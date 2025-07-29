@@ -61,7 +61,7 @@ Existing ERP solutions force organizations into specific technology stacks, maki
 Most ERP systems have complex, proprietary extension mechanisms that require specialized knowledge and often break during updates.
 
 **Our Solution:** Provide a standardized plugin/extension system with well-documented APIs that maintain compatibility across updates.
-With the help of AI, developers can easily develop and deploy applications or additional features in much faster time and still on maintain a high system reliability.
+With the help of AI, developers can easily develop and deploy applications or additional features in much faster time and still maintain a high system reliability.
 
 ## Differentiators
 
