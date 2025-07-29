@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: company-partner-postgres
+    environment:
+      POSTGRES_DB: company_partner_db
+      POSTGRES_USER: cpuser
+      POSTGRES_PASSWORD: cppass123
+    ports:
+      - "5433:5432"  # Different port to avoid conflict with auth service
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cpuser -d company_partner_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: company-partner-redis
+    ports:
+      - "6380:6379"  # Different port to avoid conflict with auth service
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  company-partner-service:
+    build: .
+    container_name: company-partner-service
+    ports:
+      - "8002:8000"  # Different port to run alongside auth service
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://cpuser:cppass123@postgres:5432/company_partner_db
+      - DEBUG=true
+      - ENVIRONMENT=development
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000
+      - REDIS_URL=redis://redis:6379/1
+      - AUTH_SERVICE_URL=http://host.docker.internal:8000  # Connect to auth service on host
+      - RATE_LIMITING_ENABLED=false
+      - ALLOW_MULTI_COMPANY=true
+      - DEFAULT_COMPANY_NAME=Demo Company
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

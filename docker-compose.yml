@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:17
+    container_name: m-erp-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: m_erp_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for messaging and caching
+  redis:
+    image: redis:7-alpine
+    container_name: m-erp-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # User Authentication Service
+  user-auth-service:
+    build: ./services/user-auth-service
+    container_name: m-erp-user-auth
+    ports:
+      - "8001:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/user_auth_db
+      SECRET_KEY: development-secret-key-change-in-production
+      ENVIRONMENT: development
+      DEBUG: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/user-auth-service:/app
+    restart: unless-stopped
+
+  # Company Partner Service
+  company-partner-service:
+    build: ./services/company-partner-service
+    container_name: m-erp-company-partner
+    ports:
+      - "8002:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/company_partner_db
+      AUTH_SERVICE_URL: http://user-auth-service:8000
+      SERVICE_KEY: company-partner-service-key
+      ENVIRONMENT: development
+      DEBUG: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      user-auth-service:
+        condition: service_started
+    volumes:
+      - ./services/company-partner-service:/app
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
