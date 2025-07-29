@@ -40,7 +40,7 @@ M-ERP is a highly extensible microservices-based ERP system that helps businesse
 
 ### Monolithic ERP Limitations
 
-Traditional ERP systems like SAP or Oracle are monolithic, expensive, and difficult to customize. Organizations often pay for features they don't need and struggle to adapt the system to their unique processes.
+Traditional ERP systems like SAP or Oracle are monolithic, expensive, and difficult to customize. Organizations often pay for features they don't need and struggle to adapt the system to their unique processes. Odoo, in the other hand is much cheaper, but still monolithic and suffers in performance on enterprise level database size.
 
 **Our Solution:** Provide a microservices-based architecture where businesses only deploy and pay for the modules they need.
 
@@ -61,6 +61,7 @@ Existing ERP solutions force organizations into specific technology stacks, maki
 Most ERP systems have complex, proprietary extension mechanisms that require specialized knowledge and often break during updates.
 
 **Our Solution:** Provide a standardized plugin/extension system with well-documented APIs that maintain compatibility across updates.
+With the help of AI, developers can easily develop and deploy applications or additional features in much faster time and still on maintain a high system reliability.
 
 ## Differentiators
 
