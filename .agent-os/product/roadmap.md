@@ -1,7 +1,7 @@
 # Product Roadmap
 
-> Last Updated: 2025-07-29
-> Version: 1.1.0
+> Last Updated: 2025-07-30
+> Version: 1.2.0
 > Status: Phase 1 In Progress
 
 ## Phase 1: Core Infrastructure & Base Services (8-10 weeks)
@@ -19,7 +19,7 @@
 - [x] UI Service - Vue-based admin interface for immediate base feature management `L`
 - [x] Group & Access Rights Service - Role-based permission system `L` *(Implemented as part of Menu/Access Rights Service)*
 - [x] Basic Admin Interface - Vue-based management dashboard `L` *(Implemented as part of UI Service)*
-- [ ] Service Discovery - Automatic service registration and health monitoring `M`
+- [x] Service Discovery - Automatic service registration and health monitoring `M`
 
 ### Should-Have Features
 
@@ -29,11 +29,12 @@
 
 ### Phase 1 Progress Summary
 
-**Completed (80% of Must-Have Features):**
+**Completed (90% of Must-Have Features):**
 - ✅ User Authentication Service with JWT tokens, user management, password policies
 - ✅ Company/Partner Service with multi-company data isolation, full CRUD operations
 - ✅ Menu/Access Rights Service with hierarchical permissions, role-based access control
 - ✅ API Gateway using Kong with centralized routing, CORS, rate limiting, health checks
+- ✅ Service Discovery with Redis-based registry, automatic registration, health monitoring
 - ✅ Docker Compose development environment with PostgreSQL and Redis
 - ✅ Inter-service authentication and communication
 - ✅ UI Service with Vue 3 + TypeScript admin interface for users and companies management
@@ -43,7 +44,6 @@
 
 **Remaining:**
 - Base Shared Data Services (currencies management)
-- Service Discovery with automatic registration
 - Redis Message Queue implementation
 - Audit logging system
 

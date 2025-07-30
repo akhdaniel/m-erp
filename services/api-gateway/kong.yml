@@ -66,6 +66,26 @@ services:
         strip_path: true
         preserve_host: false
 
+  # Service Registry
+  - name: service-registry
+    url: http://service-registry:8000
+    tags:
+      - m-erp
+      - service-discovery
+    routes:
+      - name: service-registry-routes
+        paths:
+          - /api/v1/services
+          - /api/services
+        strip_path: false
+        preserve_host: false
+        methods: ["GET", "POST", "PUT", "DELETE"]
+      - name: service-registry-health
+        paths:
+          - /registry-health
+        strip_path: true
+        preserve_host: false
+
 plugins:
   # CORS Plugin for browser compatibility
   - name: cors

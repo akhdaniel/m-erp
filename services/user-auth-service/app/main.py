@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import close_db
+from app.core.service_registry_client import ServiceRegistryClient
 from app.routers import auth, service_auth, token_validation, audit, password_policy
 # from app.middleware.rate_limiting import rate_limit_middleware
 from app.middleware.security_headers import security_headers_middleware, request_id_middleware
@@ -19,14 +20,53 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# Global service registry client
+registry_client = None
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+  global registry_client
+  
   # Startup
   logger.info("Starting up User Authentication Service...")
   logger.info("Database migrations handled by startup script")
+  
+  # Register with service registry
+  try:
+    registry_client = ServiceRegistryClient(
+      service_name="user-auth-service",
+      service_host="user-auth-service",
+      service_port=8000,
+      version="1.0.0",
+      tags=["auth", "authentication", "users"],
+      metadata={
+        "description": "User authentication and authorization service",
+        "capabilities": ["login", "registration", "jwt-tokens", "user-management"]
+      }
+    )
+    
+    success = await registry_client.register()
+    if success:
+      logger.info("✓ Successfully registered with service registry")
+    else:
+      logger.warning("✗ Failed to register with service registry")
+  except Exception as e:
+    logger.error(f"Service registry registration error: {e}")
+  
   yield
+  
   # Shutdown
   logger.info("Shutting down User Authentication Service...")
+  
+  # Deregister from service registry
+  if registry_client:
+    try:
+      await registry_client.deregister()
+      await registry_client.close()
+      logger.info("✓ Deregistered from service registry")
+    except Exception as e:
+      logger.error(f"Service registry deregistration error: {e}")
+  
   await close_db()
   logger.info("Database connections closed")
 

@@ -101,6 +101,28 @@ services:
       - ./services/menu-access-service:/app
     restart: unless-stopped
 
+  # Service Registry
+  service-registry:
+    build: ./services/service-registry
+    container_name: m-erp-service-registry
+    ports:
+      - "8004:8000"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      KONG_ADMIN_URL: http://kong:8001
+      AUTH_SERVICE_URL: http://user-auth-service:8000
+      DEBUG: "true"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # API Gateway (Kong)
   kong:
     image: kong:3.4
