@@ -5,7 +5,7 @@ Authentication middleware for inter-service communication.
 import httpx
 import logging
 from typing import Optional, Dict, Any
-from fastapi import HTTPException, status, Request
+from fastapi import HTTPException, status, Request, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.core.config import settings
@@ -27,7 +27,7 @@ class AuthClient:
         try:
             headers = {"Authorization": f"Bearer {token}"}
             response = await self.client.post(
-                f"{self.auth_service_url}/auth/validate-token",
+                f"{self.auth_service_url}/api/auth/validate-token",
                 headers=headers
             )
             
@@ -84,7 +84,7 @@ auth_client = AuthClient()
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> Dict[str, Any]:
     """
     Dependency to get the current user from JWT token.
@@ -108,7 +108,7 @@ async def get_current_user(
 
 
 async def get_current_active_user(
-    current_user: Dict[str, Any] = None
+    current_user: Dict[str, Any] = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """
     Dependency to get the current active user.

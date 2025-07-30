@@ -258,3 +258,35 @@ async def activate_partner(
             detail="Partner not found"
         )
     return activated_partner
+
+
+@router.post("/{partner_id}/deactivate", response_model=PartnerResponse)
+async def deactivate_partner(
+    partner_id: int,
+    company_id: Optional[int] = Query(None, description="Company ID for access verification"),
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_active_user)
+):
+    """
+    Deactivate a partner.
+    
+    This sets the partner's is_active field to False.
+    """
+    # First get the partner to verify company access
+    partner = await PartnerService.get_partner(db, partner_id, company_id)
+    if not partner:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Partner not found"
+        )
+    
+    # Verify user has access to the partner's company
+    await verify_company_access(partner.company_id, current_user)
+    
+    deactivated_partner = await PartnerService.deactivate_partner(db, partner_id, company_id)
+    if not deactivated_partner:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Partner not found"
+        )
+    return deactivated_partner

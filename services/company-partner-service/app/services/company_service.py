@@ -148,3 +148,18 @@ class CompanyService:
         await db.commit()
         await db.refresh(company)
         return company
+
+    @staticmethod
+    async def deactivate_company(
+        db: AsyncSession,
+        company_id: int
+    ) -> Optional[Company]:
+        """Deactivate a company (set is_active to False)."""
+        company = await CompanyService.get_company(db, company_id)
+        if not company:
+            return None
+
+        company.is_active = False
+        await db.commit()
+        await db.refresh(company)
+        return company

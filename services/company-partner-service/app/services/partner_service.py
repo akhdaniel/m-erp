@@ -178,6 +178,22 @@ class PartnerService:
         return partner
 
     @staticmethod
+    async def deactivate_partner(
+        db: AsyncSession,
+        partner_id: int,
+        company_id: Optional[int] = None
+    ) -> Optional[Partner]:
+        """Deactivate a partner (set is_active to False)."""
+        partner = await PartnerService.get_partner(db, partner_id, company_id)
+        if not partner:
+            return None
+
+        partner.is_active = False
+        await db.commit()
+        await db.refresh(partner)
+        return partner
+
+    @staticmethod
     async def get_partners_by_company(
         db: AsyncSession,
         company_id: int,

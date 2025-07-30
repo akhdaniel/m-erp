@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.middleware.auth import get_current_active_user
+from app.middleware.auth import get_current_user, get_current_active_user
 from app.services.company_service import CompanyService
 from app.schemas.company import (
     CompanyCreate,
@@ -169,6 +169,26 @@ async def activate_company(
     This sets the company's is_active field to True.
     """
     company = await CompanyService.activate_company(db, company_id)
+    if not company:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Company not found"
+        )
+    return company
+
+
+@router.post("/{company_id}/deactivate", response_model=CompanyResponse)
+async def deactivate_company(
+    company_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_active_user)
+):
+    """
+    Deactivate a company.
+    
+    This sets the company's is_active field to False.
+    """
+    company = await CompanyService.deactivate_company(db, company_id)
     if not company:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -472,6 +472,110 @@ async def logout_all_devices(
     )
 
 
+@router.post(
+    "/validate-token",
+    summary="Validate JWT token",
+    description="Validate a JWT token and return user information"
+)
+async def validate_token(
+    current_user: Annotated[CurrentUser, Depends(get_current_user)]
+):
+    """
+    Validate JWT token and return user information.
+    
+    This endpoint is used by other services to validate tokens
+    and get user information for authorization.
+    
+    Returns the user data if token is valid.
+    """
+    return {
+        "id": current_user.user_id,
+        "email": current_user.email,
+        "is_active": True,  # get_current_user already verified this
+        "permissions": current_user.permissions
+    }
+
+
+@router.get(
+    "/debug-token",
+    summary="Debug token parsing",
+    description="Debug endpoint to test token parsing"
+)
+async def debug_token(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)]
+):
+    """Debug endpoint to test raw token parsing."""
+    try:
+        token = credentials.credentials
+        payload = JWTService.verify_access_token(token)
+        return {
+            "token_valid": payload is not None,
+            "payload": payload,
+            "token_length": len(token) if token else 0
+        }
+    except Exception as e:
+        return {
+            "error": str(e),
+            "token_present": bool(credentials),
+            "credentials_str": str(credentials) if credentials else None
+        }
+
+
+@router.get(
+    "/debug-user",
+    summary="Debug user lookup",
+    description="Debug endpoint to test user database lookup"
+)
+async def debug_user(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    db: Annotated[AsyncSession, Depends(get_db)]
+):
+    """Debug endpoint to test user database lookup."""
+    try:
+        token = credentials.credentials
+        payload = JWTService.verify_access_token(token)
+        
+        if payload is None:
+            return {"error": "Token verification failed"}
+        
+        user_id = payload.get("user_id")
+        
+        # Get user from database
+        stmt = select(User).where(User.id == user_id)
+        result = await db.execute(stmt)
+        user = result.scalar_one_or_none()
+        
+        return {
+            "user_id_from_token": user_id,
+            "user_found": user is not None,
+            "user_is_active": user.is_active if user else None,
+            "user_email": user.email if user else None,
+            "user_verified": user.is_verified if user else None
+        }
+    except Exception as e:
+        return {
+            "error": str(e),
+            "error_type": type(e).__name__
+        }
+
+
+@router.get(
+    "/debug-dependency",
+    summary="Debug get_current_user dependency",
+    description="Debug endpoint using get_current_user dependency"
+)
+async def debug_dependency(
+    current_user: Annotated[CurrentUser, Depends(get_current_user)]
+):
+    """Debug endpoint using the actual get_current_user dependency."""
+    return {
+        "success": True,
+        "user_id": current_user.user_id,
+        "email": current_user.email,
+        "permissions": current_user.permissions
+    }
+
+
 # Profile Management Endpoints
 
 @router.put(
