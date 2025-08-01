@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.middleware.auth import get_current_active_user, verify_company_access
 from app.services.partner_service import PartnerService
+from app.services.messaging_service import get_messaging_service
 from app.schemas.partner import (
     PartnerCreate,
     PartnerUpdate,
@@ -36,6 +37,27 @@ async def create_partner(
     
     try:
         partner = await PartnerService.create_partner(db, partner_data)
+        
+        # Publish partner created event
+        messaging_service = await get_messaging_service()
+        if messaging_service:
+            partner_data_dict = {
+                "id": partner.id,
+                "name": partner.name,
+                "email": partner.email,
+                "phone": partner.phone,
+                "is_customer": partner.is_customer,
+                "is_supplier": partner.is_supplier,
+                "company_id": partner.company_id,
+                "created_at": partner.created_at.isoformat() if partner.created_at else None
+            }
+            await messaging_service.publish_partner_created(
+                partner_id=partner.id,
+                partner_data=partner_data_dict,
+                company_id=partner.company_id,
+                created_by_user_id=current_user.get("id")
+            )
+        
         return partner
     except ValueError as e:
         raise HTTPException(

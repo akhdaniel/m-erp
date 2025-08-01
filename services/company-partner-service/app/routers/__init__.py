@@ -2,6 +2,6 @@
 API routers package.
 """
 
-from . import companies, partners
+from . import companies, partners, currencies
 
-__all__ = ["companies", "partners"]
+__all__ = ["companies", "partners", "currencies"]

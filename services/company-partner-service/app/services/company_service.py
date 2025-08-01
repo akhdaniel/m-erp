@@ -3,7 +3,7 @@ Company service for business logic operations.
 """
 
 import math
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict, Any
 from sqlalchemy import and_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -114,6 +114,58 @@ class CompanyService:
             await db.commit()
             await db.refresh(company)
             return company
+        except IntegrityError as e:
+            await db.rollback()
+            if "companies_code_key" in str(e.orig):
+                raise ValueError(f"Company code '{company_data.code}' already exists")
+            raise ValueError("Failed to update company due to data integrity error")
+
+    @staticmethod
+    async def update_company_with_changes(
+        db: AsyncSession,
+        company_id: int,
+        company_data: CompanyUpdate
+    ) -> Optional[Tuple[Company, Dict[str, Any], Dict[str, Any], Dict[str, Any]]]:
+        """Update a company and return before/after data and changes."""
+        company = await CompanyService.get_company(db, company_id)
+        if not company:
+            return None
+        
+        # Capture before data
+        before_data = {
+            "id": company.id,
+            "name": company.name,
+            "legal_name": company.legal_name,
+            "code": company.code,
+            "is_active": company.is_active,
+            "updated_at": company.updated_at.isoformat() if company.updated_at else None
+        }
+        
+        try:
+            update_data = company_data.dict(exclude_unset=True)
+            changes = {}
+            
+            for field, value in update_data.items():
+                old_value = getattr(company, field)
+                if old_value != value:
+                    changes[field] = {"from": old_value, "to": value}
+                    setattr(company, field, value)
+            
+            await db.commit()
+            await db.refresh(company)
+            
+            # Capture after data
+            after_data = {
+                "id": company.id,
+                "name": company.name,
+                "legal_name": company.legal_name,
+                "code": company.code,
+                "is_active": company.is_active,
+                "updated_at": company.updated_at.isoformat() if company.updated_at else None
+            }
+            
+            return company, before_data, after_data, changes
+            
         except IntegrityError as e:
             await db.rollback()
             if "companies_code_key" in str(e.orig):

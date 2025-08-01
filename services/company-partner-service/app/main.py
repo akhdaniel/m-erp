@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import close_db, get_db
 from app.middleware.auth import auth_client
+from app.services.messaging_service import init_messaging, shutdown_messaging
 
 # Configure logging
 logging.basicConfig(
@@ -22,9 +23,26 @@ async def lifespan(app: FastAPI):
   # Startup
   logger.info("Starting up Company & Partner Management Service...")
   logger.info("Database migrations handled by startup script")
+  
+  # Initialize messaging service
+  try:
+    await init_messaging()
+    logger.info("✓ Messaging service initialized")
+  except Exception as e:
+    logger.error(f"Messaging service initialization error: {e}")
+  
   yield
+  
   # Shutdown
   logger.info("Shutting down Company & Partner Management Service...")
+  
+  # Shutdown messaging service
+  try:
+    await shutdown_messaging()
+    logger.info("✓ Messaging service shutdown complete")
+  except Exception as e:
+    logger.error(f"Messaging service shutdown error: {e}")
+  
   await close_db()
   await auth_client.close()
   logger.info("Database connections and auth client closed")
@@ -49,9 +67,10 @@ def create_application() -> FastAPI:
   )
   
   # Include API routers
-  from app.routers import companies, partners
+  from app.routers import companies, partners, currencies
   application.include_router(companies.router, prefix="/api/v1")
   application.include_router(partners.router, prefix="/api/v1")
+  application.include_router(currencies.router)
   
   return application
 

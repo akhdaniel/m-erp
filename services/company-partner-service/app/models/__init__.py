@@ -9,6 +9,7 @@ from app.models.partner import Partner
 from app.models.company_user import CompanyUser
 from app.models.partner_contact import PartnerContact
 from app.models.partner_address import PartnerAddress
+from app.models.currency import Currency, CurrencyRate
 
 __all__ = [
     "Base", 
@@ -20,5 +21,7 @@ __all__ = [
     "Partner", 
     "CompanyUser",
     "PartnerContact",
-    "PartnerAddress"
+    "PartnerAddress",
+    "Currency",
+    "CurrencyRate"
 ]

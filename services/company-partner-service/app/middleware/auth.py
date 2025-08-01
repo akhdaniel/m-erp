@@ -153,3 +153,17 @@ async def verify_company_access(
         )
     
     return current_user
+
+
+async def get_current_user_company(
+    current_user: Dict[str, Any] = Depends(get_current_active_user)
+) -> int:
+    """
+    Dependency to get the current user's company ID.
+    TODO: This should be replaced with proper multi-company logic
+    that gets the company based on user's selection or default company.
+    """
+    # For now, return a default company ID (1)
+    # This should be replaced with logic to get the user's current/selected company
+    company_id = current_user.get("company_id", 1)
+    return company_id

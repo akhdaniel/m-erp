@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.middleware.auth import get_current_user, get_current_active_user
 from app.services.company_service import CompanyService
+from app.services.messaging_service import get_messaging_service
 from app.schemas.company import (
     CompanyCreate,
     CompanyUpdate,
@@ -33,6 +34,24 @@ async def create_company(
     """
     try:
         company = await CompanyService.create_company(db, company_data)
+        
+        # Publish company created event
+        messaging_service = await get_messaging_service()
+        if messaging_service:
+            company_data_dict = {
+                "id": company.id,
+                "name": company.name,
+                "legal_name": company.legal_name,
+                "code": company.code,
+                "is_active": company.is_active,
+                "created_at": company.created_at.isoformat() if company.created_at else None
+            }
+            await messaging_service.publish_company_created(
+                company_id=company.id,
+                company_data=company_data_dict,
+                created_by_user_id=current_user.get("id")
+            )
+        
         return company
     except ValueError as e:
         raise HTTPException(
@@ -124,12 +143,27 @@ async def update_company(
     Only provided fields will be updated.
     """
     try:
-        company = await CompanyService.update_company(db, company_id, company_data)
-        if not company:
+        update_result = await CompanyService.update_company_with_changes(db, company_id, company_data)
+        if not update_result:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Company not found"
             )
+        
+        company, before_data, after_data, changes = update_result
+        
+        # Publish company updated event if there were changes
+        if changes:
+            messaging_service = await get_messaging_service()
+            if messaging_service:
+                await messaging_service.publish_company_updated(
+                    company_id=company.id,
+                    before_data=before_data,
+                    after_data=after_data,
+                    changes=changes,
+                    updated_by_user_id=current_user.get("id")
+                )
+        
         return company
     except ValueError as e:
         raise HTTPException(
