@@ -5,10 +5,10 @@ Partner model for business partner management (customers, suppliers, vendors).
 from sqlalchemy import Column, Integer, String, Boolean, Text, CheckConstraint, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 
-from app.models.base import CompanyBaseModel
+from app.framework.base import CompanyBusinessObject
 
 
-class Partner(CompanyBaseModel):
+class Partner(CompanyBusinessObject):
     """
     Partner model for business partner management.
     
@@ -42,6 +42,14 @@ class Partner(CompanyBaseModel):
         index=True
     )
     
+    # Category assignment
+    category_id = Column(
+        Integer,
+        ForeignKey("partner_categories.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True
+    )
+    
     # Settings - what type of partner this is
     is_company = Column(Boolean, default=False, nullable=False)
     is_customer = Column(Boolean, default=True, nullable=False)
@@ -52,11 +60,13 @@ class Partner(CompanyBaseModel):
     is_active = Column(Boolean, default=True, nullable=False, index=True)
     
     # Relationships
-    # parent_partner = relationship("Partner", remote_side=[id], back_populates="child_partners")
-    # child_partners = relationship("Partner", back_populates="parent_partner")
-    # company = relationship("Company", back_populates="partners")
-    # contacts = relationship("PartnerContact", back_populates="partner", cascade="all, delete-orphan")
-    # addresses = relationship("PartnerAddress", back_populates="partner", cascade="all, delete-orphan")
+    parent_partner = relationship("Partner", remote_side="Partner.id", back_populates="child_partners")
+    child_partners = relationship("Partner", back_populates="parent_partner")
+    company = relationship("Company", back_populates="partners")
+    category = relationship("PartnerCategory", back_populates="partners")
+    contacts = relationship("PartnerContact", back_populates="partner", cascade="all, delete-orphan")
+    addresses = relationship("PartnerAddress", back_populates="partner", cascade="all, delete-orphan")
+    communications = relationship("PartnerCommunication", back_populates="partner", cascade="all, delete-orphan")
     
     # Constraints
     __table_args__ = (
@@ -86,9 +96,7 @@ class Partner(CompanyBaseModel):
     @property
     def is_parent(self):
         """Check if this partner has child partners."""
-        # This would be implemented when relationships are added
-        # return len(self.child_partners) > 0
-        return False
+        return len(self.child_partners) > 0
     
     @property
     def has_parent(self):

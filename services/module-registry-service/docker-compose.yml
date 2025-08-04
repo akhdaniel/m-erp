@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Module Registry Service
+  module-registry-service:
+    build: .
+    container_name: module-registry-service
+    ports:
+      - "8005:8005"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://mruser:mrpass123@module-registry-db:5432/module_registry_db
+      - REDIS_URL=redis://module-registry-redis:6379/2
+      - SERVICE_REGISTRY_URL=http://service-registry:8003
+      - AUTH_SERVICE_URL=http://user-auth-service:8001
+      - DEBUG=true
+      - ENVIRONMENT=development
+    depends_on:
+      - module-registry-db
+      - module-registry-redis
+    volumes:
+      - .:/app
+      - /tmp/modules:/tmp/modules
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8005 --reload
+    restart: unless-stopped
+    networks:
+      - module-registry-network
+      - m-erp-network
+
+  # PostgreSQL Database for Module Registry
+  module-registry-db:
+    image: postgres:17
+    container_name: module-registry-db
+    environment:
+      - POSTGRES_USER=mruser
+      - POSTGRES_PASSWORD=mrpass123
+      - POSTGRES_DB=module_registry_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - module_registry_db_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    restart: unless-stopped
+    networks:
+      - module-registry-network
+
+  # Redis for Module Registry (caching and messaging)
+  module-registry-redis:
+    image: redis:7-alpine
+    container_name: module-registry-redis
+    ports:
+      - "6381:6379"
+    volumes:
+      - module_registry_redis_data:/data
+    restart: unless-stopped
+    networks:
+      - module-registry-network
+
+volumes:
+  module_registry_db_data:
+  module_registry_redis_data:
+
+networks:
+  module-registry-network:
+    driver: bridge
+  m-erp-network:
+    external: true

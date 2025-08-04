@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY services/company-partner-service/app/ ./app/
+COPY services/company-partner-service/tests/ ./tests/
 COPY services/company-partner-service/migrations/ ./migrations/
 COPY services/company-partner-service/alembic.ini .
 COPY services/company-partner-service/start.sh .

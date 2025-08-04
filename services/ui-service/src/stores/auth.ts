@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import Cookies from 'js-cookie'
 import authService from '@/services/auth'
+import { notificationService } from '@/services/notifications'
 import type { User, LoginCredentials, AuthToken } from '@/types'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -41,6 +42,9 @@ export const useAuthStore = defineStore('auth', () => {
       // Set user data directly from login response
       user.value = userData
       localStorage.setItem('auth_user', JSON.stringify(userData))
+      
+      // Connect to real-time notifications
+      notificationService.connect(userData.id)
     } catch (err: any) {
       error.value = err.response?.data?.detail || 'Login failed'
       throw err
@@ -62,6 +66,9 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = null
       Cookies.remove('auth_token')
       localStorage.removeItem('auth_user')
+      
+      // Disconnect from notifications
+      notificationService.disconnect()
     }
   }
 

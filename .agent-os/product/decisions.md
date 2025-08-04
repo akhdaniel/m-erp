@@ -1,6 +1,6 @@
 # Product Decisions Log
 
-> Last Updated: 2025-07-27
+> Last Updated: 2025-08-02
 > Version: 1.0.0
 > Override Priority: Highest
 
@@ -158,3 +158,51 @@ The company_id column approach provides the best balance of simplicity, scalabil
 - More complex security validation at application layer
 - Potential for human error in query construction
 - Backup and restore operations affect all companies simultaneously
+
+## 2025-08-02: Plugin-within-Service Extension Architecture
+
+**ID:** DEC-005
+**Status:** Accepted
+**Category:** Technical
+**Related Spec:** @.agent-os/specs/2025-08-02-extension-system-purchasing-module/
+
+### Decision
+
+Implement plugin/extension framework using plugin-within-service architecture where modules are loaded as dynamic components within existing services rather than deploying as separate microservices, while maintaining a centralized module registry for discovery and lifecycle management.
+
+### Context
+
+Phase 3 requires establishing the foundational extension system that will enable third-party developers to create custom modules for M-ERP. The architectural choice for how modules are deployed and executed fundamentally impacts development complexity, operational overhead, and system performance.
+
+### Alternatives Considered
+
+1. **Microservice-per-Module Architecture**
+   - Pros: Complete module isolation, independent scaling, technology flexibility per module
+   - Cons: Significant operational complexity, increased network overhead, resource consumption per module
+
+2. **Plugin-within-Service Architecture** (Selected)
+   - Pros: Simpler deployment and operations, shared infrastructure, faster inter-module communication
+   - Cons: Less module isolation, potential stability impact, shared technology constraints
+
+3. **Hybrid Module Architecture**
+   - Pros: Flexibility to choose deployment strategy per module based on requirements
+   - Cons: Increased complexity, inconsistent development patterns, operational overhead
+
+### Rationale
+
+The plugin-within-service approach provides the optimal balance for Phase 3 validation of the extension concept while leveraging existing infrastructure and development patterns. This approach enables rapid development and validation of the module ecosystem without the operational complexity of managing numerous microservices for each business module.
+
+### Consequences
+
+**Positive:**
+- Faster module development and deployment cycles using existing service infrastructure
+- Simplified operational management with fewer deployment units and service dependencies
+- Better performance for module interactions through in-process communication
+- Leverages existing Business Object Framework for consistent module development patterns
+- Lower resource overhead enabling cost-effective module ecosystem
+
+**Negative:**
+- Reduced module isolation requiring careful error handling and resource management
+- Shared technology stack constraints limiting module implementation language choices
+- Potential stability impact if poorly written modules affect host service performance
+- More complex module security model requiring runtime permission enforcement

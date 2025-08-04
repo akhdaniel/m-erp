@@ -200,6 +200,9 @@
         <slot />
       </div>
     </main>
+    
+    <!-- Notification Center -->
+    <NotificationCenter />
   </div>
 </template>
 
@@ -209,6 +212,7 @@ import { useRouter } from 'vue-router'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '@/stores/auth'
+import NotificationCenter from './NotificationCenter.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

@@ -5,10 +5,10 @@ Company model for multi-company support.
 from sqlalchemy import Column, Integer, String, Boolean, Text, CheckConstraint
 from sqlalchemy.orm import relationship
 
-from app.models.base import BaseModel
+from app.framework.base import BusinessObjectBase
 
 
-class Company(BaseModel):
+class Company(BusinessObjectBase):
     """
     Company model for multi-company operations.
     
@@ -49,7 +49,8 @@ class Company(BaseModel):
     # Relationships
     # Note: These will be added when the related models are created
     # users = relationship("CompanyUser", back_populates="company")
-    # partners = relationship("Partner", back_populates="company")
+    partners = relationship("Partner", back_populates="company")
+    partner_categories = relationship("PartnerCategory", back_populates="company")
     
     # Constraints
     __table_args__ = (

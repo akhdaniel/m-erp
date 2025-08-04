@@ -1,0 +1,348 @@
+name: inventory-module
+version: 1.0.0
+display_name: Inventory Management Module
+description: Comprehensive inventory and warehouse management with product catalog, stock tracking, and location management
+author: M-ERP Development Team
+author_email: dev@m-erp.com
+license: MIT
+type: full_module
+
+# Module dependencies
+dependencies:
+  - name: business-object-framework
+    version: ">=1.0.0"
+    type: module
+    description: Core business object infrastructure
+  - name: company-partner-service
+    version: ">=1.0.0"
+    type: service
+    description: Partner integration for suppliers and customers
+  - name: currency-service
+    version: ">=1.0.0"
+    type: service
+    description: Multi-currency support for international inventory valuation
+  - name: purchasing-module
+    version: ">=1.0.0"
+    type: module
+    description: Integration for purchase order receiving and stock updates
+
+# Entry points for module initialization
+entry_points:
+  main: inventory_module.main:initialize_module
+  health_check: inventory_module.main:check_health
+
+# API endpoints provided by this module
+endpoints:
+  # Product Catalog Management
+  - path: /products
+    method: GET
+    handler: inventory_module.api.products:list_products
+    description: List products with filtering and search
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.view"]
+    
+  - path: /products
+    method: POST
+    handler: inventory_module.api.products:create_product
+    description: Create new product
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.create"]
+    
+  - path: /products/{id}
+    method: GET
+    handler: inventory_module.api.products:get_product
+    description: Get product details by ID
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.view"]
+    
+  - path: /products/{id}
+    method: PUT
+    handler: inventory_module.api.products:update_product
+    description: Update product information
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.edit"]
+    
+  # Stock Management
+  - path: /stock
+    method: GET
+    handler: inventory_module.api.stock:get_stock_levels
+    description: Get current stock levels across all locations
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.view"]
+    
+  - path: /stock/{product_id}
+    method: GET
+    handler: inventory_module.api.stock:get_product_stock
+    description: Get stock levels for specific product
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.view"]
+    
+  - path: /stock/movements
+    method: GET
+    handler: inventory_module.api.stock:list_stock_movements
+    description: List stock movements with filtering
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.view"]
+    
+  - path: /stock/movements
+    method: POST
+    handler: inventory_module.api.stock:create_stock_movement
+    description: Create stock movement (adjustment, transfer)
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.edit"]
+    
+  # Warehouse and Location Management
+  - path: /warehouses
+    method: GET
+    handler: inventory_module.api.warehouses:list_warehouses
+    description: List warehouses and storage locations
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.view"]
+    
+  - path: /warehouses
+    method: POST
+    handler: inventory_module.api.warehouses:create_warehouse
+    description: Create new warehouse
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.admin"]
+    
+  - path: /warehouses/{id}/locations
+    method: GET
+    handler: inventory_module.api.warehouses:list_locations
+    description: List storage locations within warehouse
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.view"]
+    
+  # Purchase Order Integration
+  - path: /receiving
+    method: POST
+    handler: inventory_module.api.receiving:create_receipt
+    description: Receive goods from purchase order
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.receive"]
+    
+  - path: /receiving/{receipt_id}
+    method: GET
+    handler: inventory_module.api.receiving:get_receipt
+    description: Get receiving receipt details
+    requires_auth: true
+    company_scoped: true
+    permissions: ["inventory.view"]
+
+# Event handlers for integration with other modules
+event_handlers:
+  - event_type: purchase_order.approved
+    handler: inventory_module.events:on_purchase_order_approved
+    description: Create expected receipts when purchase orders are approved
+    
+  - event_type: purchase_order.received
+    handler: inventory_module.events:on_purchase_order_received
+    description: Update stock levels when goods are received
+    
+  - event_type: partner.updated
+    handler: inventory_module.events:on_partner_updated
+    description: Update supplier information for products
+    
+  - event_type: currency.rate_updated
+    handler: inventory_module.events:on_currency_rate_updated
+    description: Recalculate inventory valuations on currency updates
+
+# Events published by this module
+event_publishers:
+  - event_type: product.created
+    description: Published when new product is created
+    
+  - event_type: product.updated
+    description: Published when product information is updated
+    
+  - event_type: stock.level_changed
+    description: Published when stock levels change
+    
+  - event_type: stock.low_level_alert
+    description: Published when stock falls below minimum threshold
+    
+  - event_type: stock.movement_created
+    description: Published when stock movement is recorded
+    
+  - event_type: warehouse.created
+    description: Published when new warehouse is created
+    
+  - event_type: goods.received
+    description: Published when goods are received into inventory
+
+# Module configuration schema
+config_schema:
+  type: object
+  properties:
+    stock_management:
+      type: object
+      description: Stock management settings
+      properties:
+        enable_negative_stock:
+          type: boolean
+          description: Allow negative stock levels
+          default: false
+        low_stock_threshold_percentage:
+          type: number
+          description: Percentage of minimum stock to trigger low stock alert
+          default: 20.0
+          minimum: 0
+          maximum: 100
+        automatic_reorder_enabled:
+          type: boolean
+          description: Enable automatic reorder point calculations
+          default: true
+        default_lead_time_days:
+          type: integer
+          description: Default lead time for products in days
+          default: 14
+          minimum: 1
+      required: ["enable_negative_stock"]
+      
+    valuation_method:
+      type: string
+      description: Inventory valuation method
+      enum: ["FIFO", "LIFO", "AVERAGE_COST", "STANDARD_COST"]
+      default: "FIFO"
+      
+    warehouse_settings:
+      type: object
+      description: Warehouse management settings
+      properties:
+        enable_location_tracking:
+          type: boolean
+          description: Enable detailed location tracking within warehouses
+          default: true
+        require_location_for_movements:
+          type: boolean
+          description: Require location specification for all stock movements
+          default: false
+        enable_batch_tracking:
+          type: boolean
+          description: Enable batch/lot number tracking
+          default: true
+        enable_serial_tracking:
+          type: boolean
+          description: Enable serial number tracking
+          default: false
+      required: ["enable_location_tracking"]
+      
+    product_settings:
+      type: object
+      description: Product catalog settings
+      properties:
+        require_sku:
+          type: boolean
+          description: Require SKU for all products
+          default: true
+        auto_generate_sku:
+          type: boolean
+          description: Automatically generate SKUs if not provided
+          default: true
+        sku_prefix:
+          type: string
+          description: Prefix for auto-generated SKUs
+          default: "SKU"
+        enable_variants:
+          type: boolean
+          description: Enable product variants (size, color, etc.)
+          default: true
+        enable_kits:
+          type: boolean
+          description: Enable product kits/bundles
+          default: false
+      required: ["require_sku"]
+      
+    notifications:
+      type: object
+      description: Notification settings
+      properties:
+        enable_low_stock_alerts:
+          type: boolean
+          description: Send alerts when stock is low
+          default: true
+        enable_stockout_alerts:
+          type: boolean
+          description: Send alerts when stock reaches zero
+          default: true
+        enable_receiving_notifications:
+          type: boolean
+          description: Send notifications when goods are received
+          default: true
+        alert_recipients:
+          type: array
+          description: Email addresses to receive inventory alerts
+          items:
+            type: string
+            format: email
+          default: []
+      required: ["enable_low_stock_alerts"]
+      
+  required: ["stock_management", "valuation_method", "warehouse_settings", "product_settings"]
+
+# Database migrations
+migrations:
+  - version: "1.0.0"
+    description: "Initial inventory module tables"
+    script: "migrations/001_initial_inventory_tables.sql"
+
+# UI components provided by this module
+ui_components:
+  - name: ProductCatalog
+    component: inventory_module.ui.components:ProductCatalog
+    description: Product catalog management interface
+    
+  - name: StockLevels
+    component: inventory_module.ui.components:StockLevels
+    description: Current stock levels dashboard
+    
+  - name: StockMovements
+    component: inventory_module.ui.components:StockMovements
+    description: Stock movement history and creation
+    
+  - name: WarehouseManagement
+    component: inventory_module.ui.components:WarehouseManagement
+    description: Warehouse and location management
+    
+  - name: ReceivingInterface
+    component: inventory_module.ui.components:ReceivingInterface
+    description: Goods receiving and inspection interface
+    
+  - name: InventoryReports
+    component: inventory_module.ui.components:InventoryReports
+    description: Inventory analytics and reporting dashboard
+
+# Module metadata
+metadata:
+  category: inventory
+  tags: ["inventory", "warehouse", "stock", "products", "receiving", "catalog"]
+  documentation_url: "https://docs.m-erp.com/modules/inventory"
+  support_url: "https://support.m-erp.com/inventory-module"
+  minimum_m_erp_version: "2.0.0"
+  
+# Security and compliance
+security:
+  data_retention_days: 2555  # 7 years for financial records
+  encryption_required: true
+  audit_all_operations: true
+  gdpr_compliant: true
+  
+# Performance and scaling
+performance:
+  max_concurrent_stock_movements: 200
+  max_products_per_request: 100
+  cache_stock_levels: true
+  cache_ttl_seconds: 300  # 5 minutes for stock levels
+  enable_read_replicas: true

@@ -7,6 +7,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_, or_, func
 from typing import Annotated, Optional
+from datetime import datetime
 
 from app.core.database import get_db
 from app.models.user import User
@@ -15,6 +16,7 @@ from app.services.password_service import PasswordService
 from app.services.jwt_service import JWTService
 from app.services.session_service import SessionService
 from app.services.account_lockout_service import AccountLockoutService
+from app.services.messaging_service import get_messaging_service
 from app.schemas.auth import (
     UserRegistrationRequest, 
     UserLoginRequest, 
@@ -196,6 +198,22 @@ async def register_user(
     # Add initial password to history
     await PasswordService.add_to_password_history(db, new_user.id, password_hash)
     
+    # Publish user created event
+    messaging_service = await get_messaging_service()
+    if messaging_service:
+        user_data = {
+            "id": new_user.id,
+            "email": new_user.email,
+            "first_name": new_user.first_name,
+            "last_name": new_user.last_name,
+            "is_active": new_user.is_active,
+            "created_at": new_user.created_at.isoformat() if new_user.created_at else None
+        }
+        await messaging_service.publish_user_created(
+            user_id=new_user.id,
+            user_data=user_data
+        )
+    
     return AuthResponse(
         user=UserResponse.model_validate(new_user),
         access_token=access_token,
@@ -303,6 +321,21 @@ async def login_user(
         user.id,
         refresh_token
     )
+    
+    # Publish user logged in event
+    messaging_service = await get_messaging_service()
+    if messaging_service:
+        login_data = {
+            "user_id": user.id,
+            "email": user.email,
+            "login_time": datetime.utcnow().isoformat(),
+            "ip_address": request.client.host if request.client else None,
+            "user_agent": request.headers.get("user-agent")
+        }
+        await messaging_service.publish_user_logged_in(
+            user_id=user.id,
+            login_data=login_data
+        )
     
     return AuthResponse(
         user=UserResponse.model_validate(user),

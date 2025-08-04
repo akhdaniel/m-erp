@@ -39,7 +39,7 @@ class PartnerAddress(BaseModel):
     is_default = Column(Boolean, default=False, nullable=False)
     
     # Relationships
-    # partner = relationship("Partner", back_populates="addresses")
+    partner = relationship("Partner", back_populates="addresses")
     
     # Constraints
     __table_args__ = (

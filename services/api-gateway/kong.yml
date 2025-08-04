@@ -35,8 +35,10 @@ services:
         paths:
           - /api/v1/companies
           - /api/v1/partners
+          - /api/v1/currencies
           - /api/companies
           - /api/partners
+          - /api/currencies
         strip_path: false
         preserve_host: false
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]

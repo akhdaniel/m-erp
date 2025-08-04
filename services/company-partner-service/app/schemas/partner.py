@@ -19,6 +19,7 @@ class PartnerBase(BaseModel):
     tax_id: Optional[str] = Field(None, max_length=100)
     industry: Optional[str] = Field(None, max_length=100)
     parent_partner_id: Optional[int] = None
+    category_id: Optional[int] = None
     is_company: bool = False
     is_customer: bool = True
     is_supplier: bool = False
@@ -56,6 +57,7 @@ class PartnerUpdate(BaseModel):
     tax_id: Optional[str] = Field(None, max_length=100)
     industry: Optional[str] = Field(None, max_length=100)
     parent_partner_id: Optional[int] = None
+    category_id: Optional[int] = None
     is_company: Optional[bool] = None
     is_customer: Optional[bool] = None
     is_supplier: Optional[bool] = None

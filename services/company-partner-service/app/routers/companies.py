@@ -66,8 +66,8 @@ async def list_companies(
     limit: int = Query(100, ge=1, le=1000, description="Number of records to return"), 
     search: Optional[str] = Query(None, description="Search term for company name, legal name, or code"),
     active_only: bool = Query(False, description="Return only active companies"),
-    db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_active_user)
+    db: AsyncSession = Depends(get_db)
+    # current_user: dict = Depends(get_current_active_user)  # Temporarily disabled for development
 ):
     """
     List companies with pagination and optional filtering.

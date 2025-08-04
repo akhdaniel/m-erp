@@ -42,7 +42,8 @@ class PartnerContact(BaseModel):
     is_active = Column(Boolean, default=True, nullable=False)
     
     # Relationships
-    # partner = relationship("Partner", back_populates="contacts")
+    partner = relationship("Partner", back_populates="contacts")
+    communications = relationship("PartnerCommunication", back_populates="partner_contact")
     
     # Constraints
     __table_args__ = (

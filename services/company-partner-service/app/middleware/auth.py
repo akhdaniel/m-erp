@@ -53,11 +53,11 @@ class AuthClient:
             
             auth_data = {
                 "service_name": "company-partner-service",
-                "service_key": settings.service_key
+                "service_secret": settings.service_key
             }
             
             response = await self.client.post(
-                f"{self.auth_service_url}/services/auth",
+                f"{self.auth_service_url}/api/services/token",
                 json=auth_data
             )
             

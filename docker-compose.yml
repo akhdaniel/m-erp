@@ -37,7 +37,9 @@ services:
 
   # User Authentication Service
   user-auth-service:
-    build: ./services/user-auth-service
+    build:
+      context: .
+      dockerfile: ./services/user-auth-service/Dockerfile
     container_name: m-erp-user-auth
     ports:
       - "8001:8000"
@@ -46,6 +48,9 @@ services:
       SECRET_KEY: development-secret-key-change-in-production
       ENVIRONMENT: development
       DEBUG: "true"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: user-auth-service
     depends_on:
       postgres:
         condition: service_healthy
@@ -57,7 +62,9 @@ services:
 
   # Company Partner Service
   company-partner-service:
-    build: ./services/company-partner-service
+    build:
+      context: .
+      dockerfile: ./services/company-partner-service/Dockerfile
     container_name: m-erp-company-partner
     ports:
       - "8002:8000"
@@ -67,6 +74,9 @@ services:
       SERVICE_KEY: company-partner-service-key
       ENVIRONMENT: development
       DEBUG: "true"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: company-partner-service
     depends_on:
       postgres:
         condition: service_healthy
@@ -165,6 +175,57 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Notification Service
+  notification-service:
+    build:
+      context: .
+      dockerfile: ./services/notification-service/Dockerfile
+    container_name: m-erp-notifications
+    ports:
+      - "8005:8005"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: notification-service
+      ENVIRONMENT: development
+      DEBUG: "true"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Audit Service
+  audit-service:
+    build:
+      context: .
+      dockerfile: ./services/audit-service/Dockerfile
+    container_name: m-erp-audit
+    ports:
+      - "8006:8006"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/audit_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: audit-service
+      ENVIRONMENT: development
+      DEBUG: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
       interval: 30s
       timeout: 10s
       retries: 3

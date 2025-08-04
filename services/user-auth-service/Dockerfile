@@ -10,14 +10,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY services/user-auth-service/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY app/ ./app/
-COPY migrations/ ./migrations/
-COPY alembic.ini .
-COPY start.sh .
+COPY services/user-auth-service/app/ ./app/
+COPY services/user-auth-service/migrations/ ./migrations/
+COPY services/user-auth-service/alembic.ini .
+COPY services/user-auth-service/start.sh .
+COPY services/user-auth-service/messaging/ ./messaging/
 
 # Create non-root user and make start script executable
 RUN useradd --create-home --shell /bin/bash app \

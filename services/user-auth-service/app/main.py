@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import close_db
 from app.core.service_registry_client import ServiceRegistryClient
+from app.services.messaging_service import init_messaging, shutdown_messaging
 from app.routers import auth, service_auth, token_validation, audit, password_policy
 # from app.middleware.rate_limiting import rate_limit_middleware
 from app.middleware.security_headers import security_headers_middleware, request_id_middleware
@@ -30,6 +31,13 @@ async def lifespan(app: FastAPI):
   # Startup
   logger.info("Starting up User Authentication Service...")
   logger.info("Database migrations handled by startup script")
+  
+  # Initialize messaging service
+  try:
+    await init_messaging()
+    logger.info("✓ Messaging service initialized")
+  except Exception as e:
+    logger.error(f"Messaging service initialization error: {e}")
   
   # Register with service registry
   try:
@@ -57,6 +65,13 @@ async def lifespan(app: FastAPI):
   
   # Shutdown
   logger.info("Shutting down User Authentication Service...")
+  
+  # Shutdown messaging service
+  try:
+    await shutdown_messaging()
+    logger.info("✓ Messaging service shutdown complete")
+  except Exception as e:
+    logger.error(f"Messaging service shutdown error: {e}")
   
   # Deregister from service registry
   if registry_client:

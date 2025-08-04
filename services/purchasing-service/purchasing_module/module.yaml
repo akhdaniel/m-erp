@@ -1,0 +1,241 @@
+name: purchasing-module
+version: 1.0.0
+display_name: Purchasing Management Module
+description: Complete procurement workflow management with purchase orders, supplier management, and approval workflows
+author: M-ERP Development Team
+author_email: dev@m-erp.com
+license: MIT
+type: full_module
+
+# Module dependencies
+dependencies:
+  - name: business-object-framework
+    version: ">=1.0.0"
+    type: module
+    description: Core business object infrastructure
+  - name: company-partner-service
+    version: ">=1.0.0"
+    type: service
+    description: Partner/supplier management integration
+  - name: currency-service
+    version: ">=1.0.0"
+    type: service
+    description: Multi-currency support for international procurement
+
+# Entry points for module initialization
+entry_points:
+  main: purchasing_module.main:initialize_module
+  health_check: purchasing_module.health:check_health
+
+# API endpoints provided by this module
+endpoints:
+  - path: /purchase-orders
+    method: GET
+    handler: purchasing_module.api.purchase_orders:list_purchase_orders
+    description: List purchase orders with filtering
+    requires_auth: true
+    company_scoped: true
+    permissions: ["purchasing.view"]
+    
+  - path: /purchase-orders
+    method: POST
+    handler: purchasing_module.api.purchase_orders:create_purchase_order
+    description: Create new purchase order
+    requires_auth: true
+    company_scoped: true
+    permissions: ["purchasing.create"]
+    
+  - path: /purchase-orders/{id}
+    method: GET
+    handler: purchasing_module.api.purchase_orders:get_purchase_order
+    description: Get purchase order by ID
+    requires_auth: true
+    company_scoped: true
+    permissions: ["purchasing.view"]
+    
+  - path: /purchase-orders/{id}
+    method: PUT
+    handler: purchasing_module.api.purchase_orders:update_purchase_order
+    description: Update purchase order
+    requires_auth: true
+    company_scoped: true
+    permissions: ["purchasing.edit"]
+    
+  - path: /purchase-orders/{id}/approve
+    method: POST
+    handler: purchasing_module.api.approvals:approve_purchase_order
+    description: Approve purchase order
+    requires_auth: true
+    company_scoped: true
+    permissions: ["purchasing.approve"]
+    
+  - path: /purchase-orders/{id}/reject
+    method: POST
+    handler: purchasing_module.api.approvals:reject_purchase_order
+    description: Reject purchase order
+    requires_auth: true
+    company_scoped: true
+    permissions: ["purchasing.approve"]
+    
+  - path: /suppliers
+    method: GET
+    handler: purchasing_module.api.suppliers:list_suppliers
+    description: List approved suppliers
+    requires_auth: true
+    company_scoped: true
+    permissions: ["purchasing.view"]
+    
+  - path: /suppliers/{id}/performance
+    method: GET
+    handler: purchasing_module.api.suppliers:get_supplier_performance
+    description: Get supplier performance metrics
+    requires_auth: true
+    company_scoped: true
+    permissions: ["purchasing.reports"]
+
+# Event handlers for integration with other modules
+event_handlers:
+  - event_type: partner.created
+    handler: purchasing_module.events:on_partner_created
+    description: Handle new partner creation for supplier setup
+    
+  - event_type: partner.updated
+    handler: purchasing_module.events:on_partner_updated
+    description: Update supplier information when partner is modified
+    
+  - event_type: currency.rate_updated
+    handler: purchasing_module.events:on_currency_rate_updated
+    description: Recalculate purchase order amounts on currency updates
+
+# Events published by this module
+event_publishers:
+  - event_type: purchase_order.created
+    description: Published when new purchase order is created
+    
+  - event_type: purchase_order.approved
+    description: Published when purchase order is approved
+    
+  - event_type: purchase_order.rejected
+    description: Published when purchase order is rejected
+    
+  - event_type: purchase_order.completed
+    description: Published when purchase order is completed
+    
+  - event_type: supplier.performance_updated
+    description: Published when supplier performance metrics are updated
+
+# Module configuration schema
+config_schema:
+  type: object
+  properties:
+    approval_thresholds:
+      type: object
+      description: Approval thresholds by amount
+      properties:
+        manager_limit:
+          type: number
+          description: Maximum amount a manager can approve
+          default: 5000.00
+        director_limit:
+          type: number
+          description: Maximum amount a director can approve
+          default: 25000.00
+        requires_board_approval:
+          type: number
+          description: Amount requiring board approval
+          default: 100000.00
+      required: ["manager_limit", "director_limit"]
+      
+    default_currency:
+      type: string
+      description: Default currency for purchase orders
+      default: "USD"
+      
+    notification_settings:
+      type: object
+      description: Notification preferences
+      properties:
+        email_notifications:
+          type: boolean
+          description: Enable email notifications
+          default: true
+        approval_reminders:
+          type: boolean
+          description: Send approval reminder emails
+          default: true
+        reminder_days:
+          type: integer
+          description: Days after which to send reminders
+          default: 3
+          minimum: 1
+          maximum: 30
+      required: ["email_notifications"]
+      
+    supplier_evaluation:
+      type: object
+      description: Supplier evaluation settings
+      properties:
+        enabled:
+          type: boolean
+          description: Enable supplier performance tracking
+          default: true
+        rating_criteria:
+          type: array
+          description: Criteria for supplier rating
+          items:
+            type: string
+          default: ["delivery_time", "quality", "price", "communication"]
+        minimum_orders_for_rating:
+          type: integer
+          description: Minimum orders required before rating supplier
+          default: 3
+          minimum: 1
+      required: ["enabled"]
+      
+  required: ["approval_thresholds", "default_currency"]
+
+# Database migrations
+migrations:
+  - version: "1.0.0"
+    description: "Initial purchasing module tables"
+    script: "migrations/001_initial_purchasing_tables.sql"
+
+# UI components provided by this module
+ui_components:
+  - name: PurchaseOrderList
+    component: purchasing_module.ui.components:PurchaseOrderList
+    description: List view for purchase orders
+    
+  - name: PurchaseOrderForm
+    component: purchasing_module.ui.components:PurchaseOrderForm
+    description: Form for creating/editing purchase orders
+    
+  - name: ApprovalWorkflow
+    component: purchasing_module.ui.components:ApprovalWorkflow
+    description: Approval workflow interface
+    
+  - name: SupplierPerformance
+    component: purchasing_module.ui.components:SupplierPerformance
+    description: Supplier performance dashboard
+
+# Module metadata
+metadata:
+  category: procurement
+  tags: ["purchasing", "procurement", "suppliers", "approval", "workflow"]
+  documentation_url: "https://docs.m-erp.com/modules/purchasing"
+  support_url: "https://support.m-erp.com/purchasing-module"
+  minimum_m_erp_version: "2.0.0"
+  
+# Security and compliance
+security:
+  data_retention_days: 2555  # 7 years for financial records
+  encryption_required: true
+  audit_all_operations: true
+  gdpr_compliant: true
+  
+# Performance and scaling
+performance:
+  max_concurrent_approvals: 100
+  max_purchase_orders_per_request: 50
+  cache_supplier_performance: true
+  cache_ttl_seconds: 3600
