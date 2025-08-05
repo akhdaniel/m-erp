@@ -141,11 +141,13 @@ class SalesQuote(CompanyBusinessObject):
     is_active = Column(Boolean, default=True, nullable=False, index=True)
     
     # Relationships
+    line_items = relationship("SalesQuoteLineItem", back_populates="quote", cascade="all, delete-orphan")
+    versions = relationship("QuoteVersion", back_populates="quote", cascade="all, delete-orphan")
+    approvals = relationship("QuoteApproval", back_populates="quote", cascade="all, delete-orphan")
+    
+    # External relationships (would be defined when integrating with other services)
     # customer = relationship("Customer", back_populates="quotes")
     # opportunity = relationship("SalesOpportunity", back_populates="quotes")
-    # line_items = relationship("SalesQuoteLineItem", back_populates="quote", cascade="all, delete-orphan")
-    # versions = relationship("QuoteVersion", back_populates="quote", cascade="all, delete-orphan")
-    # approvals = relationship("QuoteApproval", back_populates="quote", cascade="all, delete-orphan")
     
     def __str__(self):
         """String representation of sales quote."""
@@ -430,7 +432,7 @@ class SalesQuoteLineItem(CompanyBusinessObject):
     custom_attributes = Column(JSON)
     
     # Relationships
-    # quote = relationship("SalesQuote", back_populates="line_items")
+    quote = relationship("SalesQuote", back_populates="line_items")
     
     def __str__(self):
         """String representation of quote line item."""
@@ -542,7 +544,7 @@ class QuoteVersion(CompanyBusinessObject):
     is_active = Column(Boolean, default=True, nullable=False, index=True)
     
     # Relationships
-    # quote = relationship("SalesQuote", back_populates="versions")
+    quote = relationship("SalesQuote", back_populates="versions")
     
     def __str__(self):
         """String representation of quote version."""
@@ -612,7 +614,7 @@ class QuoteApproval(CompanyBusinessObject):
     is_active = Column(Boolean, default=True, nullable=False, index=True)
     
     # Relationships
-    # quote = relationship("SalesQuote", back_populates="approvals")
+    quote = relationship("SalesQuote", back_populates="approvals")
     
     def __str__(self):
         """String representation of quote approval."""
