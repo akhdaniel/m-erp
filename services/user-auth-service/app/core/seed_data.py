@@ -1,12 +1,13 @@
 """
 Seed data for initial database setup.
-This module contains functions to create default roles and permissions.
+This module contains functions to create default roles, permissions, and admin user.
 """
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from app.models.role import Role
+from app.models.role import Role, UserRole
+from app.models.user import User
 
 
 async def create_default_roles(db: AsyncSession) -> None:
@@ -86,9 +87,66 @@ async def create_default_roles(db: AsyncSession) -> None:
   await db.commit()
 
 
+async def create_default_admin_user(db: AsyncSession) -> None:
+  """Create default admin user with full access."""
+  from app.services.password_service import PasswordService
+  
+  # Check if admin user already exists
+  existing_admin = await db.execute(
+    select(User).where(User.email == "admin@m-erp.com")
+  )
+  if existing_admin.scalar_one_or_none() is not None:
+    print("✅ Default admin user already exists")
+    return
+  
+  # Create password service instance
+  password_service = PasswordService()
+  
+  # Hash the default password
+  default_password = "admin123"
+  password_hash = password_service.hash_password(default_password)
+  
+  # Create admin user
+  admin_user = User(
+    email="admin@m-erp.com",
+    password_hash=password_hash,
+    first_name="System",
+    last_name="Administrator",
+    is_active=True,
+    is_verified=True,
+    is_superuser=True
+  )
+  
+  db.add(admin_user)
+  await db.flush()  # Get the user ID
+  
+  # Get superuser role
+  superuser_role = await db.execute(
+    select(Role).where(Role.name == "superuser")
+  )
+  role = superuser_role.scalar_one_or_none()
+  
+  if role:
+    # Assign superuser role to admin
+    user_role = UserRole(
+      user_id=admin_user.id,
+      role_id=role.id,
+      assigned_by=None  # System assignment
+    )
+    db.add(user_role)
+  
+  await db.commit()
+  
+  print("✅ Default admin user created successfully")
+  print("   📧 Email: admin@m-erp.com")
+  print("   🔑 Password: admin123")
+  print("   ⚠️  IMPORTANT: Change this password immediately in production!")
+
+
 async def seed_database(db: AsyncSession) -> None:
   """Seed the database with initial data."""
   await create_default_roles(db)
+  await create_default_admin_user(db)
 
 
 async def seed_initial_data() -> None:
@@ -98,7 +156,7 @@ async def seed_initial_data() -> None:
   async with async_session_factory() as session:
     try:
       await seed_database(session)
-      print("✅ Default roles created successfully")
+      print("✅ Database initialization completed successfully")
     except Exception as e:
       print(f"⚠️  Seed data warning: {e}")
       # Don't fail if data already exists
