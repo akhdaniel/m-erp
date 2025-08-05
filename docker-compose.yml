@@ -210,7 +210,7 @@ services:
       dockerfile: ./services/audit-service/Dockerfile
     container_name: m-erp-audit
     ports:
-      - "8006:8006"
+      - "8007:8006"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/audit_db
       REDIS_HOST: redis
@@ -223,6 +223,69 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Inventory Service
+  inventory-service:
+    build:
+      context: .
+      dockerfile: ./services/inventory-service/Dockerfile
+    container_name: m-erp-inventory
+    ports:
+      - "8005:8005"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/inventory_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: inventory-service
+      ENVIRONMENT: development
+      DEBUG: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Sales Service
+  sales-service:
+    build:
+      context: .
+      dockerfile: ./services/sales-service/Dockerfile
+    container_name: m-erp-sales
+    ports:
+      - "8006:8006"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/sales_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: sales-service
+      ENVIRONMENT: development
+      DEBUG: "true"
+      # Service integration URLs
+      INVENTORY_SERVICE_URL: http://inventory-service:8005
+      PARTNER_SERVICE_URL: http://company-partner-service:8000
+      CURRENCY_SERVICE_URL: http://company-partner-service:8000
+      AUDIT_SERVICE_URL: http://audit-service:8006
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      inventory-service:
+        condition: service_started
+      company-partner-service:
+        condition: service_started
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
