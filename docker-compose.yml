@@ -186,7 +186,7 @@ services:
       dockerfile: ./services/notification-service/Dockerfile
     container_name: m-erp-notifications
     ports:
-      - "8005:8005"
+      - "8007:8005"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -210,7 +210,7 @@ services:
       dockerfile: ./services/audit-service/Dockerfile
     container_name: m-erp-audit
     ports:
-      - "8007:8006"
+      - "8008:8006"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/audit_db
       REDIS_HOST: redis

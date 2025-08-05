@@ -12,11 +12,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY services/sales-service/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+# Copy application code from services/sales-service
+COPY services/sales-service/. /app/
 
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser

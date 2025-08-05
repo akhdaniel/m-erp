@@ -168,5 +168,5 @@ class PartnerCommunicationStatsResponse(BaseModel):
 class PartnerCommunicationBulkActionRequest(BaseModel):
     """Schema for bulk actions on partner communications."""
     communication_ids: List[int] = Field(..., min_items=1)
-    action: str = Field(..., regex=r'^(complete|cancel|delete|update_status)$')
+    action: str = Field(..., pattern=r'^(complete|cancel|delete|update_status)$')
     data: Optional[dict] = None  # Additional data for the action

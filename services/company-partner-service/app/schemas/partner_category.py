@@ -12,7 +12,7 @@ class PartnerCategoryBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     code: str = Field(..., min_length=1, max_length=50)
     description: Optional[str] = None
-    color: Optional[str] = Field(None, max_length=7, regex=r'^#[0-9A-Fa-f]{6}$')
+    color: Optional[str] = Field(None, max_length=7, pattern=r'^#[0-9A-Fa-f]{6}$')
     parent_category_id: Optional[int] = None
     is_active: bool = True
     is_default: bool = False
@@ -46,7 +46,7 @@ class PartnerCategoryUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     code: Optional[str] = Field(None, min_length=1, max_length=50)
     description: Optional[str] = None
-    color: Optional[str] = Field(None, max_length=7, regex=r'^#[0-9A-Fa-f]{6}$')
+    color: Optional[str] = Field(None, max_length=7, pattern=r'^#[0-9A-Fa-f]{6}$')
     parent_category_id: Optional[int] = None
     is_active: Optional[bool] = None
     is_default: Optional[bool] = None
