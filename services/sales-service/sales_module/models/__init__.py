@@ -8,7 +8,7 @@ including customers, opportunities, quotes, orders, and pricing models.
 # from .customer import Customer, CustomerContact, CustomerAddress, CustomerCategory
 # from .opportunity import SalesOpportunity, OpportunityStage, OpportunityActivity
 from .quote import SalesQuote, SalesQuoteLineItem, QuoteVersion, QuoteApproval, QuoteStatus, ApprovalStatus, LineItemType
-# from .order import SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice
+from .order import SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice, OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus
 # from .pricing import PriceList, PriceRule, Discount, Promotion
 
 __all__ = [
@@ -33,10 +33,14 @@ __all__ = [
     "LineItemType",
     
     # Order models
-    # "SalesOrder",
-    # "SalesOrderLineItem",
-    # "OrderShipment",
-    # "OrderInvoice",
+    "SalesOrder",
+    "SalesOrderLineItem", 
+    "OrderShipment",
+    "OrderInvoice",
+    "OrderStatus",
+    "PaymentStatus",
+    "ShipmentStatus",
+    "InvoiceStatus",
     
     # Pricing models
     # "PriceList",

@@ -236,6 +236,69 @@ class SalesOrder(CompanyBusinessObject):
         timestamp = int(time.time())
         return f"{prefix}{timestamp:08d}"
     
+    @classmethod
+    def from_quote(cls, quote, user_id: int = None, **kwargs):
+        """
+        Create a sales order from an accepted quote.
+        
+        Args:
+            quote: SalesQuote instance to convert
+            user_id: ID of user creating the order
+            **kwargs: Additional order-specific data
+            
+        Returns:
+            SalesOrder: New order instance created from quote
+        """
+        # Generate order number if not provided
+        order_number = kwargs.get('order_number')
+        if not order_number:
+            temp_order = cls(company_id=quote.company_id)
+            order_number = temp_order.generate_order_number()
+        
+        # Create order from quote data
+        order_data = {
+            'company_id': quote.company_id,
+            'order_number': order_number,
+            'title': quote.title,
+            'description': quote.description or f"Order converted from quote {quote.quote_number}",
+            'customer_id': quote.customer_id,
+            'quote_id': quote.id,
+            'sales_rep_user_id': user_id or quote.prepared_by_user_id,
+            
+            # Financial information from quote
+            'subtotal': quote.subtotal,
+            'discount_amount': quote.discount_amount,
+            'tax_amount': quote.tax_amount,
+            'total_amount': quote.total_amount,
+            'currency_code': quote.currency_code,
+            'payment_terms_days': quote.payment_terms_days,
+            
+            # Order dates
+            'order_date': datetime.utcnow(),
+            'required_date': kwargs.get('required_date', quote.valid_until),
+            
+            # Order settings
+            'status': OrderStatus.CONFIRMED,  # Start as confirmed since quote was accepted
+            'payment_status': PaymentStatus.PENDING,
+            'outstanding_amount': quote.total_amount,
+            
+            # Additional order attributes
+            'source_channel': 'quote_conversion',
+            'special_instructions': quote.notes,
+            'customer_po_number': kwargs.get('customer_po_number'),
+        }
+        
+        # Override with any additional kwargs
+        order_data.update(kwargs)
+        
+        # Create the order
+        order = cls(**order_data)
+        
+        # Calculate totals and set due date
+        order.calculate_totals()
+        
+        return order
+    
     def calculate_totals(self) -> None:
         """Calculate order totals from line items."""
         # In production, would calculate from actual line items
@@ -481,6 +544,70 @@ class SalesOrderLineItem(CompanyBusinessObject):
         # Calculate tax
         if self.tax_percentage > 0:
             self.tax_amount = self.line_total * (self.tax_percentage / 100)
+    
+    @classmethod
+    def from_quote_line_item(cls, quote_line_item, order_id: int, **kwargs):
+        """
+        Create an order line item from a quote line item.
+        
+        Args:
+            quote_line_item: SalesQuoteLineItem instance to convert
+            order_id: ID of the order this line item belongs to
+            **kwargs: Additional line item-specific data
+            
+        Returns:
+            SalesOrderLineItem: New order line item created from quote line item
+        """
+        # Create line item from quote line item data
+        line_item_data = {
+            'company_id': quote_line_item.company_id,
+            'order_id': order_id,
+            'line_number': quote_line_item.line_number,
+            
+            # Product/service information
+            'product_id': quote_line_item.product_id,
+            'product_variant_id': quote_line_item.product_variant_id,
+            'item_code': quote_line_item.item_code,
+            'item_name': quote_line_item.item_name,
+            'description': quote_line_item.description,
+            
+            # Quantities - start with all quantity as ordered
+            'quantity_ordered': quote_line_item.quantity,
+            'unit_of_measure': quote_line_item.unit_of_measure,
+            
+            # Pricing from quote line item
+            'unit_price': quote_line_item.unit_price,
+            'discount_percentage': quote_line_item.discount_percentage,
+            'discount_amount': quote_line_item.discount_amount,
+            'line_total': quote_line_item.line_total,
+            
+            # Tax information
+            'tax_percentage': quote_line_item.tax_percentage,
+            'tax_amount': quote_line_item.tax_amount,
+            'tax_code': quote_line_item.tax_code,
+            
+            # Product specifications and options
+            'specifications': quote_line_item.specifications,
+            'custom_options': quote_line_item.custom_options,
+            
+            # Delivery information (convert from quote)
+            'required_date': kwargs.get('required_date', quote_line_item.delivery_date),
+            
+            # Additional attributes
+            'notes': quote_line_item.notes,
+            'custom_attributes': quote_line_item.custom_attributes,
+        }
+        
+        # Override with any additional kwargs
+        line_item_data.update(kwargs)
+        
+        # Create the line item
+        line_item = cls(**line_item_data)
+        
+        # Calculate totals to ensure consistency
+        line_item.calculate_line_total()
+        
+        return line_item
     
     def ship_quantity(self, quantity_to_ship: Decimal, user_id: int = None) -> None:
         """Ship specified quantity."""
