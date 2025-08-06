@@ -3,12 +3,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.core.database import close_db
 from app.core.service_registry_client import ServiceRegistryClient
 from app.services.messaging_service import init_messaging, shutdown_messaging
-from app.routers import auth, service_auth, token_validation, audit, password_policy
+from app.routers import auth, service_auth, token_validation, audit, password_policy, role_management
 # from app.middleware.rate_limiting import rate_limit_middleware
 from app.middleware.security_headers import security_headers_middleware, request_id_middleware
 # from app.middleware.audit_middleware import audit_middleware
@@ -113,10 +114,14 @@ def create_application() -> FastAPI:
   # Include routers
   application.include_router(auth.router)
   application.include_router(auth.admin_router)
+  application.include_router(role_management.router)
   application.include_router(service_auth.router)
   application.include_router(token_validation.router)
   application.include_router(audit.router)
   application.include_router(password_policy.router)
+  
+  # Mount static files for admin UI
+  application.mount("/admin", StaticFiles(directory="app/static", html=True), name="static")
   
   return application
 

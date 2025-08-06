@@ -81,6 +81,7 @@ class UserResponse(BaseModel):
     is_verified: bool
     created_at: datetime
     updated_at: datetime
+    permissions: Optional[List[str]] = Field(None, description="User permissions")
     
     model_config = {
         "from_attributes": True,
@@ -93,7 +94,8 @@ class UserResponse(BaseModel):
                 "is_active": True,
                 "is_verified": False,
                 "created_at": "2024-01-01T12:00:00Z",
-                "updated_at": "2024-01-01T12:00:00Z"
+                "updated_at": "2024-01-01T12:00:00Z",
+                "permissions": ["read", "write"]
             }
         }
     }

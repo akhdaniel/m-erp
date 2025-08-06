@@ -476,7 +476,20 @@ async def get_current_user_info(
             detail="User not found"
         )
     
-    return UserResponse.model_validate(user)
+    # Create response with permissions
+    user_dict = {
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "is_active": user.is_active,
+        "is_verified": user.is_verified,
+        "created_at": user.created_at,
+        "updated_at": user.updated_at,
+        "permissions": current_user.permissions
+    }
+    
+    return UserResponse(**user_dict)
 
 
 @router.post(
@@ -1245,6 +1258,54 @@ async def create_user(
         updated_at=new_user.updated_at,
         roles=assigned_roles,
         last_login=None
+    )
+
+
+@admin_router.delete(
+    "/users/{user_id}",
+    response_model=MessageResponse,
+    summary="Delete user",
+    description="Permanently delete a user account"
+)
+async def delete_user(
+    user_id: int,
+    admin_user: Annotated[CurrentUser, Depends(get_admin_user)],
+    db: Annotated[AsyncSession, Depends(get_db)]
+):
+    """
+    Permanently delete a user account.
+    
+    - **user_id**: User ID to delete
+    
+    Warning: This action cannot be undone.
+    Requires admin permissions (manage_users).
+    """
+    # Prevent admin from deleting themselves
+    if user_id == admin_user.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete your own account"
+        )
+    
+    # Get user
+    stmt = select(User).where(User.id == user_id)
+    result = await db.execute(stmt)
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    user_email = user.email
+    
+    # Delete user (this will cascade delete user_roles and other related records)
+    await db.delete(user)
+    await db.commit()
+    
+    return MessageResponse(
+        message=f"Successfully deleted user: {user_email}"
     )
 
 
