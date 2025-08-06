@@ -100,7 +100,7 @@ async def create_quote(
 async def list_quotes(
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
-    status: Optional[str] = Query(None, description="Filter by status"),
+    quote_status: Optional[str] = Query(None, description="Filter by status"),
     customer_id: Optional[int] = Query(None, gt=0, description="Filter by customer"),
     search: Optional[str] = Query(None, max_length=100, description="Search text"),
     quote_service: QuoteService = Depends(get_quote_service),
@@ -115,23 +115,24 @@ async def list_quotes(
     try:
         # Build filter criteria
         filters = {"company_id": company_id}
-        if status:
-            filters["status"] = status
+        if quote_status:
+            filters["status"] = quote_status
         if customer_id:
             filters["customer_id"] = customer_id
         if search:
             filters["search"] = search
         
         # Get quotes from service
-        quotes = quote_service.get_all(
+        result = quote_service.list(
             filters=filters,
             page=page,
             page_size=page_size
         )
         
-        # Calculate pagination info
-        total_count = quote_service.count(filters)
-        total_pages = (total_count + page_size - 1) // page_size
+        # Extract data from service result
+        quotes = result.get("items", [])
+        total_count = result.get("total", 0)
+        total_pages = result.get("total_pages", 0)
         
         return QuoteListResponse(
             quotes=[QuoteResponse.model_validate(quote) for quote in quotes],

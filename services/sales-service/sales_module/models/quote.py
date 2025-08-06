@@ -61,16 +61,14 @@ class SalesQuote(CompanyBusinessObject):
     title = Column(String(255), nullable=False)
     description = Column(Text)
     
-    # Customer and opportunity references
+    # Customer and opportunity references (external service references)
     customer_id = Column(
         Integer,
-        ForeignKey("customers.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
     opportunity_id = Column(
         Integer,
-        ForeignKey("sales_opportunities.id", ondelete="SET NULL"),
         nullable=True,
         index=True
     )

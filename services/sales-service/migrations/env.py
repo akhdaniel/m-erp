@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 # Import all models to ensure they're registered with SQLAlchemy
 from sales_module.framework.base import Base
 from sales_module.models.quote import SalesQuote, SalesQuoteLineItem, QuoteVersion, QuoteApproval
+from sales_module.models.pricing_rules import PricingRule
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

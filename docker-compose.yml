@@ -266,7 +266,7 @@ services:
     ports:
       - "8006:8006"
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/sales_db
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/sales_db
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SERVICE_NAME: sales-service

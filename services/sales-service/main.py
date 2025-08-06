@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 # Import API routers
 from sales_module.api.quote_api import router as quote_router
+from sales_module.api.pricing_api import router as pricing_router
 
 # Configure logging
 logging.basicConfig(
@@ -46,6 +47,7 @@ app.add_middleware(
 
 # Include API routers
 app.include_router(quote_router)
+app.include_router(pricing_router)
 
 # Root endpoint
 @app.get("/")
@@ -57,6 +59,7 @@ async def root():
         "status": "running",
         "endpoints": {
             "quotes": "/api/v1/quotes",
+            "pricing": "/pricing",
             "docs": "/api/docs",
             "health": "/health"
         }
