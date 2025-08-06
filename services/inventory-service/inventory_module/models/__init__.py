@@ -5,16 +5,18 @@ This package contains all database models for the inventory management module,
 including products, stock levels, warehouses, and movement tracking.
 """
 
-from .product import Product, ProductVariant, ProductCategory
+from .product import Product, ProductVariant, ProductCategory, ProductType, ProductStatus
 from .stock import StockLevel, StockMovement, StockMovementType
-from .warehouse import Warehouse, WarehouseLocation
-from .receiving import ReceivingRecord, ReceivingLineItem
+from .warehouse import Warehouse, WarehouseLocation, WarehouseType, LocationType
+from .receiving import ReceivingRecord, ReceivingLineItem, ReceivingStatus, ReceivingLineStatus
 
 __all__ = [
     # Product models
     "Product",
     "ProductVariant", 
     "ProductCategory",
+    "ProductType",
+    "ProductStatus",
     
     # Stock models
     "StockLevel",
@@ -24,8 +26,12 @@ __all__ = [
     # Warehouse models
     "Warehouse",
     "WarehouseLocation",
+    "WarehouseType",
+    "LocationType",
     
     # Receiving models
     "ReceivingRecord",
-    "ReceivingLineItem"
+    "ReceivingLineItem",
+    "ReceivingStatus",
+    "ReceivingLineStatus"
 ]

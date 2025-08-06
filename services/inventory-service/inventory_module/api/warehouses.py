@@ -149,7 +149,7 @@ class LocationCreate(BaseModel):
     humidity_max: Optional[Decimal] = Field(None, ge=0, le=100)
     pick_sequence: int = 0
     putaway_sequence: int = 0
-    abc_classification: Optional[str] = Field(None, regex="^[ABC]$")
+    abc_classification: Optional[str] = Field(None, pattern="^[ABC]$")
     restricted_access: bool = False
     access_permissions: Optional[Dict[str, Any]] = None
     hazmat_approved: bool = False
@@ -177,7 +177,7 @@ class LocationUpdate(BaseModel):
     humidity_max: Optional[Decimal] = Field(None, ge=0, le=100)
     pick_sequence: Optional[int] = None
     putaway_sequence: Optional[int] = None
-    abc_classification: Optional[str] = Field(None, regex="^[ABC]$")
+    abc_classification: Optional[str] = Field(None, pattern="^[ABC]$")
     restricted_access: Optional[bool] = None
     access_permissions: Optional[Dict[str, Any]] = None
     hazmat_approved: Optional[bool] = None

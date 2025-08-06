@@ -165,7 +165,7 @@ class StockLevel(CompanyBusinessObject):
         return True
     
     def adjust_stock(self, quantity_change: Decimal, movement_type: StockMovementType) -> None:
-        """Adjust stock level and update metadata."""
+        """Adjust stock level and update movement metadata."""
         self.quantity_on_hand += quantity_change
         self.update_available_quantity()
         self.last_movement_date = datetime.utcnow()
@@ -264,7 +264,7 @@ class StockMovement(CompanyBusinessObject):
     reversed_at = Column(DateTime, nullable=True)
     
     # Additional metadata
-    metadata = Column(JSON)  # Additional movement-specific data
+    movement_metadata = Column(JSON)  # Additional movement-specific data
     
     # Relationships
     # product = relationship("Product", back_populates="stock_movements")

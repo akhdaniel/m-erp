@@ -24,7 +24,7 @@ class ProductCategoryCreate(BaseModel):
     description: Optional[str] = None
     parent_category_id: Optional[int] = None
     display_order: int = 0
-    color: Optional[str] = Field(None, regex=r"^#[0-9A-Fa-f]{6}$")
+    color: Optional[str] = Field(None, pattern=r"^#[0-9A-Fa-f]{6}$")
     icon: Optional[str] = None
     slug: Optional[str] = None
     meta_title: Optional[str] = None

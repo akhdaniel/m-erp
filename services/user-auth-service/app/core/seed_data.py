@@ -25,7 +25,32 @@ async def create_default_roles(db: AsyncSession) -> None:
         "manage_companies",
         "manage_partners",
         "manage_currencies",
-        "access_admin_dashboard"
+        "access_admin_dashboard",
+        # Inventory permissions
+        "access_inventory",
+        "manage_inventory",
+        "manage_products",
+        "manage_stock",
+        "manage_warehouses",
+        "view_inventory_reports",
+        # Sales permissions
+        "access_sales",
+        "manage_sales",
+        "manage_quotes",
+        "manage_orders",
+        "view_sales_reports",
+        # Purchase permissions
+        "access_purchase",
+        "manage_purchase",
+        "manage_purchase_orders",
+        "manage_suppliers",
+        "view_purchase_reports",
+        # Accounting permissions
+        "access_accounting",
+        "manage_accounting",
+        "manage_accounts",
+        "manage_journals",
+        "view_financial_reports"
       ]
     },
     {
@@ -41,13 +66,137 @@ async def create_default_roles(db: AsyncSession) -> None:
       ]
     },
     {
+      "name": "inventory_manager",
+      "description": "Inventory Manager with full inventory access",
+      "permissions": [
+        "view_profile",
+        "edit_profile",
+        "view_partners",
+        "view_companies",
+        "access_inventory",
+        "manage_inventory",
+        "manage_products",
+        "manage_stock",
+        "manage_warehouses",
+        "view_inventory_reports"
+      ]
+    },
+    {
+      "name": "inventory_user",
+      "description": "Inventory User with basic inventory access",
+      "permissions": [
+        "view_profile",
+        "edit_profile",
+        "view_partners",
+        "view_companies",
+        "access_inventory",
+        "view_products",
+        "view_stock",
+        "view_warehouses"
+      ]
+    },
+    {
+      "name": "sales_manager",
+      "description": "Sales Manager with full sales access",
+      "permissions": [
+        "view_profile",
+        "edit_profile",
+        "view_partners",
+        "manage_partners",
+        "view_companies",
+        "access_sales",
+        "manage_sales",
+        "manage_quotes",
+        "manage_orders",
+        "view_sales_reports",
+        "access_inventory",
+        "view_products",
+        "view_stock"
+      ]
+    },
+    {
+      "name": "sales_user",
+      "description": "Sales User with basic sales access",
+      "permissions": [
+        "view_profile",
+        "edit_profile",
+        "view_partners",
+        "view_companies",
+        "access_sales",
+        "view_quotes",
+        "view_orders",
+        "access_inventory",
+        "view_products",
+        "view_stock"
+      ]
+    },
+    {
+      "name": "purchase_manager",
+      "description": "Purchase Manager with full purchase access",
+      "permissions": [
+        "view_profile",
+        "edit_profile",
+        "view_partners",
+        "manage_partners",
+        "view_companies",
+        "access_purchase",
+        "manage_purchase",
+        "manage_purchase_orders",
+        "manage_suppliers",
+        "view_purchase_reports",
+        "access_inventory",
+        "view_products",
+        "view_stock"
+      ]
+    },
+    {
+      "name": "purchase_user",
+      "description": "Purchase User with basic purchase access",
+      "permissions": [
+        "view_profile",
+        "edit_profile",
+        "view_partners",
+        "view_companies",
+        "access_purchase",
+        "view_purchase_orders",
+        "view_suppliers",
+        "access_inventory",
+        "view_products",
+        "view_stock"
+      ]
+    },
+    {
+      "name": "accountant",
+      "description": "Accountant with full accounting access",
+      "permissions": [
+        "view_profile",
+        "edit_profile",
+        "view_partners",
+        "view_companies",
+        "access_accounting",
+        "manage_accounting",
+        "manage_accounts",
+        "manage_journals",
+        "view_financial_reports",
+        "view_sales_reports",
+        "view_purchase_reports",
+        "view_inventory_reports"
+      ]
+    },
+    {
       "name": "manager",
       "description": "Manager with limited administrative access",
       "permissions": [
         "view_users",
         "manage_partners",
         "view_companies",
-        "view_reports"
+        "view_reports",
+        "access_inventory",
+        "view_inventory_reports",
+        "access_sales",
+        "view_sales_reports",
+        "access_purchase",
+        "view_purchase_reports"
       ]
     },
     {
