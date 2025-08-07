@@ -388,6 +388,25 @@ async def get_low_stock_products(
     return service.get_low_stock_products(limit=limit)
 
 
+@router.get("/stats")
+async def get_product_stats(
+    service: ProductService = Depends(get_product_service),
+    category_service: ProductCategoryService = Depends(get_category_service)
+):
+    """Get product statistics."""
+    total = service.count_all(Product, active_only=False)
+    active = service.count_all(Product, active_only=True)
+    inactive = total - active
+    categories = category_service.count_all(ProductCategory, active_only=False)
+    
+    return {
+        "total": total,
+        "active": active,
+        "inactive": inactive,
+        "categories": categories
+    }
+
+
 @router.get("/{product_id}", response_model=ProductResponse)
 async def get_product(
     product_id: int = Path(..., description="Product ID"),

@@ -92,11 +92,11 @@ class InventoryService {
     if (params?.offset) queryParams.append('offset', params.offset.toString())
     
     const query = queryParams.toString()
-    return api.get<Product[]>(`/api/v1/products${query ? '?' + query : ''}`)
+    return api.get<Product[]>(`/v1/products${query ? '?' + query : ''}`)
   }
 
   async getProduct(id: number) {
-    return api.get<Product>(`/api/v1/products/${id}`)
+    return api.get<Product>(`/v1/products/${id}`)
   }
 
   async getProductStats() {
@@ -105,7 +105,7 @@ class InventoryService {
       active: number
       inactive: number
       categories: number 
-    }>('/api/v1/products/stats')
+    }>('/v1/products/stats')
   }
 
   // Stock
@@ -124,7 +124,7 @@ class InventoryService {
     if (params?.offset) queryParams.append('offset', params.offset.toString())
     
     const query = queryParams.toString()
-    return api.get<StockLevel[]>(`/api/v1/stock${query ? '?' + query : ''}`)
+    return api.get<StockLevel[]>(`/v1/stock${query ? '?' + query : ''}`)
   }
 
   async getStockStats() {
@@ -134,11 +134,11 @@ class InventoryService {
       low_stock_count: number
       out_of_stock_count: number
       warehouses: number
-    }>('/api/v1/stock/stats')
+    }>('/v1/stock/stats')
   }
 
   async getLowStockItems(limit: number = 10) {
-    return api.get<LowStockItem[]>(`/api/v1/stock/low?limit=${limit}`)
+    return api.get<LowStockItem[]>(`/v1/stock/low?limit=${limit}`)
   }
 
   // Warehouses
@@ -153,11 +153,11 @@ class InventoryService {
     if (params?.offset) queryParams.append('offset', params.offset.toString())
     
     const query = queryParams.toString()
-    return api.get<Warehouse[]>(`/api/v1/warehouses${query ? '?' + query : ''}`)
+    return api.get<Warehouse[]>(`/v1/warehouses${query ? '?' + query : ''}`)
   }
 
   async getWarehouse(id: number) {
-    return api.get<Warehouse>(`/api/v1/warehouses/${id}`)
+    return api.get<Warehouse>(`/v1/warehouses/${id}`)
   }
 
   async getWarehouseStats() {
@@ -167,7 +167,7 @@ class InventoryService {
       total_capacity: number
       total_used: number
       utilization_percentage: number
-    }>('/api/v1/warehouses/stats')
+    }>('/v1/warehouses/stats')
   }
 
   // Dashboard
@@ -224,7 +224,7 @@ class InventoryService {
 
   async getRecentMovements(limit: number = 10): Promise<RecentMovement[]> {
     try {
-      return await api.get<RecentMovement[]>(`/api/v1/inventory/movements/recent?limit=${limit}`)
+      return await api.get<RecentMovement[]>(`/v1/inventory/movements/recent?limit=${limit}`)
     } catch (error) {
       console.error('Error fetching recent movements:', error)
       // Return mock data for development
