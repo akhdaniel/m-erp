@@ -112,15 +112,22 @@ class MenuService:
         user_role_level: Optional[int] = None
     ) -> List[MenuItem]:
         """Get menu items accessible by a user based on permissions."""
+        import logging
+        logger = logging.getLogger(__name__)
+        
         # Get all active menus
         all_menus = await self.get_all_menus(active_only=True)
+        logger.info(f"Found {len(all_menus)} total active menus")
         
         # Filter menus based on user permissions
         accessible_menus = []
         for menu in all_menus:
-            if await self._can_access_menu(menu, user_permissions, user_role_level):
+            can_access = await self._can_access_menu(menu, user_permissions, user_role_level)
+            logger.debug(f"Menu {menu.code} - required permission: {menu.required_permission}, can access: {can_access}")
+            if can_access:
                 accessible_menus.append(menu)
         
+        logger.info(f"User has access to {len(accessible_menus)} menus")
         return accessible_menus
     
     async def _can_access_menu(
@@ -152,6 +159,12 @@ class MenuService:
         user_role_level: Optional[int] = None
     ) -> List[MenuItemWithChildren]:
         """Build a hierarchical menu tree from flat menu list."""
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        logger.info(f"Building menu tree with {len(menus)} menus")
+        logger.info(f"User permissions for tree building: {user_permissions}")
+        
         # Create a dictionary for quick lookup
         menu_dict = {menu.id: menu for menu in menus}
         
@@ -166,21 +179,30 @@ class MenuService:
         # Build the tree
         root_menus = []
         for menu in menus:
+            logger.debug(f"Processing menu: {menu.code}, parent_id: {menu.parent_id}")
+            
             # Skip if user doesn't have access
             if user_permissions is not None:
-                if not await self._can_access_menu(menu, user_permissions, user_role_level):
+                can_access = await self._can_access_menu(menu, user_permissions, user_role_level)
+                logger.debug(f"Can access {menu.code}: {can_access}")
+                if not can_access:
                     continue
             
             if menu.parent_id is None:
+                logger.info(f"Found root menu: {menu.code}")
                 # Root menu item
                 menu_with_children = await self._build_menu_with_children(
                     menu, children_by_parent, user_permissions, user_role_level
                 )
                 if menu_with_children:  # Only add if has accessible items
                     root_menus.append(menu_with_children)
+                    logger.info(f"Added root menu to tree: {menu.code}")
+                else:
+                    logger.info(f"Root menu {menu.code} has no accessible items")
         
         # Sort by order_index
         root_menus.sort(key=lambda x: x.order_index)
+        logger.info(f"Built tree with {len(root_menus)} root menus")
         return root_menus
     
     async def _build_menu_with_children(

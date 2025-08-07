@@ -48,8 +48,8 @@ async def get_menu_tree(
     # Get all menus or user-specific menus
     if current_user:
         menus = await service.get_user_menus(user_permissions, user_role_level)
-        # Build hierarchical tree with permission filtering
-        menu_tree = await service.build_menu_tree(menus, user_permissions, user_role_level)
+        # Build hierarchical tree WITHOUT permission filtering (already filtered)
+        menu_tree = await service.build_menu_tree(menus)
     else:
         # For unauthenticated requests, return public menus only
         menus = await service.get_all_menus(active_only=active_only)
