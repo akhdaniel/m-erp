@@ -79,6 +79,72 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/profile/ProfileView.vue'),
     meta: { requiresAuth: true, title: 'My Profile' }
   },
+  // Inventory Management Routes
+  {
+    path: '/inventory',
+    name: 'Inventory',
+    component: () => import('@/views/inventory/InventoryDashboard.vue'),
+    meta: { requiresAuth: true, title: 'Inventory Management' }
+  },
+  {
+    path: '/inventory/products',
+    redirect: '/inventory'
+  },
+  {
+    path: '/inventory/categories',
+    redirect: '/inventory'
+  },
+  {
+    path: '/inventory/stock-movements',
+    redirect: '/inventory'
+  },
+  {
+    path: '/inventory/stock-levels',
+    redirect: '/inventory'
+  },
+  {
+    path: '/inventory/warehouses',
+    redirect: '/inventory'
+  },
+  {
+    path: '/inventory/receiving',
+    redirect: '/inventory'
+  },
+  {
+    path: '/inventory/suppliers',
+    redirect: '/partners'
+  },
+  // Sales Management Routes
+  {
+    path: '/sales',
+    name: 'Sales',
+    component: () => import('@/views/sales/SalesDashboard.vue'),
+    meta: { requiresAuth: true, title: 'Sales Management' }
+  },
+  {
+    path: '/sales/quotes',
+    redirect: '/sales'
+  },
+  {
+    path: '/sales/orders',
+    redirect: '/sales'
+  },
+  {
+    path: '/sales/customers',
+    redirect: '/partners'
+  },
+  {
+    path: '/sales/products',
+    redirect: '/sales'
+  },
+  {
+    path: '/sales/invoices',
+    redirect: '/sales'
+  },
+  {
+    path: '/sales/analytics',
+    redirect: '/sales'
+  },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',

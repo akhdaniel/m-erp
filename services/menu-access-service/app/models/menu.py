@@ -3,7 +3,7 @@ Menu model for dynamic navigation system.
 """
 
 from sqlalchemy import Column, String, Text, Boolean, Integer, ForeignKey, JSON, CheckConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from app.models.base import BaseModel
 
@@ -52,13 +52,6 @@ class MenuItem(BaseModel):
     css_class = Column(String(255))  # Custom CSS classes
     
     # Relationships
-    parent = relationship("MenuItem", remote_side=[id], back_populates="children")
-    children = relationship(
-        "MenuItem", 
-        back_populates="parent",
-        cascade="all, delete-orphan",
-        order_by="MenuItem.order_index"
-    )
     
     # Constraints
     __table_args__ = (
@@ -106,3 +99,11 @@ class MenuItem(BaseModel):
                 return False
         
         return True
+
+
+# Define self-referential relationship after class definition
+MenuItem.parent = relationship(
+    "MenuItem", 
+    remote_side=[MenuItem.id],
+    backref=backref("children", cascade="all, delete-orphan", order_by=MenuItem.order_index)
+)

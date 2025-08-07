@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Menu System Test</h1>
+    <div id="login-form">
+        <h2>Login</h2>
+        <input type="email" id="email" value="admin@example.com" placeholder="Email">
+        <input type="password" id="password" value="admin123" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+    
+    <div id="menu-test" style="display:none;">
+        <h2>Menu Test</h2>
+        <button onclick="testDirectAPI()">Test Direct API (Port 8003)</button>
+        <button onclick="testKongAPI()">Test Kong API (Port 9080)</button>
+        <button onclick="testUIProxy()">Test UI Proxy (Port 3000)</button>
+        <hr>
+        <div id="results"></div>
+    </div>
+    
+    <script>
+        let authToken = null;
+        
+        async function login() {
+            try {
+                const response = await axios.post('http://localhost:8001/api/auth/login', {
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                });
+                
+                authToken = response.data.access_token;
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('menu-test').style.display = 'block';
+                
+                // Decode JWT to show permissions
+                const payload = JSON.parse(atob(authToken.split('.')[1]));
+                document.getElementById('results').innerHTML = `
+                    <h3>Login Success!</h3>
+                    <p>User ID: ${payload.user_id}</p>
+                    <p>Total Permissions: ${payload.permissions.length}</p>
+                    <p>Has access_inventory: ${payload.permissions.includes('access_inventory') ? '✓' : '✗'}</p>
+                    <p>Has manage_inventory: ${payload.permissions.includes('manage_inventory') ? '✓' : '✗'}</p>
+                `;
+            } catch (error) {
+                alert('Login failed: ' + error.message);
+            }
+        }
+        
+        async function testDirectAPI() {
+            try {
+                const response = await axios.get('http://localhost:8003/api/v1/menus/tree', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                showResults('Direct API (8003)', response.data);
+            } catch (error) {
+                showError('Direct API', error);
+            }
+        }
+        
+        async function testKongAPI() {
+            try {
+                const response = await axios.get('http://localhost:9080/menu-access/api/v1/menus/tree', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                showResults('Kong API (9080)', response.data);
+            } catch (error) {
+                showError('Kong API', error);
+            }
+        }
+        
+        async function testUIProxy() {
+            try {
+                const response = await axios.get('http://localhost:3000/api/menu-access/api/v1/menus/tree', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                showResults('UI Proxy (3000)', response.data);
+            } catch (error) {
+                showError('UI Proxy', error);
+            }
+        }
+        
+        function showResults(source, data) {
+            const inventoryMenu = data.menus.find(m => m.code === 'inventory_management');
+            document.getElementById('results').innerHTML += `
+                <hr>
+                <h3>${source} - SUCCESS</h3>
+                <p>Total Menus: ${data.menus.length}</p>
+                <p>Inventory Menu Found: ${inventoryMenu ? '✓' : '✗'}</p>
+                ${inventoryMenu ? `<p>Required Permission: ${inventoryMenu.required_permission}</p>` : ''}
+                <p>Menus: ${data.menus.map(m => m.title).join(', ')}</p>
+            `;
+        }
+        
+        function showError(source, error) {
+            document.getElementById('results').innerHTML += `
+                <hr>
+                <h3>${source} - ERROR</h3>
+                <p style="color:red;">${error.message}</p>
+                <p>Status: ${error.response?.status}</p>
+                <p>Data: ${JSON.stringify(error.response?.data)}</p>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -164,17 +164,25 @@ services:
 
   # UI Service (Vue.js Frontend)
   ui-service:
-    build: ./services/ui-service
+    build: 
+      context: ./services/ui-service
+      dockerfile: Dockerfile.dev
     container_name: m-erp-ui
     ports:
-      - "3000:80"  # Frontend interface
+      - "3000:3000"  # Vite dev server
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
+      VITE_API_URL: http://kong:8000
+    volumes:
+      - ./services/ui-service:/app
+      - /app/node_modules  # Prevent overwriting node_modules
     depends_on:
       - kong
+      - user-auth-service
+      - menu-access-service
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 3

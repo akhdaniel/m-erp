@@ -9,6 +9,7 @@ from sqlalchemy import text
 from app.core.config import settings
 from app.core.database import close_db, get_db
 from app.middleware.auth import auth_client
+from app.middleware.request_auth import AuthenticationMiddleware
 
 # Configure logging
 logging.basicConfig(
@@ -49,11 +50,12 @@ def create_application() -> FastAPI:
         allow_headers=["*"],
     )
     
-    # TODO: Include API routers when implemented
-    # from app.routers import permissions, roles, menus
-    # application.include_router(permissions.router, prefix="/api/v1")
-    # application.include_router(roles.router, prefix="/api/v1")
-    # application.include_router(menus.router, prefix="/api/v1")
+    # Authentication middleware
+    application.add_middleware(AuthenticationMiddleware)
+    
+    # Include API routers
+    from app.routers import menu
+    application.include_router(menu.router, prefix="/api/v1")
     
     return application
 

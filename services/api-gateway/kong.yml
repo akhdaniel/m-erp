@@ -62,6 +62,11 @@ services:
           - /api/v1/menus
         strip_path: false
         preserve_host: false
+      - name: menu-access-prefix-routes
+        paths:
+          - /menu-access
+        strip_path: true
+        preserve_host: false
       - name: menu-access-health
         paths:
           - /menu-health
@@ -85,6 +90,53 @@ services:
       - name: service-registry-health
         paths:
           - /registry-health
+        strip_path: true
+        preserve_host: false
+
+  # Inventory Service
+  - name: inventory-service
+    url: http://inventory-service:8005
+    tags:
+      - m-erp
+      - inventory
+    routes:
+      - name: inventory-routes
+        paths:
+          - /api/v1/inventory
+          - /api/v1/products
+          - /api/v1/stock
+          - /api/v1/warehouses
+          - /api/v1/receiving
+          - /inventory
+        strip_path: false
+        preserve_host: false
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+      - name: inventory-health
+        paths:
+          - /inventory-health
+        strip_path: true
+        preserve_host: false
+
+  # Sales Service
+  - name: sales-service
+    url: http://sales-service:8006
+    tags:
+      - m-erp
+      - sales
+    routes:
+      - name: sales-routes
+        paths:
+          - /api/v1/sales
+          - /api/v1/quotes
+          - /api/v1/orders
+          - /api/v1/pricing
+          - /sales
+        strip_path: false
+        preserve_host: false
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+      - name: sales-health
+        paths:
+          - /sales-health
         strip_path: true
         preserve_host: false
 

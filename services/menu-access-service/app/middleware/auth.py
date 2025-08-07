@@ -25,14 +25,28 @@ class AuthClient:
     async def validate_token(self, token: str) -> Optional[Dict[str, Any]]:
         """Validate a JWT token with the auth service."""
         try:
-            headers = {"Authorization": f"Bearer {token}"}
+            # First try to get a service token
+            service_token = await self.get_service_token()
+            if not service_token:
+                logger.error("Failed to obtain service token for validation")
+                return None
+            
+            headers = {"Authorization": f"Bearer {service_token}"}
             response = await self.client.post(
-                f"{self.auth_service_url}/auth/validate-token",
-                headers=headers
+                f"{self.auth_service_url}/api/validate/token",
+                headers=headers,
+                json={"token": token}
             )
             
             if response.status_code == 200:
-                return response.json()
+                data = response.json()
+                # Extract user data from validation response
+                return {
+                    "user_id": data.get("user_id"),
+                    "email": data.get("email"),
+                    "permissions": data.get("permissions", []),
+                    "is_active": data.get("is_active", True)
+                }
             elif response.status_code == 401:
                 logger.warning("Token validation failed: Invalid or expired token")
                 return None
@@ -53,11 +67,12 @@ class AuthClient:
             
             auth_data = {
                 "service_name": "menu-access-service",
-                "service_key": settings.service_key
+                "service_key": settings.service_key,
+                "service_secret": settings.service_secret
             }
             
             response = await self.client.post(
-                f"{self.auth_service_url}/services/auth",
+                f"{self.auth_service_url}/api/services/token",
                 json=auth_data
             )
             
