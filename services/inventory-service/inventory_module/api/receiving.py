@@ -10,9 +10,11 @@ from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from pydantic import BaseModel, Field
 from datetime import datetime
+from sqlalchemy.orm import Session
 
 from inventory_module.models import ReceivingRecord, ReceivingLineItem, ReceivingStatus, ReceivingLineStatus
 from inventory_module.services import ReceivingService
+from inventory_module.database import get_db
 
 router = APIRouter(prefix="/receiving", tags=["receiving"])
 
@@ -147,8 +149,8 @@ class QualityInspectionRequest(BaseModel):
 
 
 # Dependency injection
-def get_receiving_service() -> ReceivingService:
-    return ReceivingService(db_session=None, user_id=1, company_id=1)
+def get_receiving_service(db: Session = Depends(get_db)) -> ReceivingService:
+    return ReceivingService(db_session=db, user_id=1, company_id=1)
 
 
 # Receiving record endpoints

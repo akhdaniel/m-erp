@@ -10,9 +10,11 @@ from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from pydantic import BaseModel, Field
 from datetime import datetime
+from sqlalchemy.orm import Session
 
 from inventory_module.models import Warehouse, WarehouseLocation, WarehouseType, LocationType
 from inventory_module.services import WarehouseService, WarehouseLocationService
+from inventory_module.database import get_db
 
 router = APIRouter(prefix="/warehouses", tags=["warehouses"])
 
@@ -247,12 +249,12 @@ class PutawayOptimizationRequest(BaseModel):
 
 
 # Dependency injection
-def get_warehouse_service() -> WarehouseService:
-    return WarehouseService(db_session=None, user_id=1, company_id=1)
+def get_warehouse_service(db: Session = Depends(get_db)) -> WarehouseService:
+    return WarehouseService(db_session=db, user_id=1, company_id=1)
 
 
-def get_location_service() -> WarehouseLocationService:
-    return WarehouseLocationService(db_session=None, user_id=1, company_id=1)
+def get_location_service(db: Session = Depends(get_db)) -> WarehouseLocationService:
+    return WarehouseLocationService(db_session=db, user_id=1, company_id=1)
 
 
 # Warehouse endpoints

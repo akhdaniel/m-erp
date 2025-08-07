@@ -83,14 +83,6 @@
             </div>
           </div>
           
-          <!-- Debug menu refresh button -->
-          <button 
-            @click="menuStore.fetchMenus()" 
-            class="mr-4 px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Refresh Menu
-          </button>
-          
           <!-- User menu -->
           <div class="hidden sm:ml-6 sm:flex sm:items-center">
             <Menu as="div" class="ml-3 relative">

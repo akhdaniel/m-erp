@@ -10,9 +10,11 @@ from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from pydantic import BaseModel, Field
 from datetime import datetime
+from sqlalchemy.orm import Session
 
 from inventory_module.models import Product, ProductCategory, ProductVariant, ProductType, ProductStatus
 from inventory_module.services import ProductService, ProductCategoryService, ProductVariantService
+from inventory_module.database import get_db
 
 router = APIRouter(prefix="/products", tags=["products"])
 
@@ -210,18 +212,18 @@ class ProductVariantResponse(BaseModel):
         from_attributes = True
 
 
-# Dependency injection (simplified - would integrate with auth service)
-def get_product_service() -> ProductService:
-    # In production, would get database session and user context
-    return ProductService(db_session=None, user_id=1, company_id=1)
+# Dependency injection
+def get_product_service(db: Session = Depends(get_db)) -> ProductService:
+    # In production, would get user context from auth
+    return ProductService(db_session=db, user_id=1, company_id=1)
 
 
-def get_category_service() -> ProductCategoryService:
-    return ProductCategoryService(db_session=None, user_id=1, company_id=1)
+def get_category_service(db: Session = Depends(get_db)) -> ProductCategoryService:
+    return ProductCategoryService(db_session=db, user_id=1, company_id=1)
 
 
-def get_variant_service() -> ProductVariantService:
-    return ProductVariantService(db_session=None, user_id=1, company_id=1)
+def get_variant_service(db: Session = Depends(get_db)) -> ProductVariantService:
+    return ProductVariantService(db_session=db, user_id=1, company_id=1)
 
 
 # Category endpoints

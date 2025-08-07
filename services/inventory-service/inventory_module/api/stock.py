@@ -10,9 +10,11 @@ from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from pydantic import BaseModel, Field
 from datetime import datetime
+from sqlalchemy.orm import Session
 
 from inventory_module.models import StockLevel, StockMovement, StockMovementType
 from inventory_module.services import StockService, StockMovementService
+from inventory_module.database import get_db
 
 router = APIRouter(prefix="/stock", tags=["stock"])
 
@@ -127,12 +129,12 @@ class StockSummaryResponse(BaseModel):
 
 
 # Dependency injection
-def get_stock_service() -> StockService:
-    return StockService(db_session=None, user_id=1, company_id=1)
+def get_stock_service(db: Session = Depends(get_db)) -> StockService:
+    return StockService(db_session=db, user_id=1, company_id=1)
 
 
-def get_movement_service() -> StockMovementService:
-    return StockMovementService(db_session=None, user_id=1, company_id=1)
+def get_movement_service(db: Session = Depends(get_db)) -> StockMovementService:
+    return StockMovementService(db_session=db, user_id=1, company_id=1)
 
 
 # Stock level endpoints
