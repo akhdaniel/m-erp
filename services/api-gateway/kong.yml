@@ -117,6 +117,25 @@ services:
         strip_path: true
         preserve_host: false
 
+  # UI Registry Service
+  - name: ui-registry-service
+    url: http://ui-registry-service:8010
+    tags:
+      - m-erp
+      - ui-registry
+    routes:
+      - name: ui-registry-routes
+        paths:
+          - ~/api/v1/ui-registry
+        strip_path: false
+        preserve_host: false
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+      - name: ui-registry-health
+        paths:
+          - /ui-registry-health
+        strip_path: true
+        preserve_host: false
+
   # Sales Service
   - name: sales-service
     url: http://sales-service:8006

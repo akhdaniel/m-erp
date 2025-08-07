@@ -10,6 +10,8 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
+import asyncio
+import logging
 
 from inventory_module.api import (
     products_router,
@@ -17,6 +19,10 @@ from inventory_module.api import (
     warehouses_router,
     receiving_router
 )
+from inventory_module.menu_init import init_menus_on_startup
+from inventory_module.ui_definitions import INVENTORY_UI_PACKAGE
+
+logger = logging.getLogger(__name__)
 
 # Create FastAPI application
 app = FastAPI(
@@ -71,6 +77,32 @@ async def health_check():
         "service": "inventory-service",
         "timestamp": "2025-01-04T12:00:00Z"
     }
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize service on startup"""
+    try:
+        # Register menus
+        init_menus_on_startup()
+        logger.info("Menu initialization completed")
+    except Exception as e:
+        logger.error(f"Failed to initialize menus: {e}")
+    
+    # Register UI components
+    try:
+        import sys
+        import os
+        # Add parent directory to path to import shared modules
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        from shared.ui_registration_client import register_service_ui
+        
+        # Register UI package with a delay to ensure UI registry is ready
+        await asyncio.sleep(5)
+        register_service_ui("inventory-service", INVENTORY_UI_PACKAGE)
+        logger.info("UI components registered successfully")
+    except Exception as e:
+        logger.error(f"Failed to register UI components: {e}")
 
 
 @app.exception_handler(Exception)
