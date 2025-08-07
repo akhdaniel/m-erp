@@ -20,6 +20,9 @@ from sales_module.api.quote_api import router as quote_router
 from sales_module.api.order_api import router as order_router
 from sales_module.api.pricing_api import router as pricing_router
 
+# Import menu initialization
+from sales_module.menu_init import init_menus_on_startup
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -77,6 +80,22 @@ async def health_check():
         "service": "sales-service",
         "version": "1.0.0"
     }
+
+# Startup event to initialize menus
+@app.on_event("startup")
+async def startup_event():
+    """Initialize service components on startup."""
+    logger.info("Starting sales service...")
+    
+    # Initialize menus (non-blocking, log errors but don't fail startup)
+    try:
+        init_menus_on_startup()
+        logger.info("Menu initialization completed")
+    except Exception as e:
+        logger.error(f"Failed to initialize menus: {e}")
+        # Continue startup even if menu registration fails
+    
+    logger.info("Sales service started successfully")
 
 # Global exception handler
 @app.exception_handler(Exception)
