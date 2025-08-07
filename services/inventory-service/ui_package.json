@@ -1,0 +1,155 @@
+{
+  "widgets": [
+    {
+      "id": "total-products",
+      "title": "Total Products",
+      "type": "metric",
+      "size": "small",
+      "data_endpoint": "/api/v1/products/stats",
+      "refresh_interval": 300,
+      "config": {
+        "field": "total",
+        "format": "number",
+        "color": "blue",
+        "icon": "package"
+      }
+    },
+    {
+      "id": "active-products",
+      "title": "Active Products",
+      "type": "metric",
+      "size": "small",
+      "data_endpoint": "/api/v1/products/stats",
+      "refresh_interval": 300,
+      "config": {
+        "field": "active",
+        "format": "number",
+        "color": "green",
+        "icon": "check-circle"
+      }
+    },
+    {
+      "id": "low-stock-alerts",
+      "title": "Low Stock Alerts",
+      "type": "metric",
+      "size": "small",
+      "data_endpoint": "/api/v1/stock/low-stock",
+      "refresh_interval": 60,
+      "config": {
+        "field": "count",
+        "format": "number",
+        "color": "red",
+        "icon": "alert-triangle",
+        "link": "/inventory/stock/low"
+      }
+    },
+    {
+      "id": "warehouse-count",
+      "title": "Warehouses",
+      "type": "metric",
+      "size": "small",
+      "data_endpoint": "/api/v1/warehouses/stats",
+      "refresh_interval": 600,
+      "config": {
+        "field": "total",
+        "format": "number",
+        "color": "purple",
+        "icon": "building"
+      }
+    },
+    {
+      "id": "recent-movements",
+      "title": "Recent Stock Movements",
+      "type": "list",
+      "size": "large",
+      "data_endpoint": "/api/v1/stock/movements/recent",
+      "refresh_interval": 60,
+      "config": {
+        "limit": 10,
+        "columns": ["product_name", "quantity", "movement_type", "timestamp"]
+      }
+    },
+    {
+      "id": "top-products",
+      "title": "Top Products by Movement",
+      "type": "chart",
+      "size": "medium",
+      "data_endpoint": "/api/v1/products/top-movers",
+      "refresh_interval": 300,
+      "config": {
+        "chart_type": "bar",
+        "x_field": "product_name",
+        "y_field": "movement_count"
+      }
+    }
+  ],
+  "lists": [
+    {
+      "id": "products-list",
+      "title": "Products",
+      "entity": "products",
+      "data_endpoint": "/api/v1/products",
+      "columns": [
+        {"key": "sku", "label": "SKU", "sortable": true},
+        {"key": "name", "label": "Product Name", "sortable": true},
+        {"key": "category", "label": "Category", "sortable": true},
+        {"key": "list_price", "label": "Price", "format": "currency"},
+        {"key": "stock_on_hand", "label": "Stock", "format": "number"},
+        {"key": "status", "label": "Status", "format": "badge"}
+      ],
+      "actions": [
+        {"id": "view", "label": "View", "icon": "eye"},
+        {"id": "edit", "label": "Edit", "icon": "edit"},
+        {"id": "delete", "label": "Delete", "icon": "trash", "confirm": true}
+      ],
+      "filters": [
+        {"field": "category", "type": "select", "label": "Category"},
+        {"field": "status", "type": "select", "label": "Status", "options": ["active", "inactive"]}
+      ],
+      "pagination": true,
+      "permissions": []
+    }
+  ],
+  "forms": [
+    {
+      "id": "product-form",
+      "title": "Product Details",
+      "entity": "product",
+      "mode": "create",
+      "submit_endpoint": "/api/v1/products",
+      "data_endpoint": "/api/v1/products/{id}",
+      "fields": [
+        {"name": "sku", "label": "SKU", "type": "text", "required": true},
+        {"name": "name", "label": "Product Name", "type": "text", "required": true},
+        {"name": "description", "label": "Description", "type": "textarea"},
+        {"name": "list_price", "label": "List Price", "type": "number", "min": 0},
+        {"name": "cost_price", "label": "Cost Price", "type": "number", "min": 0}
+      ],
+      "layout": "single",
+      "permissions": [],
+      "validation_rules": {}
+    }
+  ],
+  "components": [
+    {
+      "id": "inventory-dashboard",
+      "type": "dashboard",
+      "title": "Inventory Dashboard",
+      "path": "/inventory/dashboard",
+      "icon": "package",
+      "config": {
+        "layout": [
+          {"widget": "total-products", "row": 0, "col": 0},
+          {"widget": "active-products", "row": 0, "col": 1},
+          {"widget": "low-stock-alerts", "row": 0, "col": 2},
+          {"widget": "warehouse-count", "row": 0, "col": 3},
+          {"widget": "recent-movements", "row": 1, "col": 0, "colspan": 2},
+          {"widget": "top-products", "row": 1, "col": 2, "colspan": 2}
+        ]
+      },
+      "permissions": [],
+      "order": 0,
+      "metadata": {}
+    }
+  ]
+}
