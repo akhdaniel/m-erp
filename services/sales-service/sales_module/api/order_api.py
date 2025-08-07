@@ -789,6 +789,43 @@ async def record_payment(
 
 
 # Analytics endpoints
+@router.get("/stats", response_model=Dict[str, Any])
+async def get_order_stats(
+    company_id: int = Depends(get_current_company_id),
+    order_service: OrderService = Depends(get_order_service)
+):
+    """Get order statistics for dashboard."""
+    try:
+        # Get pending orders count
+        pending_orders = order_service.db_session.query(SalesOrder).filter(
+            SalesOrder.company_id == company_id,
+            SalesOrder.status.in_(['pending', 'confirmed', 'processing']),
+            SalesOrder.is_active == True
+        ).count()
+        
+        # Get total orders
+        total_orders = order_service.db_session.query(SalesOrder).filter(
+            SalesOrder.company_id == company_id,
+            SalesOrder.is_active == True
+        ).count()
+        
+        # Get completed orders this month
+        from datetime import datetime
+        start_of_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        completed_this_month = order_service.db_session.query(SalesOrder).filter(
+            SalesOrder.company_id == company_id,
+            SalesOrder.status == 'completed',
+            SalesOrder.completed_date >= start_of_month
+        ).count()
+        
+        return {
+            "pending_orders": pending_orders,
+            "total_orders": total_orders,
+            "completed_this_month": completed_this_month
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/analytics/summary", response_model=Dict[str, Any])
 async def get_order_analytics(
     date_from: Optional[datetime] = Query(None, description="Analytics from date"),

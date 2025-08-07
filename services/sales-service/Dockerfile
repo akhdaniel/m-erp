@@ -15,8 +15,14 @@ RUN apt-get update && apt-get install -y \
 COPY services/sales-service/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy shared modules first
+COPY services/shared /app/shared
+
 # Copy application code from services/sales-service
 COPY services/sales-service/. /app/
+
+# Ensure sample data script is executable
+RUN chmod +x /app/add_sample_data.py || true
 
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser

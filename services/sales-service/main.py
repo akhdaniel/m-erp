@@ -20,8 +20,8 @@ from sales_module.api.quote_api import router as quote_router
 from sales_module.api.order_api import router as order_router
 from sales_module.api.pricing_api import router as pricing_router
 
-# Import menu initialization
-from sales_module.menu_init import init_menus_on_startup
+# Import UI definitions
+from sales_module.ui_definitions import SALES_UI_PACKAGE
 
 # Configure logging
 logging.basicConfig(
@@ -85,15 +85,29 @@ async def health_check():
 @app.on_event("startup")
 async def startup_event():
     """Initialize service components on startup."""
+    import asyncio
     logger.info("Starting sales service...")
     
     # Initialize menus (non-blocking, log errors but don't fail startup)
     try:
-        init_menus_on_startup()
+        from sales_module.menu_init import initialize_sales_menus
+        await initialize_sales_menus()
         logger.info("Menu initialization completed")
     except Exception as e:
         logger.error(f"Failed to initialize menus: {e}")
         # Continue startup even if menu registration fails
+    
+    # Register UI components with UI Registry
+    try:
+        from shared.ui_registration_client import register_service_ui
+        
+        # Register UI package with a delay to ensure UI registry is ready
+        await asyncio.sleep(5)
+        register_service_ui("sales-service", SALES_UI_PACKAGE)
+        logger.info("UI components registered successfully")
+    except Exception as e:
+        logger.error(f"Failed to register UI components: {e}")
+        # Continue startup even if UI registration fails
     
     logger.info("Sales service started successfully")
 

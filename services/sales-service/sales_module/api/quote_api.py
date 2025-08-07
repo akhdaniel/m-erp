@@ -809,6 +809,43 @@ async def reserve_inventory(
 
 
 # Analytics endpoints
+@router.get("/stats", response_model=dict)
+async def get_quote_stats(
+    company_id: int = Depends(get_current_company_id),
+    quote_service: QuoteService = Depends(get_quote_service)
+):
+    """Get quote statistics for dashboard."""
+    try:
+        # Get active quotes count
+        active_quotes = quote_service.db_session.query(SalesQuote).filter(
+            SalesQuote.company_id == company_id,
+            SalesQuote.status.in_(['draft', 'sent', 'viewed']),
+            SalesQuote.is_active == True
+        ).count()
+        
+        # Get total quotes
+        total_quotes = quote_service.db_session.query(SalesQuote).filter(
+            SalesQuote.company_id == company_id,
+            SalesQuote.is_active == True
+        ).count()
+        
+        # Get accepted quotes this month
+        from datetime import datetime, timedelta
+        start_of_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        accepted_this_month = quote_service.db_session.query(SalesQuote).filter(
+            SalesQuote.company_id == company_id,
+            SalesQuote.status == 'accepted',
+            SalesQuote.accepted_date >= start_of_month
+        ).count()
+        
+        return {
+            "active_quotes": active_quotes,
+            "total_quotes": total_quotes,
+            "accepted_this_month": accepted_this_month
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/analytics", response_model=QuoteAnalyticsResponse)
 async def get_analytics(
     date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
