@@ -74,10 +74,13 @@ async def get_dashboard_metrics(
             end_date = today
 
         # Get quote metrics
-        quote_stats = quote_service.get_analytics(
-            start_date=start_date,
-            end_date=end_date,
-            company_id=company_id
+        date_range = {
+            'from': datetime.combine(start_date, datetime.min.time()),
+            'to': datetime.combine(end_date, datetime.max.time())
+        }
+        quote_stats = quote_service.get_quote_analytics(
+            company_id=company_id,
+            date_range=date_range
         )
 
         # Get order metrics
@@ -218,7 +221,7 @@ async def get_sales_pipeline_data(
     """
     try:
         # Get quote analytics
-        analytics = quote_service.get_analytics(company_id=company_id)
+        analytics = quote_service.get_quote_analytics(company_id=company_id)
         
         # Generate pipeline data with sample counts
         pipeline_stages = [
@@ -285,7 +288,16 @@ async def get_recent_orders(
                 "priority": "normal"
             })
         
-        return recent_orders
+        return {
+            "data": recent_orders,
+            "total_count": len(recent_orders),
+            "config": {
+                "title": "Recent Orders",
+                "columns": ["order_number", "customer_name", "total_amount", "status", "order_date"],
+                "link_pattern": "/sales/orders/{id}"
+            },
+            "last_updated": datetime.utcnow().isoformat()
+        }
         
         # Original code to use when table exists:
         # from sales_module.models import SalesOrder
@@ -318,17 +330,6 @@ async def get_recent_orders(
         #     },
         #     "last_updated": datetime.utcnow().isoformat()
         # }
-        
-        return {
-            "data": recent_orders,
-            "total_count": len(recent_orders),
-            "config": {
-                "title": "Recent Orders",
-                "columns": ["order_number", "customer_name", "total_amount", "status", "order_date"],
-                "link_pattern": "/sales/orders/{id}"
-            },
-            "last_updated": datetime.utcnow().isoformat()
-        }
         
     except Exception as e:
         logger.error(f"Error getting recent orders: {e}")

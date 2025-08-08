@@ -56,11 +56,11 @@
 
         <!-- List Widget -->
         <div v-else-if="widget.type === 'list'" class="list-widget">
-          <div v-if="!data || data.length === 0" class="text-gray-500 text-sm">
+          <div v-if="!listData || listData.length === 0" class="text-gray-500 text-sm">
             No data available
           </div>
           <ul v-else class="-my-5 divide-y divide-gray-200">
-            <li v-for="(item, index) in data.slice(0, widget.config.limit || 5)" 
+            <li v-for="(item, index) in listData.slice(0, widget.config.limit || 5)" 
               :key="index" class="py-3">
               <div class="flex items-center space-x-4">
                 <div class="flex-1 min-w-0">
@@ -94,7 +94,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200">
-                <tr v-for="(row, index) in data" :key="index">
+                <tr v-for="(row, index) in tableData" :key="index">
                   <td v-for="col in widget.config.columns" :key="col"
                     class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                     {{ row[col] }}
@@ -134,6 +134,22 @@ const props = defineProps<{
 const emit = defineEmits<{
   refresh: []
 }>()
+
+// Extract list data from response (handles both array and object with data property)
+const listData = computed(() => {
+  if (!props.data) return []
+  if (Array.isArray(props.data)) return props.data
+  if (props.data.data && Array.isArray(props.data.data)) return props.data.data
+  return []
+})
+
+// Extract table data from response (handles both array and object with data property)
+const tableData = computed(() => {
+  if (!props.data) return []
+  if (Array.isArray(props.data)) return props.data
+  if (props.data.data && Array.isArray(props.data.data)) return props.data.data
+  return []
+})
 
 // Get value from data based on widget config
 const getValue = () => {
