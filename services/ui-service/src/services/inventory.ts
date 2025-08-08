@@ -224,7 +224,7 @@ class InventoryService {
 
   async getRecentMovements(limit: number = 10): Promise<RecentMovement[]> {
     try {
-      return await api.get<RecentMovement[]>(`/v1/inventory/movements/recent?limit=${limit}`)
+      return await api.get<RecentMovement[]>(`/v1/stock/movements/recent?limit=${limit}`)
     } catch (error) {
       console.error('Error fetching recent movements:', error)
       // Return mock data for development
