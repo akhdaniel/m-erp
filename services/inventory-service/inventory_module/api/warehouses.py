@@ -273,6 +273,22 @@ async def create_warehouse(
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.get("/stats", response_model=Dict[str, Any])
+async def get_warehouse_stats(
+    service: WarehouseService = Depends(get_warehouse_service)
+):
+    """Get warehouse statistics for dashboard."""
+    warehouses = service.get_company_warehouses(active_only=False)
+    active_warehouses = [w for w in warehouses if w.is_active] if warehouses else []
+    
+    return {
+        "total": len(warehouses) if warehouses else 0,
+        "active": len(active_warehouses),
+        "inactive": len(warehouses) - len(active_warehouses) if warehouses else 0,
+        "capacity_utilization": 65.5  # Placeholder percentage
+    }
+
+
 @router.get("/", response_model=List[WarehouseResponse])
 async def list_warehouses(
     active_only: bool = Query(True, description="Filter active warehouses only"),

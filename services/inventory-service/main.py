@@ -81,6 +81,14 @@ async def health_check():
 @app.on_event("startup")
 async def startup_event():
     """Initialize service on startup"""
+    # Schedule menu and UI registration to run in background
+    asyncio.create_task(initialize_menus_and_ui())
+
+
+async def initialize_menus_and_ui():
+    """Initialize menus and UI components in background"""
+    await asyncio.sleep(5)  # Give time for other services to start
+    
     try:
         # Register menus
         from inventory_module.menu_init import initialize_inventory_menus
@@ -92,9 +100,6 @@ async def startup_event():
     # Register UI components
     try:
         from shared.ui_registration_client import register_service_ui
-        
-        # Register UI package with a delay to ensure UI registry is ready
-        await asyncio.sleep(5)
         register_service_ui("inventory-service", INVENTORY_UI_PACKAGE)
         logger.info("UI components registered successfully")
     except Exception as e:

@@ -11,11 +11,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from pydantic import BaseModel, Field
 from datetime import datetime
 from sqlalchemy.orm import Session
+import logging
 
 from inventory_module.models import StockLevel, StockMovement, StockMovementType
 from inventory_module.services import StockService, StockMovementService
 from inventory_module.database import get_db
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/stock", tags=["stock"])
 
 
@@ -214,6 +216,37 @@ async def check_stock_availability(
     return StockAvailabilityResponse(**availability)
 
 
+@router.get("/stats", response_model=Dict[str, Any])
+async def get_stock_stats(
+    warehouse_id: Optional[int] = Query(None, description="Filter by warehouse ID"),
+    service: StockService = Depends(get_stock_service)
+):
+    """Get stock statistics for dashboard."""
+    try:
+        # Get total stock value
+        value_data = service.calculate_stock_value(location_id=warehouse_id)
+        total_value = value_data.get("total_value", 0)
+        
+        # Get low stock count
+        low_stock_items = service.get_low_stock_items(warehouse_id=warehouse_id, limit=1000)
+        low_stock_count = len(low_stock_items) if low_stock_items else 0
+        
+        return {
+            "total_value": total_value,
+            "low_stock_count": low_stock_count,
+            "warehouses": 5,  # Placeholder for now
+            "total_items": 100  # Placeholder for now
+        }
+    except Exception as e:
+        logger.error(f"Error getting stock stats: {e}")
+        return {
+            "total_value": 0,
+            "low_stock_count": 0,
+            "warehouses": 0,
+            "total_items": 0
+        }
+
+
 @router.get("/low-stock", response_model=List[Dict[str, Any]])
 async def get_low_stock_items(
     warehouse_id: Optional[int] = Query(None, description="Filter by warehouse ID"),
@@ -301,6 +334,29 @@ async def release_reservation(
 
 
 # Stock movement endpoints
+@router.get("/movements/recent", response_model=List[Dict[str, Any]])
+async def get_recent_movements(
+    limit: int = Query(10, ge=1, le=100, description="Number of recent movements to return"),
+    service: StockService = Depends(get_stock_service)
+):
+    """Get recent stock movements for dashboard."""
+    try:
+        movements = service.get_recent_movements(limit=limit)
+        return [
+            {
+                "product": m.product.name if hasattr(m, 'product') and m.product else "Unknown Product",
+                "type": m.movement_type if hasattr(m, 'movement_type') else "Unknown",
+                "quantity": m.quantity if hasattr(m, 'quantity') else 0,
+                "warehouse": m.location.warehouse.name if hasattr(m, 'location') and m.location and hasattr(m.location, 'warehouse') else "Unknown",
+                "time": m.created_at.isoformat() if hasattr(m, 'created_at') else datetime.utcnow().isoformat()
+            }
+            for m in movements
+        ] if movements else []
+    except Exception as e:
+        logger.error(f"Error getting recent movements: {e}")
+        return []
+
+
 @router.get("/movements", response_model=List[StockMovementResponse])
 async def list_stock_movements(
     product_id: Optional[int] = Query(None, description="Filter by product ID"),
