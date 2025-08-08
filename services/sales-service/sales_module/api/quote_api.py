@@ -203,17 +203,15 @@ async def get_analytics(
     """
     try:
         # Parse dates if provided
-        from_date = None
-        to_date = None
+        date_range = {}
         if date_from:
-            from_date = datetime.strptime(date_from, "%Y-%m-%d")
+            date_range['from'] = datetime.strptime(date_from, "%Y-%m-%d")
         if date_to:
-            to_date = datetime.strptime(date_to, "%Y-%m-%d")
+            date_range['to'] = datetime.strptime(date_to, "%Y-%m-%d")
         
-        analytics = quote_service.get_analytics(
+        analytics = quote_service.get_quote_analytics(
             company_id=company_id,
-            date_from=from_date,
-            date_to=to_date
+            date_range=date_range if date_range else None
         )
         return analytics
     except ValueError as e:
@@ -235,7 +233,7 @@ async def get_quote_stats(
     """
     try:
         # Get comprehensive quote analytics
-        analytics = quote_service.get_analytics(company_id=company_id)
+        analytics = quote_service.get_quote_analytics(company_id=company_id)
         
         # Return focused stats for dashboard widgets
         stats = {
@@ -274,7 +272,7 @@ async def get_quote_pipeline(
     formatted for pipeline/funnel charts.
     """
     try:
-        analytics = quote_service.get_analytics(company_id=company_id)
+        analytics = quote_service.get_quote_analytics(company_id=company_id)
         
         # Create pipeline stages data
         pipeline_data = [
