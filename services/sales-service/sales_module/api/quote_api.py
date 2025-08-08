@@ -12,6 +12,8 @@ from decimal import Decimal
 import logging
 
 from sales_module.services.quote_service import QuoteService
+from sales_module.framework.database import get_db_session
+from sqlalchemy.orm import Session
 from sales_module.schemas.quote_schemas import (
     QuoteCreateRequest, QuoteUpdateRequest, QuoteResponse, QuoteListResponse,
     QuoteLineItemCreateRequest, QuoteLineItemUpdateRequest, QuoteLineItemResponse,
@@ -21,7 +23,7 @@ from sales_module.schemas.quote_schemas import (
     QuoteAnalyticsResponse, InventoryValidationResponse, InventoryReservationResponse,
     PendingApprovalsResponse, APIResponse, QuoteQueryParams
 )
-from sales_module.models import QuoteStatus
+from sales_module.models import QuoteStatus, SalesQuote
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +32,9 @@ router = APIRouter(prefix="/api/v1/quotes", tags=["quotes"])
 
 
 # Dependencies
-def get_quote_service() -> QuoteService:
-    """Get quote service instance."""
-    return QuoteService()
+def get_quote_service(db: Session = Depends(get_db_session)) -> QuoteService:
+    """Get quote service instance with database session."""
+    return QuoteService(db_session=db)
 
 
 def get_current_user_id() -> int:
@@ -148,6 +150,75 @@ async def list_quotes(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error"
         )
+
+
+# Analytics endpoints - must be before /{quote_id} route
+@router.get("/stats", response_model=dict)
+async def get_quote_stats(
+    company_id: int = Depends(get_current_company_id),
+    quote_service: QuoteService = Depends(get_quote_service)
+):
+    """Get quote statistics for dashboard."""
+    try:
+        # Use raw SQL for simplicity until tables are properly created
+        from sqlalchemy import text
+        
+        # Get active quotes count
+        result = quote_service.db_session.execute(text(
+            "SELECT COUNT(*) FROM sales_quotes WHERE company_id = :company_id AND status IN ('draft', 'sent', 'viewed') AND is_active = true"
+        ), {"company_id": company_id})
+        active_quotes = result.scalar()
+        
+        # Get total quotes
+        result = quote_service.db_session.execute(text(
+            "SELECT COUNT(*) FROM sales_quotes WHERE company_id = :company_id AND is_active = true"
+        ), {"company_id": company_id})
+        total_quotes = result.scalar()
+        
+        # For now, just return 0 for accepted this month since we don't have accepted_date column
+        accepted_this_month = 0
+        
+        return {
+            "active_quotes": active_quotes or 0,
+            "total_quotes": total_quotes or 0,
+            "accepted_this_month": accepted_this_month
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/analytics", response_model=QuoteAnalyticsResponse)
+async def get_analytics(
+    date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
+    date_to: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
+    quote_service: QuoteService = Depends(get_quote_service),
+    company_id: int = Depends(get_current_company_id)
+):
+    """
+    Get quote analytics and metrics.
+    
+    Returns comprehensive analytics including conversion rates,
+    average values, and time-based trends.
+    """
+    try:
+        # Parse dates if provided
+        from_date = None
+        to_date = None
+        if date_from:
+            from_date = datetime.strptime(date_from, "%Y-%m-%d")
+        if date_to:
+            to_date = datetime.strptime(date_to, "%Y-%m-%d")
+        
+        analytics = quote_service.get_analytics(
+            company_id=company_id,
+            date_from=from_date,
+            date_to=to_date
+        )
+        return analytics
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid date format: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{quote_id}", response_model=QuoteResponse)
@@ -807,83 +878,6 @@ async def reserve_inventory(
             detail="Internal server error"
         )
 
-
-# Analytics endpoints
-@router.get("/stats", response_model=dict)
-async def get_quote_stats(
-    company_id: int = Depends(get_current_company_id),
-    quote_service: QuoteService = Depends(get_quote_service)
-):
-    """Get quote statistics for dashboard."""
-    try:
-        # Get active quotes count
-        active_quotes = quote_service.db_session.query(SalesQuote).filter(
-            SalesQuote.company_id == company_id,
-            SalesQuote.status.in_(['draft', 'sent', 'viewed']),
-            SalesQuote.is_active == True
-        ).count()
-        
-        # Get total quotes
-        total_quotes = quote_service.db_session.query(SalesQuote).filter(
-            SalesQuote.company_id == company_id,
-            SalesQuote.is_active == True
-        ).count()
-        
-        # Get accepted quotes this month
-        from datetime import datetime, timedelta
-        start_of_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        accepted_this_month = quote_service.db_session.query(SalesQuote).filter(
-            SalesQuote.company_id == company_id,
-            SalesQuote.status == 'accepted',
-            SalesQuote.accepted_date >= start_of_month
-        ).count()
-        
-        return {
-            "active_quotes": active_quotes,
-            "total_quotes": total_quotes,
-            "accepted_this_month": accepted_this_month
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.get("/analytics", response_model=QuoteAnalyticsResponse)
-async def get_analytics(
-    date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
-    date_to: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
-    quote_service: QuoteService = Depends(get_quote_service),
-    company_id: int = Depends(get_current_company_id)
-):
-    """
-    Get quote analytics and metrics.
-    
-    Returns comprehensive analytics including conversion rates,
-    performance metrics, and trend data.
-    """
-    try:
-        # Parse date range if provided
-        date_range = None
-        if date_from or date_to:
-            from datetime import datetime
-            date_range = {}
-            if date_from:
-                date_range['from'] = datetime.fromisoformat(date_from)
-            if date_to:
-                date_range['to'] = datetime.fromisoformat(date_to)
-        
-        analytics = quote_service.get_quote_analytics(company_id, date_range)
-        return QuoteAnalyticsResponse(**analytics)
-        
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid date format: {e}"
-        )
-    except Exception as e:
-        logger.error(f"Error getting quote analytics: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error"
-        )
 
 
 # Health check endpoint

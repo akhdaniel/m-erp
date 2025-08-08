@@ -102,11 +102,11 @@ services:
     routes:
       - name: inventory-routes
         paths:
-          - ~/api/v1/inventory
-          - ~/api/v1/products
-          - ~/api/v1/stock
-          - ~/api/v1/warehouses
-          - ~/api/v1/receiving
+          - /api/v1/inventory
+          - /api/v1/products
+          - /api/v1/stock
+          - /api/v1/warehouses
+          - /api/v1/receiving
           - /inventory
         strip_path: false
         preserve_host: false
@@ -126,7 +126,7 @@ services:
     routes:
       - name: ui-registry-routes
         paths:
-          - ~/api/v1/ui-registry
+          - /api/v1/ui-registry
         strip_path: false
         preserve_host: false
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
