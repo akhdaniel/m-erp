@@ -1,11 +1,12 @@
 <template>
-  <div>
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Sales Management</h1>
-      <p class="mt-2 text-gray-600">
-        Manage quotes, orders, customers, and sales operations
-      </p>
-    </div>
+  <AppLayout>
+    <div>
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Sales Management</h1>
+        <p class="mt-2 text-gray-600">
+          Manage quotes, orders, customers, and sales operations
+        </p>
+      </div>
 
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <!-- Quotes Card -->
@@ -121,11 +122,12 @@
         </div>
       </div>
     </div>
-  </div>
+  </AppLayout>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import AppLayout from '@/components/AppLayout.vue'
 
 onMounted(() => {
   console.log('Sales Dashboard mounted')

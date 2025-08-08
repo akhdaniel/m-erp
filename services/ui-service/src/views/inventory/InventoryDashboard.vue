@@ -1,11 +1,12 @@
 <template>
-  <div>
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Inventory Management</h1>
-      <p class="mt-2 text-gray-600">
-        Monitor stock levels, track movements, and manage warehouse operations
-      </p>
-    </div>
+  <AppLayout>
+    <div>
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Inventory Management</h1>
+        <p class="mt-2 text-gray-600">
+          Monitor stock levels, track movements, and manage warehouse operations
+        </p>
+      </div>
 
     <!-- Loading State -->
     <div v-if="loading" class="flex justify-center items-center h-64">
@@ -296,11 +297,12 @@
         </div>
       </div>
     </div>
-  </div>
+  </AppLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import AppLayout from '@/components/AppLayout.vue'
 import inventoryService from '@/services/inventory'
 import type { InventoryStats, RecentMovement, LowStockItem } from '@/services/inventory'
 
