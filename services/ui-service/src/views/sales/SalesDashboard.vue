@@ -211,7 +211,7 @@ const DEFAULT_WIDGETS = [
     title: "Monthly Revenue",
     type: "metric",
     size: "small",
-    data_endpoint: "/api/v1/orders/analytics/summary",
+    data_endpoint: "/orders/analytics/summary",
     refresh_interval: 3600,
     config: {
       field: "total_revenue",

@@ -453,6 +453,44 @@ async def get_order_stats(
         )
 
 
+@router.get("/analytics/summary", response_model=Dict[str, Any])
+async def get_order_analytics_summary(
+    date_from: Optional[datetime] = Query(None, description="Analytics from date"),
+    date_to: Optional[datetime] = Query(None, description="Analytics to date"),
+    company_id: int = Depends(get_current_company_id),
+    order_service: OrderService = Depends(get_order_service)
+):
+    """Get order analytics and metrics summary."""
+    date_range = {}
+    if date_from:
+        date_range['from'] = date_from
+    if date_to:
+        date_range['to'] = date_to
+    
+    analytics = order_service.get_order_analytics(
+        company_id=company_id,
+        date_range=date_range if date_range else None
+    )
+    
+    # Ensure we have all the expected fields for the dashboard
+    return {
+        "total_orders": analytics.get("total_orders", 0),
+        "pending_orders_count": analytics.get("pending_orders_count", 0),
+        "confirmed_orders": analytics.get("confirmed_orders", 0),
+        "shipped_orders": analytics.get("shipped_orders", 0),
+        "completed_orders": analytics.get("completed_orders", 0),
+        "cancelled_orders": analytics.get("cancelled_orders", 0),
+        "total_revenue": float(analytics.get("total_revenue", 0)),
+        "average_order_value": float(analytics.get("average_order_value", 0)),
+        "orders_this_month": analytics.get("orders_this_month", 0),
+        "revenue_this_month": float(analytics.get("revenue_this_month", 0)),
+        "conversion_rate": analytics.get("conversion_rate", 0),
+        "fulfillment_rate": analytics.get("fulfillment_rate", 0),
+        "summary": analytics.get("summary", {}),
+        "last_updated": datetime.utcnow().isoformat()
+    }
+
+
 @router.get("/analytics/revenue-trend", response_model=Dict[str, Any])
 async def get_revenue_trend(
     period: Optional[str] = Query("last_30_days", description="Time period: last_7_days, last_30_days, last_90_days"),
