@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+  <div class="h-screen flex flex-col bg-gray-50 overflow-hidden">
+    <!-- Navigation - Fixed at top -->
+    <nav class="relative bg-white shadow-sm border-b border-gray-200 flex-shrink-0">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <div class="flex">
@@ -148,8 +148,8 @@
         </div>
       </div>
       
-      <!-- Mobile menu -->
-      <div v-show="mobileMenuOpen" class="sm:hidden">
+      <!-- Mobile menu - Absolute positioned overlay -->
+      <div v-show="mobileMenuOpen" class="sm:hidden absolute top-16 left-0 right-0 bg-white shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-y-auto">
         <div class="pt-2 pb-3 space-y-1">
           <!-- Always show Dashboard -->
           <router-link
@@ -244,14 +244,16 @@
       </div>
     </nav>
     
-    <!-- Main content -->
-    <main class="py-6">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <slot />
+    <!-- Main content - Scrollable area -->
+    <main class="flex-1 overflow-y-auto">
+      <div class="py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <slot />
+        </div>
       </div>
     </main>
     
-    <!-- Notification Center -->
+    <!-- Notification Center - Fixed position -->
     <NotificationCenter />
   </div>
 </template>
