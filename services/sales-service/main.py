@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from sales_module.api.quote_api import router as quote_router
 from sales_module.api.order_api import router as order_router
 from sales_module.api.pricing_api import router as pricing_router
+from sales_module.api.dashboard_api import router as dashboard_router
 
 # Import UI definitions
 from sales_module.ui_definitions import SALES_UI_PACKAGE
@@ -53,6 +54,7 @@ app.add_middleware(
 app.include_router(quote_router)
 app.include_router(order_router)
 app.include_router(pricing_router)
+app.include_router(dashboard_router)
 
 # Root endpoint
 @app.get("/")

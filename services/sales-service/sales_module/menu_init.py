@@ -102,7 +102,19 @@ SALES_MENUS = [
         item_type="dropdown",
         required_permission="access_sales"
     ),
-    # Child menus
+    # Child menus - Dashboard first
+    MenuItem(
+        code="sales_dashboard",
+        title="Dashboard",
+        description="Sales Dashboard Overview",
+        parent_code="sales_management",
+        order_index=0,
+        level=1,
+        url="/sales/dashboard",
+        icon="grid-3x3",
+        item_type="link",
+        required_permission="access_sales"
+    ),
     MenuItem(
         code="sales_quotes",
         title="Quotes",
