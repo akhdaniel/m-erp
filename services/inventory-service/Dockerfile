@@ -16,12 +16,18 @@ COPY services/inventory-service/requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy shared modules
+COPY services/shared /app/shared
+
 # Copy application code from services/inventory-service
 COPY services/inventory-service/. /app/
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
+
+# Set Python path to include app directory
+ENV PYTHONPATH=/app:$PYTHONPATH
 
 # Expose port
 EXPOSE 8005

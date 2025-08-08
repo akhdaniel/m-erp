@@ -253,6 +253,8 @@ services:
       SERVICE_NAME: inventory-service
       ENVIRONMENT: development
       DEBUG: "true"
+      MENU_SERVICE_URL: http://menu-access-service:8000
+      UI_REGISTRY_URL: http://ui-registry-service:8010
     depends_on:
       postgres:
         condition: service_healthy
@@ -260,6 +262,7 @@ services:
         condition: service_healthy
     volumes:
       - ./services/inventory-service:/app
+      - ./services/shared:/app/shared
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
@@ -287,6 +290,8 @@ services:
       PARTNER_SERVICE_URL: http://company-partner-service:8000
       CURRENCY_SERVICE_URL: http://company-partner-service:8000
       AUDIT_SERVICE_URL: http://audit-service:8006
+      MENU_SERVICE_URL: http://menu-access-service:8000
+      UI_REGISTRY_URL: http://ui-registry-service:8010
     depends_on:
       postgres:
         condition: service_healthy

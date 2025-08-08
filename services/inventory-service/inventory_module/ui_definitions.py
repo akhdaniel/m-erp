@@ -25,7 +25,7 @@ INVENTORY_UI_PACKAGE = {
             "title": "Total Products",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/products/stats",
+            "data_endpoint": "http://inventory-service:8005/api/v1/products/stats",
             "config": {
                 "field": "total",
                 "format": "number",
@@ -39,7 +39,7 @@ INVENTORY_UI_PACKAGE = {
             "title": "Stock Value",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/stock/stats",
+            "data_endpoint": "http://inventory-service:8005/api/v1/stock/stats",
             "config": {
                 "field": "total_value",
                 "format": "currency",
@@ -53,7 +53,7 @@ INVENTORY_UI_PACKAGE = {
             "title": "Low Stock Items",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/stock/stats",
+            "data_endpoint": "http://inventory-service:8005/api/v1/stock/stats",
             "config": {
                 "field": "low_stock_count",
                 "format": "number",
@@ -68,7 +68,7 @@ INVENTORY_UI_PACKAGE = {
             "title": "Warehouses",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/warehouses/stats",
+            "data_endpoint": "http://inventory-service:8005/api/v1/warehouses/stats",
             "config": {
                 "field": "total",
                 "format": "number",
@@ -82,7 +82,7 @@ INVENTORY_UI_PACKAGE = {
             "title": "Recent Stock Movements",
             "type": "list",
             "size": "large",
-            "data_endpoint": "/api/v1/stock/movements/recent",
+            "data_endpoint": "http://inventory-service:8005/api/v1/stock/movements/recent",
             "config": {
                 "limit": 10,
                 "columns": ["product", "type", "quantity", "warehouse", "time"],
@@ -95,7 +95,7 @@ INVENTORY_UI_PACKAGE = {
             "title": "Low Stock Alerts",
             "type": "list",
             "size": "medium",
-            "data_endpoint": "/api/v1/stock/low",
+            "data_endpoint": "http://inventory-service:8005/api/v1/stock/low",
             "config": {
                 "limit": 5,
                 "columns": ["product", "current_stock", "reorder_point", "warehouse"],
@@ -110,7 +110,7 @@ INVENTORY_UI_PACKAGE = {
             "id": "products-list",
             "title": "Products",
             "entity": "products",
-            "data_endpoint": "/api/v1/products",
+            "data_endpoint": "http://inventory-service:8005/api/v1/products",
             "columns": [
                 {"key": "sku", "label": "SKU", "sortable": True},
                 {"key": "name", "label": "Product Name", "sortable": True},
@@ -135,7 +135,7 @@ INVENTORY_UI_PACKAGE = {
             "id": "stock-levels",
             "title": "Stock Levels",
             "entity": "stock",
-            "data_endpoint": "/api/v1/stock",
+            "data_endpoint": "http://inventory-service:8005/api/v1/stock",
             "columns": [
                 {"key": "product_code", "label": "Product Code", "sortable": True},
                 {"key": "product_name", "label": "Product", "sortable": True},
@@ -154,7 +154,7 @@ INVENTORY_UI_PACKAGE = {
             "id": "warehouses-list",
             "title": "Warehouses",
             "entity": "warehouses",
-            "data_endpoint": "/api/v1/warehouses",
+            "data_endpoint": "http://inventory-service:8005/api/v1/warehouses",
             "columns": [
                 {"key": "code", "label": "Code", "sortable": True},
                 {"key": "name", "label": "Name", "sortable": True},
@@ -178,7 +178,7 @@ INVENTORY_UI_PACKAGE = {
             "title": "Product",
             "entity": "product",
             "submit_endpoint": "/api/v1/products",
-            "data_endpoint": "/api/v1/products/{id}",
+            "data_endpoint": "http://inventory-service:8005/api/v1/products/{id}",
             "fields": [
                 {
                     "key": "sku",
@@ -312,7 +312,7 @@ INVENTORY_UI_PACKAGE = {
             "title": "Warehouse",
             "entity": "warehouse",
             "submit_endpoint": "/api/v1/warehouses",
-            "data_endpoint": "/api/v1/warehouses/{id}",
+            "data_endpoint": "http://inventory-service:8005/api/v1/warehouses/{id}",
             "fields": [
                 {
                     "key": "code",
