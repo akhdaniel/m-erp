@@ -196,7 +196,7 @@ const DEFAULT_WIDGETS = [
     title: "Pending Orders",
     type: "metric",
     size: "small",
-    data_endpoint: "/api/v1/orders/stats",
+    data_endpoint: "/orders/stats",
     refresh_interval: 60,
     config: {
       field: "pending_orders",
@@ -239,7 +239,7 @@ const DEFAULT_WIDGETS = [
     title: "Revenue Trend",
     type: "chart",
     size: "large",
-    data_endpoint: "/api/v1/orders/analytics/revenue-trend",
+    data_endpoint: "/orders/analytics/revenue-trend",
     refresh_interval: 3600,
     config: {
       chart_type: "line",
