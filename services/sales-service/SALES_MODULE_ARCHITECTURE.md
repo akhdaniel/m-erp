@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Sales Module provides comprehensive sales management functionality to complete the order-to-cash process in the M-ERP system. It integrates seamlessly with the existing Inventory and Purchasing modules to provide end-to-end business process support.
+The Sales Module provides comprehensive sales management functionality to complete the order-to-cash process in the XERPIUM system. It integrates seamlessly with the existing Inventory and Purchasing modules to provide end-to-end business process support.
 
 ## Architecture Goals
 
@@ -270,4 +270,4 @@ Product 1:N SalesOrderLineItem
 - Sales automation features
 - Performance optimization
 
-This architecture provides a solid foundation for implementing a comprehensive sales module that integrates seamlessly with the existing M-ERP ecosystem while providing enterprise-grade sales management capabilities.
+This architecture provides a solid foundation for implementing a comprehensive sales module that integrates seamlessly with the existing XERPIUM ecosystem while providing enterprise-grade sales management capabilities.

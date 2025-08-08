@@ -163,7 +163,7 @@ router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
   // Set page title
-  document.title = to.meta.title ? `${to.meta.title} - M-ERP` : 'M-ERP'
+  document.title = to.meta.title ? `${to.meta.title} - XERPIUM` : 'XERPIUM'
   
   // Initialize auth if we have a token but no user data
   if (authStore.token && !authStore.user) {

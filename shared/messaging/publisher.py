@@ -1,5 +1,5 @@
 """
-Message Publisher for M-ERP messaging system.
+Message Publisher for XERPIUM messaging system.
 Handles publishing messages to Redis Streams and Pub/Sub channels.
 """
 import json

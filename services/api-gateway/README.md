@@ -1,10 +1,10 @@
 # API Gateway Service
 
-Kong-based API Gateway for M-ERP microservices system.
+Kong-based API Gateway for XERPIUM microservices system.
 
 ## Overview
 
-This service provides centralized routing, authentication, rate limiting, and monitoring for all M-ERP microservices. It acts as the single entry point for all client requests.
+This service provides centralized routing, authentication, rate limiting, and monitoring for all XERPIUM microservices. It acts as the single entry point for all client requests.
 
 ## Configuration
 

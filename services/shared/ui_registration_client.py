@@ -1,5 +1,5 @@
 """
-UI Registration Client for M-ERP Services.
+UI Registration Client for XERPIUM Services.
 
 This client library allows services to register their UI components
 with the UI Registry Service.

@@ -6,13 +6,13 @@
 
 ## Overview
 
-Implement a comprehensive Business Object Framework that establishes standardized patterns for all business entities in M-ERP, providing base classes, validation frameworks, audit integration, and extension points that ensure consistency across all microservices while supporting multi-company data isolation and event-driven architecture.
+Implement a comprehensive Business Object Framework that establishes standardized patterns for all business entities in XERPIUM, providing base classes, validation frameworks, audit integration, and extension points that ensure consistency across all microservices while supporting multi-company data isolation and event-driven architecture.
 
 ## User Stories
 
 ### Developer Productivity Enhancement
 
-As a **Developer** building new business modules for M-ERP, I want to inherit from a standardized Business Object Framework, so that I can rapidly implement new entities with automatic audit logging, validation, and CRUD operations without rebuilding common functionality.
+As a **Developer** building new business modules for XERPIUM, I want to inherit from a standardized Business Object Framework, so that I can rapidly implement new entities with automatic audit logging, validation, and CRUD operations without rebuilding common functionality.
 
 The framework should provide base classes that automatically handle common fields (id, created_at, updated_at, company_id), integrate with the existing audit service for change tracking, publish events for all CRUD operations, and provide extension points for custom fields and business logic. This eliminates the need to manually implement these patterns in each new service.
 

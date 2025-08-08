@@ -5,7 +5,7 @@
 
 ## Pitch
 
-M-ERP is a highly extensible microservices-based ERP system that helps businesses and developers build customizable enterprise solutions by providing standardized APIs and modular business components, similar to Odoo but with modern microservices architecture.
+XERPIUM is a highly extensible microservices-based ERP system that helps businesses and developers build customizable enterprise solutions by providing standardized APIs and modular business components, similar to Odoo but with modern microservices architecture.
 
 ## Users
 

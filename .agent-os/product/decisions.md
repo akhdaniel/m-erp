@@ -15,7 +15,7 @@
 
 ### Decision
 
-Create M-ERP as a highly extensible microservices-based ERP system targeting businesses needing customizable enterprise solutions, developers building business applications, and organizations requiring multi-technology ERP stacks. Core focus on standardized APIs, modular architecture, and extensibility similar to Odoo but with modern microservices design.
+Create XERPIUM as a highly extensible microservices-based ERP system targeting businesses needing customizable enterprise solutions, developers building business applications, and organizations requiring multi-technology ERP stacks. Core focus on standardized APIs, modular architecture, and extensibility similar to Odoo but with modern microservices design.
 
 ### Context
 
@@ -125,7 +125,7 @@ Implement multi-company data isolation using company_id column approach with aut
 
 ### Context
 
-M-ERP needs to support multi-company operations where businesses can manage multiple legal entities within a single system instance while maintaining strict data separation. This affects database design, query patterns, and security architecture across all services.
+XERPIUM needs to support multi-company operations where businesses can manage multiple legal entities within a single system instance while maintaining strict data separation. This affects database design, query patterns, and security architecture across all services.
 
 ### Alternatives Considered
 
@@ -172,7 +172,7 @@ Implement plugin/extension framework using plugin-within-service architecture wh
 
 ### Context
 
-Phase 3 requires establishing the foundational extension system that will enable third-party developers to create custom modules for M-ERP. The architectural choice for how modules are deployed and executed fundamentally impacts development complexity, operational overhead, and system performance.
+Phase 3 requires establishing the foundational extension system that will enable third-party developers to create custom modules for XERPIUM. The architectural choice for how modules are deployed and executed fundamentally impacts development complexity, operational overhead, and system performance.
 
 ### Alternatives Considered
 

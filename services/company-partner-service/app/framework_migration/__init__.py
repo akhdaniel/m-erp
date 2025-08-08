@@ -7,4 +7,4 @@ full compatibility with existing APIs.
 """
 
 __version__ = "1.0.0"
-__author__ = "M-ERP Development Team"
+__author__ = "XERPIUM Development Team"

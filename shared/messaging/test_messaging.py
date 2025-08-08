@@ -51,7 +51,7 @@ async def test_basic_messaging():
     await publisher.publish_notification(
         notification_type=NotificationType.SUCCESS,
         title="Welcome!",
-        message="Welcome to M-ERP system",
+        message="Welcome to XERPIUM system",
         target_user_id=123,
         priority=2
     )

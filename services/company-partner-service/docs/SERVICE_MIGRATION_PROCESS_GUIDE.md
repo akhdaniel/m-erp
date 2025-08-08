@@ -2,7 +2,7 @@
 
 ## 🔄 Migrating Existing Services to Business Object Framework
 
-This comprehensive guide walks you through migrating existing business services to the M-ERP Business Object Framework. The migration process is designed to be safe, incremental, and backward-compatible.
+This comprehensive guide walks you through migrating existing business services to the XERPIUM Business Object Framework. The migration process is designed to be safe, incremental, and backward-compatible.
 
 ## 📚 Table of Contents
 

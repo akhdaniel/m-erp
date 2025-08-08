@@ -13,7 +13,7 @@ class ProductionSettings(BaseModel):
     # Application Settings
     project_name: str = "User Authentication Service"
     version: str = "1.0.0"
-    description: str = "M-ERP User Authentication Microservice"
+    description: str = "XERPIUM User Authentication Microservice"
     environment: str = "production"
     debug: bool = False
     

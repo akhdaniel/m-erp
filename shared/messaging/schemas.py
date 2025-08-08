@@ -1,5 +1,5 @@
 """
-Message schemas for M-ERP messaging system.
+Message schemas for XERPIUM messaging system.
 """
 from datetime import datetime
 from typing import Any, Dict, Optional, Union

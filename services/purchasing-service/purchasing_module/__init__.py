@@ -1,5 +1,5 @@
 """
-Purchasing Module for M-ERP Extension System
+Purchasing Module for XERPIUM Extension System
 
 This module provides comprehensive procurement functionality including:
 - Purchase Order Management
@@ -9,11 +9,11 @@ This module provides comprehensive procurement functionality including:
 - Integration with Partner Management
 
 Version: 1.0.0
-Author: M-ERP Development Team
+Author: XERPIUM Development Team
 """
 
 __version__ = "1.0.0"
-__author__ = "M-ERP Development Team"
+__author__ = "XERPIUM Development Team"
 __email__ = "dev@m-erp.com"
 
 # Module metadata for framework integration

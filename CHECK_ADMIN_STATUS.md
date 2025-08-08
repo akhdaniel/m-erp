@@ -1,8 +1,8 @@
-# M-ERP Default Admin User Status
+# XERPIUM Default Admin User Status
 
 ## ✅ Default Admin User Created Successfully!
 
-The M-ERP system has been configured to automatically create a default admin user with full system access when the user-auth-service starts up.
+The XERPIUM system has been configured to automatically create a default admin user with full system access when the user-auth-service starts up.
 
 ## 🔐 Default Admin Credentials
 
@@ -12,7 +12,7 @@ The M-ERP system has been configured to automatically create a default admin use
 
 ## 🎯 How to Access the Users Menu
 
-1. **Start the M-ERP System:**
+1. **Start the XERPIUM System:**
    ```bash
    cd /Users/daniel/data/m-erp
    docker-compose up -d
@@ -88,7 +88,7 @@ docker exec -it m-erp-user-auth python3 create_admin_user.py
 
 ## 🎉 Ready to Use!
 
-Your M-ERP system now has a default admin user ready to use. Login with the credentials above and start managing your system!
+Your XERPIUM system now has a default admin user ready to use. Login with the credentials above and start managing your system!
 
 **Next Steps:**
 1. Login to the system

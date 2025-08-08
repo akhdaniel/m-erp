@@ -6,7 +6,7 @@
 
 ## Overview
 
-Implement a comprehensive Company/Partner Service as the second core microservice in the M-ERP system that provides multi-company operations with proper data isolation and manages all business partner relationships (customers, suppliers, vendors). This service will enable businesses to operate across multiple legal entities while maintaining proper data segregation and handle complex partner relationship management with the existing User Authentication Service.
+Implement a comprehensive Company/Partner Service as the second core microservice in the XERPIUM system that provides multi-company operations with proper data isolation and manages all business partner relationships (customers, suppliers, vendors). This service will enable businesses to operate across multiple legal entities while maintaining proper data segregation and handle complex partner relationship management with the existing User Authentication Service.
 
 ## User Stories
 

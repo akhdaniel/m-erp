@@ -6,13 +6,13 @@
 
 ## Overview
 
-Implement a comprehensive plugin/extension framework that enables third-party developers to create and deploy custom modules for M-ERP, while validating the architecture with a complete purchasing module implementation. This establishes the foundation for M-ERP's extensible ecosystem and demonstrates enterprise-grade procurement workflows.
+Implement a comprehensive plugin/extension framework that enables third-party developers to create and deploy custom modules for XERPIUM, while validating the architecture with a complete purchasing module implementation. This establishes the foundation for XERPIUM's extensible ecosystem and demonstrates enterprise-grade procurement workflows.
 
 ## User Stories
 
 ### Third-Party Developer Extension Creation
 
-As a **Third-Party Developer** building custom modules for M-ERP, I want a standardized plugin framework with templates and CLI tools, so that I can rapidly develop and deploy business modules without deep knowledge of the internal architecture.
+As a **Third-Party Developer** building custom modules for XERPIUM, I want a standardized plugin framework with templates and CLI tools, so that I can rapidly develop and deploy business modules without deep knowledge of the internal architecture.
 
 The framework should provide module templates, dependency management, configuration schemas, API integration patterns, and deployment mechanisms. Developers should be able to create new modules using familiar patterns and have confidence that their modules will integrate seamlessly with core services and other plugins.
 
@@ -24,7 +24,7 @@ The purchasing module should support multi-company operations, approval workflow
 
 ### System Administrator Module Management
 
-As a **System Administrator**, I want a centralized module registry and management interface, so that I can discover, install, configure, and monitor business modules across our M-ERP deployment.
+As a **System Administrator**, I want a centralized module registry and management interface, so that I can discover, install, configure, and monitor business modules across our XERPIUM deployment.
 
 The system should provide module discovery, dependency resolution, installation management, configuration interfaces, health monitoring, and rollback capabilities. Administrators should have full visibility and control over the module ecosystem.
 

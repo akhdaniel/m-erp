@@ -2,7 +2,7 @@
   <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
       <div>
-        <h1 class="text-center text-3xl font-bold text-gray-900">M-ERP</h1>
+        <h1 class="text-center text-3xl font-bold text-gray-900">XERPIUM</h1>
         <h2 class="mt-6 text-center text-2xl font-medium text-gray-900">
           Sign in to your account
         </h2>

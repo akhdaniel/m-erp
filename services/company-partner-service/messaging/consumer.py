@@ -1,5 +1,5 @@
 """
-Message Consumer for M-ERP messaging system.
+Message Consumer for XERPIUM messaging system.
 Handles consuming messages from Redis Streams and Pub/Sub channels.
 """
 import json

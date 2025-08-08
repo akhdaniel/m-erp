@@ -2,7 +2,7 @@
 Event publishing infrastructure for sales module.
 
 Integrates with the existing Redis Streams messaging system
-used throughout the M-ERP platform for event-driven architecture.
+used throughout the XERPIUM platform for event-driven architecture.
 """
 
 import json
@@ -19,7 +19,7 @@ class SalesEventPublisher:
     """
     Publisher for sales-related events using Redis Streams.
     
-    Integrates with the M-ERP event-driven architecture to publish
+    Integrates with the XERPIUM event-driven architecture to publish
     quote, order, and approval events for system integration.
     """
     

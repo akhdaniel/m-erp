@@ -26,7 +26,7 @@ This service demonstrates:
 
 ## Usage
 
-The service automatically starts consuming events when deployed with the rest of the M-ERP system.
+The service automatically starts consuming events when deployed with the rest of the XERPIUM system.
 
 Audit logs include:
 - Event type and timestamp

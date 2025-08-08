@@ -23,5 +23,5 @@ def test_app_creation():
   from app.main import app
   
   assert app.title == "User Authentication Service"
-  assert app.description == "M-ERP User Authentication Microservice"
+  assert app.description == "XERPIUM User Authentication Microservice"
   assert app.version == "1.0.0"

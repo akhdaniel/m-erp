@@ -2,7 +2,7 @@
 
 ## 🚀 Get Started in 15 Minutes
 
-This guide will walk you through creating your first business object using the M-ERP Business Object Framework. By the end, you'll have a fully functional business object with CRUD operations, audit logging, event publishing, and custom field support.
+This guide will walk you through creating your first business object using the XERPIUM Business Object Framework. By the end, you'll have a fully functional business object with CRUD operations, audit logging, event publishing, and custom field support.
 
 ## 📋 Prerequisites
 
@@ -452,7 +452,7 @@ from app.routers import products
 from app.core.database import init_db
 
 app = FastAPI(
-    title="M-ERP Product Service",
+    title="XERPIUM Product Service",
     description="Product management with Business Object Framework",
     version="1.0.0"
 )
@@ -467,7 +467,7 @@ async def startup_event():
 
 @app.get("/")
 async def root():
-    return {"message": "M-ERP Product Service with Business Object Framework"}
+    return {"message": "XERPIUM Product Service with Business Object Framework"}
 
 @app.get("/health")
 async def health_check():
@@ -661,7 +661,7 @@ curl -X POST "http://localhost:8000/api/v1/products/1/extensions" \
 
 ## 🎉 Congratulations!
 
-You've successfully created a complete business object with the M-ERP Business Object Framework! Your `Product` business object now has:
+You've successfully created a complete business object with the XERPIUM Business Object Framework! Your `Product` business object now has:
 
 ### ✅ **Core Features**
 - ✅ Full CRUD operations with automatic validation

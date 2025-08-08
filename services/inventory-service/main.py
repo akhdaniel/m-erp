@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 # Create FastAPI application
 app = FastAPI(
-    title="M-ERP Inventory Service",
+    title="XERPIUM Inventory Service",
     description="Comprehensive inventory management service providing product catalog, stock management, warehouse operations, and receiving functionality",
     version="1.0.0",
     docs_url="/api/docs",
@@ -53,7 +53,7 @@ app.include_router(receiving_router, prefix="/api/v1")
 async def root():
     """Root endpoint providing service information."""
     return {
-        "service": "M-ERP Inventory Service",
+        "service": "XERPIUM Inventory Service",
         "version": "1.0.0",
         "status": "operational",
         "description": "Comprehensive inventory management service",

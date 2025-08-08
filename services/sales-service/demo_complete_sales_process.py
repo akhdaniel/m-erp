@@ -3,7 +3,7 @@
 Complete Sales Process Demonstration
 
 This script demonstrates the entire order-to-cash workflow using
-the M-ERP Sales Module implementation.
+the XERPIUM Sales Module implementation.
 
 Process Flow:
 1. Create Customer Quote with Line Items
@@ -89,7 +89,7 @@ class SalesProcessDemo:
         self.pricing_service = None
         self.order_service = None
         
-        print("🎯 M-ERP Sales Process Demo Initialized")
+        print("🎯 XERPIUM Sales Process Demo Initialized")
         print("=" * 60)
     
     def demonstrate_complete_process(self):
@@ -538,7 +538,7 @@ def main():
     print("   ✅ Payment Processing")
     print("   ✅ Complete Audit Trail")
     
-    print(f"\n🎉 Your M-ERP Sales Module is Production Ready!")
+    print(f"\n🎉 Your XERPIUM Sales Module is Production Ready!")
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document tracks the development progress of the User Authentication Service for the M-ERP (Microservices-based ERP) system. The service provides comprehensive authentication, authorization, and user management capabilities.
+This document tracks the development progress of the User Authentication Service for the XERPIUM (Microservices-based ERP) system. The service provides comprehensive authentication, authorization, and user management capabilities.
 
 ## Completed Tasks
 

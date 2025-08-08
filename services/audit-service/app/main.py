@@ -1,5 +1,5 @@
 """
-Audit Service - Comprehensive audit logging for M-ERP.
+Audit Service - Comprehensive audit logging for XERPIUM.
 Stores all business events in a permanent audit database for compliance and monitoring.
 """
 import sys
@@ -138,7 +138,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="M-ERP Audit Service",
+    title="XERPIUM Audit Service",
     description="Comprehensive audit logging and compliance monitoring",
     version="1.0.0",
     lifespan=lifespan
@@ -158,7 +158,7 @@ app.add_middleware(
 async def root():
     """Root endpoint."""
     return {
-        "service": "M-ERP Audit Service",
+        "service": "XERPIUM Audit Service",
         "version": "1.0.0",
         "status": "running",
         "consumer_running": audit_service.running

@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     """Application settings."""
     
     # Application
-    APP_NAME: str = "M-ERP Service Registry"
+    APP_NAME: str = "XERPIUM Service Registry"
     VERSION: str = "1.0.0"
     DEBUG: bool = False
     

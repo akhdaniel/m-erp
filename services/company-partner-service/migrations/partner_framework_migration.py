@@ -883,7 +883,7 @@ def include_framework_partner_routes(app: FastAPI):
 """
 from app.framework_migration.main_app_update import include_framework_partner_routes
 
-app = FastAPI(title="M-ERP", version="2.0.0")
+app = FastAPI(title="XERPIUM", version="2.0.0")
 
 # Include framework routes
 include_framework_partner_routes(app)

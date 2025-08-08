@@ -1,4 +1,4 @@
-# M-ERP Shared Messaging Library
+# XERPIUM Shared Messaging Library
 from .publisher import MessagePublisher
 from .consumer import MessageConsumer
 from .events import EventType, MessageType, CommandType, NotificationType

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class Settings(BaseModel):
   project_name: str = "Company & Partner Management Service"
   version: str = "1.0.0"
-  description: str = "M-ERP Company & Partner Management Microservice"
+  description: str = "XERPIUM Company & Partner Management Microservice"
   
   # Database
   database_url: str = os.getenv(

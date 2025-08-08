@@ -1,7 +1,7 @@
 {
-  "name": "m-erp-ui-service",
+  "name": "xerpium-ui-service",
   "version": "1.0.0",
-  "description": "M-ERP Admin Interface - Vue.js Frontend",
+  "description": "XERPIUM Admin Interface - Vue.js Frontend",
   "type": "module",
   "scripts": {
     "dev": "vite",

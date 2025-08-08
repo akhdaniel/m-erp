@@ -2,7 +2,7 @@
 
 ## 🚀 Overview
 
-The M-ERP Business Object Framework is a comprehensive system for building standardized, extensible business objects with automatic audit logging, event publishing, and custom field support. This guide provides developers with everything needed to leverage the framework effectively.
+The XERPIUM Business Object Framework is a comprehensive system for building standardized, extensible business objects with automatic audit logging, event publishing, and custom field support. This guide provides developers with everything needed to leverage the framework effectively.
 
 ## 📚 Table of Contents
 
@@ -1415,7 +1415,7 @@ class BatchPartnerService(CompanyBusinessObjectService):
 
 ## 📝 Summary
 
-This developer guide provides comprehensive coverage of the M-ERP Business Object Framework, including:
+This developer guide provides comprehensive coverage of the XERPIUM Business Object Framework, including:
 
 - **Architecture Overview**: Understanding the framework layers and principles
 - **Core Components**: Base models, mixins, and essential building blocks

@@ -2,7 +2,7 @@ name: purchasing-module
 version: 1.0.0
 display_name: Purchasing Management Module
 description: Complete procurement workflow management with purchase orders, supplier management, and approval workflows
-author: M-ERP Development Team
+author: XERPIUM Development Team
 author_email: dev@m-erp.com
 license: MIT
 type: full_module

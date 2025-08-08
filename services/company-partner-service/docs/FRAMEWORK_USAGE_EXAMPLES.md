@@ -2,7 +2,7 @@
 
 ## 🎯 Common Business Object Patterns
 
-This guide provides practical examples for common business object patterns using the M-ERP Business Object Framework. Each pattern includes complete implementation examples with best practices.
+This guide provides practical examples for common business object patterns using the XERPIUM Business Object Framework. Each pattern includes complete implementation examples with best practices.
 
 ## 📚 Table of Contents
 

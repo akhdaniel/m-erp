@@ -1,8 +1,8 @@
 """
-Business Object Framework for M-ERP.
+Business Object Framework for XERPIUM.
 
 This package provides base classes, mixins, and utilities for creating
-standardized business objects across all M-ERP microservices.
+standardized business objects across all XERPIUM microservices.
 """
 
 __version__ = "1.0.0"

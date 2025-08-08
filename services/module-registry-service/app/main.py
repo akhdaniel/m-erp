@@ -79,7 +79,7 @@ async def lifespan(app: FastAPI):
 # Create FastAPI application
 app = FastAPI(
     title=settings.app_name,
-    description="Module Registry Service for M-ERP Extension System",
+    description="Module Registry Service for XERPIUM Extension System",
     version=settings.app_version,
     lifespan=lifespan,
     docs_url="/docs" if settings.debug else None,
@@ -110,7 +110,7 @@ async def root():
         "service": settings.app_name,
         "version": settings.app_version,
         "status": "healthy",
-        "description": "Module Registry Service for M-ERP Extension System"
+        "description": "Module Registry Service for XERPIUM Extension System"
     }
 
 

@@ -1,6 +1,6 @@
 # Module Registry Service
 
-The Module Registry Service is a core component of the M-ERP Extension System that manages module registration, installation, and lifecycle for the Phase 3 Plugin/Extension Framework.
+The Module Registry Service is a core component of the XERPIUM Extension System that manages module registration, installation, and lifecycle for the Phase 3 Plugin/Extension Framework.
 
 ## 🚀 Features
 
@@ -17,7 +17,7 @@ The Module Registry Service is a core component of the M-ERP Extension System th
 - **Uninstallation** - Clean uninstallation with rollback capabilities
 
 ### Extension Framework Integration
-- **Service Discovery** - Automatic registration with M-ERP service registry
+- **Service Discovery** - Automatic registration with XERPIUM service registry
 - **Business Object Framework** - Integration with existing framework patterns
 - **Multi-Company Support** - Company-scoped module installations and configurations
 - **Event Publishing** - Integration with Redis Streams for module lifecycle events
@@ -60,14 +60,14 @@ module-registry-service/
 - **module_installations** - Company-specific module installations with configuration
 
 #### Multi-Company Isolation
-All installation data includes `company_id` for proper data isolation following M-ERP patterns.
+All installation data includes `company_id` for proper data isolation following XERPIUM patterns.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Docker and Docker Compose
 - Service Registry running on port 8003
-- Basic knowledge of FastAPI and the M-ERP Extension System
+- Basic knowledge of FastAPI and the XERPIUM Extension System
 
 ### Development Setup
 
@@ -195,10 +195,10 @@ config_schema:
 4. **Installation** - Company-specific installation with configuration
 5. **Health Monitoring** - Continuous health checks and status tracking
 
-## 📈 Integration with M-ERP
+## 📈 Integration with XERPIUM
 
 ### Service Discovery
-- Automatic registration with M-ERP service registry
+- Automatic registration with XERPIUM service registry
 - Health check integration for monitoring
 - Service-to-service communication patterns
 
@@ -234,19 +234,19 @@ config_schema:
 4. Test integration with service discovery
 
 ### Code Standards
-- Follow existing FastAPI patterns from other M-ERP services
+- Follow existing FastAPI patterns from other XERPIUM services
 - Use async/await for all database operations
 - Implement proper error handling and logging
 - Follow PEP 8 style guidelines
 
 ## 🚀 Production Deployment
 
-Production deployment follows the same patterns as other M-ERP services:
+Production deployment follows the same patterns as other XERPIUM services:
 
 - **Multi-container Docker setup** with PostgreSQL, Redis, and service
 - **Environment-based configuration** with secure secrets management
 - **Health monitoring** and logging integration
-- **Service discovery** integration with M-ERP infrastructure
+- **Service discovery** integration with XERPIUM infrastructure
 
 ## 📊 Phase 3 Integration
 

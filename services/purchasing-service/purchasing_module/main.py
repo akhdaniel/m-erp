@@ -2,7 +2,7 @@
 Purchasing Module Main Entry Point
 
 This module provides the main initialization and lifecycle management
-for the Purchasing Module within the M-ERP Extension System.
+for the Purchasing Module within the XERPIUM Extension System.
 """
 
 import asyncio
@@ -20,7 +20,7 @@ class PurchasingModuleManager:
     Manager class for the Purchasing Module lifecycle.
     
     Handles initialization, configuration, health checks, and shutdown
-    for the purchasing module within the M-ERP extension framework.
+    for the purchasing module within the XERPIUM extension framework.
     """
     
     def __init__(self):
@@ -335,7 +335,7 @@ async def initialize_module(config: Dict[str, Any] = None) -> bool:
     """
     Initialize the purchasing module.
     
-    This is the main entry point called by the M-ERP extension framework.
+    This is the main entry point called by the XERPIUM extension framework.
     
     Args:
         config: Module configuration dictionary
@@ -350,7 +350,7 @@ async def shutdown_module() -> bool:
     """
     Shutdown the purchasing module.
     
-    This is called by the M-ERP extension framework during module uninstallation
+    This is called by the XERPIUM extension framework during module uninstallation
     or system shutdown.
     
     Returns:
@@ -363,7 +363,7 @@ async def check_health() -> Dict[str, Any]:
     """
     Perform health check for the purchasing module.
     
-    This is called by the M-ERP extension framework for health monitoring.
+    This is called by the XERPIUM extension framework for health monitoring.
     
     Returns:
         dict: Health check results

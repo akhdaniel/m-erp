@@ -1,5 +1,5 @@
 """
-Event and Message Type definitions for M-ERP messaging system.
+Event and Message Type definitions for XERPIUM messaging system.
 """
 from enum import Enum
 

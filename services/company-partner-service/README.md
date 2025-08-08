@@ -1,10 +1,10 @@
 # Company & Partner Management Service
 
-This microservice handles company and business partner management for the M-ERP (Microservices-based ERP) system. It provides multi-company operations with complete data isolation and comprehensive partner relationship management.
+This microservice handles company and business partner management for the XERPIUM (Microservices-based ERP) system. It provides multi-company operations with complete data isolation and comprehensive partner relationship management.
 
 ## 🚀 Business Object Framework
 
-This service implements the **M-ERP Business Object Framework** - a comprehensive system for building standardized, extensible business objects with automatic audit logging, event publishing, and custom field support.
+This service implements the **XERPIUM Business Object Framework** - a comprehensive system for building standardized, extensible business objects with automatic audit logging, event publishing, and custom field support.
 
 ### Framework Features
 

@@ -8,7 +8,7 @@
             <!-- Logo -->
             <div class="flex-shrink-0 flex items-center">
               <router-link to="/dashboard" class="text-xl font-bold text-primary-600">
-                M-ERP
+                XERPIUM
               </router-link>
             </div>
             

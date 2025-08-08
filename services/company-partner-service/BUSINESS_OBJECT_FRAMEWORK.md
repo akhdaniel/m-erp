@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Business Object Framework provides standardized infrastructure for building consistent, scalable business entities in the M-ERP system. It includes automatic audit logging, event publishing, multi-company data isolation, and standardized CRUD operations.
+The Business Object Framework provides standardized infrastructure for building consistent, scalable business entities in the XERPIUM system. It includes automatic audit logging, event publishing, multi-company data isolation, and standardized CRUD operations.
 
 ## Architecture
 

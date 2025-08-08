@@ -787,7 +787,7 @@ def include_framework_{model}_routes(app: FastAPI):
 \"\"\"
 from app.framework_migration.{model}_main_app_update import include_framework_{model}_routes
 
-app = FastAPI(title="M-ERP", version="2.0.0")
+app = FastAPI(title="XERPIUM", version="2.0.0")
 
 # Include framework routes
 include_framework_{model}_routes(app)

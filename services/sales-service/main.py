@@ -32,8 +32,8 @@ logger = logging.getLogger(__name__)
 
 # Create FastAPI application
 app = FastAPI(
-    title="M-ERP Sales Service",
-    description="Sales management microservice for M-ERP platform",
+    title="XERPIUM Sales Service",
+    description="Sales management microservice for XERPIUM platform",
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc",

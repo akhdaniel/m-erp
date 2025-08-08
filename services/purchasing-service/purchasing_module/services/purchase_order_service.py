@@ -2,7 +2,7 @@
 Purchase Order Service for managing the complete purchase order lifecycle.
 
 This service provides business logic for creating, managing, and processing
-purchase orders within the M-ERP purchasing module.
+purchase orders within the XERPIUM purchasing module.
 """
 
 from typing import List, Optional, Dict, Any

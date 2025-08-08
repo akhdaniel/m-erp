@@ -1,5 +1,5 @@
 """
-Audit Logger Service - Event-driven audit logging for M-ERP.
+Audit Logger Service - Event-driven audit logging for XERPIUM.
 Demonstrates how services can consume business events for cross-cutting concerns.
 """
 import sys

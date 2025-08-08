@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class Settings(BaseModel):
     project_name: str = "Menu & Access Rights Service"
     version: str = "1.0.0"
-    description: str = "M-ERP Menu & Access Rights Management Microservice"
+    description: str = "XERPIUM Menu & Access Rights Management Microservice"
     
     # Database
     database_url: str = os.getenv(

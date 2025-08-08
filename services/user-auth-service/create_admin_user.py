@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script to create default admin user for M-ERP system.
+Script to create default admin user for XERPIUM system.
 Run this script to create a default admin user with full access rights.
 """
 
@@ -51,7 +51,7 @@ async def list_users():
 
 async def create_admin():
     """Create default admin user."""
-    print("🚀 M-ERP Admin User Creation")
+    print("🚀 XERPIUM Admin User Creation")
     print("=" * 40)
     
     # Check if admin already exists

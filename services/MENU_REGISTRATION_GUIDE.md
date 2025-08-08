@@ -2,7 +2,7 @@
 
 ## Overview
 
-Each microservice in M-ERP is responsible for registering and managing its own menu items. This ensures service autonomy and follows microservices best practices.
+Each microservice in XERPIUM is responsible for registering and managing its own menu items. This ensures service autonomy and follows microservices best practices.
 
 ## Architecture
 

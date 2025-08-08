@@ -2,7 +2,7 @@ name: inventory-module
 version: 1.0.0
 display_name: Inventory Management Module
 description: Comprehensive inventory and warehouse management with product catalog, stock tracking, and location management
-author: M-ERP Development Team
+author: XERPIUM Development Team
 author_email: dev@m-erp.com
 license: MIT
 type: full_module

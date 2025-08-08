@@ -2,7 +2,7 @@
 
 ## 🔧 Common Issues and Solutions
 
-This guide addresses the most common issues encountered when using the M-ERP Business Object Framework, with step-by-step solutions and preventive measures.
+This guide addresses the most common issues encountered when using the XERPIUM Business Object Framework, with step-by-step solutions and preventive measures.
 
 ## 📚 Table of Contents
 

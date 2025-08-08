@@ -77,4 +77,4 @@ This is the technical specification for the spec detailed in @.agent-os/specs/20
 - **Currency Service APIs** - Multi-currency pricing and conversion
 - **Business Object Framework** - Standardized CRUD and audit patterns
 
-**Justification:** All dependencies are already part of the established M-ERP technology stack, ensuring consistency and reducing operational complexity while leveraging proven integration patterns.
+**Justification:** All dependencies are already part of the established XERPIUM technology stack, ensuring consistency and reducing operational complexity while leveraging proven integration patterns.

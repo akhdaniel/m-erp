@@ -1,5 +1,5 @@
 """
-Inventory Management Module for M-ERP.
+Inventory Management Module for XERPIUM.
 
 This module provides comprehensive inventory and warehouse management capabilities
 including product catalog, stock tracking, location management, and integration
@@ -22,7 +22,7 @@ MODULE_INFO = {
     "display_name": "Inventory Management Module",
     "version": "1.0.0",
     "description": "Comprehensive inventory and warehouse management with product catalog, stock tracking, and location management",
-    "author": "M-ERP Development Team",
+    "author": "XERPIUM Development Team",
     "category": "inventory",
     "tags": ["inventory", "warehouse", "stock", "products", "receiving", "catalog"]
 }

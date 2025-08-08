@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class Settings(BaseModel):
   project_name: str = "User Authentication Service"
   version: str = "1.0.0"
-  description: str = "M-ERP User Authentication Microservice"
+  description: str = "XERPIUM User Authentication Microservice"
   
   # Database
   database_url: str = os.getenv(

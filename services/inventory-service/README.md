@@ -1,6 +1,6 @@
-# M-ERP Inventory Service
+# XERPIUM Inventory Service
 
-Comprehensive inventory management service providing product catalog, stock management, warehouse operations, and receiving functionality for the M-ERP system.
+Comprehensive inventory management service providing product catalog, stock management, warehouse operations, and receiving functionality for the XERPIUM system.
 
 ## Features
 

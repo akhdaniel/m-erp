@@ -6,13 +6,13 @@
 
 ## Overview
 
-Implement a secure, scalable user authentication and authorization microservice that serves as the foundation for the M-ERP system. This service will handle user registration, login, session management, and JWT token generation while providing standardized APIs for all other microservices to verify user identity and permissions.
+Implement a secure, scalable user authentication and authorization microservice that serves as the foundation for the XERPIUM system. This service will handle user registration, login, session management, and JWT token generation while providing standardized APIs for all other microservices to verify user identity and permissions.
 
 ## User Stories
 
 ### Core Authentication Flow
 
-As a user, I want to register and login to the M-ERP system, so that I can access the business management features securely.
+As a user, I want to register and login to the XERPIUM system, so that I can access the business management features securely.
 
 **Detailed Workflow:**
 1. User registers with email, password, and basic profile information

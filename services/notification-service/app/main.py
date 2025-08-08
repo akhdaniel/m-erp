@@ -135,7 +135,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="M-ERP Notification Service",
+    title="XERPIUM Notification Service",
     description="Real-time notifications via Server-Sent Events",
     version="1.0.0",
     lifespan=lifespan
@@ -155,7 +155,7 @@ app.add_middleware(
 async def root():
     """Root endpoint."""
     return {
-        "service": "M-ERP Notification Service",
+        "service": "XERPIUM Notification Service",
         "version": "1.0.0",
         "status": "running",
         "connected_clients": len(notification_service.clients)

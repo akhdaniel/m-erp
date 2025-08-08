@@ -1,7 +1,7 @@
 """
 Service Registry Client Library
 
-This client can be used by other M-ERP services to register themselves
+This client can be used by other XERPIUM services to register themselves
 and send heartbeats to the service registry.
 """
 

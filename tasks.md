@@ -1,4 +1,4 @@
-# M-ERP Phase 1 Implementation Tasks
+# XERPIUM Phase 1 Implementation Tasks
 
 > Last Updated: 2025-07-29
 > Current Phase: Phase 1 - Core Infrastructure & Base Services

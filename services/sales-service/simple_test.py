@@ -149,7 +149,7 @@ def show_production_deployment():
     print("📦 Required Infrastructure:")
     print("• PostgreSQL database (for quote storage)")
     print("• Redis server (for event messaging)")
-    print("• Other M-ERP services (inventory, partners, etc.)")
+    print("• Other XERPIUM services (inventory, partners, etc.)")
     print("")
     
     print("🔧 Environment Variables:")
@@ -162,7 +162,7 @@ def show_production_deployment():
     print("🐳 Docker Deployment:")
     print("• Build: docker build -t sales-service .")
     print("• Run: docker run -p 8006:8006 sales-service")
-    print("• Use docker-compose for full M-ERP stack")
+    print("• Use docker-compose for full XERPIUM stack")
 
 def main():
     """Run all tests and show instructions."""

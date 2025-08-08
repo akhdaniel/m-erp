@@ -72,7 +72,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.VERSION,
-    description="M-ERP Service Registry for automatic service discovery and health monitoring",
+    description="XERPIUM Service Registry for automatic service discovery and health monitoring",
     lifespan=lifespan
 )
 
@@ -123,7 +123,7 @@ async def root():
     return {
         "service": settings.APP_NAME,
         "version": settings.VERSION,
-        "description": "M-ERP Service Registry",
+        "description": "XERPIUM Service Registry",
         "endpoints": {
             "health": "/health",
             "services": "/api/v1/services",

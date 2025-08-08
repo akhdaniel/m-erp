@@ -1,4 +1,4 @@
-# Kong Gateway Configuration for M-ERP Services
+# Kong Gateway Configuration for XERPIUM Services
 _format_version: "3.0"
 _transform: true
 
@@ -7,7 +7,7 @@ services:
   - name: user-auth-service
     url: http://user-auth-service:8000
     tags:
-      - m-erp
+      - xerpium
       - auth
     routes:
       - name: user-auth-routes
@@ -28,7 +28,7 @@ services:
   - name: company-partner-service
     url: http://company-partner-service:8000
     tags:
-      - m-erp
+      - xerpium
       - business
     routes:
       - name: company-partner-routes
@@ -52,7 +52,7 @@ services:
   - name: menu-access-service
     url: http://menu-access-service:8000
     tags:
-      - m-erp
+      - xerpium
       - access-control
     routes:
       - name: menu-access-routes
@@ -77,7 +77,7 @@ services:
   - name: service-registry
     url: http://service-registry:8000
     tags:
-      - m-erp
+      - xerpium
       - service-discovery
     routes:
       - name: service-registry-routes
@@ -97,7 +97,7 @@ services:
   - name: inventory-service
     url: http://inventory-service:8005
     tags:
-      - m-erp
+      - xerpium
       - inventory
     routes:
       - name: inventory-routes
@@ -121,7 +121,7 @@ services:
   - name: ui-registry-service
     url: http://ui-registry-service:8010
     tags:
-      - m-erp
+      - xerpium
       - ui-registry
     routes:
       - name: ui-registry-routes
@@ -140,7 +140,7 @@ services:
   - name: sales-service
     url: http://sales-service:8006
     tags:
-      - m-erp
+      - xerpium
       - sales
     routes:
       - name: sales-routes

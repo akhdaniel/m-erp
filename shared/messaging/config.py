@@ -1,5 +1,5 @@
 """
-Configuration for M-ERP messaging system.
+Configuration for XERPIUM messaging system.
 """
 import os
 from typing import Dict, List

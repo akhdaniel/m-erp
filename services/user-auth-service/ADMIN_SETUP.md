@@ -1,8 +1,8 @@
-# M-ERP Default Admin User Setup
+# XERPIUM Default Admin User Setup
 
 ## Default Admin Credentials
 
-When the M-ERP system is first initialized, a default admin user is automatically created with full system access.
+When the XERPIUM system is first initialized, a default admin user is automatically created with full system access.
 
 ### Login Credentials
 - **Email:** `admin@m-erp.com`
@@ -81,4 +81,4 @@ python create_admin_user.py
 
 ---
 
-For additional help, check the main M-ERP documentation or contact your system administrator.
+For additional help, check the main XERPIUM documentation or contact your system administrator.

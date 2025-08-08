@@ -2,7 +2,7 @@
 
 ## Overview
 
-The M-ERP dynamic menu system allows services to register their menu items and have them automatically displayed in the UI based on user permissions. This enables each microservice (Inventory, Sales, etc.) to define its own navigation structure while maintaining centralized access control.
+The XERPIUM dynamic menu system allows services to register their menu items and have them automatically displayed in the UI based on user permissions. This enables each microservice (Inventory, Sales, etc.) to define its own navigation structure while maintaining centralized access control.
 
 ## Architecture
 

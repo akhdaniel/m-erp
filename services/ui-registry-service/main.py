@@ -1,5 +1,5 @@
 """
-UI Registry Service for M-ERP.
+UI Registry Service for XERPIUM.
 
 This service manages UI component registrations from other microservices,
 allowing them to register their dashboards, forms, lists, and other UI components.

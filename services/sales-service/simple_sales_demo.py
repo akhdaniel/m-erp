@@ -3,7 +3,7 @@
 Complete Sales Process Demonstration - Simplified Version
 
 This demonstrates the entire order-to-cash workflow structure
-implemented in the M-ERP Sales Module.
+implemented in the XERPIUM Sales Module.
 """
 
 from datetime import datetime, timedelta
@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 def run_complete_sales_process():
     """Demonstrate complete sales process workflow."""
     
-    print("🎯 M-ERP COMPLETE SALES PROCESS DEMONSTRATION")
+    print("🎯 XERPIUM COMPLETE SALES PROCESS DEMONSTRATION")
     print("=" * 60)
     
     # Customer and product data
@@ -206,7 +206,7 @@ def run_complete_sales_process():
     print(f"\n🚀 SALES PROCESS COMPLETED SUCCESSFULLY!")
     print("=" * 60)
     
-    print("\n📋 M-ERP SALES MODULE CAPABILITIES DEMONSTRATED:")
+    print("\n📋 XERPIUM SALES MODULE CAPABILITIES DEMONSTRATED:")
     capabilities = [
         "✅ Quote Creation & Management",
         "✅ Dynamic Pricing & Discounts", 
@@ -225,7 +225,7 @@ def run_complete_sales_process():
     for capability in capabilities:
         print(f"   {capability}")
     
-    print(f"\n🎉 Your M-ERP Sales Module is Production Ready!")
+    print(f"\n🎉 Your XERPIUM Sales Module is Production Ready!")
     print("   Ready to handle complete order-to-cash processes!")
 
 

@@ -1,6 +1,6 @@
-# M-ERP Redis Message Queue System
+# XERPIUM Redis Message Queue System
 
-A comprehensive messaging system for M-ERP microservices built on Redis Streams and Pub/Sub for reliable inter-service communication and event-driven architecture.
+A comprehensive messaging system for XERPIUM microservices built on Redis Streams and Pub/Sub for reliable inter-service communication and event-driven architecture.
 
 ## Features
 

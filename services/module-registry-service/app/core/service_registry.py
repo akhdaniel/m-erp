@@ -25,7 +25,7 @@ class ServiceRegistryClient:
             "status": "healthy",
             "metadata": {
                 "version": settings.app_version,
-                "description": "Module Registry Service for M-ERP Extension System",
+                "description": "Module Registry Service for XERPIUM Extension System",
                 "endpoints": [
                     f"http://{self.service_host}:{self.service_port}/modules",
                     f"http://{self.service_host}:{self.service_port}/installations",

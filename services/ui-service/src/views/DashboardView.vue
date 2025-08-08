@@ -5,7 +5,7 @@
       <div>
         <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
         <p class="mt-2 text-sm text-gray-700">
-          Welcome back, {{ authStore.user?.first_name }}! Here's an overview of your M-ERP system.
+          Welcome back, {{ authStore.user?.first_name }}! Here's an overview of your XERPIUM system.
         </p>
       </div>
 
