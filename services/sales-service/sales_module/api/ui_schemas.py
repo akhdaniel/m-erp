@@ -215,7 +215,7 @@ async def get_quotes_list_schema() -> Dict[str, Any]:
                 "field": "customer_id",
                 "label": "Customer",
                 "type": "select",
-                "optionsEndpoint": "/api/v1/customers",
+                "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
                 "optionLabelField": "name",
                 "optionValueField": "id"
             },
@@ -285,7 +285,7 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
                         "type": "select",
                         "required": True,
                         "colSpan": 2,
-                        "optionsEndpoint": "/api/v1/customers",
+                        "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Select a customer"
@@ -332,7 +332,7 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
                                 "label": "Product",
                                 "type": "select",
                                 "required": True,
-                                "optionsEndpoint": "/api/v1/products",
+                                "optionsEndpoint": "http://localhost:8005/api/v1/products",
                                 "optionLabelField": "name",
                                 "optionValueField": "id"
                             },
@@ -418,7 +418,7 @@ async def get_orders_list_schema() -> Dict[str, Any]:
         "title": "Sales Orders",
         "description": "Manage customer orders",
         "viewType": "table",
-        "endpoint": "/api/v1/orders/",
+        "endpoint": "/orders/",
         "searchable": True,
         "searchPlaceholder": "Search orders...",
         "paginated": True,
@@ -559,7 +559,7 @@ async def get_pricing_rules_list_schema() -> Dict[str, Any]:
         "title": "Pricing Rules",
         "description": "Manage pricing and discount rules",
         "viewType": "table",
-        "endpoint": "/api/v1/pricing/rules/",
+        "endpoint": "/pricing/rules/",
         "searchable": True,
         "paginated": True,
         "columns": [
@@ -684,7 +684,7 @@ async def get_customers_list_schema() -> Dict[str, Any]:
         "title": "Customers",
         "description": "Manage customer accounts",
         "viewType": "table",
-        "endpoint": "/api/v1/partners/?is_customer=true",
+        "endpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
         "searchable": True,
         "paginated": True,
         "columns": [
@@ -762,7 +762,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
     """Get orders form UI schema"""
     return {
         "title": "Order Details",
-        "endpoint": "/api/v1/orders",
+        "endpoint": "/orders",
         "method": "POST",
         "successRoute": "/sales/orders",
         "cancelRoute": "/sales/orders",
@@ -778,7 +778,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                         "type": "select",
                         "required": True,
                         "colSpan": 2,
-                        "optionsEndpoint": "/api/v1/customers",
+                        "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Select a customer"
@@ -815,7 +815,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                                 "label": "Product",
                                 "type": "select",
                                 "required": True,
-                                "optionsEndpoint": "/api/v1/products",
+                                "optionsEndpoint": "http://localhost:8005/api/v1/products",
                                 "optionLabelField": "name",
                                 "optionValueField": "id"
                             },
@@ -912,7 +912,7 @@ async def get_pricing_rules_form_schema() -> Dict[str, Any]:
     """Get pricing rules form UI schema"""
     return {
         "title": "Pricing Rule",
-        "endpoint": "/api/v1/pricing/rules",
+        "endpoint": "/pricing/rules",
         "method": "POST",
         "successRoute": "/sales/pricing",
         "cancelRoute": "/sales/pricing",
@@ -1024,7 +1024,7 @@ async def get_pricing_rules_form_schema() -> Dict[str, Any]:
                         "label": "Specific Customers",
                         "type": "select",
                         "multiple": True,
-                        "optionsEndpoint": "/api/v1/customers",
+                        "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "help": "Leave empty to apply to all customers",
@@ -1038,7 +1038,7 @@ async def get_pricing_rules_form_schema() -> Dict[str, Any]:
                         "label": "Product Categories",
                         "type": "select",
                         "multiple": True,
-                        "optionsEndpoint": "/api/v1/product-categories",
+                        "optionsEndpoint": "http://localhost:8005/api/v1/categories",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "help": "Select applicable product categories",

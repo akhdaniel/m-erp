@@ -961,3 +961,39 @@ class OrderService(BaseService):
         # Don't allow editing completed/cancelled orders
         if order.status in [OrderStatus.COMPLETED, OrderStatus.CANCELLED]:
             raise ValueError("Cannot edit completed or cancelled orders")
+    
+    def get_all(self, company_id: int = None, filters: Dict[str, Any] = None,
+                limit: int = 100, offset: int = 0) -> List[SalesOrder]:
+        """
+        Get all orders with optional filtering.
+        
+        Args:
+            company_id: Company ID to filter by
+            filters: Additional filters
+            limit: Maximum number of results
+            offset: Number of results to skip
+            
+        Returns:
+            List of orders
+        """
+        query = self.db_session.query(SalesOrder)
+        
+        if company_id:
+            query = query.filter(SalesOrder.company_id == company_id)
+            
+        if filters:
+            if filters.get('status'):
+                query = query.filter(SalesOrder.status == filters['status'])
+            if filters.get('payment_status'):
+                query = query.filter(SalesOrder.payment_status == filters['payment_status'])
+            if filters.get('customer_id'):
+                query = query.filter(SalesOrder.customer_id == filters['customer_id'])
+            if filters.get('order_date_from'):
+                query = query.filter(SalesOrder.order_date >= filters['order_date_from'])
+            if filters.get('order_date_to'):
+                query = query.filter(SalesOrder.order_date <= filters['order_date_to'])
+                
+        query = query.order_by(SalesOrder.created_at.desc())
+        query = query.limit(limit).offset(offset)
+        
+        return query.all()
