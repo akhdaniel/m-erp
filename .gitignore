@@ -1,5 +1,6 @@
 .DS_Store
 *.pyc
-dist/
+dist
 dist/assets/
 venv
+node_modules/
