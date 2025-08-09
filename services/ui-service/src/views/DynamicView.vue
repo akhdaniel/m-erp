@@ -208,14 +208,38 @@ function processSchema(schema: any) {
     schema.columns.forEach((col: any) => {
       if (col.cellClassFunction && typeof col.cellClassFunction === 'string') {
         try {
-          col.cellClassFunction = new Function('value', 'item', col.cellClassFunction.replace(/^function\s*\([^)]*\)\s*{/, '').replace(/}$/, ''))
+          // Clean up the function string
+          let funcStr = col.cellClassFunction.trim()
+          
+          // Check if it's wrapped as a function declaration
+          if (funcStr.startsWith('function')) {
+            // Extract just the function body
+            const match = funcStr.match(/function\s*\([^)]*\)\s*{\s*([\s\S]*)\s*}/)
+            if (match) {
+              funcStr = match[1]
+            }
+          }
+          
+          // Create the function
+          col.cellClassFunction = new Function('value', 'item', funcStr)
         } catch (e) {
-          console.error('Error parsing cellClassFunction:', e)
+          console.error('Error parsing cellClassFunction:', e, col.cellClassFunction)
         }
       }
-      if (col.formatter && typeof col.formatter === 'string' && col.formatter.includes('function')) {
+      
+      if (col.formatter && typeof col.formatter === 'string') {
         try {
-          col.formatter = new Function('value', 'item', col.formatter.replace(/^function\s*\([^)]*\)\s*{/, '').replace(/}$/, ''))
+          let funcStr = col.formatter.trim()
+          
+          // Check if it's a function string
+          if (funcStr.startsWith('function')) {
+            const match = funcStr.match(/function\s*\([^)]*\)\s*{\s*([\s\S]*)\s*}/)
+            if (match) {
+              funcStr = match[1]
+            }
+            col.formatter = new Function('value', 'item', funcStr)
+          }
+          // Otherwise leave it as a string formatter name (like 'currency', 'number', etc.)
         } catch (e) {
           console.error('Error parsing formatter:', e)
         }
@@ -228,14 +252,29 @@ function processSchema(schema: any) {
       section.fields?.forEach((field: any) => {
         if (field.compute && typeof field.compute === 'string') {
           try {
-            field.compute = new Function('data', field.compute.replace(/^function\s*\([^)]*\)\s*{/, '').replace(/}$/, ''))
+            let funcStr = field.compute.trim()
+            if (funcStr.startsWith('function')) {
+              const match = funcStr.match(/function\s*\([^)]*\)\s*{\s*([\s\S]*)\s*}/)
+              if (match) {
+                funcStr = match[1]
+              }
+            }
+            field.compute = new Function('data', funcStr)
           } catch (e) {
             console.error('Error parsing compute function:', e)
           }
         }
+        
         if (field.validate && typeof field.validate === 'string') {
           try {
-            field.validate = new Function('value', 'data', field.validate.replace(/^function\s*\([^)]*\)\s*{/, '').replace(/}$/, ''))
+            let funcStr = field.validate.trim()
+            if (funcStr.startsWith('function')) {
+              const match = funcStr.match(/function\s*\([^)]*\)\s*{\s*([\s\S]*)\s*}/)
+              if (match) {
+                funcStr = match[1]
+              }
+            }
+            field.validate = new Function('value', 'data', funcStr)
           } catch (e) {
             console.error('Error parsing validate function:', e)
           }
