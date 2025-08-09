@@ -88,7 +88,21 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/inventory/products',
-    redirect: '/inventory'
+    name: 'ProductList',
+    component: () => import('@/views/inventory/ProductListView.vue'),
+    meta: { requiresAuth: true, title: 'Products - Inventory' }
+  },
+  {
+    path: '/inventory/products/new',
+    name: 'ProductCreate',
+    component: () => import('@/views/inventory/ProductFormView.vue'),
+    meta: { requiresAuth: true, title: 'New Product - Inventory' }
+  },
+  {
+    path: '/inventory/products/:id/edit',
+    name: 'ProductEdit',
+    component: () => import('@/views/inventory/ProductFormView.vue'),
+    meta: { requiresAuth: true, title: 'Edit Product - Inventory' }
   },
   {
     path: '/inventory/categories',
