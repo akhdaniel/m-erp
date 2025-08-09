@@ -176,7 +176,38 @@ async function loadSchema() {
 function getSchemaEndpoint(): string {
   const path = route.path
   
-  // Map routes to schema endpoints
+  // Sales routes
+  if (path.includes('/sales')) {
+    if (path.includes('/dashboard')) {
+      return '/api/v1/ui-schemas/dashboard'
+    }
+    if (path.includes('/quotes')) {
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/quotes/form'
+      }
+      return '/api/v1/ui-schemas/quotes/list'
+    }
+    if (path.includes('/orders')) {
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/orders/form'
+      }
+      return '/api/v1/ui-schemas/orders/list'
+    }
+    if (path.includes('/pricing')) {
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/pricing/form'
+      }
+      return '/api/v1/ui-schemas/pricing/list'
+    }
+    if (path.includes('/customers')) {
+      return '/api/v1/ui-schemas/customers/list'
+    }
+    if (path.includes('/analytics')) {
+      return '/api/v1/ui-schemas/analytics/dashboard'
+    }
+  }
+  
+  // Inventory routes
   if (path.includes('/products')) {
     if (path.includes('/new') || path.includes('/edit')) {
       return '/api/v1/ui-schemas/products/form'

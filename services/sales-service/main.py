@@ -20,6 +20,7 @@ from sales_module.api.quote_api import router as quote_router
 from sales_module.api.order_api import router as order_router
 from sales_module.api.pricing_api import router as pricing_router
 from sales_module.api.dashboard_api import router as dashboard_router
+from sales_module.api.ui_schemas import router as ui_schemas_router
 
 # Import UI definitions
 from sales_module.ui_definitions import SALES_UI_PACKAGE
@@ -55,6 +56,7 @@ app.include_router(quote_router)
 app.include_router(order_router)
 app.include_router(pricing_router)
 app.include_router(dashboard_router)
+app.include_router(ui_schemas_router, prefix="/api/v1")
 
 # Root endpoint
 @app.get("/")

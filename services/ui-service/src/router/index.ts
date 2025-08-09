@@ -131,33 +131,91 @@ const routes: RouteRecordRaw[] = [
   // Sales Management Routes
   {
     path: '/sales',
-    name: 'Sales',
+    redirect: '/sales/dashboard'
+  },
+  {
+    path: '/sales/dashboard',
+    name: 'SalesDashboard',
     component: () => import('@/views/sales/SalesDashboard.vue'),
-    meta: { requiresAuth: true, title: 'Sales Management' }
+    meta: { requiresAuth: true, title: 'Sales Dashboard' }
   },
   {
     path: '/sales/quotes',
-    redirect: '/sales'
+    name: 'QuotesList',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Sales Quotes' }
+  },
+  {
+    path: '/sales/quotes/new',
+    name: 'QuoteCreate',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'New Quote' }
+  },
+  {
+    path: '/sales/quotes/:id',
+    name: 'QuoteView',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'View Quote' }
+  },
+  {
+    path: '/sales/quotes/:id/edit',
+    name: 'QuoteEdit',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Edit Quote' }
   },
   {
     path: '/sales/orders',
-    redirect: '/sales'
+    name: 'OrdersList',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Sales Orders' }
+  },
+  {
+    path: '/sales/orders/new',
+    name: 'OrderCreate',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'New Order' }
+  },
+  {
+    path: '/sales/orders/:id',
+    name: 'OrderView',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'View Order' }
+  },
+  {
+    path: '/sales/orders/:id/edit',
+    name: 'OrderEdit',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Edit Order' }
+  },
+  {
+    path: '/sales/pricing',
+    name: 'PricingList',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Pricing Rules' }
+  },
+  {
+    path: '/sales/pricing/new',
+    name: 'PricingCreate',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'New Pricing Rule' }
+  },
+  {
+    path: '/sales/pricing/:id/edit',
+    name: 'PricingEdit',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Edit Pricing Rule' }
   },
   {
     path: '/sales/customers',
-    redirect: '/partners'
-  },
-  {
-    path: '/sales/products',
-    redirect: '/sales'
-  },
-  {
-    path: '/sales/invoices',
-    redirect: '/sales'
+    name: 'CustomersList',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Customers' }
   },
   {
     path: '/sales/analytics',
-    redirect: '/sales'
+    name: 'SalesAnalytics',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Sales Analytics' }
   },
   {
     path: '/:pathMatch(.*)*',
