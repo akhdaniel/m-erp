@@ -9,7 +9,14 @@ import os
 import sys
 
 # Add parent directory to path to import shared modules
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+# When running from /app/sales_module/menu_init.py, we need to add /app to the path
+current_file = os.path.abspath(__file__)
+if '/app/sales_module' in current_file:
+    # Running in Docker container
+    sys.path.insert(0, '/app')
+else:
+    # Running locally
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(current_file))))
 
 from shared.menu_registration_client import (
     MenuRegistrationClient, 
