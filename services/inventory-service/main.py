@@ -19,6 +19,7 @@ from inventory_module.api import (
     warehouses_router,
     receiving_router
 )
+from inventory_module.api.ui_schemas import router as ui_schemas_router
 from inventory_module.ui_definitions import INVENTORY_UI_PACKAGE
 
 logger = logging.getLogger(__name__)
@@ -47,6 +48,7 @@ app.include_router(products_router, prefix="/api/v1")
 app.include_router(stock_router, prefix="/api/v1")
 app.include_router(warehouses_router, prefix="/api/v1")
 app.include_router(receiving_router, prefix="/api/v1")
+app.include_router(ui_schemas_router, prefix="/api/v1")
 
 
 @app.get("/")
