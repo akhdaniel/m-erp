@@ -251,11 +251,80 @@ class Product(CompanyBusinessObject):
     # - Multi-company isolation
 ```
 
+### Service-Driven UI Framework
+
+**New in v1.1.0**: Services now control their own UI presentation through JSON schemas, eliminating the need for custom frontend code.
+
+#### How It Works
+
+1. **Services Define UI Schemas**: Backend services provide JSON schemas that describe how their data should be displayed
+2. **Generic Components Render**: The UI service uses generic components that render based on these schemas
+3. **Dynamic Loading**: When users navigate to a route, the UI fetches the schema and renders accordingly
+
+#### Example: Product List Schema
+
+```python
+# In your service (e.g., inventory_module/api/ui_schemas.py)
+@router.get("/ui-schemas/products/list")
+async def get_products_list_schema():
+    return {
+        "title": "Products",
+        "viewType": "table",
+        "endpoint": "/api/v1/products/",
+        "searchable": True,
+        "columns": [
+            {"field": "name", "label": "Product Name"},
+            {"field": "price", "label": "Price", "formatter": "currency"},
+            {"field": "stock", "label": "Stock", "cellClassFunction": "..."}
+        ],
+        "filters": [
+            {"field": "category", "type": "select", "optionsEndpoint": "/api/v1/categories"}
+        ],
+        "createRoute": "/products/new",
+        "editRoute": "/products/{id}/edit"
+    }
+```
+
+#### Example: Product Form Schema
+
+```python
+@router.get("/ui-schemas/products/form")
+async def get_products_form_schema():
+    return {
+        "title": "Product Details",
+        "endpoint": "/api/v1/products",
+        "sections": [{
+            "title": "Basic Information",
+            "fields": [
+                {"name": "name", "type": "text", "label": "Product Name", "required": True},
+                {"name": "price", "type": "number", "label": "Price", "prefix": "$"},
+                {"name": "category_id", "type": "select", "optionsEndpoint": "/api/v1/categories"}
+            ]
+        }]
+    }
+```
+
+#### Benefits
+
+- **No Frontend Changes**: Update your service schema, UI updates automatically
+- **Consistent UI**: All services use the same components for uniformity
+- **Rapid Development**: New services get full UI with just schema definitions
+- **Service Autonomy**: Each service controls its own presentation
+- **Type Safety**: Schemas can be validated with Pydantic models
+
+#### Generic Components Available
+
+- **GenericListView**: Tables, cards, or list views with sorting, filtering, pagination
+- **GenericFormView**: Dynamic forms with validation, sections, and field types
+- **GenericTreeView**: Hierarchical data display (coming soon)
+- **GenericDashboard**: Widget-based dashboards with charts and metrics
+
 ## Documentation Index
 
 ### Core Documentation
 - **[Service Development Tutorial](docs/SERVICE_DEVELOPMENT_TUTORIAL.md)** - Step-by-step service creation
 - **[Business Object Framework](docs/BUSINESS_OBJECT_FRAMEWORK.md)** - Using the development framework
+- **[Service-Driven UI Framework](docs/SERVICE_DRIVEN_UI_FRAMEWORK.md)** - Dynamic UI generation system
 - **[API Standards](docs/API_STANDARDS.md)** - REST API conventions and patterns
 - **[Integration Patterns](docs/INTEGRATION_PATTERNS.md)** - Service communication patterns
 - **[Testing Guide](docs/TESTING_GUIDE.md)** - Testing strategies and tools
@@ -333,12 +402,23 @@ class Product(CompanyBusinessObject):
 # 4. Test integration scenarios
 ```
 
-#### Extending the UI
+#### Extending the UI (Service-Driven Approach)
 ```bash
-# 1. Register UI components
-# 2. Add menu items
-# 3. Implement Vue.js components
-# 4. Test responsive design
+# 1. Define UI schemas in your service
+# 2. Register menu items via menu service
+# 3. No frontend code needed - generic components render your schemas
+# 4. Test by navigating to your routes
+
+# Example: Add a new list view
+# In your service's ui_schemas.py:
+@router.get("/ui-schemas/my-entity/list")
+async def get_my_entity_list_schema():
+    return {
+        "title": "My Entities",
+        "endpoint": "/api/v1/my-entities/",
+        "columns": [...],
+        "filters": [...]
+    }
 ```
 
 ---
