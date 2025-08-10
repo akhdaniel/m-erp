@@ -45,7 +45,7 @@ body, html {
 
 /* Glass morphism card style */
 .glass-card {
-  background: rgba(255, 255, 255, 0.92); /* More opaque for better readability */
+  background: rgba(255, 255, 255, 0.06); /* More opaque for better readability */
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -208,7 +208,7 @@ nav {
   }
 
   .glass-card {
-    background: rgba(31, 41, 55, 0.85);
+    background: rgba(255, 255, 255, 0.29);
     border: 1px solid rgba(75, 85, 99, 0.3);
     color: #f3f4f6;
   }
@@ -272,7 +272,7 @@ nav {
   }
   
   .glass-card .text-sm {
-    color: #d1d5db !important;
+    color: #fffffff2 !important;
   }
   
   .glass-card label {
@@ -376,28 +376,28 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Brighter text colors for better readability */
 .text-gray-900 {
-  color: #111827 !important;
+  color: #f0f0f0 !important;
 }
 
 .text-gray-800 {
-  color: #1f2937 !important;
+  color: #e1ebfb !important;
 }
 
 .text-gray-700 {
-  color: #374151 !important;
+  color: #e1ebfb !important;
 }
 
 .text-gray-600 {
-  color: #4b5563 !important;
+  color: #e1ebfb !important;
 }
 
 .text-gray-500 {
-  color: #6b7280 !important;
+  color: #e1ebfb !important;
 }
 
 /* Make labels and descriptions more visible */
 label {
-  color: #1f2937 !important;
+  color: #f8fbff !important;
   font-weight: 500;
 }
 
