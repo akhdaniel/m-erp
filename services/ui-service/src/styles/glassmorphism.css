@@ -13,10 +13,12 @@
 }
 
 /* Page gradient background */
-body {
+body, html {
   background: var(--theme-primary-gradient);
   background-attachment: fixed;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 /* Main content wrapper with subtle overlay */

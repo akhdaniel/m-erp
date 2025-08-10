@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col bg-gray-50 overflow-hidden">
+  <div class="h-screen flex flex-col overflow-hidden">
     <!-- Navigation - Fixed at top -->
     <nav class="relative glass-header shadow-lg border-b border-gray-200/30 flex-shrink-0">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,7 +56,7 @@
                     leave-from-class="transform opacity-100 scale-100"
                     leave-to-class="transform opacity-0 scale-95"
                   >
-                    <MenuItems class="absolute left-0 z-10 mt-2 w-56 origin-top-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <MenuItems class="absolute left-0 mt-2 w-56 origin-top-left rounded-md glass-panel py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" style="z-index: 9999;">
                       <MenuItem
                         v-for="child in menu.children"
                         :key="child.id"
@@ -108,7 +108,7 @@
                 leave-from-class="transform opacity-100 scale-100"
                 leave-to-class="transform opacity-0 scale-95"
               >
-                <MenuItems class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                <MenuItems class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 glass-panel ring-1 ring-black ring-opacity-5 focus:outline-none" style="z-index: 9999;">
                   <MenuItem v-slot="{ active }">
                     <router-link
                       to="/profile"
@@ -152,7 +152,7 @@
       </div>
       
       <!-- Mobile menu - Absolute positioned overlay -->
-      <div v-show="mobileMenuOpen" class="sm:hidden absolute top-16 left-0 right-0 bg-white shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-y-auto">
+      <div v-show="mobileMenuOpen" class="sm:hidden absolute top-16 left-0 right-0 glass-panel shadow-lg z-40 max-h-[calc(100vh-4rem)] overflow-y-auto">
         <div class="pt-2 pb-3 space-y-1">
           <!-- Always show Dashboard -->
           <router-link
@@ -248,7 +248,7 @@
     </nav>
     
     <!-- Main content - Scrollable area -->
-    <main class="flex-1 overflow-y-auto">
+    <main class="flex-1 overflow-y-auto bg-transparent">
       <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <slot />

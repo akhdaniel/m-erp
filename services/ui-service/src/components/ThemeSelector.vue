@@ -130,7 +130,8 @@ function selectTheme(theme: ThemeColor) {
 
 .theme-dropdown {
   @apply absolute right-0 mt-2 w-72 rounded-lg shadow-xl;
-  @apply z-50 border;
+  @apply border;
+  z-index: 9999;
 }
 
 .glass-morphism {
