@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen flex flex-col bg-gray-50 overflow-hidden">
     <!-- Navigation - Fixed at top -->
-    <nav class="relative bg-white shadow-sm border-b border-gray-200 flex-shrink-0">
+    <nav class="relative glass-header shadow-lg border-b border-gray-200/30 flex-shrink-0">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <div class="flex">
@@ -84,7 +84,10 @@
           </div>
           
           <!-- User menu -->
-          <div class="hidden sm:ml-6 sm:flex sm:items-center">
+          <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+            <!-- Theme Selector -->
+            <ThemeSelector />
+            
             <Menu as="div" class="ml-3 relative">
               <div>
                 <MenuButton class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
@@ -266,6 +269,7 @@ import { Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/vue/24/outline
 import { useAuthStore } from '@/stores/auth'
 import { useMenuStore } from '@/stores/menu'
 import NotificationCenter from './NotificationCenter.vue'
+import ThemeSelector from './ThemeSelector.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

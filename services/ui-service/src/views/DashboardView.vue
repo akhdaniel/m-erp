@@ -11,7 +11,7 @@
 
       <!-- Stats cards -->
       <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="card">
+        <div class="glass-card">
           <div class="card-body">
             <div class="flex items-center">
               <div class="flex-shrink-0">
@@ -31,7 +31,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="glass-card">
           <div class="card-body">
             <div class="flex items-center">
               <div class="flex-shrink-0">
@@ -51,7 +51,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="glass-card">
           <div class="card-body">
             <div class="flex items-center">
               <div class="flex-shrink-0">
@@ -75,7 +75,7 @@
       </div>
 
       <!-- Quick actions -->
-      <div class="card">
+      <div class="glass-card">
         <div class="card-header">
           <h3 class="text-lg leading-6 font-medium text-gray-900">
             Quick Actions
@@ -145,7 +145,7 @@
       </div>
 
       <!-- Recent activity (placeholder) -->
-      <div class="card">
+      <div class="glass-card">
         <div class="card-header">
           <h3 class="text-lg leading-6 font-medium text-gray-900">
             Recent Activity

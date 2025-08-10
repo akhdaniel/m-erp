@@ -1,0 +1,292 @@
+/* Glassmorphism Theme Styles */
+
+:root {
+  /* Default blue theme */
+  --theme-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --theme-secondary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --theme-glass-bg: rgba(99, 102, 241, 0.1);
+  --theme-glass-border: rgba(99, 102, 241, 0.2);
+  --theme-text-primary: #4f46e5;
+  --theme-text-secondary: #6366f1;
+  --theme-button-primary: #4f46e5;
+  --theme-button-hover: #4338ca;
+}
+
+/* Page gradient background */
+body {
+  background: var(--theme-primary-gradient);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Main content wrapper with subtle overlay */
+#app {
+  position: relative;
+}
+
+#app::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glass morphism card style */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  border-radius: 0.75rem;
+}
+
+/* Glass morphism header style */
+.glass-header {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+}
+
+/* Glass morphism panel style */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
+  border-radius: 0.5rem;
+}
+
+/* Glass morphism button style */
+.glass-button {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.1);
+  transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Themed primary button */
+.btn-primary-themed {
+  background: var(--theme-button-primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary-themed:hover {
+  background: var(--theme-button-hover);
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Update existing components with glass morphism */
+.bg-white {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.shadow-sm {
+  box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.1) !important;
+}
+
+.shadow {
+  box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.15) !important;
+}
+
+.shadow-lg {
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2) !important;
+}
+
+/* Table glass effect */
+table {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+thead {
+  background: rgba(249, 250, 251, 0.95) !important;
+}
+
+tbody tr:hover {
+  background: rgba(249, 250, 251, 0.6) !important;
+}
+
+/* Form inputs with glass effect */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(229, 231, 235, 0.8) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: var(--theme-text-primary) !important;
+  box-shadow: 0 0 0 3px var(--theme-glass-bg) !important;
+}
+
+/* Navigation with glass effect */
+nav {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.9) 100%
+  ) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.3);
+}
+
+/* Sidebar with glass effect */
+.sidebar {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(229, 231, 235, 0.3);
+}
+
+/* Modal/Dialog glass effect */
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: var(--theme-primary-gradient);
+  }
+
+  .glass-card {
+    background: rgba(31, 41, 55, 0.85);
+    border: 1px solid rgba(75, 85, 99, 0.3);
+  }
+
+  .glass-header {
+    background: linear-gradient(
+      135deg,
+      rgba(31, 41, 55, 0.95) 0%,
+      rgba(31, 41, 55, 0.85) 100%
+    );
+    border: 1px solid rgba(75, 85, 99, 0.3);
+  }
+
+  .glass-panel {
+    background: rgba(31, 41, 55, 0.75);
+    border: 1px solid rgba(75, 85, 99, 0.25);
+  }
+
+  .glass-button {
+    background: rgba(31, 41, 55, 0.65);
+    border: 1px solid rgba(75, 85, 99, 0.3);
+  }
+
+  .glass-button:hover {
+    background: rgba(31, 41, 55, 0.85);
+  }
+
+  .bg-white {
+    background: rgba(31, 41, 55, 0.85) !important;
+  }
+
+  table {
+    background: rgba(31, 41, 55, 0.9) !important;
+  }
+
+  thead {
+    background: rgba(55, 65, 81, 0.95) !important;
+  }
+
+  tbody tr:hover {
+    background: rgba(55, 65, 81, 0.6) !important;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="datetime-local"],
+  select,
+  textarea {
+    background: rgba(31, 41, 55, 0.8) !important;
+    border: 1px solid rgba(75, 85, 99, 0.8) !important;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    background: rgba(31, 41, 55, 0.95) !important;
+  }
+
+  nav {
+    background: linear-gradient(
+      135deg,
+      rgba(31, 41, 55, 0.95) 0%,
+      rgba(31, 41, 55, 0.9) 100%
+    ) !important;
+    border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+  }
+
+  .sidebar {
+    background: rgba(31, 41, 55, 0.85) !important;
+    border-right: 1px solid rgba(75, 85, 99, 0.3);
+  }
+
+  .modal-content {
+    background: rgba(31, 41, 55, 0.95) !important;
+    border: 1px solid rgba(75, 85, 99, 0.3);
+  }
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
