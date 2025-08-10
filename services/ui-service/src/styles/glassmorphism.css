@@ -46,8 +46,8 @@ body, html {
 /* Glass morphism card style */
 .glass-card {
   background: rgba(255, 255, 255, 0.06); /* More opaque for better readability */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  /* backdrop-filter: blur(20px); */
+  /* -webkit-backdrop-filter: blur(20px); */
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
   border-radius: 0.75rem;
@@ -113,7 +113,7 @@ body, html {
 
 /* Update existing components with glass morphism */
 .bg-white {
-  background: rgba(255, 255, 255, 0.85) !important;
+  background: rgba(255, 255, 255, 0.53) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -272,11 +272,11 @@ nav {
   }
   
   .glass-card .text-sm {
-    color: #fffffff2 !important;
+    color:#ffffffd8 !important;
   }
   
   .glass-card label {
-    color: #f3f4f6 !important;
+    color: #ffffffaa !important;
   }
   
   .glass-card input,
@@ -309,9 +309,6 @@ nav {
     background: rgba(31, 41, 55, 0.85);
   }
 
-  .bg-white {
-    background: rgba(31, 41, 55, 0.85) !important;
-  }
 
   table {
     background: rgba(31, 41, 55, 0.9) !important;
@@ -423,12 +420,12 @@ nav a.border-primary-500 {
 
 /* Table text */
 table th {
-  color: #111827 !important;
+  color: #e3ecff !important;
   font-weight: 600;
 }
 
 table td {
-  color: #1f2937 !important;
+  color: #e3ecff !important;
 }
 
 /* Card text */
@@ -438,15 +435,15 @@ table td {
 .glass-card h4,
 .glass-card h5,
 .glass-card h6 {
-  color: #111827 !important;
+  color: #e3ecff !important;
 }
 
 .glass-card p {
-  color: #374151 !important;
+  color: #e3ecff !important;
 }
 
 .glass-card .text-sm {
-  color: #4b5563 !important;
+  color: #ffffff !important;
 }
 
 /* Button text */
@@ -461,14 +458,14 @@ button {
 
 /* Form labels and text */
 .glass-card label {
-  color: #1f2937 !important;
+  color: #edf4ff !important;
   font-weight: 500;
 }
 
 .glass-card input,
 .glass-card select,
 .glass-card textarea {
-  color: #111827 !important;
+  color: #fafcff !important;
 }
 
 /* Links */
