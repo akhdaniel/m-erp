@@ -508,8 +508,8 @@ function getCellClass(item: any, column: any): string {
 
 function getActionClasses(action: any): string {
   const baseClasses = action.variant === 'primary' 
-    ? 'border-transparent text-white bg-primary-600 hover:bg-primary-700'
-    : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50'
+    ? 'border-transparent hover:bg-primary-700 hover:border-gray-300 hover:bg-gray-50 rounded-md '
+    : 'border-gray-300 text-gray-700  hover:bg-gray-50  hover:text-red rounded-md '
   return `${baseClasses} ${action.class || ''}`
 }
 

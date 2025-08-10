@@ -32,8 +32,8 @@ const themes: Record<ThemeColor, ThemeConfig> = {
   'dark-red': {
     name: 'Crimson Night',
     color: 'dark-red',
-    primaryGradient: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
-    secondaryGradient: 'linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%)',
+    primaryGradient: 'linear-gradient(135deg, #aa1515ff 0%, #81057fff 100%)',
+    secondaryGradient: 'linear-gradient(135deg, #b91e1eff 0%, #7f1d1d 100%)',
     glassBackground: 'rgba(220, 38, 38, 0.1)',
     glassBorder: 'rgba(220, 38, 38, 0.2)',
     textPrimary: '#dc2626',
@@ -44,7 +44,7 @@ const themes: Record<ThemeColor, ThemeConfig> = {
   'purple': {
     name: 'Royal Purple',
     color: 'purple',
-    primaryGradient: 'linear-gradient(135deg, #9333ea 0%, #6b21a8 100%)',
+    primaryGradient: 'linear-gradient(135deg, #9333ea 0%, #5c0447ff 100%)',
     secondaryGradient: 'linear-gradient(135deg, #7c3aed 0%, #581c87 100%)',
     glassBackground: 'rgba(147, 51, 234, 0.1)',
     glassBorder: 'rgba(147, 51, 234, 0.2)',

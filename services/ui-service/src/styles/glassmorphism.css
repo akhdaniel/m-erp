@@ -80,8 +80,8 @@ body, html {
 /* Glass morphism button style */
 .glass-button {
   background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  /* backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); */
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.1);
   transition: all 0.3s ease;
@@ -114,8 +114,8 @@ body, html {
 /* Update existing components with glass morphism */
 .bg-white {
   background: rgba(255, 255, 255, 0.53) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  /* backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); */
 }
 
 .shadow-sm {
@@ -153,8 +153,8 @@ input[type="datetime-local"],
 select,
 textarea {
   background: rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  /* backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px); */
   border: 1px solid rgba(229, 231, 235, 0.8) !important;
 }
 
@@ -236,6 +236,10 @@ nav {
   
   .text-gray-500 {
     color: #9ca3af !important;
+  }
+    
+  .text-gray-400 {
+    color: rgb(219, 232, 255) !important;
   }
   
   label {
@@ -367,7 +371,7 @@ nav {
 
 /* Enhanced text colors for better contrast */
 h1, h2, h3, h4, h5, h6 {
-  color: #111827 !important; /* Near black for headings */
+  color: #e7e8e9 !important; /* Near black for headings */
   font-weight: 600;
 }
 
@@ -399,7 +403,7 @@ label {
 }
 
 p {
-  color: #374151 !important;
+  color: #f1f6ff !important;
 }
 
 /* Navigation text */
@@ -410,6 +414,10 @@ nav a {
 
 nav a:hover {
   color: var(--theme-text-primary) !important;
+}
+
+a {
+  text-decoration: none !important;
 }
 
 /* Active navigation items */
@@ -485,7 +493,7 @@ a:hover {
 
 .text-green-800,
 .text-green-600 {
-  color: #166534 !important;
+  color:#20ee6e !important;
   font-weight: 600;
 }
 
@@ -495,17 +503,17 @@ a:hover {
 
 .text-yellow-800,
 .text-yellow-600 {
-  color: #854d0e !important;
+  color: #f2ff04 !important;
   font-weight: 600;
 }
 
 .bg-red-100 {
-  background: rgba(239, 68, 68, 0.2) !important;
+  background: rgba(231, 44, 44, 0.2) !important;
 }
 
 .text-red-800,
 .text-red-600 {
-  color: #991b1b !important;
+  color: #da1b1b !important;
   font-weight: 600;
 }
 
@@ -515,7 +523,7 @@ a:hover {
 
 .text-blue-800,
 .text-blue-600 {
-  color: #1e40af !important;
+  color: #3d6bff !important;
   font-weight: 600;
 }
 
