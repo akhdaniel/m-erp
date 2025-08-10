@@ -83,7 +83,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/inventory',
     name: 'Inventory',
-    component: () => import('@/views/inventory/InventoryDashboard.vue'),
+    component: () => import('@/views/DynamicDashboard.vue'),
     meta: { requiresAuth: true, title: 'Inventory Management' }
   },
   {
@@ -136,7 +136,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/sales/dashboard',
     name: 'SalesDashboard',
-    component: () => import('@/views/sales/SalesDashboard.vue'),
+    component: () => import('@/views/DynamicDashboard.vue'),
     meta: { requiresAuth: true, title: 'Sales Dashboard' }
   },
   {

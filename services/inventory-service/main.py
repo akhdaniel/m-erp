@@ -102,10 +102,44 @@ async def initialize_menus_and_ui():
     # Register UI components
     try:
         from shared.ui_registration_client import register_service_ui
+        import httpx
+        
         register_service_ui("inventory-service", INVENTORY_UI_PACKAGE)
         logger.info("UI components registered successfully")
+        
     except Exception as e:
         logger.error(f"Failed to register UI components: {e}")
+    
+    # Register dashboard in background after service is fully started
+    async def register_dashboard_delayed():
+        await asyncio.sleep(10)  # Wait for service to be fully started
+        logger.info("Attempting to register dashboard with UI Registry...")
+        async with httpx.AsyncClient() as client:
+            try:
+                # Get dashboard schema from our own endpoint
+                logger.info("Fetching dashboard schema from local endpoint...")
+                dashboard_response = await client.get("http://localhost:8005/api/v1/ui-schemas/dashboard")
+                if dashboard_response.status_code == 200:
+                    dashboard_config = dashboard_response.json()
+                    logger.info(f"Got dashboard config: {dashboard_config.get('title', 'Unknown')}")
+                    
+                    # Register with UI Registry
+                    logger.info("Registering dashboard with UI Registry...")
+                    registry_response = await client.post(
+                        "http://ui-registry-service:8010/api/v1/services/inventory/dashboard",
+                        json=dashboard_config
+                    )
+                    if registry_response.status_code == 200:
+                        logger.info("Dashboard registered with UI Registry successfully")
+                    else:
+                        logger.error(f"Failed to register dashboard: {registry_response.status_code} - {registry_response.text}")
+                else:
+                    logger.error(f"Failed to get dashboard schema: {dashboard_response.status_code} - {dashboard_response.text}")
+            except Exception as e:
+                logger.error(f"Exception during dashboard registration: {e}")
+    
+    # Run dashboard registration in background
+    asyncio.create_task(register_dashboard_delayed())
 
 
 @app.exception_handler(Exception)

@@ -165,6 +165,30 @@ async def unregister_component(service: str, component_id: str):
     redis_client.srem(f"ui:service:{service}:components", component_id)
     return {"status": "unregistered"}
 
+# Dashboard Registration
+
+@app.post("/api/v1/services/{service}/dashboard")
+async def register_dashboard(service: str, dashboard: Dict[str, Any]):
+    """Register a complete dashboard configuration for a service"""
+    key = f"ui:dashboard:{service}"
+    redis_client.setex(
+        key,
+        86400,  # 24 hour TTL
+        json.dumps(dashboard)
+    )
+    return {"status": "registered", "service": service}
+
+@app.get("/api/v1/services/{service}/dashboard")
+async def get_dashboard(service: str):
+    """Get the dashboard configuration for a service"""
+    key = f"ui:dashboard:{service}"
+    data = redis_client.get(key)
+    
+    if not data:
+        raise HTTPException(status_code=404, detail=f"Dashboard not found for service: {service}")
+    
+    return json.loads(data)
+
 # Dashboard Widget Registration
 
 @app.post("/api/v1/dashboard/widgets")

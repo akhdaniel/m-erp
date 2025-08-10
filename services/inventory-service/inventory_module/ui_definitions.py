@@ -10,7 +10,7 @@ INVENTORY_UI_PACKAGE = {
         {
             "id": "inventory-dashboard",
             "type": "dashboard",
-            "title": "Inventory Dashboard",
+            "title": "Inventory Dashboard 2",
             "description": "Overview of inventory metrics and status",
             "path": "/inventory",
             "icon": "warehouse",

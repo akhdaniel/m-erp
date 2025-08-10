@@ -9,6 +9,112 @@ from typing import Any, Dict
 router = APIRouter(prefix="/ui-schemas", tags=["UI Schemas"])
 
 
+@router.get("/dashboard")
+async def get_dashboard_schema() -> Dict[str, Any]:
+    """Get UI schema for inventory dashboard"""
+    return {
+        "title": "Inventory Dashboard",
+        "description": "Overview of inventory status and key metrics",
+        "viewType": "dashboard",
+        "refreshInterval": 30000,  # 30 seconds
+        "layout": {
+            "columns": 3,
+            "rows": "auto"
+        },
+        "widgets": [
+            {
+                "id": "total_products",
+                "type": "metric",
+                "title": "Total Products",
+                "endpoint": "/api/v1/products/statistics",
+                "valueField": "total_products",
+                "format": "number",
+                "icon": "package",
+                "color": "blue",
+                "span": 1
+            },
+            {
+                "id": "active_products",
+                "type": "metric",
+                "title": "Active Products",
+                "endpoint": "/api/v1/products/statistics",
+                "valueField": "active_products",
+                "format": "number",
+                "icon": "check-circle",
+                "color": "green",
+                "span": 1
+            },
+            {
+                "id": "low_stock",
+                "type": "metric",
+                "title": "Low Stock Items",
+                "endpoint": "/api/v1/stock/low-stock",
+                "valueField": "count",
+                "format": "number",
+                "icon": "alert-triangle",
+                "color": "orange",
+                "span": 1
+            },
+            {
+                "id": "stock_value",
+                "type": "metric",
+                "title": "Total Stock Value",
+                "endpoint": "/api/v1/stock/statistics",
+                "valueField": "total_value",
+                "format": "currency",
+                "icon": "dollar-sign",
+                "color": "green",
+                "span": 1
+            },
+            {
+                "id": "warehouses",
+                "type": "metric",
+                "title": "Active Warehouses",
+                "endpoint": "/api/v1/warehouses/statistics",
+                "valueField": "active_warehouses",
+                "format": "number",
+                "icon": "building",
+                "color": "purple",
+                "span": 1
+            },
+            {
+                "id": "pending_receipts",
+                "type": "metric",
+                "title": "Pending Receipts",
+                "endpoint": "/api/v1/receiving/statistics",
+                "valueField": "pending_count",
+                "format": "number",
+                "icon": "inbox",
+                "color": "yellow",
+                "span": 1
+            },
+            {
+                "id": "stock_movements",
+                "type": "list",
+                "title": "Recent Stock Movements",
+                "endpoint": "/api/v1/stock/movements?limit=5",
+                "limit": 5,
+                "span": 2,
+                "columns": [
+                    {"field": "product_name", "label": "Product"},
+                    {"field": "movement_type", "label": "Type"},
+                    {"field": "quantity", "label": "Qty"},
+                    {"field": "created_at", "label": "Date", "formatter": "date"}
+                ]
+            },
+            {
+                "id": "stock_levels_chart",
+                "type": "chart",
+                "title": "Stock Levels by Category",
+                "endpoint": "/api/v1/stock/by-category",
+                "chartType": "bar",
+                "span": 1,
+                "height": 300
+            }
+        ]
+    }
+
+
 @router.get("/products/list")
 async def get_products_list_schema() -> Dict[str, Any]:
     """Get UI schema for products list view"""
