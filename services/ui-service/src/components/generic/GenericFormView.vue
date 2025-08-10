@@ -455,9 +455,14 @@ async function loadFieldOptions() {
 
 async function loadOptions(field: any) {
   try {
-    const url = props.serviceUrl 
-      ? `${props.serviceUrl}${field.optionsEndpoint}`
-      : field.optionsEndpoint
+    // Check if the optionsEndpoint is already a full URL
+    let url = field.optionsEndpoint
+    if (!field.optionsEndpoint.startsWith('http://') && !field.optionsEndpoint.startsWith('https://')) {
+      // Only prepend serviceUrl if the endpoint is not already a full URL
+      url = props.serviceUrl 
+        ? `${props.serviceUrl}${field.optionsEndpoint}`
+        : field.optionsEndpoint
+    }
       
     const response = await fetch(url)
     if (!response.ok) throw new Error('Failed to load options')
@@ -466,12 +471,18 @@ async function loadOptions(field: any) {
     
     // Handle different response formats
     let options = []
-    if (Array.isArray(data)) {
+    if (field.optionsDataPath) {
+      // Use specified data path if provided
+      options = getNestedValue(data, field.optionsDataPath) || []
+    } else if (Array.isArray(data)) {
       options = data
     } else if (data.items) {
       options = data.items
     } else if (data.data) {
       options = data.data
+    } else if (data.partners) {
+      // Handle partners response format
+      options = data.partners
     }
     
     // Map to label/value format
@@ -572,6 +583,10 @@ function executeAction(action: any) {
 }
 
 // Utility functions
+function getNestedValue(obj: any, path: string): any {
+  return path.split('.').reduce((curr, prop) => curr?.[prop], obj)
+}
+
 function getFieldOptions(field: any): any[] {
   return fieldOptions.value[field.name] || field.options || []
 }

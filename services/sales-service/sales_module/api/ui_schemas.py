@@ -685,6 +685,7 @@ async def get_customers_list_schema() -> Dict[str, Any]:
         "description": "Manage customer accounts",
         "viewType": "table",
         "endpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
+        "dataPath": "partners",  # Tell the UI where to find the data in the response
         "searchable": True,
         "paginated": True,
         "columns": [
