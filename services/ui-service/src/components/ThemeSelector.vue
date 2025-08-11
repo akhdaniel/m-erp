@@ -45,7 +45,7 @@
           >
             <div class="theme-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"></div>
             <div class="flex-1 text-left">
-              <div class="font-medium">Ocean Blue</div>
+              <div class="font-medium text-gray-300">Ocean Blue</div>
               <div class="text-xs text-gray-500">Cool & Professional</div>
             </div>
             <svg v-if="themeStore.currentTheme === 'blue'" class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -61,7 +61,7 @@
           >
             <div class="theme-preview" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%)"></div>
             <div class="flex-1 text-left">
-              <div class="font-medium">Crimson Night</div>
+              <div class="font-medium text-gray-300">Crimson Night</div>
               <div class="text-xs text-gray-500">Bold & Energetic</div>
             </div>
             <svg v-if="themeStore.currentTheme === 'dark-red'" class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -77,7 +77,7 @@
           >
             <div class="theme-preview" style="background: linear-gradient(135deg, #9333ea 0%, #6b21a8 100%)"></div>
             <div class="flex-1 text-left">
-              <div class="font-medium">Royal Purple</div>
+              <div class="font-medium text-gray-300">Royal Purple</div>
               <div class="text-xs text-gray-500">Elegant & Modern</div>
             </div>
             <svg v-if="themeStore.currentTheme === 'purple'" class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">

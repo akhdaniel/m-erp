@@ -46,8 +46,8 @@
         </div>
         <div class="ml-3">
           <h3 class="text-sm font-medium text-red-800">Error</h3>
-          <div class="mt-2 text-sm text-red-700">
-            <p>{{ error }}</p>
+          <div class="mt-2 text-sm ">
+            <p class="text-red-700">{{ error }}</p>
           </div>
         </div>
       </div>
@@ -275,6 +275,7 @@
                 :field="field"
                 :disabled="field.disabled"
                 :required="field.required"
+                v-bind="field.props || {}"
               />
 
               <!-- Computed/Display Field -->
@@ -423,9 +424,42 @@ async function loadRecord() {
     // Map data to form
     Object.keys(data).forEach(key => {
       if (formData.value.hasOwnProperty(key)) {
-        formData.value[key] = data[key]
+        // Check if there's a field definition for this key
+        let fieldDef = null
+        props.schema.sections?.forEach((section: any) => {
+          const field = section.fields?.find((f: any) => f.name === key)
+          if (field) fieldDef = field
+        })
+        
+        // Handle different field types
+        if (fieldDef) {
+          if (fieldDef.type === 'date' && data[key]) {
+            // Convert ISO date to YYYY-MM-DD format for date input
+            formData.value[key] = data[key].split('T')[0]
+          } else if (fieldDef.type === 'datetime-local' && data[key]) {
+            // Convert ISO datetime to datetime-local format
+            formData.value[key] = data[key].substring(0, 16) // YYYY-MM-DDTHH:mm
+          } else if (fieldDef.type === 'component' && fieldDef.component === 'LineItemsManager') {
+            // Handle line items - check both 'line_items' and 'items' fields
+            formData.value[key] = data.line_items || data.items || []
+          } else {
+            formData.value[key] = data[key]
+          }
+        } else {
+          formData.value[key] = data[key]
+        }
       }
     })
+    
+    // Also check for line_items if the form has that field but API returns items
+    if (formData.value.hasOwnProperty('line_items') && !data.line_items && data.items) {
+      formData.value.line_items = data.items
+    }
+    
+    // Map API field names to form field names
+    if (formData.value.hasOwnProperty('quote_date') && data.valid_from) {
+      formData.value.quote_date = data.valid_from.split('T')[0]
+    }
     
     originalData.value = { ...formData.value }
   } catch (err: any) {
@@ -516,12 +550,21 @@ async function handleSubmit() {
   try {
     const method = isEditMode.value ? 'PUT' : 'POST'
     
+    // Prepare submission data - handle line_items special case
+    const submitData = { ...formData.value }
+    
+    // If we have line_items, we may need to rename it to items for the API
+    if (submitData.line_items && !submitData.items) {
+      submitData.items = submitData.line_items
+      delete submitData.line_items
+    }
+    
     const response = await fetch(apiUrl.value, {
       method,
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(formData.value)
+      body: JSON.stringify(submitData)
     })
     
     if (!response.ok) {

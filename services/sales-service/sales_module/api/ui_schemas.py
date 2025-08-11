@@ -124,6 +124,7 @@ async def get_quotes_list_schema() -> Dict[str, Any]:
         "description": "Manage customer quotations",
         "viewType": "table",
         "endpoint": "/api/v1/quotes/",
+        "dataPath": "quotes",  # Tell the UI where to find the data in the response
         "searchable": True,
         "searchPlaceholder": "Search quotes...",
         "searchParam": "search",
@@ -275,16 +276,24 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
         "cancelRoute": "/sales/quotes",
         "sections": [
             {
-                "id": "customer",
-                "title": "Customer Information",
+                "id": "basic",
+                "title": "Quote Information",
                 "gridClass": "grid-cols-2",
                 "fields": [
+                    {
+                        "name": "title",
+                        "label": "Quote Title",
+                        "type": "text",
+                        "required": True,
+                        "colSpan": 1,
+                        "placeholder": "Enter a descriptive title for this quote"
+                    },
                     {
                         "name": "customer_id",
                         "label": "Customer",
                         "type": "select",
                         "required": True,
-                        "colSpan": 2,
+                        "colSpan": 1,
                         "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
@@ -300,82 +309,48 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
                     {
                         "name": "valid_until",
                         "label": "Valid Until",
-                        "type": "date",
-                        "required": True,
+                        "type": "datetime-local",
+                        "required": False,
                         "help": "Quote expiration date",
                         "compute": """
                             function(data) {
                                 if (data.quote_date) {
                                     const date = new Date(data.quote_date);
                                     date.setDate(date.getDate() + 30);
-                                    return date.toISOString().split('T')[0];
+                                    return date.toISOString().slice(0, 16);
                                 }
                                 return null;
                             }
                         """
+                    },
+                    {
+                        "name": "description",
+                        "label": "Description",
+                        "type": "textarea",
+                        "rows": 2,
+                        "colSpan": 2,
+                        "placeholder": "Additional quote details or notes"
                     }
                 ]
             },
             {
                 "id": "items",
                 "title": "Quote Items",
+                "gridClass": "grid-cols-2",
                 "fields": [
                     {
-                        "name": "items",
-                        "type": "array",
-                        "label": "Line Items",
+                        "name": "line_items",
+                        "type": "component",
+                        "component": "LineItemsManager",
+                        "label": "Quote Items",
                         "required": True,
-                        "minItems": 1,
-                        "itemFields": [
-                            {
-                                "name": "product_id",
-                                "label": "Product",
-                                "type": "select",
-                                "required": True,
-                                "optionsEndpoint": "http://localhost:8005/api/v1/products",
-                                "optionLabelField": "name",
-                                "optionValueField": "id"
-                            },
-                            {
-                                "name": "quantity",
-                                "label": "Quantity",
-                                "type": "number",
-                                "required": True,
-                                "min": 1,
-                                "defaultValue": 1
-                            },
-                            {
-                                "name": "unit_price",
-                                "label": "Unit Price",
-                                "type": "number",
-                                "required": True,
-                                "prefix": "$",
-                                "step": 0.01
-                            },
-                            {
-                                "name": "discount_percent",
-                                "label": "Discount %",
-                                "type": "number",
-                                "min": 0,
-                                "max": 100,
-                                "defaultValue": 0
-                            },
-                            {
-                                "name": "line_total",
-                                "label": "Total",
-                                "type": "display",
-                                "prefix": "$",
-                                "compute": """
-                                    function(item) {
-                                        const qty = item.quantity || 0;
-                                        const price = item.unit_price || 0;
-                                        const discount = item.discount_percent || 0;
-                                        const subtotal = qty * price;
-                                        return subtotal - (subtotal * discount / 100);
-                                    }
-                                """
-                            }
-                        ]
+                        "colSpan": 2,
+                        "props": {
+                            # "title": "Quote Items",
+                            "entityType": "quote",
+                            "taxRate": 0,
+                            "productApiUrl": "http://localhost:8006/api/v1/products"
+                        }
                     }
                 ]
             },
@@ -384,23 +359,36 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
                 "title": "Terms & Conditions",
                 "fields": [
                     {
-                        "name": "payment_terms",
-                        "label": "Payment Terms",
+                        "name": "payment_terms_days",
+                        "label": "Payment Terms (Days)",
                         "type": "select",
                         "options": [
-                            {"value": "net30", "label": "Net 30"},
-                            {"value": "net60", "label": "Net 60"},
-                            {"value": "due_on_receipt", "label": "Due on Receipt"},
-                            {"value": "2_10_net30", "label": "2/10 Net 30"}
+                            {"value": 30, "label": "Net 30"},
+                            {"value": 60, "label": "Net 60"},
+                            {"value": 0, "label": "Due on Receipt"},
+                            {"value": 10, "label": "Net 10"}
                         ],
-                        "defaultValue": "net30"
+                        "defaultValue": 30
                     },
                     {
-                        "name": "notes",
-                        "label": "Notes",
+                        "name": "delivery_terms",
+                        "label": "Delivery Terms",
+                        "type": "text",
+                        "placeholder": "e.g., FOB, Ex Works, etc."
+                    },
+                    {
+                        "name": "internal_notes",
+                        "label": "Internal Notes",
+                        "type": "textarea",
+                        "rows": 2,
+                        "placeholder": "Internal notes (not visible to customer)"
+                    },
+                    {
+                        "name": "terms_and_conditions",
+                        "label": "Terms and Conditions",
                         "type": "textarea",
                         "rows": 3,
-                        "placeholder": "Additional notes or terms"
+                        "placeholder": "Terms and conditions for the quote"
                     }
                 ]
             }
@@ -769,16 +757,24 @@ async def get_orders_form_schema() -> Dict[str, Any]:
         "cancelRoute": "/sales/orders",
         "sections": [
             {
-                "id": "customer",
-                "title": "Customer Information",
+                "id": "basic",
+                "title": "Order Information",
                 "gridClass": "grid-cols-2",
                 "fields": [
+                    {
+                        "name": "title",
+                        "label": "Order Title",
+                        "type": "text",
+                        "required": True,
+                        "colSpan": 1,
+                        "placeholder": "Enter a descriptive title for this order"
+                    },
                     {
                         "name": "customer_id",
                         "label": "Customer",
                         "type": "select",
                         "required": True,
-                        "colSpan": 2,
+                        "colSpan": 1,
                         "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
@@ -797,69 +793,35 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                         "type": "date",
                         "required": True,
                         "help": "Expected delivery date"
+                    },
+                    {
+                        "name": "description",
+                        "label": "Description",
+                        "type": "textarea",
+                        "rows": 2,
+                        "colSpan": 2,
+                        "placeholder": "Additional order details or notes"
                     }
                 ]
             },
             {
                 "id": "items",
                 "title": "Order Items",
+                "gridClass": "grid-cols-2",
                 "fields": [
                     {
-                        "name": "items",
-                        "type": "array",
-                        "label": "Line Items",
+                        "name": "line_items",
+                        "type": "component",
+                        "component": "LineItemsManager",
+                        "label": "Order Items",
                         "required": True,
-                        "minItems": 1,
-                        "itemFields": [
-                            {
-                                "name": "product_id",
-                                "label": "Product",
-                                "type": "select",
-                                "required": True,
-                                "optionsEndpoint": "http://localhost:8005/api/v1/products",
-                                "optionLabelField": "name",
-                                "optionValueField": "id"
-                            },
-                            {
-                                "name": "quantity",
-                                "label": "Quantity",
-                                "type": "number",
-                                "required": True,
-                                "min": 1,
-                                "defaultValue": 1
-                            },
-                            {
-                                "name": "unit_price",
-                                "label": "Unit Price",
-                                "type": "number",
-                                "required": True,
-                                "prefix": "$",
-                                "step": 0.01
-                            },
-                            {
-                                "name": "discount_percent",
-                                "label": "Discount %",
-                                "type": "number",
-                                "min": 0,
-                                "max": 100,
-                                "defaultValue": 0
-                            },
-                            {
-                                "name": "line_total",
-                                "label": "Total",
-                                "type": "display",
-                                "prefix": "$",
-                                "compute": """
-                                    function(item) {
-                                        const qty = item.quantity || 0;
-                                        const price = item.unit_price || 0;
-                                        const discount = item.discount_percent || 0;
-                                        const subtotal = qty * price;
-                                        return subtotal - (subtotal * discount / 100);
-                                    }
-                                """
-                            }
-                        ]
+                        "colSpan":2,
+                        "props": {
+                            "title": "Order Items",
+                            "entityType": "order",
+                            "taxRate": 0,
+                            "productApiUrl": "http://localhost:8006/api/v1/products"
+                        }
                     }
                 ]
             },

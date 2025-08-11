@@ -41,9 +41,10 @@ class QuoteCreateRequest(BaseQuoteSchema):
     valid_until: Optional[datetime] = Field(None, description="Quote valid until date")
     
     # Terms and conditions
-    payment_terms: Optional[str] = Field(None, description="Payment terms", max_length=200)
+    payment_terms_days: Optional[int] = Field(30, description="Payment terms in days", ge=0)
     delivery_terms: Optional[str] = Field(None, description="Delivery terms", max_length=200)
-    special_instructions: Optional[str] = Field(None, description="Special instructions", max_length=1000)
+    internal_notes: Optional[str] = Field(None, description="Internal notes", max_length=1000)
+    terms_and_conditions: Optional[str] = Field(None, description="Terms and conditions", max_length=2000)
     
     # Pricing settings
     requires_approval: bool = Field(False, description="Whether quote requires approval")
@@ -67,9 +68,10 @@ class QuoteUpdateRequest(BaseModel):
     contact_phone: Optional[str] = Field(None, description="Customer contact phone", max_length=50)
     
     valid_until: Optional[datetime] = Field(None, description="Quote valid until date")
-    payment_terms: Optional[str] = Field(None, description="Payment terms", max_length=200)
+    payment_terms_days: Optional[int] = Field(None, description="Payment terms in days", ge=0)
     delivery_terms: Optional[str] = Field(None, description="Delivery terms", max_length=200)
-    special_instructions: Optional[str] = Field(None, description="Special instructions", max_length=1000)
+    internal_notes: Optional[str] = Field(None, description="Internal notes", max_length=1000)
+    terms_and_conditions: Optional[str] = Field(None, description="Terms and conditions", max_length=2000)
     
     class Config:
         from_attributes = True
@@ -261,61 +263,80 @@ class QuoteApprovalResponse(BaseModel):
 class QuoteResponse(BaseModel):
     """Schema for complete quote responses."""
     
-    id: int
-    quote_number: str
-    title: str
-    description: Optional[str]
-    status: str
+    # Primary fields
+    id: Optional[int] = None
+    quote_number: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+    version: Optional[int] = None
     
-    customer_id: int
-    contact_person: Optional[str]
-    contact_email: Optional[str]
-    contact_phone: Optional[str]
+    # Customer information
+    customer_id: Optional[int] = None
+    opportunity_id: Optional[int] = None
     
     # Dates
-    valid_from: datetime
-    valid_until: datetime
-    quote_date: datetime
+    valid_from: Optional[datetime] = None
+    valid_until: Optional[datetime] = None
+    sent_date: Optional[datetime] = None
     
-    # Financial data
-    subtotal: Decimal
-    tax_amount: Optional[Decimal]
-    shipping_amount: Optional[Decimal]
-    overall_discount_percentage: Optional[Decimal]
-    overall_discount_amount: Optional[Decimal]
-    total_amount: Decimal
+    # Financial data (matching model field names exactly)
+    subtotal: Optional[Decimal] = None
+    discount_amount: Optional[Decimal] = None
+    tax_amount: Optional[Decimal] = None
+    shipping_amount: Optional[Decimal] = None
+    overall_discount_percentage: Optional[Decimal] = None
+    total_amount: Optional[Decimal] = None
+    total_cost: Optional[Decimal] = None
+    margin_percentage: Optional[Decimal] = None
     
-    total_cost: Optional[Decimal]
-    margin_amount: Optional[Decimal]
-    margin_percentage: Optional[Decimal]
-    
-    currency_code: str
+    currency_code: Optional[str] = "USD"
     
     # Terms
-    payment_terms: Optional[str]
-    delivery_terms: Optional[str]
-    special_instructions: Optional[str]
+    payment_terms_days: Optional[int] = None
+    delivery_terms: Optional[str] = None
+    internal_notes: Optional[str] = None
+    terms_and_conditions: Optional[str] = None
     
     # Workflow fields
-    requires_approval: bool
-    is_template: bool
-    sent_to_customer: bool
-    sent_at: Optional[datetime]
+    requires_approval: Optional[bool] = False
+    viewed_by_customer: Optional[bool] = False
+    pdf_generated: Optional[bool] = False
     
     # System fields
-    prepared_by_user_id: int
-    approved_by_user_id: Optional[int]
-    company_id: int
-    created_at: datetime
-    updated_at: Optional[datetime]
+    prepared_by_user_id: Optional[int] = None
+    approved_by_user_id: Optional[int] = None
+    sent_by_user_id: Optional[int] = None
+    company_id: Optional[int] = None
     
-    # Related data
+    # Tracking
+    email_sent_count: Optional[int] = None
+    last_email_sent: Optional[datetime] = None
+    first_viewed_date: Optional[datetime] = None
+    last_viewed_date: Optional[datetime] = None
+    
+    # Conversion info
+    converted_to_order_id: Optional[int] = None
+    converted_date: Optional[datetime] = None
+    converted_by_user_id: Optional[int] = None
+    
+    # Additional fields
+    custom_fields: Optional[Dict[str, Any]] = None
+    tags: Optional[List[str]] = None
+    is_active: Optional[bool] = True
+    
+    # Timestamps
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    
+    # Related data (optional)
     line_items: Optional[List[QuoteLineItemResponse]] = None
     versions: Optional[List[QuoteVersionResponse]] = None
     approvals: Optional[List[QuoteApprovalResponse]] = None
     
     class Config:
         from_attributes = True
+        arbitrary_types_allowed = True
 
 
 class QuoteListResponse(BaseModel):

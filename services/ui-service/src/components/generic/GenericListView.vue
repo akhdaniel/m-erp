@@ -102,8 +102,8 @@
         </div>
         <div class="ml-3">
           <h3 class="text-sm font-medium text-red-800">Error</h3>
-          <div class="mt-2 text-sm text-red-700">
-            <p>{{ error }}</p>
+          <div class="mt-2 text-sm">
+            <p class="text-red-700">{{ error }}</p>
           </div>
         </div>
       </div>
@@ -517,7 +517,39 @@ function getRowActions(item: any): any[] {
   if (!props.schema.rowActions) return []
   return props.schema.rowActions.filter((action: any) => {
     if (action.condition) {
-      return action.condition(item)
+      // Handle both function and object conditions
+      if (typeof action.condition === 'function') {
+        return action.condition(item)
+      } else if (typeof action.condition === 'object') {
+        // Object-based condition: {field: "status", value: "draft", operator: "=="}
+        const field = action.condition.field
+        const expectedValue = action.condition.value
+        const operator = action.condition.operator || '==' // Default to equality
+        const actualValue = getNestedValue(item, field)
+        
+        switch (operator) {
+          case '==':
+          case '=':
+            return actualValue == expectedValue
+          case '!=':
+          case '<>':
+            return actualValue != expectedValue
+          case '>':
+            return actualValue > expectedValue
+          case '>=':
+            return actualValue >= expectedValue
+          case '<':
+            return actualValue < expectedValue
+          case '<=':
+            return actualValue <= expectedValue
+          case 'in':
+            return Array.isArray(expectedValue) && expectedValue.includes(actualValue)
+          case 'not_in':
+            return Array.isArray(expectedValue) && !expectedValue.includes(actualValue)
+          default:
+            return actualValue == expectedValue
+        }
+      }
     }
     return true
   })

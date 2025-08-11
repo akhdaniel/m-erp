@@ -30,8 +30,8 @@
           </div>
           <div class="ml-3">
             <h3 class="text-sm font-medium text-red-800">Error loading dashboard</h3>
-            <div class="mt-2 text-sm text-red-700">
-              <p>{{ error }}</p>
+            <div class="mt-2 text-sm">
+              <p class="text-red-700">{{ error }}</p>
             </div>
           </div>
         </div>
