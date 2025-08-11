@@ -199,7 +199,7 @@
                   :rows="field.rows || 3"
                   :placeholder="field.placeholder"
                   :maxlength="field.maxLength"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm placeholder-gray-300"
                   :class="{ 'bg-gray-100': field.disabled }"
                 ></textarea>
                 <p v-if="field.help" class="mt-1 text-sm text-gray-500">{{ field.help }}</p>
