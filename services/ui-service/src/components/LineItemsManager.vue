@@ -104,10 +104,10 @@
     </div>
 
     <!-- Totals Section -->
-    <div v-if="items.length > 0" class="bg-gray-50 rounded-lg p-4">
+    <div v-if="items.length > 0" class="bg-white rounded-lg p-4">
       <div class="space-y-2">
         <div class="flex justify-between text-sm">
-          <span class="text-gray-200">Subtotal:</span>
+          <span>Subtotal:</span>
           <span class="font-medium">{{ formatCurrency(subtotal) }}</span>
         </div>
         <div v-if="totalDiscount > 0" class="flex justify-between text-sm">
