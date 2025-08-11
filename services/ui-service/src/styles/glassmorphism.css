@@ -334,14 +334,14 @@ nav {
   input[type="datetime-local"],
   select,
   textarea {
-    background: rgba(31, 41, 55, 0.8) !important;
-    border: 1px solid rgba(75, 85, 99, 0.8) !important;
+    background: rgba(31, 41, 55, 0.19) !important;
+    border: 1px solid rgba(252, 252, 253, 0.3) !important;
   }
 
   input:focus,
   select:focus,
   textarea:focus {
-    background: rgba(31, 41, 55, 0.95) !important;
+    background: rgba(31, 41, 55, 0.067) !important;
   }
 
   nav {
