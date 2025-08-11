@@ -278,7 +278,6 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
             {
                 "id": "basic",
                 "title": "Quote Information",
-                "gridClass": "grid-cols-2",
                 "fields": [
                     {
                         "name": "title",
