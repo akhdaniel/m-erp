@@ -234,6 +234,7 @@ async def get_overdue_receipts(
 
 
 @router.get("/statistics", response_model=Dict[str, Any])
+@router.get("/stats", response_model=Dict[str, Any])
 async def get_receiving_statistics(
     days_back: int = Query(30, ge=1, le=365, description="Number of days to analyze"),
     service: ReceivingService = Depends(get_receiving_service)
