@@ -12,11 +12,9 @@ from decimal import Decimal
 from datetime import datetime, timedelta, date
 import logging
 
-from sales_module.services.quote_service import QuoteService
-from sales_module.services.order_service import OrderService
+from sales_module.services.dashboard_service import DashboardService
 from sales_module.framework.database import get_db_session
 from sqlalchemy.orm import Session
-from sales_module.models import QuoteStatus, OrderStatus
 
 logger = logging.getLogger(__name__)
 
@@ -25,14 +23,9 @@ router = APIRouter(prefix="/api/v1/dashboard", tags=["dashboard"])
 
 
 # Dependencies
-def get_quote_service(db: Session = Depends(get_db_session)) -> QuoteService:
-    """Get quote service instance with database session."""
-    return QuoteService(db_session=db)
-
-
-def get_order_service(db: Session = Depends(get_db_session)) -> OrderService:
-    """Get order service instance with database session."""
-    return OrderService(db_session=db)
+def get_dashboard_service() -> DashboardService:
+    """Get dashboard service instance."""
+    return DashboardService()
 
 
 def get_current_company_id() -> int:
@@ -44,8 +37,7 @@ def get_current_company_id() -> int:
 @router.get("/metrics", response_model=Dict[str, Any])
 async def get_dashboard_metrics(
     period: Optional[str] = Query("current_month", description="Time period: current_month, last_30_days, current_year"),
-    quote_service: QuoteService = Depends(get_quote_service),
-    order_service: OrderService = Depends(get_order_service),
+    dashboard_service: DashboardService = Depends(get_dashboard_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -56,65 +48,44 @@ async def get_dashboard_metrics(
     - Pending orders count 
     - Monthly/period revenue
     - Quote conversion rate
+    - Inventory metrics
+    - Customer metrics
     """
     try:
-        # Calculate date range based on period
-        today = date.today()
-        if period == "current_month":
-            start_date = today.replace(day=1)
-            end_date = today
-        elif period == "last_30_days":
-            start_date = today - timedelta(days=30)
-            end_date = today
-        elif period == "current_year":
-            start_date = today.replace(month=1, day=1)
-            end_date = today
-        else:
-            start_date = today.replace(day=1)
-            end_date = today
-
-        # Get quote metrics
-        date_range = {
-            'from': datetime.combine(start_date, datetime.min.time()),
-            'to': datetime.combine(end_date, datetime.max.time())
-        }
-        quote_stats = quote_service.get_quote_analytics(
-            company_id=company_id,
-            date_range=date_range
-        )
-
-        # Get order metrics
-        order_analytics = order_service.get_order_analytics(
-            company_id=company_id
-        )
-
-        # Combine metrics for dashboard
+        # Get sales metrics
+        sales_metrics = await dashboard_service.get_sales_metrics(company_id, period)
+        
+        # Get inventory metrics
+        inventory_metrics = await dashboard_service.get_inventory_metrics()
+        
+        # Get customer metrics
+        customer_metrics = await dashboard_service.get_customer_metrics()
+        
+        # Combine all metrics for dashboard
         metrics = {
-            # Widget: total-quotes
-            "active_quotes": quote_stats.get("total_active", 0),
-            "total_quotes": quote_stats.get("total_quotes", 0),
+            # Sales metrics
+            "active_quotes": sales_metrics.get("active_quotes", 0),
+            "pending_orders": sales_metrics.get("pending_orders", 0),
+            "current_month_revenue": sales_metrics.get("total_revenue", 0),
+            "revenue_growth": sales_metrics.get("revenue_growth_percentage", 0),
+            "conversion_rate": sales_metrics.get("quote_to_order_rate", 0),
+            "average_order_value": sales_metrics.get("average_order_value", 0),
+            "orders_this_period": sales_metrics.get("orders_count", 0),
             
-            # Widget: pending-orders  
-            "pending_orders": order_analytics.get("pending_orders_count", 0),
-            "total_orders": order_analytics.get("total_orders", 0),
+            # Inventory metrics
+            "total_inventory_value": inventory_metrics.get("total_inventory_value", 0),
+            "low_stock_count": inventory_metrics.get("low_stock_count", 0),
+            "active_products": inventory_metrics.get("active_products", 0),
             
-            # Widget: monthly-revenue
-            "current_month_revenue": float(order_analytics.get("total_revenue", 0)),
-            "revenue_growth": order_analytics.get("revenue_growth_percentage", 0),
-            
-            # Widget: conversion-rate
-            "conversion_rate": quote_stats.get("conversion_rate", 0),
-            "conversion_trend": quote_stats.get("conversion_trend", "stable"),
-            
-            # Additional metrics
-            "average_order_value": float(order_analytics.get("average_order_value", 0)),
-            "orders_this_period": order_analytics.get("orders_count", 0),
-            "quotes_sent_this_period": quote_stats.get("quotes_sent", 0),
+            # Customer metrics
+            "total_customers": customer_metrics.get("total_customers", 0),
+            "vip_customers": customer_metrics.get("vip_customers", 0),
+            "new_customers_this_month": customer_metrics.get("new_customers_this_month", 0),
             
             # Period info
             "period": period,
-            "start_date": start_date.isoformat(),
-            "end_date": end_date.isoformat(),
+            "start_date": sales_metrics.get("start_date"),
+            "end_date": sales_metrics.get("end_date"),
             "last_updated": datetime.utcnow().isoformat()
         }
 
@@ -131,7 +102,7 @@ async def get_dashboard_metrics(
 @router.get("/charts/revenue-trend", response_model=Dict[str, Any])
 async def get_revenue_trend_data(
     period: Optional[str] = Query("last_30_days", description="Time period: last_7_days, last_30_days, last_90_days"),
-    order_service: OrderService = Depends(get_order_service),
+    dashboard_service: DashboardService = Depends(get_dashboard_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -141,48 +112,12 @@ async def get_revenue_trend_data(
     formatted for chart consumption.
     """
     try:
-        # Calculate date range and granularity
-        today = date.today()
-        if period == "last_7_days":
-            start_date = today - timedelta(days=7)
-            granularity = "daily"
-        elif period == "last_30_days":
-            start_date = today - timedelta(days=30)
-            granularity = "daily"
-        elif period == "last_90_days":
-            start_date = today - timedelta(days=90)
-            granularity = "weekly"
-        else:
-            start_date = today - timedelta(days=30)
-            granularity = "daily"
-
-        # Get order analytics with trend data
-        analytics = order_service.get_order_analytics(
-            company_id=company_id
-        )
-
-        # Generate sample trend data (in production, this would come from the service)
-        trend_data = []
-        current_date = start_date
+        # Get revenue trend from dashboard service
+        trend_data = await dashboard_service.get_revenue_trend(company_id, period)
         
-        while current_date <= today:
-            # Generate sample revenue data with some variation
-            base_revenue = 5000 + (current_date.day * 100) + ((current_date.weekday() + 1) * 200)
-            if current_date.weekday() >= 5:  # Weekend - lower sales
-                base_revenue *= 0.7
-                
-            trend_data.append({
-                "date": current_date.isoformat(),
-                "revenue": float(base_revenue),
-                "orders_count": max(1, int(base_revenue / 250)),  # Approximate orders
-                "average_order_value": 250.0
-            })
-            
-            if granularity == "daily":
-                current_date += timedelta(days=1)
-            else:  # weekly
-                current_date += timedelta(weeks=1)
-
+        # Calculate granularity
+        granularity = "weekly" if period == "last_90_days" else "daily"
+        
         chart_data = {
             "data": trend_data,
             "period": period,
@@ -211,7 +146,7 @@ async def get_revenue_trend_data(
 
 @router.get("/charts/sales-pipeline", response_model=Dict[str, Any])
 async def get_sales_pipeline_data(
-    quote_service: QuoteService = Depends(get_quote_service),
+    dashboard_service: DashboardService = Depends(get_dashboard_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -220,26 +155,18 @@ async def get_sales_pipeline_data(
     Returns quote status distribution data formatted for funnel chart display.
     """
     try:
-        # Get quote analytics
-        analytics = quote_service.get_quote_analytics(company_id=company_id)
+        # Get pipeline data from dashboard service
+        pipeline_data = await dashboard_service.get_sales_pipeline(company_id)
         
-        # Generate pipeline data with sample counts
-        pipeline_stages = [
-            {"stage": "draft", "label": "Draft", "count": 15, "value": 45000.0, "color": "#6B7280"},
-            {"stage": "sent", "label": "Sent", "count": 12, "value": 38000.0, "color": "#3B82F6"},
-            {"stage": "viewed", "label": "Viewed", "count": 8, "value": 25000.0, "color": "#8B5CF6"},
-            {"stage": "accepted", "label": "Accepted", "count": 3, "value": 12000.0, "color": "#10B981"},
-            {"stage": "rejected", "label": "Rejected", "count": 2, "value": 6000.0, "color": "#EF4444"}
-        ]
-
         chart_data = {
-            "data": pipeline_stages,
-            "total_quotes": sum(stage["count"] for stage in pipeline_stages),
-            "total_value": sum(stage["value"] for stage in pipeline_stages),
-            "conversion_rate": analytics.get("conversion_rate", 25.0),
+            "data": pipeline_data["stages"],
+            "total_pipeline_value": pipeline_data["total_pipeline_value"],
+            "average_deal_size": pipeline_data["average_deal_size"],
+            "win_rate": pipeline_data["win_rate"],
+            "average_sales_cycle": pipeline_data["average_sales_cycle"],
             "chart_config": {
                 "type": "funnel",
-                "stages": ["draft", "sent", "viewed", "accepted", "rejected"],
+                "stages": [stage["stage"] for stage in pipeline_data["stages"]],
                 "title": "Sales Pipeline",
                 "value_field": "count",
                 "label_field": "label"
@@ -260,7 +187,7 @@ async def get_sales_pipeline_data(
 @router.get("/recent/orders", response_model=Dict[str, Any])
 async def get_recent_orders(
     limit: int = Query(10, ge=1, le=50, description="Number of recent orders to return"),
-    order_service: OrderService = Depends(get_order_service),
+    dashboard_service: DashboardService = Depends(get_dashboard_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -343,7 +270,7 @@ async def get_recent_orders(
 async def get_top_customers(
     limit: int = Query(5, ge=1, le=20, description="Number of top customers to return"),
     period: Optional[str] = Query("current_month", description="Time period for analysis"),
-    order_service: OrderService = Depends(get_order_service),
+    dashboard_service: DashboardService = Depends(get_dashboard_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -352,62 +279,16 @@ async def get_top_customers(
     Returns customer performance data ranked by total revenue.
     """
     try:
-        # Get order analytics
-        analytics = order_service.get_order_analytics(
-            company_id=company_id
-        )
-
-        # Generate sample top customers data
-        top_customers = [
-            {
-                "customer_name": "Acme Corporation",
-                "order_count": 8,
-                "total_revenue": 25000.0,
-                "average_order": 3125.0,
-                "last_order_date": "2025-01-05",
-                "growth_rate": 15.5
-            },
-            {
-                "customer_name": "TechStart Inc.",
-                "order_count": 12,
-                "total_revenue": 18500.0,
-                "average_order": 1541.67,
-                "last_order_date": "2025-01-06",
-                "growth_rate": 23.2
-            },
-            {
-                "customer_name": "Global Industries",
-                "order_count": 5,
-                "total_revenue": 15000.0,
-                "average_order": 3000.0,
-                "last_order_date": "2025-01-04",
-                "growth_rate": -5.3
-            },
-            {
-                "customer_name": "Innovation Labs",
-                "order_count": 7,
-                "total_revenue": 12750.0,
-                "average_order": 1821.43,
-                "last_order_date": "2025-01-07",
-                "growth_rate": 8.7
-            },
-            {
-                "customer_name": "Metro Systems",
-                "order_count": 6,
-                "total_revenue": 11200.0,
-                "average_order": 1866.67,
-                "last_order_date": "2025-01-03",
-                "growth_rate": 12.1
-            }
-        ]
-
+        # Get top customers from dashboard service
+        top_customers = await dashboard_service.get_top_customers(company_id, limit)
+        
         return {
-            "data": top_customers[:limit],
+            "data": top_customers,
             "period": period,
             "total_customers": len(top_customers),
             "config": {
                 "title": f"Top Customers ({period.replace('_', ' ').title()})",
-                "columns": ["customer_name", "order_count", "total_revenue", "average_order"],
+                "columns": ["customer_name", "order_count", "total_revenue", "average_order_value"],
                 "sortable": True
             },
             "last_updated": datetime.utcnow().isoformat()

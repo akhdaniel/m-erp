@@ -154,40 +154,6 @@ async def list_quotes(
 
 
 # Analytics endpoints - must be before /{quote_id} route
-@router.get("/stats", response_model=dict)
-async def get_quote_stats(
-    company_id: int = Depends(get_current_company_id),
-    quote_service: QuoteService = Depends(get_quote_service)
-):
-    """Get quote statistics for dashboard."""
-    try:
-        # Use raw SQL for simplicity until tables are properly created
-        from sqlalchemy import text
-        
-        # Get active quotes count
-        result = quote_service.db_session.execute(text(
-            "SELECT COUNT(*) FROM sales_quotes WHERE company_id = :company_id AND status IN ('draft', 'sent', 'viewed') AND is_active = true"
-        ), {"company_id": company_id})
-        active_quotes = result.scalar()
-        
-        # Get total quotes
-        result = quote_service.db_session.execute(text(
-            "SELECT COUNT(*) FROM sales_quotes WHERE company_id = :company_id AND is_active = true"
-        ), {"company_id": company_id})
-        total_quotes = result.scalar()
-        
-        # For now, just return 0 for accepted this month since we don't have accepted_date column
-        accepted_this_month = 0
-        
-        return {
-            "active_quotes": active_quotes or 0,
-            "total_quotes": total_quotes or 0,
-            "accepted_this_month": accepted_this_month
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 @router.get("/analytics", response_model=QuoteAnalyticsResponse)
 async def get_analytics(
     date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
