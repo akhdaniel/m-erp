@@ -259,7 +259,44 @@ async function fetchWidgetData() {
           
         const response = await fetch(url)
         if (response.ok) {
-          widgetData.value[widget.id] = await response.json()
+          const data = await response.json()
+          
+          // Process data based on widget type
+          if (widget.type === 'metric') {
+            // Extract the value using the valueField configuration
+            let value = 0
+            if (widget.valueField) {
+              // Handle nested field paths like "data.count"
+              const fields = widget.valueField.split('.')
+              value = fields.reduce((obj, field) => obj?.[field], data) || 0
+            } else if (widget.valueField === 'count' && Array.isArray(data)) {
+              // Special case: if expecting count and data is array, use length
+              value = data.length
+            } else {
+              value = data.value || data || 0
+            }
+            
+            widgetData.value[widget.id] = {
+              value: value,
+              // Include other fields if they exist
+              change: data.change,
+              trend: data.trend,
+              label: data.label || widget.title
+            }
+          } else if (widget.type === 'list') {
+            // Handle list data - could be an array or object with items
+            widgetData.value[widget.id] = {
+              items: Array.isArray(data) ? data : (data.items || data.data || [])
+            }
+          } else if (widget.type === 'table') {
+            // Handle table data
+            widgetData.value[widget.id] = {
+              rows: Array.isArray(data) ? data : (data.rows || data.data || [])
+            }
+          } else {
+            // For other widget types, store data as-is
+            widgetData.value[widget.id] = data
+          }
         }
       } catch (err) {
         console.error(`Error fetching data for widget ${widget.id}:`, err)
