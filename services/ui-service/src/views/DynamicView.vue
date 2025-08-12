@@ -71,6 +71,7 @@ const schemaError = ref('')
 const SERVICE_MAPPING: Record<string, string> = {
   'inventory': 'http://localhost:8005',
   'sales': 'http://localhost:8006',
+  'purchasing': 'http://localhost:8007',
   'partners': 'http://localhost:8002',
   'users': 'http://localhost:8001'
 }
@@ -175,6 +176,34 @@ async function loadSchema() {
 
 function getSchemaEndpoint(): string {
   const path = route.path
+  
+  // Purchasing routes
+  if (path.includes('/purchasing')) {
+    if (path.includes('/dashboard')) {
+      return '/api/v1/ui-schemas/dashboard'
+    }
+    if (path.includes('/orders')) {
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/forms/purchase-order'
+      }
+      return '/api/v1/ui-schemas/lists/purchase-orders'
+    }
+    if (path.includes('/suppliers')) {
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/forms/supplier'
+      }
+      return '/api/v1/ui-schemas/lists/suppliers'
+    }
+    if (path.includes('/approvals')) {
+      return '/api/v1/ui-schemas/lists/approvals'
+    }
+    if (path.includes('/reports')) {
+      return '/api/v1/ui-schemas/views/reports'
+    }
+    if (path.includes('/settings')) {
+      return '/api/v1/ui-schemas/views/settings'
+    }
+  }
   
   // Sales routes
   if (path.includes('/sales')) {
