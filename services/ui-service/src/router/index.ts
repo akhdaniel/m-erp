@@ -217,6 +217,83 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/DynamicView.vue'),
     meta: { requiresAuth: true, title: 'Sales Analytics' }
   },
+  // Purchasing Management Routes
+  {
+    path: '/purchasing',
+    redirect: '/purchasing/dashboard'
+  },
+  {
+    path: '/purchasing/dashboard',
+    name: 'PurchasingDashboard',
+    component: () => import('@/views/DynamicDashboard.vue'),
+    meta: { requiresAuth: true, title: 'Purchasing Dashboard' }
+  },
+  {
+    path: '/purchasing/orders',
+    name: 'PurchaseOrdersList',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Purchase Orders' }
+  },
+  {
+    path: '/purchasing/orders/new',
+    name: 'PurchaseOrderCreate',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'New Purchase Order' }
+  },
+  {
+    path: '/purchasing/orders/:id',
+    name: 'PurchaseOrderView',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'View Purchase Order' }
+  },
+  {
+    path: '/purchasing/orders/:id/edit',
+    name: 'PurchaseOrderEdit',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Edit Purchase Order' }
+  },
+  {
+    path: '/purchasing/suppliers',
+    name: 'SuppliersList',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Suppliers' }
+  },
+  {
+    path: '/purchasing/suppliers/new',
+    name: 'SupplierCreate',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'New Supplier' }
+  },
+  {
+    path: '/purchasing/suppliers/:id',
+    name: 'SupplierView',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'View Supplier' }
+  },
+  {
+    path: '/purchasing/suppliers/:id/edit',
+    name: 'SupplierEdit',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Edit Supplier' }
+  },
+  {
+    path: '/purchasing/approvals',
+    name: 'PurchaseApprovals',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Purchase Approvals' }
+  },
+  {
+    path: '/purchasing/reports',
+    name: 'PurchasingReports',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Purchasing Reports' }
+  },
+  {
+    path: '/purchasing/settings',
+    name: 'PurchasingSettings',
+    component: () => import('@/views/DynamicView.vue'),
+    meta: { requiresAuth: true, title: 'Purchasing Settings' }
+  },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
