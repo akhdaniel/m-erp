@@ -136,6 +136,28 @@ services:
         strip_path: true
         preserve_host: false
 
+  # Purchasing Service
+  - name: purchasing-service
+    url: http://purchasing-service:8007
+    tags:
+      - xerpium
+      - purchasing
+    routes:
+      - name: purchasing-routes
+        paths:
+          - /api/v1/purchasing
+          - /api/v1/purchase-orders
+          - /api/v1/suppliers
+          - /api/v1/approvals
+        strip_path: false
+        preserve_host: false
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+      - name: purchasing-health
+        paths:
+          - /purchasing-health
+        strip_path: true
+        preserve_host: false
+
   # Sales Service
   - name: sales-service
     url: http://sales-service:8006

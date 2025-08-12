@@ -284,7 +284,6 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
                         "label": "Quote Title",
                         "type": "text",
                         "required": True,
-                        "colSpan": 1,
                         "placeholder": "Enter a descriptive title for this quote"
                     },
                     {
@@ -292,7 +291,6 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
                         "label": "Customer",
                         "type": "select",
                         "required": True,
-                        "colSpan": 1,
                         "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",

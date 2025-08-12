@@ -194,7 +194,7 @@ services:
       dockerfile: ./services/notification-service/Dockerfile
     container_name: m-erp-notifications
     ports:
-      - "8007:8005"
+      - "8009:8005"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -325,6 +325,41 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  purchasing-service:
+    build:
+      context: .
+      dockerfile: ./services/purchasing-service/Dockerfile
+    container_name: m-erp-purchasing
+    ports:
+      - "8007:8007"
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/purchasing_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: purchasing-service
+      ENVIRONMENT: development
+      DEBUG: "true"
+      # Service integration URLs
+      PARTNER_SERVICE_URL: http://company-partner-service:8000
+      CURRENCY_SERVICE_URL: http://company-partner-service:8000
+      AUDIT_SERVICE_URL: http://audit-service:8006
+      MENU_SERVICE_URL: http://menu-access-service:8000
+      UI_REGISTRY_URL: http://ui-registry-service:8010
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/purchasing-service:/app
+      - ./services/shared:/app/shared
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8007/health"]
       interval: 30s
       timeout: 10s
       retries: 3
