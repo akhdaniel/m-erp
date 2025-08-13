@@ -84,7 +84,19 @@
             {{ section.description }}
           </p>
           
-          <div :class="section.gridClass || 'grid grid-cols-1 gap-6 sm:grid-cols-2'">
+          <!-- Special handling for LineItemsManager component -->
+          <LineItemsManager
+            v-if="section.type === 'line_items' && section.component === 'LineItemsManager'"
+            v-model="formData[section.key || 'items']"
+            :title="section.config?.title"
+            :entityType="section.config?.entityType"
+            :taxRate="section.config?.taxRate"
+            :productApiUrl="section.config?.productApiUrl"
+            @totalsChanged="handleTotalsChanged"
+          />
+          
+          <!-- Regular fields grid -->
+          <div v-else :class="section.gridClass || 'grid grid-cols-1 gap-6 sm:grid-cols-2'">
             <div
               v-for="field in section.fields"
               :key="field.name"
@@ -334,6 +346,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import LineItemsManager from '@/components/LineItemsManager.vue'
 
 // Props
 const props = defineProps<{
@@ -619,6 +632,15 @@ function handleCancel() {
   } else {
     emit('cancel')
   }
+}
+
+// Handle line items totals change
+function handleTotalsChanged(totals: any) {
+  // Update form data with calculated totals
+  formData.value.subtotal = totals.subtotal
+  formData.value.discount = totals.discount
+  formData.value.tax = totals.tax
+  formData.value.total = totals.total
 }
 
 function executeAction(action: any) {

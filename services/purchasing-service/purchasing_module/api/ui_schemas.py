@@ -27,7 +27,11 @@ async def get_purchase_orders_list_schema_v2():
                 "filters": list_def.get("filters", []),
                 "actions": list_def.get("actions", []),
                 "pagination": list_def.get("pagination", True),
-                "pageSize": list_def.get("pageSize", 20)
+                "pageSize": list_def.get("pageSize", 20),
+                "createRoute": "/purchasing/orders/new",  # Enable New button
+                "editRoute": "/purchasing/orders/{id}/edit",  # Enable row click edit
+                "viewType": "table",
+                "createLabel": "New Purchase Order"
             }
     # Fallback to the existing static schema if not found
     return await get_purchase_orders_list_schema()
@@ -36,25 +40,57 @@ async def get_purchase_orders_list_schema_v2():
 @router.get("/ui-schemas/forms/purchase-order")
 async def get_purchase_order_form_schema_v2():
     """Get form schema for purchase order (frontend compatible)."""
-    # Find the purchase order form in the UI definitions
-    for form_def in PURCHASING_UI_PACKAGE.get("forms", []):
-        if form_def["id"] == "purchase-order-form":
-            # Convert from UI definition format to schema format
-            return {
-                "id": form_def["id"],
-                "title": form_def["title"],
-                "submit_endpoint": form_def["submit_endpoint"],
-                "mode": form_def.get("mode", "create"),
-                "layout": form_def.get("layout", "single"),
-                "sections": [
-                    {
-                        "title": "Form Fields",
-                        "fields": form_def.get("fields", [])
-                    }
+    # Always return the proper form structure with LineItemsManager
+    return {
+        "id": "purchase-order-form",
+        "title": "New Purchase Order",
+        "submitUrl": "/api/v1/purchase-orders/",
+        "method": "POST",
+        "successRoute": "/purchasing/orders",
+        "cancelRoute": "/purchasing/orders",
+        "sections": [
+            {
+                "title": "Basic Information",
+                "fields": [
+                    {"key": "supplier_id", "label": "Supplier", "type": "select", "required": True, "dataSource": "/api/v1/suppliers"},
+                    {"key": "supplier_name", "label": "Supplier Name", "type": "text", "required": True},
+                    {"key": "order_date", "label": "Order Date", "type": "date", "required": True, "default": "today"},
+                    {"key": "expected_delivery", "label": "Expected Delivery", "type": "date"},
+                    {"key": "currency_code", "label": "Currency", "type": "select", "options": ["USD", "EUR", "GBP"], "default": "USD"},
+                    {"key": "payment_terms", "label": "Payment Terms", "type": "select", "options": ["Net 30", "Net 60", "COD", "Prepaid"], "default": "Net 30"}
+                ]
+            },
+            {
+                "title": "Line Items",
+                "type": "line_items",
+                "key": "items",
+                "component": "LineItemsManager",
+                "config": {
+                    "title": "Purchase Order Items",
+                    "entityType": "purchase order",
+                    "productApiUrl": "http://localhost:9080/api/v1/products",
+                    "taxRate": 10
+                }
+            },
+            {
+                "title": "Addresses",
+                "fields": [
+                    {"key": "shipping_address", "label": "Shipping Address", "type": "textarea", "rows": 3},
+                    {"key": "billing_address", "label": "Billing Address", "type": "textarea", "rows": 3}
+                ]
+            },
+            {
+                "title": "Additional Information",
+                "fields": [
+                    {"key": "notes", "label": "Notes", "type": "textarea", "rows": 4}
                 ]
             }
-    # Fallback to the existing static schema if not found
-    return await get_purchase_order_form_schema()
+        ],
+        "actions": [
+            {"label": "Save as Draft", "action": "save_draft", "type": "secondary"},
+            {"label": "Submit for Approval", "action": "submit", "type": "primary"}
+        ]
+    }
 
 
 @router.get("/ui-schemas/lists/suppliers")
@@ -405,7 +441,11 @@ async def get_purchase_orders_list_schema():
                 "actions": list_def.get("actions", []),
                 "bulkActions": list_def.get("bulkActions", []),
                 "pagination": list_def.get("pagination", True),
-                "pageSize": list_def.get("pageSize", 20)
+                "pageSize": list_def.get("pageSize", 20),
+                "createRoute": "/purchasing/orders/new",  # Enable New button
+                "editRoute": "/purchasing/orders/{id}/edit",  # Enable row click edit
+                "viewType": "table",
+                "createLabel": "New Purchase Order"
             }
     # Fallback to static schema if not found
     return {
@@ -437,7 +477,11 @@ async def get_purchase_orders_list_schema():
             {"label": "Export", "action": "export", "icon": "download"}
         ],
         "pagination": True,
-        "pageSize": 20
+        "pageSize": 20,
+        "createRoute": "/purchasing/orders/new",  # Enable New button
+        "editRoute": "/purchasing/orders/{id}/edit",  # Enable row click edit
+        "viewType": "table",
+        "createLabel": "New Purchase Order"
     }
 
 
@@ -451,6 +495,10 @@ async def get_purchase_order_form_schema():
             return {
                 "id": form_def["id"],
                 "title": form_def["title"],
+                "submitUrl": "/api/v1/purchase-orders/",  # API endpoint for form submission
+                "method": "POST",
+                "successRoute": "/purchasing/orders",  # Navigate to list after successful submission
+                "cancelRoute": "/purchasing/orders",  # Navigate to list on cancel
                 "sections": [
                     {
                         "title": "Basic Information",
@@ -458,16 +506,15 @@ async def get_purchase_order_form_schema():
                     },
                     {
                         "title": "Line Items",
-                        "type": "array",
-                        "key": "line_items",
-                        "fields": [
-                            {"key": "product_id", "label": "Product", "type": "select", "dataSource": "/api/v1/products"},
-                            {"key": "product_name", "label": "Product Name", "type": "text", "required": True},
-                            {"key": "quantity", "label": "Quantity", "type": "number", "required": True, "min": 1},
-                            {"key": "unit_price", "label": "Unit Price", "type": "currency", "required": True},
-                            {"key": "discount_percentage", "label": "Discount %", "type": "number", "min": 0, "max": 100, "default": 0},
-                            {"key": "tax_rate", "label": "Tax %", "type": "number", "min": 0, "default": 0}
-                        ]
+                        "type": "line_items",  # Special type for LineItemsManager component
+                        "key": "items",  # Use 'items' as the key name for the API
+                        "component": "LineItemsManager",
+                        "config": {
+                            "title": "Purchase Order Items",
+                            "entityType": "purchase order",
+                            "productApiUrl": "http://localhost:9080/api/v1/products",
+                            "taxRate": 10  # Default tax rate
+                        }
                     }
                 ],
                 "actions": [
@@ -479,11 +526,16 @@ async def get_purchase_order_form_schema():
     return {
         "id": "purchase-order-form",
         "title": "Purchase Order",
+        "submitUrl": "/api/v1/purchase-orders/",
+        "method": "POST",
+        "successRoute": "/purchasing/orders",
+        "cancelRoute": "/purchasing/orders",
         "sections": [
             {
                 "title": "Basic Information",
                 "fields": [
                     {"key": "supplier_id", "label": "Supplier", "type": "select", "required": True, "dataSource": "/api/v1/suppliers"},
+                    {"key": "supplier_name", "label": "Supplier Name", "type": "text", "required": True},
                     {"key": "order_date", "label": "Order Date", "type": "date", "required": True, "default": "today"},
                     {"key": "expected_delivery", "label": "Expected Delivery", "type": "date"},
                     {"key": "currency_code", "label": "Currency", "type": "select", "options": ["USD", "EUR", "GBP"], "default": "USD"},
@@ -492,16 +544,15 @@ async def get_purchase_order_form_schema():
             },
             {
                 "title": "Line Items",
-                "type": "array",
-                "key": "line_items",
-                "fields": [
-                    {"key": "product_id", "label": "Product", "type": "select", "dataSource": "/api/v1/products"},
-                    {"key": "product_name", "label": "Product Name", "type": "text", "required": True},
-                    {"key": "quantity", "label": "Quantity", "type": "number", "required": True, "min": 1},
-                    {"key": "unit_price", "label": "Unit Price", "type": "currency", "required": True},
-                    {"key": "discount_percentage", "label": "Discount %", "type": "number", "min": 0, "max": 100, "default": 0},
-                    {"key": "tax_rate", "label": "Tax %", "type": "number", "min": 0, "default": 0}
-                ]
+                "type": "line_items",
+                "key": "items",
+                "component": "LineItemsManager",
+                "config": {
+                    "title": "Purchase Order Items",
+                    "entityType": "purchase order",
+                    "productApiUrl": "http://localhost:9080/api/v1/products",
+                    "taxRate": 10
+                }
             },
             {
                 "title": "Addresses",
