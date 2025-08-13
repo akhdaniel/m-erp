@@ -102,11 +102,11 @@ async def list_partners(
     page = (skip // limit) + 1
     
     return PartnerListResponse(
-        partners=partners,
-        total=total,
+        data=partners,
+        total_count=total,
         page=page,
-        per_page=limit,
-        pages=pages
+        page_size=limit,
+        total_pages=pages
     )
 
 

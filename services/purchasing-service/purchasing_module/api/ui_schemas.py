@@ -6,6 +6,7 @@ Provides UI component schemas for dynamic UI rendering.
 
 from fastapi import APIRouter
 from typing import Dict, Any
+from purchasing_module.ui_definitions import PURCHASING_UI_PACKAGE
 
 router = APIRouter(tags=["ui-schemas"])
 
@@ -14,24 +15,90 @@ router = APIRouter(tags=["ui-schemas"])
 @router.get("/ui-schemas/lists/purchase-orders")
 async def get_purchase_orders_list_schema_v2():
     """Get list view schema for purchase orders (frontend compatible)."""
+    # Find the purchase orders list in the UI definitions
+    for list_def in PURCHASING_UI_PACKAGE.get("lists", []):
+        if list_def["id"] == "purchase-orders-list":
+            # Convert from UI definition format to schema format
+            return {
+                "id": list_def["id"],
+                "title": list_def["title"],
+                "endpoint": list_def["data_endpoint"],  # Frontend expects 'endpoint'
+                "columns": list_def["columns"],
+                "filters": list_def.get("filters", []),
+                "actions": list_def.get("actions", []),
+                "pagination": list_def.get("pagination", True),
+                "pageSize": list_def.get("pageSize", 20)
+            }
+    # Fallback to the existing static schema if not found
     return await get_purchase_orders_list_schema()
 
 
 @router.get("/ui-schemas/forms/purchase-order")
 async def get_purchase_order_form_schema_v2():
     """Get form schema for purchase order (frontend compatible)."""
+    # Find the purchase order form in the UI definitions
+    for form_def in PURCHASING_UI_PACKAGE.get("forms", []):
+        if form_def["id"] == "purchase-order-form":
+            # Convert from UI definition format to schema format
+            return {
+                "id": form_def["id"],
+                "title": form_def["title"],
+                "submit_endpoint": form_def["submit_endpoint"],
+                "mode": form_def.get("mode", "create"),
+                "layout": form_def.get("layout", "single"),
+                "sections": [
+                    {
+                        "title": "Form Fields",
+                        "fields": form_def.get("fields", [])
+                    }
+                ]
+            }
+    # Fallback to the existing static schema if not found
     return await get_purchase_order_form_schema()
 
 
 @router.get("/ui-schemas/lists/suppliers")
 async def get_suppliers_list_schema_v2():
     """Get list view schema for suppliers (frontend compatible)."""
+    # Find the suppliers list in the UI definitions
+    for list_def in PURCHASING_UI_PACKAGE.get("lists", []):
+        if list_def["id"] == "suppliers-list":
+            # Convert from UI definition format to schema format
+            return {
+                "id": list_def["id"],
+                "title": list_def["title"],
+                "endpoint": list_def["data_endpoint"],  # Frontend expects 'endpoint'
+                "columns": list_def["columns"],
+                "filters": list_def.get("filters", []),
+                "actions": list_def.get("actions", []),
+                "pagination": list_def.get("pagination", True),
+                "pageSize": list_def.get("pageSize", 20)
+            }
+    # Fallback to the existing static schema if not found
     return await get_suppliers_list_schema()
 
 
 @router.get("/ui-schemas/forms/supplier")
 async def get_supplier_form_schema():
     """Get form schema for supplier creation/editing."""
+    # Find the supplier form in the UI definitions
+    for form_def in PURCHASING_UI_PACKAGE.get("forms", []):
+        if form_def["id"] == "supplier-form":
+            # Convert from UI definition format to schema format
+            return {
+                "id": form_def["id"],
+                "title": form_def["title"],
+                "submit_endpoint": form_def["submit_endpoint"],
+                "mode": form_def.get("mode", "create"),
+                "layout": form_def.get("layout", "single"),
+                "sections": [
+                    {
+                        "title": "Form Fields",
+                        "fields": form_def.get("fields", [])
+                    }
+                ]
+            }
+    # Fallback to static schema if not found
     return {
         "id": "supplier-form",
         "title": "Supplier",
@@ -85,6 +152,21 @@ async def get_supplier_form_schema():
 @router.get("/ui-schemas/lists/approvals")
 async def get_approvals_list_schema():
     """Get list view schema for purchase approvals."""
+    # Find the approvals list in the UI definitions
+    for list_def in PURCHASING_UI_PACKAGE.get("lists", []):
+        if list_def["id"] == "approvals-list":
+            # Convert from UI definition format to schema format
+            return {
+                "id": list_def["id"],
+                "title": list_def["title"],
+                "endpoint": list_def["data_endpoint"],  # Frontend expects 'endpoint'
+                "columns": list_def["columns"],
+                "filters": list_def.get("filters", []),
+                "actions": list_def.get("actions", []),
+                "pagination": list_def.get("pagination", True),
+                "pageSize": list_def.get("pageSize", 20)
+            }
+    # Fallback to static schema if not found
     return {
         "id": "approvals-list",
         "title": "Purchase Approvals",
@@ -189,104 +271,143 @@ async def get_settings_view_schema():
 @router.get("/ui-schemas/dashboard")
 async def get_dashboard_schema():
     """Get dashboard configuration for purchasing module."""
-    return {
-        "id": "purchasing-dashboard",
-        "title": "Purchasing Dashboard",
-        "description": "Overview of purchasing operations",
-        "layout": "grid",
-        "refreshInterval": 30000,
-        "widgets": [
-            {
-                "id": "purchasing-metrics",
-                "type": "metrics",
-                "title": "Key Metrics",
-                "position": {"x": 0, "y": 0, "w": 12, "h": 2},
-                "dataSource": "/api/v1/dashboard/metrics",
-                "metrics": [
-                    {"key": "total_orders", "label": "Total Orders", "format": "number", "icon": "file-text"},
-                    {"key": "pending_approval", "label": "Pending Approval", "format": "number", "icon": "clock", "color": "warning"},
-                    {"key": "active_suppliers", "label": "Active Suppliers", "format": "number", "icon": "truck"},
-                    {"key": "month_spend", "label": "Month Spend", "format": "currency", "icon": "dollar-sign", "color": "success"}
-                ]
-            },
-            {
-                "id": "spending-trend",
-                "type": "chart",
-                "title": "Spending Trend",
-                "position": {"x": 0, "y": 2, "w": 8, "h": 4},
-                "dataSource": "/api/v1/dashboard/charts/spending-trend",
-                "chartType": "line",
-                "options": {
-                    "responsive": True,
-                    "maintainAspectRatio": False
-                }
-            },
-            {
-                "id": "supplier-distribution",
-                "type": "chart",
-                "title": "Supplier Distribution",
-                "position": {"x": 8, "y": 2, "w": 4, "h": 4},
-                "dataSource": "/api/v1/dashboard/charts/supplier-distribution",
-                "chartType": "doughnut",
-                "options": {
-                    "responsive": True,
-                    "maintainAspectRatio": False
-                }
-            },
-            {
-                "id": "recent-orders",
-                "type": "list",
-                "title": "Recent Purchase Orders",
-                "position": {"x": 0, "y": 6, "w": 6, "h": 4},
-                "dataSource": "/api/v1/dashboard/recent/orders",
-                "columns": [
-                    {"key": "po_number", "label": "PO Number", "sortable": True},
-                    {"key": "supplier", "label": "Supplier"},
-                    {"key": "amount", "label": "Amount", "format": "currency"},
-                    {"key": "status", "label": "Status", "badge": True}
-                ],
-                "actions": [
-                    {"label": "View", "action": "view", "icon": "eye"}
-                ]
-            },
-            {
-                "id": "top-suppliers",
-                "type": "list",
-                "title": "Top Suppliers",
-                "position": {"x": 6, "y": 6, "w": 6, "h": 4},
-                "dataSource": "/api/v1/dashboard/analytics/top-suppliers",
-                "dataPath": "suppliers",
-                "columns": [
-                    {"key": "name", "label": "Supplier"},
-                    {"key": "spend", "label": "Total Spend", "format": "currency"},
-                    {"key": "orders", "label": "Orders", "format": "number"},
-                    {"key": "rating", "label": "Rating", "format": "rating"}
-                ]
-            },
-            {
-                "id": "pending-approvals",
-                "type": "metric-card",
-                "title": "Pending Approvals",
-                "position": {"x": 0, "y": 10, "w": 4, "h": 2},
-                "dataSource": "/api/v1/dashboard/pending-approvals/summary",
-                "display": {
-                    "primaryMetric": "total_pending",
-                    "primaryLabel": "Awaiting Approval",
-                    "secondaryMetrics": [
-                        {"key": "urgent", "label": "Urgent", "color": "danger"},
-                        {"key": "total_value", "label": "Total Value", "format": "currency"}
-                    ],
-                    "icon": "alert-circle",
-                    "color": "warning"
-                }
+    # Use the dashboard definition from UI definitions
+    dashboard = PURCHASING_UI_PACKAGE.get("dashboard", {})
+    widgets = PURCHASING_UI_PACKAGE.get("widgets", [])
+    
+    # Convert widgets to dashboard schema format matching Sales/Inventory convention
+    widget_configs = []
+    
+    # If we have a "metrics" widget, expand it into individual metric widgets
+    for widget in widgets:
+        if widget["type"] == "metric" and "metrics" in widget["id"]:
+            # Create individual metric widgets like Sales/Inventory do
+            metrics_endpoint = widget["data_endpoint"]
+            
+            # Total Orders metric
+            widget_configs.append({
+                "id": "total_orders_metric",
+                "type": "metric",
+                "title": "Total Orders",
+                "endpoint": metrics_endpoint,
+                "valueField": "total_orders",
+                "format": "number",
+                "icon": "file-text",
+                "color": "blue",
+                "span": 1
+            })
+            
+            # Pending Approval metric
+            widget_configs.append({
+                "id": "pending_approval_metric",
+                "type": "metric",
+                "title": "Pending Approval",
+                "endpoint": metrics_endpoint,
+                "valueField": "pending_approval",
+                "format": "number",
+                "icon": "clock",
+                "color": "orange",
+                "span": 1
+            })
+            
+            # Active Suppliers metric
+            widget_configs.append({
+                "id": "active_suppliers_metric",
+                "type": "metric",
+                "title": "Active Suppliers",
+                "endpoint": metrics_endpoint,
+                "valueField": "active_suppliers",
+                "format": "number",
+                "icon": "truck",
+                "color": "green",
+                "span": 1
+            })
+            
+            # Month Spend metric
+            widget_configs.append({
+                "id": "month_spend_metric",
+                "type": "metric",
+                "title": "Month Spend",
+                "endpoint": metrics_endpoint,
+                "valueField": "month_spend",
+                "format": "currency",
+                "icon": "dollar-sign",
+                "color": "green",
+                "span": 1
+            })
+        else:
+            # For other widgets, process normally
+            widget_config = {
+                "id": widget["id"],
+                "type": widget["type"],
+                "title": widget["title"],
+                "endpoint": widget["data_endpoint"],
+                "span": 1
             }
-        ]
+            
+            if widget["type"] == "list":
+                widget_config["limit"] = 5
+                if "recent-orders" in widget["id"]:
+                    widget_config["columns"] = [
+                        {"field": "po_number", "label": "PO #"},
+                        {"field": "supplier", "label": "Supplier"},
+                        {"field": "amount", "label": "Amount", "formatter": "currency"}
+                    ]
+                elif "top-suppliers" in widget["id"]:
+                    widget_config["columns"] = [
+                        {"field": "name", "label": "Supplier"},
+                        {"field": "spend", "label": "Spend", "formatter": "currency"},
+                        {"field": "rating", "label": "Rating"}
+                    ]
+            
+            elif widget["type"] == "chart":
+                widget_config["chartType"] = "line" if "trend" in widget["id"] else "bar"
+                widget_config["height"] = 300
+            
+            # Set span based on widget size (following Sales/Inventory pattern)
+            size = widget.get("size", "medium")
+            if size == "large":
+                widget_config["span"] = 2
+            elif size == "small":
+                widget_config["span"] = 1
+            else:  # medium
+                widget_config["span"] = 1
+            
+            widget_configs.append(widget_config)
+    
+    return {
+        "title": dashboard.get("title", "Purchasing Dashboard"),
+        "description": dashboard.get("description", "Overview of purchasing operations"),
+        "viewType": "dashboard",
+        "refreshInterval": 30000,  # 30 seconds
+        "layout": {
+            "columns": 3,
+            "rows": "auto"
+        },
+        "widgets": widget_configs
     }
 
 
 @router.get("/ui-schemas/purchase-orders-list")
 async def get_purchase_orders_list_schema():
     """Get list view schema for purchase orders."""
+    # Find the purchase orders list in the UI definitions
+    for list_def in PURCHASING_UI_PACKAGE.get("lists", []):
+        if list_def["id"] == "purchase-orders-list":
+            # Convert from UI definition format to schema format
+            return {
+                "id": list_def["id"],
+                "title": list_def["title"],
+                "endpoint": list_def["data_endpoint"],  # Frontend expects 'endpoint'
+                "dataSource": list_def["data_endpoint"],  # Keep both for compatibility
+                "columns": list_def["columns"],
+                "filters": list_def.get("filters", []),
+                "actions": list_def.get("actions", []),
+                "bulkActions": list_def.get("bulkActions", []),
+                "pagination": list_def.get("pagination", True),
+                "pageSize": list_def.get("pageSize", 20)
+            }
+    # Fallback to static schema if not found
     return {
         "id": "purchase-orders-list",
         "title": "Purchase Orders",
@@ -323,6 +444,38 @@ async def get_purchase_orders_list_schema():
 @router.get("/ui-schemas/purchase-order-form")
 async def get_purchase_order_form_schema():
     """Get form schema for purchase order creation/editing."""
+    # Find the purchase order form in the UI definitions
+    for form_def in PURCHASING_UI_PACKAGE.get("forms", []):
+        if form_def["id"] == "purchase-order-form":
+            # Convert from UI definition format to schema format with proper sections
+            return {
+                "id": form_def["id"],
+                "title": form_def["title"],
+                "sections": [
+                    {
+                        "title": "Basic Information",
+                        "fields": form_def.get("fields", [])[:5]  # First 5 fields
+                    },
+                    {
+                        "title": "Line Items",
+                        "type": "array",
+                        "key": "line_items",
+                        "fields": [
+                            {"key": "product_id", "label": "Product", "type": "select", "dataSource": "/api/v1/products"},
+                            {"key": "product_name", "label": "Product Name", "type": "text", "required": True},
+                            {"key": "quantity", "label": "Quantity", "type": "number", "required": True, "min": 1},
+                            {"key": "unit_price", "label": "Unit Price", "type": "currency", "required": True},
+                            {"key": "discount_percentage", "label": "Discount %", "type": "number", "min": 0, "max": 100, "default": 0},
+                            {"key": "tax_rate", "label": "Tax %", "type": "number", "min": 0, "default": 0}
+                        ]
+                    }
+                ],
+                "actions": [
+                    {"label": "Save as Draft", "action": "save_draft", "type": "secondary"},
+                    {"label": "Submit for Approval", "action": "submit", "type": "primary"}
+                ]
+            }
+    # Fallback to static schema if not found
     return {
         "id": "purchase-order-form",
         "title": "Purchase Order",
@@ -374,6 +527,22 @@ async def get_purchase_order_form_schema():
 @router.get("/ui-schemas/suppliers-list")
 async def get_suppliers_list_schema():
     """Get list view schema for suppliers."""
+    # Find the suppliers list in the UI definitions
+    for list_def in PURCHASING_UI_PACKAGE.get("lists", []):
+        if list_def["id"] == "suppliers-list":
+            # Convert from UI definition format to schema format
+            return {
+                "id": list_def["id"],
+                "title": list_def["title"],
+                "endpoint": list_def["data_endpoint"],  # Frontend expects 'endpoint'
+                "dataSource": list_def["data_endpoint"],  # Keep both for compatibility
+                "columns": list_def["columns"],
+                "filters": list_def.get("filters", []),
+                "actions": list_def.get("actions", []),
+                "pagination": list_def.get("pagination", True),
+                "pageSize": list_def.get("pageSize", 20)
+            }
+    # Fallback to static schema if not found
     return {
         "id": "suppliers-list",
         "title": "Suppliers",

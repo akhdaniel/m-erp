@@ -342,7 +342,7 @@ class QuoteResponse(BaseModel):
 class QuoteListResponse(BaseModel):
     """Schema for paginated quote list responses."""
     
-    quotes: List[QuoteResponse]
+    data: List[QuoteResponse]  # Standardized to use 'data' key like other services
     total_count: int
     page: int
     page_size: int

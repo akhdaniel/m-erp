@@ -372,19 +372,22 @@ async function fetchData() {
     
     const data = await response.json()
     
-    // Handle different response formats
+    // Handle standardized response format
     if (props.schema.dataPath) {
+      // Custom data path if specified
       items.value = getNestedValue(data, props.schema.dataPath) || []
     } else if (Array.isArray(data)) {
+      // Plain array response (legacy)
       items.value = data
-    } else if (data.items) {
-      items.value = data.items
-      totalItems.value = data.total || data.items.length
+      totalItems.value = data.length
     } else if (data.data) {
+      // Standardized format: all services should use 'data' key
       items.value = data.data
-      totalItems.value = data.total || data.count || data.data.length
+      totalItems.value = data.total_count || data.total || data.count || data.data.length
     } else {
+      // Fallback
       items.value = []
+      console.warn('Unexpected API response format. Expected "data" key:', data)
     }
   } catch (err: any) {
     error.value = err.message || 'Failed to load data'

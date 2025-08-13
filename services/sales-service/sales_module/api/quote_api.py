@@ -226,7 +226,7 @@ async def list_quotes(
         paginated_quotes = filtered_quotes[start_idx:end_idx]
         
         return QuoteListResponse(
-            quotes=[QuoteResponse.model_validate(quote) for quote in paginated_quotes],
+            data=[QuoteResponse.model_validate(quote) for quote in paginated_quotes],
             total_count=total_count,
             page=page,
             page_size=page_size,

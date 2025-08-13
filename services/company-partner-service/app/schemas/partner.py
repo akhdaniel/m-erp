@@ -92,8 +92,8 @@ class PartnerResponse(PartnerBase):
 
 class PartnerListResponse(BaseModel):
     """Schema for partner list response."""
-    partners: list[PartnerResponse]
-    total: int
+    data: list[PartnerResponse]  # Standardized to use 'data' key like other services
+    total_count: int  # Standardized field name
     page: int
-    per_page: int
-    pages: int
+    page_size: int  # Standardized field name
+    total_pages: int  # Standardized field name

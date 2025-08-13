@@ -19,7 +19,7 @@ PURCHASING_UI_PACKAGE = {
             "id": "purchasing-metrics",
             "title": "Purchasing Metrics",
             "description": "Key purchasing KPIs",
-            "type": "metrics",
+            "type": "metric",
             "size": "large",
             "data_endpoint": "/api/v1/dashboard/metrics",
             "refresh_interval": 60

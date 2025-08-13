@@ -212,7 +212,7 @@ const currentService = computed(() => {
 const serviceUrls: Record<string, string> = {
   sales: 'http://localhost:8006',
   inventory: 'http://localhost:8005',
-  purchasing: 'http://localhost:8004',
+  purchasing: 'http://localhost:8007',
   main: 'http://localhost:8001'
 }
 

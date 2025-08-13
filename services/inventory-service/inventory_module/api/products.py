@@ -212,6 +212,15 @@ class ProductVariantResponse(BaseModel):
         from_attributes = True
 
 
+class ProductListResponse(BaseModel):
+    """Schema for paginated product list responses."""
+    data: List[ProductResponse]  # Standardized to use 'data' key like other services
+    total_count: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
 # Dependency injection
 def get_product_service(db: Session = Depends(get_db)) -> ProductService:
     # In production, would get user context from auth
@@ -328,25 +337,28 @@ async def create_product(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/", response_model=List[ProductResponse])
+@router.get("/", response_model=ProductListResponse)
 async def list_products(
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     active_only: bool = Query(True, description="Filter active products only"),
     category_id: Optional[int] = Query(None, description="Filter by category ID"),
     product_type: Optional[ProductType] = Query(None, description="Filter by product type"),
     status: Optional[ProductStatus] = Query(None, description="Filter by product status"),
-    limit: int = Query(100, ge=1, le=1000, description="Maximum number of products to return"),
-    offset: int = Query(0, ge=0, description="Number of products to skip"),
     service: ProductService = Depends(get_product_service)
 ):
-    """List products with filtering."""
+    """List products with filtering and pagination."""
+    # Calculate offset from page and page_size
+    offset = (page - 1) * page_size
+    
     if category_id:
         products = service.get_products_by_category(category_id, active_only=active_only)
     else:
         products = service.list_all(
             Product,
             active_only=active_only,
-            limit=limit,
-            offset=offset,
+            limit=1000,  # Get more for filtering
+            offset=0,  # Start from beginning for filtering
             order_by="name"
         )
     
@@ -356,7 +368,20 @@ async def list_products(
     if status:
         products = [p for p in products if p.status == status]
     
-    return [ProductResponse.from_orm(product) for product in products[:limit]]
+    # Calculate pagination
+    total_count = len(products)
+    total_pages = (total_count + page_size - 1) // page_size if total_count > 0 else 0
+    
+    # Apply pagination
+    paginated_products = products[offset:offset + page_size]
+    
+    return ProductListResponse(
+        data=[ProductResponse.from_orm(product) for product in paginated_products],
+        total_count=total_count,
+        page=page,
+        page_size=page_size,
+        total_pages=total_pages
+    )
 
 
 @router.get("/search", response_model=List[ProductResponse])

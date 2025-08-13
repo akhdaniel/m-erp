@@ -93,11 +93,11 @@ async def list_partners(
         )
         
         return PartnerListResponse(
-            partners=[PartnerResponse.model_validate(partner) for partner in partners],
-            total=total,
+            data=[PartnerResponse.model_validate(partner) for partner in partners],
+            total_count=total,
             page=math.floor(skip / limit) + 1 if limit > 0 else 1,
-            per_page=limit,
-            pages=math.ceil(total / limit) if limit > 0 else 1
+            page_size=limit,
+            total_pages=math.ceil(total / limit) if limit > 0 else 1
         )
         
     except ValueError as e:
