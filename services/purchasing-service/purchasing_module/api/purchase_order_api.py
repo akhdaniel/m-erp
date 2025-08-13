@@ -144,7 +144,6 @@ async def create_purchase_order(
         
         # Store in mock database
         mock_purchase_orders_db.append(purchase_order)
-        
         return purchase_order
         
     except Exception as e:
@@ -155,6 +154,7 @@ async def create_purchase_order(
         )
 
 
+@router.get("", response_model=Dict[str, Any])
 @router.get("/", response_model=Dict[str, Any])
 async def list_purchase_orders(
     status: Optional[str] = Query(None, description="Filter by status"),
@@ -191,6 +191,8 @@ async def list_purchase_orders(
         start_idx = (page - 1) * page_size
         end_idx = start_idx + page_size
         paginated_orders = filtered_orders[start_idx:end_idx]
+
+        logger.info(f'------- {filtered_orders}')
         
         return {
             "data": paginated_orders,
@@ -199,6 +201,8 @@ async def list_purchase_orders(
             "page_size": page_size,
             "total_pages": (total_count + page_size - 1) // page_size
         }
+        
+    
         
     except Exception as e:
         logger.error(f"Error listing purchase orders: {e}")

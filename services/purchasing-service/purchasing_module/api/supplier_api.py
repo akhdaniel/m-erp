@@ -93,6 +93,7 @@ async def create_supplier(
         )
 
 
+@router.get("")
 @router.get("/")
 async def list_suppliers(
     status: Optional[str] = Query(None, description="Filter by status"),

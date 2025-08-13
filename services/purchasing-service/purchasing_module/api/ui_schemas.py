@@ -88,7 +88,8 @@ async def get_approvals_list_schema():
     return {
         "id": "approvals-list",
         "title": "Purchase Approvals",
-        "dataSource": "/api/v1/approvals",
+        "endpoint": "/api/v1/approvals/pending",
+        "dataSource": "/api/v1/approvals/pending",
         "columns": [
             {"key": "po_number", "label": "PO Number", "sortable": True},
             {"key": "supplier_name", "label": "Supplier"},
@@ -289,7 +290,8 @@ async def get_purchase_orders_list_schema():
     return {
         "id": "purchase-orders-list",
         "title": "Purchase Orders",
-        "dataSource": "/api/v1/purchase-orders",
+        "endpoint": "/api/v1/purchase-orders/",
+        "dataSource": "/api/v1/purchase-orders/",
         "columns": [
             {"key": "po_number", "label": "PO Number", "sortable": True, "searchable": True},
             {"key": "supplier_name", "label": "Supplier", "sortable": True, "searchable": True},
@@ -375,7 +377,8 @@ async def get_suppliers_list_schema():
     return {
         "id": "suppliers-list",
         "title": "Suppliers",
-        "dataSource": "/api/v1/suppliers",
+        "endpoint": "/api/v1/suppliers/",
+        "dataSource": "/api/v1/suppliers/",
         "columns": [
             {"key": "code", "label": "Code", "sortable": True, "searchable": True},
             {"key": "name", "label": "Name", "sortable": True, "searchable": True},

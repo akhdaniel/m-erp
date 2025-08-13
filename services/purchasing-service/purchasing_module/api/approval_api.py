@@ -29,6 +29,43 @@ def get_current_company_id() -> int:
     return 1
 
 
+@router.get("")
+@router.get("/")
+async def list_approvals(
+    status: Optional[str] = Query(None, description="Filter by status"),
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    user_id: int = Depends(get_current_user_id)
+):
+    """
+    List all approvals for the current user.
+    """
+    try:
+        # Filter approvals
+        filtered = mock_approvals_db
+        if status:
+            filtered = [a for a in filtered if a["status"] == status]
+        
+        # Pagination
+        total_count = len(filtered)
+        start = (page - 1) * page_size
+        end = start + page_size
+        items = filtered[start:end]
+        
+        return {
+            "data": items,
+            "total_count": total_count,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": (total_count + page_size - 1) // page_size
+        }
+    except Exception as e:
+        logger.error(f"Error listing approvals: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
+
 @router.get("/pending")
 async def get_pending_approvals(
     user_id: int = Depends(get_current_user_id),

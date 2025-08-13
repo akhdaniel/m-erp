@@ -154,14 +154,16 @@ services:
       - xerpium
       - purchasing
     routes:
-      - name: purchasing-routes
+      - name: purchasing-routes-all
         paths:
           - /api/v1/purchasing
           - /api/v1/purchase-orders
-          - /api/v1/suppliers
+          - /api/v1/suppliers  
           - /api/v1/approvals
         strip_path: false
-        preserve_host: false
+        preserve_host: true
+        request_buffering: false
+        response_buffering: false
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
       - name: purchasing-dashboard
         paths:
