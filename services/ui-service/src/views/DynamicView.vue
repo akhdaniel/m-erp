@@ -68,12 +68,13 @@ const loadingSchema = ref(true)
 const schemaError = ref('')
 
 // Service mapping - would normally come from a registry
+// All requests go through Kong API Gateway on port 9080
 const SERVICE_MAPPING: Record<string, string> = {
-  'inventory': 'http://localhost:8005',
-  'sales': 'http://localhost:8006',
-  'purchasing': 'http://localhost:8007',
-  'partners': 'http://localhost:8002',
-  'users': 'http://localhost:8001'
+  'inventory': 'http://localhost:9080',
+  'sales': 'http://localhost:9080',
+  'purchasing': 'http://localhost:9080',
+  'partners': 'http://localhost:9080',
+  'users': 'http://localhost:9080'
 }
 
 // Computed
@@ -151,6 +152,9 @@ async function loadSchema() {
   try {
     // Determine schema endpoint based on route
     const schemaEndpoint = getSchemaEndpoint()
+    console.log('Debug - Route path:', route.path)
+    console.log('Debug - Service URL:', serviceUrl.value)
+    console.log('Debug - Schema endpoint:', schemaEndpoint)
     if (!schemaEndpoint) {
       schemaError.value = 'No schema endpoint configured for this view'
       return

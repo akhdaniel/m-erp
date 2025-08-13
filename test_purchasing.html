@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Purchasing API</title>
+</head>
+<body>
+    <h1>Testing Purchasing Service API</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testAPIs() {
+            const results = document.getElementById('results');
+            
+            // Test 1: Direct service UI schema
+            try {
+                const schemaResponse = await fetch('http://localhost:8007/api/v1/ui-schemas/lists/purchase-orders');
+                const schemaData = await schemaResponse.json();
+                results.innerHTML += `<p>✅ Schema loaded: ${schemaData.title}</p>`;
+                results.innerHTML += `<p>Data source: ${schemaData.dataSource}</p>`;
+            } catch (e) {
+                results.innerHTML += `<p>❌ Schema error: ${e.message}</p>`;
+            }
+            
+            // Test 2: Direct service data
+            try {
+                const dataResponse = await fetch('http://localhost:8007/api/v1/purchase-orders/', {
+                    headers: {
+                        'x-user-id': '1',
+                        'x-company-id': '1'
+                    }
+                });
+                const data = await dataResponse.json();
+                results.innerHTML += `<p>✅ Data loaded: ${data.total_count} records</p>`;
+            } catch (e) {
+                results.innerHTML += `<p>❌ Data error: ${e.message}</p>`;
+            }
+            
+            // Test 3: Through Kong
+            try {
+                const kongResponse = await fetch('http://localhost:8000/api/v1/purchase-orders/', {
+                    headers: {
+                        'x-user-id': '1',
+                        'x-company-id': '1'
+                    }
+                });
+                const kongData = await kongResponse.json();
+                results.innerHTML += `<p>✅ Kong routing works: ${kongData.total_count} records</p>`;
+            } catch (e) {
+                results.innerHTML += `<p>❌ Kong error: ${e.message}</p>`;
+            }
+        }
+        
+        testAPIs();
+    </script>
+</body>
+</html>

@@ -27,7 +27,7 @@ export const notificationStore = reactive<NotificationStore>({
 })
 
 class NotificationService {
-  private baseUrl = 'http://localhost:8007'  // Notification service URL
+  private baseUrl = 'http://localhost:8009'  // Notification service URL (external port)
   private eventSource: EventSource | null = null
   private maxNotifications = 50
   

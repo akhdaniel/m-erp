@@ -111,6 +111,17 @@ services:
         strip_path: false
         preserve_host: false
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+      - name: inventory-ui-schemas
+        paths:
+          - /api/v1/ui-schemas/products
+          - /api/v1/ui-schemas/warehouses
+          - /api/v1/ui-schemas/stock
+          - /api/v1/ui-schemas/receiving
+          - /api/v1/ui-schemas/categories
+        strip_path: false
+        preserve_host: false
+        service: inventory-service
+        methods: ["GET", "OPTIONS"]
       - name: inventory-health
         paths:
           - /inventory-health
@@ -151,7 +162,26 @@ services:
           - /api/v1/approvals
         strip_path: false
         preserve_host: false
-        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+      - name: purchasing-dashboard
+        paths:
+          - /api/v1/dashboard
+        strip_path: false
+        preserve_host: false
+        service: purchasing-service
+        methods: ["GET", "OPTIONS"]
+      - name: purchasing-ui-schemas
+        paths:
+          - /api/v1/ui-schemas/lists/purchase-orders
+          - /api/v1/ui-schemas/lists/suppliers
+          - /api/v1/ui-schemas/lists/approvals
+          - /api/v1/ui-schemas/forms/purchase-order
+          - /api/v1/ui-schemas/forms/supplier
+          - /api/v1/ui-schemas/dashboard
+        strip_path: false
+        preserve_host: false
+        service: purchasing-service
+        methods: ["GET", "OPTIONS"]
       - name: purchasing-health
         paths:
           - /purchasing-health
@@ -175,6 +205,17 @@ services:
         strip_path: false
         preserve_host: false
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+      - name: sales-ui-schemas
+        paths:
+          - /api/v1/ui-schemas/quotes
+          - /api/v1/ui-schemas/orders
+          - /api/v1/ui-schemas/pricing
+          - /api/v1/ui-schemas/customers
+          - /api/v1/ui-schemas/analytics
+        strip_path: false
+        preserve_host: false
+        service: sales-service
+        methods: ["GET", "OPTIONS"]
       - name: sales-health
         paths:
           - /sales-health
