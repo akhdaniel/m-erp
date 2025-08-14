@@ -140,28 +140,28 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true, title: 'Sales Dashboard' }
   },
   {
-    path: '/sales/quotes',
-    name: 'QuotesList',
+    path: '/sales/quotations',
+    name: 'QuotationsList',
     component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Sales Quotes' }
+    meta: { requiresAuth: true, title: 'Sales Quotations' }
   },
   {
-    path: '/sales/quotes/new',
-    name: 'QuoteCreate',
+    path: '/sales/quotations/new',
+    name: 'QuotationCreate',
     component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'New Quote' }
+    meta: { requiresAuth: true, title: 'New Quotation' }
   },
   {
-    path: '/sales/quotes/:id',
-    name: 'QuoteView',
+    path: '/sales/quotations/:id',
+    name: 'QuotationView',
     component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'View Quote' }
+    meta: { requiresAuth: true, title: 'View Quotation' }
   },
   {
-    path: '/sales/quotes/:id/edit',
-    name: 'QuoteEdit',
+    path: '/sales/quotations/:id/edit',
+    name: 'QuotationEdit',
     component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Edit Quote' }
+    meta: { requiresAuth: true, title: 'Edit Quotation' }
   },
   {
     path: '/sales/orders',

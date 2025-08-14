@@ -16,7 +16,7 @@ from sales_module.models import (
     SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice,
     OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus
 )
-from sales_module.models.quote import SalesQuote
+from sales_module.models.quote import SalesQuotation
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -85,7 +85,7 @@ class OrderService(BaseService):
         Create order from accepted quote with complete data transfer.
         
         Args:
-            quote_id: Quote ID to convert
+            quote_id: Quotation ID to convert
             order_data: Additional order data
             user_id: ID of user creating order
             company_id: Company ID for isolation
@@ -94,16 +94,16 @@ class OrderService(BaseService):
             Created order instance
         """
         # Fetch the actual quote
-        quote = self.db_session.query(SalesQuote).filter(
-            SalesQuote.id == quote_id,
-            SalesQuote.company_id == company_id
+        quote = self.db_session.query(SalesQuotation).filter(
+            SalesQuotation.id == quote_id,
+            SalesQuotation.company_id == company_id
         ).first()
         
         if not quote:
-            raise ValueError(f"Quote {quote_id} not found")
+            raise ValueError(f"Quotation {quote_id} not found")
         
         if quote.status != "accepted":
-            raise ValueError(f"Quote {quote_id} must be accepted before creating order")
+            raise ValueError(f"Quotation {quote_id} must be accepted before creating order")
         
         # Use the quote model's from_quote method
         order = SalesOrder.from_quote(quote, user_id, **(order_data or {}))

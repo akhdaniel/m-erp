@@ -1,5 +1,5 @@
 """
-Tests for QuoteService business logic and workflow management.
+Tests for QuotationService business logic and workflow management.
 
 Comprehensive test suite for quote service operations including
 CRUD operations, workflow management, approval processes, and integrations.
@@ -10,43 +10,43 @@ from unittest.mock import Mock, patch, MagicMock
 from decimal import Decimal
 from datetime import datetime, timedelta
 
-from sales_module.services.quote_service import QuoteService
+from sales_module.services.quote_service import QuotationService
 from sales_module.models.quote import (
-    SalesQuote, SalesQuoteLineItem, QuoteVersion, QuoteApproval,
-    QuoteStatus, ApprovalStatus, LineItemType
+    SalesQuotation, SalesQuotationLineItem, QuotationVersion, QuotationApproval,
+    QuotationStatus, ApprovalStatus, LineItemType
 )
 
 
-class TestQuoteServiceInit:
-    """Test QuoteService initialization and configuration."""
+class TestQuotationServiceInit:
+    """Test QuotationService initialization and configuration."""
     
     def test_service_initialization(self):
         """Test service initializes correctly."""
-        service = QuoteService()
+        service = QuotationService()
         
-        assert service.model_class == SalesQuote
+        assert service.model_class == SalesQuotation
         assert service.db_session is None
         
         # Test with database session
         mock_session = Mock()
-        service_with_session = QuoteService(mock_session)
+        service_with_session = QuotationService(mock_session)
         assert service_with_session.db_session == mock_session
 
 
-class TestQuoteCreation:
+class TestQuotationCreation:
     """Test quote creation functionality."""
     
     @pytest.fixture
     def quote_service(self):
         """Create quote service with mocked session."""
         mock_session = Mock()
-        return QuoteService(mock_session)
+        return QuotationService(mock_session)
     
     @pytest.fixture
     def sample_quote_data(self):
         """Sample quote data for testing."""
         return {
-            "title": "Test Quote",
+            "title": "Test Quotation",
             "description": "Test quote description",
             "customer_id": 100,
             "subtotal": Decimal("1000.00"),
@@ -78,7 +78,7 @@ class TestQuoteCreation:
     def test_create_quote_basic(self, quote_service, sample_quote_data):
         """Test basic quote creation without line items."""
         with patch.object(quote_service, 'create') as mock_create:
-            mock_quote = Mock(spec=SalesQuote)
+            mock_quote = Mock(spec=SalesQuotation)
             mock_quote.id = 1
             mock_create.return_value = mock_quote
             
@@ -103,7 +103,7 @@ class TestQuoteCreation:
         sample_quote_data['quote_number'] = 'CUSTOM-2025-001'
         
         with patch.object(quote_service, 'create') as mock_create:
-            mock_quote = Mock(spec=SalesQuote)
+            mock_quote = Mock(spec=SalesQuotation)
             mock_create.return_value = mock_quote
             
             quote_service.create_quote(sample_quote_data, user_id=1, company_id=1)
@@ -117,7 +117,7 @@ class TestQuoteCreation:
              patch.object(quote_service, 'add_line_item') as mock_add_line, \
              patch.object(quote_service, 'calculate_quote_totals') as mock_calc_totals:
             
-            mock_quote = Mock(spec=SalesQuote)
+            mock_quote = Mock(spec=SalesQuotation)
             mock_quote.id = 1
             mock_create.return_value = mock_quote
             
@@ -149,12 +149,12 @@ class TestLineItemManagement:
     @pytest.fixture
     def quote_service(self):
         """Create quote service with mocked session."""
-        return QuoteService(Mock())
+        return QuotationService(Mock())
     
     @pytest.fixture
     def mock_quote(self):
         """Mock quote for testing."""
-        quote = Mock(spec=SalesQuote)
+        quote = Mock(spec=SalesQuotation)
         quote.id = 1
         quote.company_id = 1
         return quote
@@ -169,10 +169,10 @@ class TestLineItemManagement:
         
         with patch.object(quote_service, 'get_by_id') as mock_get, \
              patch.object(quote_service, 'calculate_quote_totals') as mock_calc, \
-             patch('sales_module.services.quote_service.SalesQuoteLineItem') as mock_line_item_class:
+             patch('sales_module.services.quote_service.SalesQuotationLineItem') as mock_line_item_class:
             
             mock_get.return_value = mock_quote
-            mock_line_item = Mock(spec=SalesQuoteLineItem)
+            mock_line_item = Mock(spec=SalesQuotationLineItem)
             mock_line_item_class.return_value = mock_line_item
             
             result = quote_service.add_line_item(1, line_item_data, user_id=1, company_id=1)
@@ -205,18 +205,18 @@ class TestLineItemManagement:
         assert result is None
 
 
-class TestQuoteCalculations:
+class TestQuotationCalculations:
     """Test quote calculation functionality."""
     
     @pytest.fixture
     def quote_service(self):
         """Create quote service with mocked session."""
-        return QuoteService(Mock())
+        return QuotationService(Mock())
     
     @pytest.fixture
     def mock_quote(self):
         """Mock quote for testing."""
-        quote = Mock(spec=SalesQuote)
+        quote = Mock(spec=SalesQuotation)
         quote.id = 1
         quote.subtotal = Decimal("1000.00")
         quote.tax_amount = Decimal("80.00")
@@ -260,20 +260,20 @@ class TestQuoteCalculations:
             mock_quote.save.assert_called_once()
 
 
-class TestQuoteWorkflow:
+class TestQuotationWorkflow:
     """Test quote workflow and status transitions."""
     
     @pytest.fixture
     def quote_service(self):
         """Create quote service with mocked session."""
-        return QuoteService(Mock())
+        return QuotationService(Mock())
     
     @pytest.fixture
     def mock_quote(self):
         """Mock quote for testing."""
-        quote = Mock(spec=SalesQuote)
+        quote = Mock(spec=SalesQuotation)
         quote.id = 1
-        quote.status = QuoteStatus.APPROVED
+        quote.status = QuotationStatus.APPROVED
         quote.requires_approval = False
         quote.quote_number = "QUO-2025-001"
         return quote
@@ -295,13 +295,13 @@ class TestQuoteWorkflow:
     
     def test_send_quote_requires_approval(self, quote_service, mock_quote):
         """Test sending quote that requires approval."""
-        mock_quote.status = QuoteStatus.DRAFT
+        mock_quote.status = QuotationStatus.DRAFT
         mock_quote.requires_approval = True
         
         with patch.object(quote_service, 'get_by_id') as mock_get:
             mock_get.return_value = mock_quote
             
-            with pytest.raises(ValueError, match="Quote must be approved before sending"):
+            with pytest.raises(ValueError, match="Quotation must be approved before sending"):
                 quote_service.send_quote_to_customer(1, user_id=1, company_id=1)
     
     def test_extend_quote_validity(self, quote_service, mock_quote):
@@ -320,24 +320,24 @@ class TestQuoteWorkflow:
             mock_quote.extend_validity.assert_called_once_with(15, 1)
 
 
-class TestQuoteVersioning:
+class TestQuotationVersioning:
     """Test quote versioning functionality."""
     
     @pytest.fixture
     def quote_service(self):
         """Create quote service with mocked session."""
-        return QuoteService(Mock())
+        return QuotationService(Mock())
     
     @pytest.fixture
     def mock_quote(self):
         """Mock quote for testing."""
-        quote = Mock(spec=SalesQuote)
+        quote = Mock(spec=SalesQuotation)
         quote.id = 1
         return quote
     
     def test_create_quote_version(self, quote_service, mock_quote):
         """Test creating new quote version."""
-        mock_version = Mock(spec=QuoteVersion)
+        mock_version = Mock(spec=QuotationVersion)
         
         with patch.object(quote_service, 'get_by_id') as mock_get:
             mock_get.return_value = mock_quote
@@ -369,28 +369,28 @@ class TestApprovalWorkflow:
     @pytest.fixture
     def quote_service(self):
         """Create quote service with mocked session."""
-        return QuoteService(Mock())
+        return QuotationService(Mock())
     
     @pytest.fixture
     def mock_quote(self):
         """Mock quote for testing."""
-        quote = Mock(spec=SalesQuote)
+        quote = Mock(spec=SalesQuotation)
         quote.id = 1
         quote.overall_discount_percentage = Decimal("10.0")
         quote.total_amount = Decimal("5000.00")
         quote.margin_percentage = Decimal("25.0")
-        quote.status = QuoteStatus.DRAFT
+        quote.status = QuotationStatus.DRAFT
         return quote
     
     def test_request_quote_approval(self, quote_service, mock_quote):
         """Test requesting quote approval."""
         with patch.object(quote_service, 'get_by_id') as mock_get, \
              patch.object(quote_service, 'get_approver_for_level') as mock_get_approver, \
-             patch('sales_module.services.quote_service.QuoteApproval') as mock_approval_class:
+             patch('sales_module.services.quote_service.QuotationApproval') as mock_approval_class:
             
             mock_get.return_value = mock_quote
             mock_get_approver.return_value = 2  # Approver user ID
-            mock_approval = Mock(spec=QuoteApproval)
+            mock_approval = Mock(spec=QuotationApproval)
             mock_approval_class.return_value = mock_approval
             
             result = quote_service.request_quote_approval(
@@ -406,7 +406,7 @@ class TestApprovalWorkflow:
             mock_approval.save.assert_called_once()
             
             # Verify quote status updated
-            assert mock_quote.status == QuoteStatus.PENDING_APPROVAL
+            assert mock_quote.status == QuotationStatus.PENDING_APPROVAL
             mock_quote.save.assert_called_once()
     
     def test_request_approval_quote_not_found(self, quote_service):
@@ -422,7 +422,7 @@ class TestApprovalWorkflow:
         """Test approving quote."""
         result = quote_service.approve_quote(
             1,
-            approver_notes="Quote looks good to go",
+            approver_notes="Quotation looks good to go",
             user_id=2,
             company_id=1
         )
@@ -443,20 +443,20 @@ class TestApprovalWorkflow:
         assert result is None
 
 
-class TestQuoteConversion:
+class TestQuotationConversion:
     """Test quote to order conversion functionality."""
     
     @pytest.fixture
     def quote_service(self):
         """Create quote service with mocked session."""
-        return QuoteService(Mock())
+        return QuotationService(Mock())
     
     @pytest.fixture
     def mock_accepted_quote(self):
         """Mock accepted quote for testing."""
-        quote = Mock(spec=SalesQuote)
+        quote = Mock(spec=SalesQuotation)
         quote.id = 1
-        quote.status = QuoteStatus.ACCEPTED
+        quote.status = QuotationStatus.ACCEPTED
         quote.quote_number = "QUO-2025-001"
         return quote
     
@@ -486,12 +486,12 @@ class TestQuoteConversion:
             result = quote_service.convert_quote_to_order(999, user_id=1, company_id=1)
             
             assert result["success"] is False
-            assert "Quote not found" in result["error"]
+            assert "Quotation not found" in result["error"]
     
     def test_convert_quote_wrong_status(self, quote_service):
         """Test conversion of quote with wrong status."""
-        mock_quote = Mock(spec=SalesQuote)
-        mock_quote.status = QuoteStatus.DRAFT
+        mock_quote = Mock(spec=SalesQuotation)
+        mock_quote.status = QuotationStatus.DRAFT
         
         with patch.object(quote_service, 'get_by_id') as mock_get:
             mock_get.return_value = mock_quote
@@ -508,7 +508,7 @@ class TestAnalyticsAndReporting:
     @pytest.fixture
     def quote_service(self):
         """Create quote service with mocked session."""
-        return QuoteService(Mock())
+        return QuotationService(Mock())
     
     def test_get_quote_analytics(self, quote_service):
         """Test getting quote analytics."""
@@ -555,7 +555,7 @@ class TestUtilityMethods:
     @pytest.fixture
     def quote_service(self):
         """Create quote service with mocked session."""
-        return QuoteService(Mock())
+        return QuotationService(Mock())
     
     def test_get_approver_for_level(self, quote_service):
         """Test getting approver for approval level."""
@@ -578,12 +578,12 @@ class TestValidation:
     @pytest.fixture
     def quote_service(self):
         """Create quote service with mocked session."""
-        return QuoteService(Mock())
+        return QuotationService(Mock())
     
     def test_validate_create_data_success(self, quote_service):
         """Test successful validation of create data."""
         valid_data = {
-            "title": "Test Quote",
+            "title": "Test Quotation",
             "customer_id": 100,
             "valid_from": datetime.utcnow(),
             "valid_until": datetime.utcnow() + timedelta(days=30)
@@ -603,7 +603,7 @@ class TestValidation:
         """Test validation failure for invalid date range."""
         base_date = datetime.utcnow()
         invalid_data = {
-            "title": "Test Quote",
+            "title": "Test Quotation",
             "customer_id": 100,
             "valid_from": base_date,
             "valid_until": base_date - timedelta(days=1)  # Invalid: until before from
@@ -614,9 +614,9 @@ class TestValidation:
     
     def test_validate_update_data_success(self, quote_service):
         """Test successful validation of update data."""
-        mock_quote = Mock(spec=SalesQuote)
+        mock_quote = Mock(spec=SalesQuotation)
         mock_quote.quote_number = "QUO-2025-001"
-        mock_quote.status = QuoteStatus.DRAFT
+        mock_quote.status = QuotationStatus.DRAFT
         
         valid_data = {"title": "Updated Title"}
         
@@ -625,18 +625,18 @@ class TestValidation:
     
     def test_validate_update_data_quote_number_change(self, quote_service):
         """Test validation failure when trying to change quote number."""
-        mock_quote = Mock(spec=SalesQuote)
+        mock_quote = Mock(spec=SalesQuotation)
         mock_quote.quote_number = "QUO-2025-001"
         
         invalid_data = {"quote_number": "QUO-2025-002"}
         
-        with pytest.raises(ValueError, match="Quote number cannot be changed"):
+        with pytest.raises(ValueError, match="Quotation number cannot be changed"):
             quote_service.validate_update_data(invalid_data, mock_quote)
     
     def test_validate_update_data_converted_quote(self, quote_service):
         """Test validation failure when trying to edit converted quote."""
-        mock_quote = Mock(spec=SalesQuote)
-        mock_quote.status = QuoteStatus.CONVERTED
+        mock_quote = Mock(spec=SalesQuotation)
+        mock_quote.status = QuotationStatus.CONVERTED
         
         invalid_data = {"title": "Cannot update converted quote"}
         

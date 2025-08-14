@@ -208,8 +208,8 @@ async def create_sales_menus():
             ),
             Permission(
                 code="quotes.view",
-                name="View Quotes",
-                description="View sales quotes and proposals",
+                name="View Quotations",
+                description="View sales quotations and proposals",
                 category="quotes",
                 action="read"
             ),
@@ -274,9 +274,9 @@ async def create_sales_menus():
         sales_sub_items = [
             MenuItem(
                 code="quotes_management",
-                title="Sales Quotes",
-                description="Create and manage sales quotes and proposals",
-                url="/sales/quotes",
+                title="Sales Quotations",
+                description="Create and manage sales quotations and proposals",
+                url="/sales/quotations",
                 icon="fas fa-file-invoice-dollar",
                 parent_id=sales_menu.id,
                 order_index=10,

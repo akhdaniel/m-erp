@@ -83,12 +83,12 @@ async def get_recent_activities(
     try:
         activities = []
         activity_types = [
-            ("quote_sent", "Quote sent to {customer}", "file-text", "blue"),
+            ("quote_sent", "Quotation sent to {customer}", "file-text", "blue"),
             ("order_received", "New order from {customer}", "shopping-bag", "green"),
             ("payment_received", "Payment received from {customer}", "dollar-sign", "green"),
-            ("quote_viewed", "Quote viewed by {customer}", "eye", "purple"),
+            ("quote_viewed", "Quotation viewed by {customer}", "eye", "purple"),
             ("follow_up", "Follow-up scheduled with {customer}", "calendar", "orange"),
-            ("quote_accepted", "Quote accepted by {customer}", "check-circle", "green"),
+            ("quote_accepted", "Quotation accepted by {customer}", "check-circle", "green"),
             ("inventory_alert", "Low stock alert for {product}", "alert-triangle", "yellow")
         ]
         
@@ -143,7 +143,7 @@ async def get_recent_notifications(
         notifications = []
         notification_types = [
             ("low_stock", "Low stock alert", "{count} products below reorder point", "warning"),
-            ("quote_expiring", "Quote expiring soon", "{count} quotes expiring this week", "info"),
+            ("quote_expiring", "Quotation expiring soon", "{count} quotes expiring this week", "info"),
             ("payment_overdue", "Payment overdue", "{count} invoices past due date", "error"),
             ("target_achieved", "Sales target achieved", "Monthly target exceeded by {percent}%", "success"),
             ("new_lead", "New lead assigned", "{count} new leads require attention", "info")

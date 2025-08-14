@@ -265,7 +265,7 @@ class DashboardService:
             },
             {
                 "stage": "quoted",
-                "label": "Quoted",
+                "label": "Quotationd",
                 "count": int(total_leads * 0.5),
                 "value": int(total_leads * 0.5 * 2000),
                 "color": "#3B82F6",

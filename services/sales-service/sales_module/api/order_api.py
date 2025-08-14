@@ -108,7 +108,7 @@ class OrderUpdate(BaseModel):
     tags: Optional[List[str]] = None
 
 
-class OrderFromQuoteCreate(BaseModel):
+class OrderFromQuotationCreate(BaseModel):
     quote_id: int = Field(..., gt=0)
     order_data: Optional[OrderUpdate] = None
 
@@ -350,7 +350,7 @@ async def create_order(
 
 @router.post("/from-quote", response_model=OrderResponse, status_code=201)
 async def create_order_from_quote(
-    request_data: OrderFromQuoteCreate,
+    request_data: OrderFromQuotationCreate,
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id),
     order_service: OrderService = Depends(get_order_service)

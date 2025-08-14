@@ -1,9 +1,8 @@
 """
-Quote API endpoints for sales module.
+Quotation API endpoints for sales module.
 
-Provides comprehensive REST API for quote management including
-CRUD operations, workflow management, approvals, and inventory integration.
-"""
+Provides comprehensive REST API for quotation management including
+CRUD operations, workflow management, approvals, and inventory integration."""
 
 from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, Depends, Query, Path, status, Body
@@ -13,33 +12,33 @@ from datetime import datetime, date
 import logging
 import sys
 
-from sales_module.services.quote_service import QuoteService
+from sales_module.services.quote_service import QuotationService
 from sales_module.framework.database import get_db_session
 from sqlalchemy.orm import Session
-from sales_module.schemas.quote_schemas import (
-    QuoteCreateRequest, QuoteUpdateRequest, QuoteResponse, QuoteListResponse,
-    QuoteLineItemCreateRequest, QuoteLineItemUpdateRequest, QuoteLineItemResponse,
-    QuoteApprovalRequest, QuoteApprovalAction, QuoteApprovalResponse,
-    QuoteDiscountRequest, QuoteSendRequest, QuoteVersionRequest, QuoteVersionResponse,
-    QuoteConversionRequest, QuoteConversionResponse, ValidityExtensionRequest,
-    QuoteAnalyticsResponse, InventoryValidationResponse, InventoryReservationResponse,
-    PendingApprovalsResponse, APIResponse, QuoteQueryParams
+from sales_module.schemas.quotation_schemas import (
+    QuotationCreateRequest, QuotationUpdateRequest, QuotationResponse, QuotationListResponse,
+    QuotationLineItemCreateRequest, QuotationLineItemUpdateRequest, QuotationLineItemResponse,
+    QuotationApprovalRequest, QuotationApprovalAction, QuotationApprovalResponse,
+    QuotationDiscountRequest, QuotationSendRequest, QuotationVersionRequest, QuotationVersionResponse,
+    QuotationConversionRequest, QuotationConversionResponse, ValidityExtensionRequest,
+    QuotationAnalyticsResponse, InventoryValidationResponse, InventoryReservationResponse,
+    PendingApprovalsResponse, APIResponse, QuotationQueryParams
 )
-from sales_module.models import QuoteStatus, SalesQuote
+from sales_module.models import QuotationStatus, SalesQuotation
 
 logger = logging.getLogger(__name__)
 
 # Create API router
-router = APIRouter(prefix="/api/v1/quotes", tags=["quotes"])
+router = APIRouter(prefix="/api/v1/quotations", tags=["quotations"])
 
 # In-memory storage for demo purposes
-mock_quotes_db = []
-next_quote_id = 1
+mock_quotations_db = []
+next_quotation_id = 1
 
 # Dependencies
-def get_quote_service(db: Session = Depends(get_db_session)) -> QuoteService:
-    """Get quote service instance with database session."""
-    return QuoteService(db_session=db)
+def get_quotation_service(db: Session = Depends(get_db_session)) -> QuotationService:
+    """Get quotation service instance with database session."""
+    return QuotationService(db_session=db)
 
 
 def get_current_user_id() -> int:
@@ -54,11 +53,11 @@ def get_current_company_id() -> int:
     return 1
 
 
-# Quote CRUD endpoints
-@router.post("/", response_model=QuoteResponse, status_code=status.HTTP_201_CREATED)
-async def create_quote(
+# Quotation CRUD endpoints
+@router.post("/", response_model=QuotationResponse, status_code=status.HTTP_201_CREATED)
+async def create_quotation(
     request: Dict[str, Any] = Body(...),
-    quote_service: QuoteService = Depends(get_quote_service),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -72,8 +71,8 @@ async def create_quote(
         # Extract line items from request if present
         line_items = request.pop('items', None) or request.pop('line_items', None)
         
-        # Create QuoteCreateRequest from remaining data
-        quote_data = QuoteCreateRequest(**request)
+        # Create QuotationCreateRequest from remaining data
+        quote_data = QuotationCreateRequest(**request)
         
         # Convert request data to dict
         quote_dict_input = quote_data.model_dump(exclude_unset=True)
@@ -166,7 +165,7 @@ async def create_quote(
         # Store in mock database
         mock_quotes_db.append(quote_response)
         
-        return QuoteResponse.model_validate(quote_response)
+        return QuotationResponse.model_validate(quote_response)
         
     except ValueError as e:
         raise HTTPException(
@@ -181,14 +180,14 @@ async def create_quote(
         )
 
 
-@router.get("/", response_model=QuoteListResponse)
+@router.get("/", response_model=QuotationListResponse)
 async def list_quotes(
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     quote_status: Optional[str] = Query(None, description="Filter by status"),
     customer_id: Optional[int] = Query(None, gt=0, description="Filter by customer"),
     search: Optional[str] = Query(None, max_length=100, description="Search text"),
-    quote_service: QuoteService = Depends(get_quote_service),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -225,8 +224,8 @@ async def list_quotes(
         end_idx = start_idx + page_size
         paginated_quotes = filtered_quotes[start_idx:end_idx]
         
-        return QuoteListResponse(
-            data=[QuoteResponse.model_validate(quote) for quote in paginated_quotes],
+        return QuotationListResponse(
+            data=[QuotationResponse.model_validate(quote) for quote in paginated_quotes],
             total_count=total_count,
             page=page,
             page_size=page_size,
@@ -242,11 +241,11 @@ async def list_quotes(
 
 
 # Analytics endpoints - must be before /{quote_id} route
-@router.get("/analytics", response_model=QuoteAnalyticsResponse)
+@router.get("/analytics", response_model=QuotationAnalyticsResponse)
 async def get_analytics(
     date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
     date_to: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
-    quote_service: QuoteService = Depends(get_quote_service),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -276,7 +275,7 @@ async def get_analytics(
 
 @router.get("/stats", response_model=Dict[str, Any])
 async def get_quote_stats(
-    quote_service: QuoteService = Depends(get_quote_service),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -316,7 +315,7 @@ async def get_quote_stats(
 
 @router.get("/pipeline", response_model=Dict[str, Any])
 async def get_quote_pipeline(
-    quote_service: QuoteService = Depends(get_quote_service),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -394,13 +393,13 @@ async def get_quote_pipeline(
         )
 
 
-@router.get("/{quote_id}", response_model=QuoteResponse)
+@router.get("/{quote_id}", response_model=QuotationResponse)
 async def get_quote(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
     include_line_items: bool = Query(True, description="Include line items"),
     include_versions: bool = Query(False, description="Include versions"),
     include_approvals: bool = Query(False, description="Include approvals"),
-    quote_service: QuoteService = Depends(get_quote_service),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -421,19 +420,19 @@ async def get_quote(
                 # Debug: log what we found
                 logger.info(f"Found quote {quote_id}: has 'items'={bool(q.get('items'))}, has 'line_items'={bool(q.get('line_items'))}")
                 if q.get('items'):
-                    logger.info(f"Quote has {len(q.get('items'))} items")
+                    logger.info(f"Quotation has {len(q.get('items'))} items")
                 if q.get('line_items'):
-                    logger.info(f"Quote has {len(q.get('line_items'))} line_items")
+                    logger.info(f"Quotation has {len(q.get('line_items'))} line_items")
                 break
         
         if not quote:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Quote not found"
+                detail="Quotation not found"
             )
         
         # Convert to response model
-        quote_response = QuoteResponse.model_validate(quote)
+        quote_response = QuotationResponse.model_validate(quote)
         
         # Include related data if requested
         if include_line_items:
@@ -441,13 +440,13 @@ async def get_quote(
             # Check both 'items' and 'line_items' keys
             stored_items = quote.get('items') or quote.get('line_items') or []
             # Debug logging
-            logger.info(f"Quote {quote_id} has {len(stored_items)} line items")
+            logger.info(f"Quotation {quote_id} has {len(stored_items)} line items")
             # Directly set the line_items in the response
             if stored_items:
                 # Create a dict from the response model and update it
                 response_dict = quote_response.model_dump()
                 response_dict['line_items'] = stored_items
-                quote_response = QuoteResponse.model_validate(response_dict)
+                quote_response = QuotationResponse.model_validate(response_dict)
         
         if include_versions:
             # In production, would load from database
@@ -469,9 +468,9 @@ async def get_quote(
         )
 
 
-@router.put("/{quote_id}", response_model=QuoteResponse)
+@router.put("/{quote_id}", response_model=QuotationResponse)
 async def update_quote(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
     request: Dict[str, Any] = Body(...),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
@@ -507,11 +506,11 @@ async def update_quote(
         if not quote:
             # If not in mock DB, create a placeholder for demo purposes
             # This handles the case where the mock DB was cleared
-            print(f"Quote {quote_id} not found in mock DB, creating placeholder")
+            print(f"Quotation {quote_id} not found in mock DB, creating placeholder")
             quote = {
                 'id': quote_id,
                 'quote_number': f'QUO-2025-{quote_id:03d}',
-                'title': 'Placeholder Quote',
+                'title': 'Placeholder Quotation',
                 'description': '',
                 'status': 'draft',
                 'version': 1,
@@ -599,7 +598,7 @@ async def update_quote(
         
         # Write debug info to a file that we can check
         with open('/tmp/quote_debug.txt', 'w') as f:
-            f.write(f"After update - Quote {quote_id}:\n")
+            f.write(f"After update - Quotation {quote_id}:\n")
             f.write(f"Has line_items: {len(quote.get('line_items', []))}\n")
             f.write(f"Has items: {len(quote.get('items', []))}\n")
             if quote.get('line_items'):
@@ -607,7 +606,7 @@ async def update_quote(
                 for item in quote['line_items']:
                     f.write(f"  - {item.get('item_name')}: qty={item.get('quantity')}, price={item.get('unit_price')}\n")
             f.write(f"\nMock DB now has {len(mock_quotes_db)} quotes\n")
-            f.write(f"Quote at index {quote_index} has {len(mock_quotes_db[quote_index].get('line_items', []))} line_items\n")
+            f.write(f"Quotation at index {quote_index} has {len(mock_quotes_db[quote_index].get('line_items', []))} line_items\n")
         
         # Create a copy of the quote to return
         response_quote = quote.copy()
@@ -626,7 +625,7 @@ async def update_quote(
         
         # Return the updated quote - use model_validate_json for better compatibility
         try:
-            return QuoteResponse.model_validate(response_quote)
+            return QuotationResponse.model_validate(response_quote)
         except Exception as e:
             # If validation fails, return a basic response
             logger.error(f"Failed to validate quote response: {e}")
@@ -650,8 +649,8 @@ async def update_quote(
 
 @router.delete("/{quote_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_quote(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
-    quote_service: QuoteService = Depends(get_quote_service),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -665,11 +664,11 @@ async def delete_quote(
         if not quote:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Quote not found"
+                detail="Quotation not found"
             )
         
         # Check if quote can be deleted
-        if quote.status in [QuoteStatus.SENT, QuoteStatus.ACCEPTED, QuoteStatus.CONVERTED]:
+        if quote.status in [QuotationStatus.SENT, QuotationStatus.ACCEPTED, QuotationStatus.CONVERTED]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Cannot delete quote that has been sent or accepted"
@@ -693,11 +692,11 @@ async def delete_quote(
 
 
 # Line item endpoints
-@router.post("/{quote_id}/line-items", response_model=QuoteLineItemResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/{quote_id}/line-items", response_model=QuotationLineItemResponse, status_code=status.HTTP_201_CREATED)
 async def add_line_item(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
-    line_item_data: QuoteLineItemCreateRequest = None,
-    quote_service: QuoteService = Depends(get_quote_service),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
+    line_item_data: QuotationLineItemCreateRequest = None,
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -722,10 +721,10 @@ async def add_line_item(
         if not line_item:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Quote not found"
+                detail="Quotation not found"
             )
         
-        return QuoteLineItemResponse.model_validate(line_item)
+        return QuotationLineItemResponse.model_validate(line_item)
         
     except ValueError as e:
         raise HTTPException(
@@ -740,12 +739,12 @@ async def add_line_item(
         )
 
 
-@router.put("/{quote_id}/line-items/{line_item_id}", response_model=QuoteLineItemResponse)
+@router.put("/{quote_id}/line-items/{line_item_id}", response_model=QuotationLineItemResponse)
 async def update_line_item(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
     line_item_id: int = Path(..., gt=0, description="Line item ID"),
-    line_item_data: QuoteLineItemUpdateRequest = None,
-    quote_service: QuoteService = Depends(get_quote_service),
+    line_item_data: QuotationLineItemUpdateRequest = None,
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -778,7 +777,7 @@ async def update_line_item(
                 detail="Line item not found"
             )
         
-        return QuoteLineItemResponse.model_validate(line_item)
+        return QuotationLineItemResponse.model_validate(line_item)
         
     except ValueError as e:
         raise HTTPException(
@@ -795,9 +794,9 @@ async def update_line_item(
 
 @router.delete("/{quote_id}/line-items/{line_item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_line_item(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
     line_item_id: int = Path(..., gt=0, description="Line item ID"),
-    quote_service: QuoteService = Depends(get_quote_service),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -826,12 +825,12 @@ async def delete_line_item(
         )
 
 
-# Quote operations endpoints
-@router.post("/{quote_id}/discount", response_model=QuoteResponse)
+# Quotation operations endpoints
+@router.post("/{quote_id}/discount", response_model=QuotationResponse)
 async def apply_discount(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
-    discount_request: QuoteDiscountRequest = None,
-    quote_service: QuoteService = Depends(get_quote_service),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
+    discount_request: QuotationDiscountRequest = None,
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -851,10 +850,10 @@ async def apply_discount(
         if not quote:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Quote not found"
+                detail="Quotation not found"
             )
         
-        return QuoteResponse.model_validate(quote)
+        return QuotationResponse.model_validate(quote)
         
     except ValueError as e:
         raise HTTPException(
@@ -869,11 +868,11 @@ async def apply_discount(
         )
 
 
-@router.post("/{quote_id}/send", response_model=QuoteResponse)
+@router.post("/{quote_id}/send", response_model=QuotationResponse)
 async def send_quote(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
-    send_request: QuoteSendRequest = None,
-    quote_service: QuoteService = Depends(get_quote_service),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
+    send_request: QuotationSendRequest = None,
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -893,10 +892,10 @@ async def send_quote(
         if not quote:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Quote not found"
+                detail="Quotation not found"
             )
         
-        return QuoteResponse.model_validate(quote)
+        return QuotationResponse.model_validate(quote)
         
     except ValueError as e:
         raise HTTPException(
@@ -911,11 +910,11 @@ async def send_quote(
         )
 
 
-@router.post("/{quote_id}/versions", response_model=QuoteVersionResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/{quote_id}/versions", response_model=QuotationVersionResponse, status_code=status.HTTP_201_CREATED)
 async def create_version(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
-    version_request: QuoteVersionRequest = None,
-    quote_service: QuoteService = Depends(get_quote_service),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
+    version_request: QuotationVersionRequest = None,
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -935,10 +934,10 @@ async def create_version(
         if not version:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Quote not found"
+                detail="Quotation not found"
             )
         
-        return QuoteVersionResponse.model_validate(version)
+        return QuotationVersionResponse.model_validate(version)
         
     except Exception as e:
         logger.error(f"Error creating version for quote {quote_id}: {e}")
@@ -948,11 +947,11 @@ async def create_version(
         )
 
 
-@router.post("/{quote_id}/convert", response_model=QuoteConversionResponse)
+@router.post("/{quote_id}/convert", response_model=QuotationConversionResponse)
 async def convert_to_order(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
-    conversion_request: QuoteConversionRequest = None,
-    quote_service: QuoteService = Depends(get_quote_service),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
+    conversion_request: QuotationConversionRequest = None,
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -969,7 +968,7 @@ async def convert_to_order(
             company_id=company_id
         )
         
-        return QuoteConversionResponse(**result)
+        return QuotationConversionResponse(**result)
         
     except Exception as e:
         logger.error(f"Error converting quote {quote_id}: {e}")
@@ -979,11 +978,11 @@ async def convert_to_order(
         )
 
 
-@router.post("/{quote_id}/extend-validity", response_model=QuoteResponse)
+@router.post("/{quote_id}/extend-validity", response_model=QuotationResponse)
 async def extend_validity(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
     extension_request: ValidityExtensionRequest = None,
-    quote_service: QuoteService = Depends(get_quote_service),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -1003,10 +1002,10 @@ async def extend_validity(
         if not quote:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Quote not found"
+                detail="Quotation not found"
             )
         
-        return QuoteResponse.model_validate(quote)
+        return QuotationResponse.model_validate(quote)
         
     except Exception as e:
         logger.error(f"Error extending validity for quote {quote_id}: {e}")
@@ -1017,11 +1016,11 @@ async def extend_validity(
 
 
 # Approval workflow endpoints
-@router.post("/{quote_id}/approvals", response_model=QuoteApprovalResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/{quote_id}/approvals", response_model=QuotationApprovalResponse, status_code=status.HTTP_201_CREATED)
 async def request_approval(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
-    approval_request: QuoteApprovalRequest = None,
-    quote_service: QuoteService = Depends(get_quote_service),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
+    approval_request: QuotationApprovalRequest = None,
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -1043,10 +1042,10 @@ async def request_approval(
         if not approval:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Quote not found"
+                detail="Quotation not found"
             )
         
-        return QuoteApprovalResponse.model_validate(approval)
+        return QuotationApprovalResponse.model_validate(approval)
         
     except Exception as e:
         logger.error(f"Error requesting approval for quote {quote_id}: {e}")
@@ -1056,11 +1055,11 @@ async def request_approval(
         )
 
 
-@router.post("/approvals/{approval_id}/action", response_model=QuoteApprovalResponse)
+@router.post("/approvals/{approval_id}/action", response_model=QuotationApprovalResponse)
 async def approval_action(
     approval_id: int = Path(..., gt=0, description="Approval ID"),
-    action_request: QuoteApprovalAction = None,
-    quote_service: QuoteService = Depends(get_quote_service),
+    action_request: QuotationApprovalAction = None,
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -1109,7 +1108,7 @@ async def approval_action(
                 detail="Approval not found"
             )
         
-        return QuoteApprovalResponse.model_validate(approval)
+        return QuotationApprovalResponse.model_validate(approval)
         
     except ValueError as e:
         raise HTTPException(
@@ -1128,7 +1127,7 @@ async def approval_action(
 
 @router.get("/approvals/pending", response_model=PendingApprovalsResponse)
 async def get_pending_approvals(
-    quote_service: QuoteService = Depends(get_quote_service),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     user_id: int = Depends(get_current_user_id),
     company_id: int = Depends(get_current_company_id)
 ):
@@ -1156,8 +1155,8 @@ async def get_pending_approvals(
 # Inventory integration endpoints  
 @router.get("/{quote_id}/inventory/validate", response_model=InventoryValidationResponse)
 async def validate_inventory(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
-    quote_service: QuoteService = Depends(get_quote_service),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """
@@ -1179,9 +1178,9 @@ async def validate_inventory(
 
 @router.post("/{quote_id}/inventory/reserve", response_model=InventoryReservationResponse)
 async def reserve_inventory(
-    quote_id: int = Path(..., gt=0, description="Quote ID"),
+    quote_id: int = Path(..., gt=0, description="Quotation ID"),
     expiry_hours: int = Query(24, ge=1, le=168, description="Reservation expiry hours"),
-    quote_service: QuoteService = Depends(get_quote_service),
+    quotation_service: QuotationService = Depends(get_quotation_service),
     company_id: int = Depends(get_current_company_id)
 ):
     """

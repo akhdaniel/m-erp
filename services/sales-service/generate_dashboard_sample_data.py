@@ -18,9 +18,9 @@ from random import randint, choice, uniform
 sys.path.insert(0, os.path.dirname(__file__))
 
 from sales_module.framework.database import get_db_session
-from sales_module.services.quote_service import QuoteService
+from sales_module.services.quote_service import QuotationService
 from sales_module.services.order_service import OrderService
-from sales_module.models import QuoteStatus, OrderStatus, PaymentStatus
+from sales_module.models import QuotationStatus, OrderStatus, PaymentStatus
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -63,17 +63,17 @@ class SampleDataGenerator:
 
     async def generate_sample_quotes(self, db_session, count=25):
         """Generate sample quotes with varied statuses and dates."""
-        quote_service = QuoteService(db_session=db_session)
+        quote_service = QuotationService(db_session=db_session)
         
         logger.info(f"Generating {count} sample quotes...")
         
         # Define quote status distribution
         status_distribution = [
-            (QuoteStatus.DRAFT, 6),
-            (QuoteStatus.SENT, 8), 
-            (QuoteStatus.VIEWED, 6),
-            (QuoteStatus.ACCEPTED, 3),
-            (QuoteStatus.REJECTED, 2)
+            (QuotationStatus.DRAFT, 6),
+            (QuotationStatus.SENT, 8), 
+            (QuotationStatus.VIEWED, 6),
+            (QuotationStatus.ACCEPTED, 3),
+            (QuotationStatus.REJECTED, 2)
         ]
         
         quote_count = 0
@@ -289,7 +289,7 @@ async def main():
     
     if result["success"]:
         print("\n🎉 Sales Dashboard Sample Data Generated Successfully! 🎉")
-        print(f"   📋 Quotes Created: {result['quotes_created']}")
+        print(f"   📋 Quotations Created: {result['quotes_created']}")
         print(f"   🛒 Orders Created: {result['orders_created']}")
         print("\nThe dashboard should now display realistic data across all widgets.")
         return 0

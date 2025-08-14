@@ -64,7 +64,7 @@ def upgrade() -> None:
         sa.Column('customer_id', sa.Integer(), nullable=False),
         sa.Column('opportunity_id', sa.Integer(), nullable=True),
         
-        # Quote status and workflow
+        # Quotation status and workflow
         sa.Column('status', quote_status_enum, nullable=False, server_default='draft'),
         sa.Column('version', sa.Integer(), nullable=False, server_default='1'),
         
@@ -81,13 +81,13 @@ def upgrade() -> None:
         sa.Column('margin_percentage', sa.Numeric(precision=5, scale=2), nullable=True),
         sa.Column('total_cost', sa.Numeric(precision=15, scale=2), nullable=True),
         
-        # Quote validity and terms
+        # Quotation validity and terms
         sa.Column('valid_from', sa.DateTime(), nullable=False),
         sa.Column('valid_until', sa.DateTime(), nullable=False),
         sa.Column('payment_terms_days', sa.Integer(), nullable=False, server_default='30'),
         sa.Column('delivery_terms', sa.String(length=255), nullable=True),
         
-        # Quote preparation and sending
+        # Quotation preparation and sending
         sa.Column('prepared_by_user_id', sa.Integer(), nullable=False),
         sa.Column('approved_by_user_id', sa.Integer(), nullable=True),
         sa.Column('sent_date', sa.DateTime(), nullable=True),
@@ -158,7 +158,7 @@ def upgrade() -> None:
         sa.Column('company_id', sa.Integer(), nullable=False),
         sa.Column('framework_version', sa.String(length=50), nullable=True),
         
-        # Quote reference
+        # Quotation reference
         sa.Column('quote_id', sa.Integer(), nullable=False),
         
         # Line identification
@@ -242,7 +242,7 @@ def upgrade() -> None:
         sa.Column('company_id', sa.Integer(), nullable=False),
         sa.Column('framework_version', sa.String(length=50), nullable=True),
         
-        # Quote reference
+        # Quotation reference
         sa.Column('quote_id', sa.Integer(), nullable=False),
         
         # Version information
@@ -281,7 +281,7 @@ def upgrade() -> None:
         sa.Column('company_id', sa.Integer(), nullable=False),
         sa.Column('framework_version', sa.String(length=50), nullable=True),
         
-        # Quote reference
+        # Quotation reference
         sa.Column('quote_id', sa.Integer(), nullable=False),
         
         # Approval workflow

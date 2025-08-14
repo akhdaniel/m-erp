@@ -110,7 +110,7 @@ def main():
     print("-" * 30)
     model_files = [
         ("sales_module/models/order.py", "Order models"),
-        ("sales_module/models/quote.py", "Quote models"),
+        ("sales_module/models/quote.py", "Quotation models"),
         ("sales_module/models/__init__.py", "Models init")
     ]
     
@@ -124,7 +124,7 @@ def main():
     print("-" * 30)
     service_files = [
         ("sales_module/services/order_service.py", "Order service"),
-        ("sales_module/services/quote_service.py", "Quote service"),
+        ("sales_module/services/quote_service.py", "Quotation service"),
         ("sales_module/services/base_service.py", "Base service"),
         ("sales_module/services/__init__.py", "Services init")
     ]
@@ -139,7 +139,7 @@ def main():
     print("-" * 30)
     api_files = [
         ("sales_module/api/order_api.py", "Order API"),
-        ("sales_module/api/quote_api.py", "Quote API"),
+        ("sales_module/api/quote_api.py", "Quotation API"),
         ("sales_module/api/__init__.py", "API init"),
         ("main.py", "FastAPI main application")
     ]

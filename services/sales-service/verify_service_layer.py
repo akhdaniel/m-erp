@@ -17,7 +17,7 @@ def verify_service_structure():
     
     try:
         # Import service and dependencies
-        from sales_module.services.quote_service import QuoteService
+        from sales_module.services.quote_service import QuotationService
         from sales_module.services.base_service import BaseService
         from sales_module.integrations.inventory_client import inventory_client
         from sales_module.messaging.event_publisher import sales_event_publisher
@@ -25,11 +25,11 @@ def verify_service_structure():
         print("✅ Service imports successful")
         
         # Check inheritance
-        print(f"✅ QuoteService inherits from: {QuoteService.__bases__[0].__name__}")
+        print(f"✅ QuotationService inherits from: {QuotationService.__bases__[0].__name__}")
         
         # Check service initialization
-        service = QuoteService()
-        print(f"✅ QuoteService model_class: {service.model_class.__name__}")
+        service = QuotationService()
+        print(f"✅ QuotationService model_class: {service.model_class.__name__}")
         
         # Check integration clients available
         print("✅ Inventory client available")
@@ -50,9 +50,9 @@ def verify_service_methods():
     print("\n🔍 Verifying Service Methods\n")
     
     try:
-        from sales_module.services.quote_service import QuoteService
+        from sales_module.services.quote_service import QuotationService
         
-        service = QuoteService()
+        service = QuotationService()
         
         # Core CRUD methods
         crud_methods = [
@@ -122,15 +122,15 @@ def test_basic_service_functionality():
     print("\n🔍 Testing Basic Service Functionality\n")
     
     try:
-        from sales_module.services.quote_service import QuoteService
+        from sales_module.services.quote_service import QuotationService
         
         # Create service with mock session
         mock_session = Mock()
-        service = QuoteService(mock_session)
+        service = QuotationService(mock_session)
         
         # Test quote creation data
         quote_data = {
-            "title": "Test Quote",
+            "title": "Test Quotation",
             "customer_id": 100,
             "subtotal": Decimal("1000.00"),
             "total_amount": Decimal("1080.00"),
@@ -145,7 +145,7 @@ def test_basic_service_functionality():
             
             # Test quote creation
             result = service.create_quote(quote_data, user_id=1, company_id=1)
-            print("✅ Quote creation functionality works")
+            print("✅ Quotation creation functionality works")
             
             # Verify create was called
             assert mock_create.called
@@ -209,9 +209,9 @@ def main():
     
     if all(results):
         print("\n🎉🎉 ALL SERVICE LAYER VERIFICATIONS PASSED! 🎉🎉")
-        print("\n📋 Task 2: Quote Service Layer Implementation COMPLETE")
+        print("\n📋 Task 2: Quotation Service Layer Implementation COMPLETE")
         print("\n✅ Completed Components:")
-        print("   • Comprehensive QuoteService with 25+ business methods")
+        print("   • Comprehensive QuotationService with 25+ business methods")
         print("   • Complete test suite with 50+ test cases covering all functionality")
         print("   • Inventory service integration with product lookups and reservations")
         print("   • Multi-level approval workflow with escalation and permissions")

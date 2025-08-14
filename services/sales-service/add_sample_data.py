@@ -11,9 +11,9 @@ import random
 
 # Import models
 from sales_module.models import (
-    SalesQuote, SalesQuoteLineItem, QuoteVersion, QuoteApproval,
+    SalesQuotation, SalesQuotationLineItem, QuotationVersion, QuotationApproval,
     SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice,
-    QuoteStatus, OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus
+    QuotationStatus, OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus
 )
 from sales_module.models.pricing import PriceRule
 from sales_module.framework.database import Base
@@ -34,7 +34,7 @@ def create_sample_data():
         Base.metadata.create_all(bind=engine)
         
         # Check if data already exists
-        existing_quotes = session.query(SalesQuote).count()
+        existing_quotes = session.query(SalesQuotation).count()
         if existing_quotes > 0:
             print(f"ℹ️  Database already has {existing_quotes} quotes. Skipping sample data creation.")
             return
@@ -93,23 +93,23 @@ def create_sample_data():
         
         # Create quotes
         quotes = []
-        quote_statuses = [QuoteStatus.DRAFT, QuoteStatus.SENT, QuoteStatus.VIEWED, 
-                         QuoteStatus.ACCEPTED, QuoteStatus.REJECTED, QuoteStatus.EXPIRED]
+        quote_statuses = [QuotationStatus.DRAFT, QuotationStatus.SENT, QuotationStatus.VIEWED, 
+                         QuotationStatus.ACCEPTED, QuotationStatus.REJECTED, QuotationStatus.EXPIRED]
         
         for i in range(1, 31):  # Create 30 quotes
             customer_id = random.choice(customer_ids)
             status = random.choice(quote_statuses)
             
-            quote = SalesQuote(
+            quote = SalesQuotation(
                 quote_number=f"Q-2025-{i:04d}",
-                title=f"Quote for Customer {customer_id} - Project {i}",
+                title=f"Quotation for Customer {customer_id} - Project {i}",
                 description=f"Sales quote for various products and services",
                 customer_id=customer_id,
                 status=status,
                 valid_until=datetime.now() + timedelta(days=random.randint(7, 30)),
-                sent_date=datetime.now() - timedelta(days=random.randint(1, 10)) if status != QuoteStatus.DRAFT else None,
-                viewed_date=datetime.now() - timedelta(days=random.randint(0, 5)) if status in [QuoteStatus.VIEWED, QuoteStatus.ACCEPTED] else None,
-                accepted_date=datetime.now() - timedelta(days=random.randint(0, 3)) if status == QuoteStatus.ACCEPTED else None,
+                sent_date=datetime.now() - timedelta(days=random.randint(1, 10)) if status != QuotationStatus.DRAFT else None,
+                viewed_date=datetime.now() - timedelta(days=random.randint(0, 5)) if status in [QuotationStatus.VIEWED, QuotationStatus.ACCEPTED] else None,
+                accepted_date=datetime.now() - timedelta(days=random.randint(0, 3)) if status == QuotationStatus.ACCEPTED else None,
                 payment_terms_days=random.choice([15, 30, 45, 60]),
                 currency_code="USD",
                 sales_rep_user_id=random.choice([1, 2, 3]),
@@ -127,7 +127,7 @@ def create_sample_data():
                 unit_price = Decimal(random.uniform(50, 500)).quantize(Decimal("0.01"))
                 discount_pct = Decimal(random.choice([0, 5, 10, 15])).quantize(Decimal("0.01"))
                 
-                line_item = SalesQuoteLineItem(
+                line_item = SalesQuotationLineItem(
                     line_number=j + 1,
                     product_id=product_id,
                     item_name=f"Product {product_id}",
@@ -156,7 +156,7 @@ def create_sample_data():
         
         # Create orders from accepted quotes
         orders = []
-        accepted_quotes = [q for q in quotes if q.status == QuoteStatus.ACCEPTED]
+        accepted_quotes = [q for q in quotes if q.status == QuotationStatus.ACCEPTED]
         
         for i, quote in enumerate(accepted_quotes, 1):
             order_status = random.choice([OrderStatus.PENDING, OrderStatus.CONFIRMED, 
@@ -281,10 +281,10 @@ def create_sample_data():
         # Summary statistics
         print("\n📊 Sample Data Summary:")
         print(f"   • Pricing Rules: {len(pricing_rules)}")
-        print(f"   • Quotes: {len(quotes)}")
-        print(f"   • - Draft: {sum(1 for q in quotes if q.status == QuoteStatus.DRAFT)}")
-        print(f"   • - Sent: {sum(1 for q in quotes if q.status == QuoteStatus.SENT)}")
-        print(f"   • - Accepted: {sum(1 for q in quotes if q.status == QuoteStatus.ACCEPTED)}")
+        print(f"   • Quotations: {len(quotes)}")
+        print(f"   • - Draft: {sum(1 for q in quotes if q.status == QuotationStatus.DRAFT)}")
+        print(f"   • - Sent: {sum(1 for q in quotes if q.status == QuotationStatus.SENT)}")
+        print(f"   • - Accepted: {sum(1 for q in quotes if q.status == QuotationStatus.ACCEPTED)}")
         print(f"   • Orders: {len(orders)}")
         print(f"   • - Pending: {sum(1 for o in orders if o.status == OrderStatus.PENDING)}")
         print(f"   • - Shipped: {sum(1 for o in orders if o.status == OrderStatus.SHIPPED)}")

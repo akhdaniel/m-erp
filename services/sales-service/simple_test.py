@@ -15,10 +15,10 @@ def test_file_structure():
         "Application": "main.py",
         "Requirements": "requirements.txt", 
         "Environment": ".env.example",
-        "Quote API": "sales_module/api/quote_api.py",
-        "Quote Schemas": "sales_module/schemas/quote_schemas.py",
-        "Quote Service": "sales_module/services/quote_service.py",
-        "Quote Models": "sales_module/models/quote.py",
+        "Quotation API": "sales_module/api/quote_api.py",
+        "Quotation Schemas": "sales_module/schemas/quote_schemas.py",
+        "Quotation Service": "sales_module/services/quote_service.py",
+        "Quotation Models": "sales_module/models/quote.py",
         "API Tests": "tests/test_quote_api.py",
         "Service Tests": "tests/test_quote_service.py"
     }
@@ -58,13 +58,13 @@ def test_import_structure():
             with open(api_file, 'r') as f:
                 content = f.read()
                 if "from fastapi import" in content and "@router." in content:
-                    print("✅ Quote API structure valid")
+                    print("✅ Quotation API structure valid")
                 else:
-                    print("❌ Quote API missing FastAPI components")
+                    print("❌ Quotation API missing FastAPI components")
         else:
-            print("❌ Quote API file not found")
+            print("❌ Quotation API file not found")
     except Exception as e:
-        print(f"❌ Quote API analysis error: {e}")
+        print(f"❌ Quotation API analysis error: {e}")
     
     # Test schema structure
     try:
@@ -103,7 +103,7 @@ def show_testing_instructions():
     print("• Service Root: http://localhost:8006/")
     print("• Health Check: http://localhost:8006/health")  
     print("• API Docs: http://localhost:8006/api/docs")
-    print("• Quote API: http://localhost:8006/api/v1/quotes/")
+    print("• Quotation API: http://localhost:8006/api/v1/quotes/")
     print("")
     
     print("📋 Interactive Testing (via Swagger UI):")
@@ -115,11 +115,11 @@ def show_testing_instructions():
     
     print("🧪 Example API Calls:")
     print("")
-    print("Create Quote (POST /api/v1/quotes/):")
+    print("Create Quotation (POST /api/v1/quotes/):")
     print("""curl -X POST "http://localhost:8006/api/v1/quotes/" \\
      -H "Content-Type: application/json" \\
      -d '{
-       "title": "Test Quote",
+       "title": "Test Quotation",
        "customer_id": 100,
        "currency_code": "USD",
        "contact_person": "John Doe",
@@ -127,7 +127,7 @@ def show_testing_instructions():
      }'""")
     print("")
     
-    print("List Quotes (GET /api/v1/quotes/):")
+    print("List Quotations (GET /api/v1/quotes/):")
     print('curl "http://localhost:8006/api/v1/quotes/?page=1&page_size=10"')
     print("")
     

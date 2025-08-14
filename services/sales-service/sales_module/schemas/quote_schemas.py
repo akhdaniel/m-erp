@@ -1,5 +1,5 @@
 """
-Quote-related Pydantic schemas for API request/response validation.
+Quotation-related Pydantic schemas for API request/response validation.
 
 Provides comprehensive validation schemas for all quote operations
 including creation, updates, line items, approvals, and responses.
@@ -11,15 +11,15 @@ from decimal import Decimal
 from pydantic import BaseModel, Field, validator
 from enum import Enum
 
-from sales_module.models import QuoteStatus, ApprovalStatus
+from sales_module.models import QuotationStatus, ApprovalStatus
 
 
 # Base schemas for common fields
-class BaseQuoteSchema(BaseModel):
+class BaseQuotationSchema(BaseModel):
     """Base schema with common quote fields."""
     
-    title: str = Field(..., description="Quote title", max_length=200)
-    description: Optional[str] = Field(None, description="Quote description", max_length=1000)
+    title: str = Field(..., description="Quotation title", max_length=200)
+    description: Optional[str] = Field(None, description="Quotation description", max_length=1000)
     customer_id: int = Field(..., description="Customer/partner ID", gt=0)
     currency_code: str = Field("USD", description="Currency code", max_length=3)
     
@@ -28,17 +28,17 @@ class BaseQuoteSchema(BaseModel):
 
 
 # Request schemas
-class QuoteCreateRequest(BaseQuoteSchema):
+class QuotationCreateRequest(BaseQuotationSchema):
     """Schema for creating new quotes."""
     
-    quote_number: Optional[str] = Field(None, description="Quote number (auto-generated if empty)", max_length=50)
+    quote_number: Optional[str] = Field(None, description="Quotation number (auto-generated if empty)", max_length=50)
     contact_person: Optional[str] = Field(None, description="Customer contact person", max_length=100)
     contact_email: Optional[str] = Field(None, description="Customer contact email", max_length=255)
     contact_phone: Optional[str] = Field(None, description="Customer contact phone", max_length=50)
     
     # Validity dates
-    valid_from: Optional[datetime] = Field(None, description="Quote valid from date")
-    valid_until: Optional[datetime] = Field(None, description="Quote valid until date")
+    valid_from: Optional[datetime] = Field(None, description="Quotation valid from date")
+    valid_until: Optional[datetime] = Field(None, description="Quotation valid until date")
     
     # Terms and conditions
     payment_terms_days: Optional[int] = Field(30, description="Payment terms in days", ge=0)
@@ -58,16 +58,16 @@ class QuoteCreateRequest(BaseQuoteSchema):
         return v
 
 
-class QuoteUpdateRequest(BaseModel):
+class QuotationUpdateRequest(BaseModel):
     """Schema for updating existing quotes."""
     
-    title: Optional[str] = Field(None, description="Quote title", max_length=200)
-    description: Optional[str] = Field(None, description="Quote description", max_length=1000)
+    title: Optional[str] = Field(None, description="Quotation title", max_length=200)
+    description: Optional[str] = Field(None, description="Quotation description", max_length=1000)
     contact_person: Optional[str] = Field(None, description="Customer contact person", max_length=100)
     contact_email: Optional[str] = Field(None, description="Customer contact email", max_length=255)
     contact_phone: Optional[str] = Field(None, description="Customer contact phone", max_length=50)
     
-    valid_until: Optional[datetime] = Field(None, description="Quote valid until date")
+    valid_until: Optional[datetime] = Field(None, description="Quotation valid until date")
     payment_terms_days: Optional[int] = Field(None, description="Payment terms in days", ge=0)
     delivery_terms: Optional[str] = Field(None, description="Delivery terms", max_length=200)
     internal_notes: Optional[str] = Field(None, description="Internal notes", max_length=1000)
@@ -78,7 +78,7 @@ class QuoteUpdateRequest(BaseModel):
 
 
 # Line item schemas
-class QuoteLineItemCreateRequest(BaseModel):
+class QuotationLineItemCreateRequest(BaseModel):
     """Schema for creating quote line items."""
     
     product_id: Optional[int] = Field(None, description="Product ID from inventory", gt=0)
@@ -103,7 +103,7 @@ class QuoteLineItemCreateRequest(BaseModel):
         return v
 
 
-class QuoteLineItemUpdateRequest(BaseModel):
+class QuotationLineItemUpdateRequest(BaseModel):
     """Schema for updating quote line items."""
     
     quantity: Optional[Decimal] = Field(None, description="Quantity", gt=0)
@@ -116,7 +116,7 @@ class QuoteLineItemUpdateRequest(BaseModel):
 
 
 # Approval schemas
-class QuoteApprovalRequest(BaseModel):
+class QuotationApprovalRequest(BaseModel):
     """Schema for requesting quote approval."""
     
     approval_level: int = Field(1, description="Approval level required", ge=1, le=5)
@@ -131,7 +131,7 @@ class QuoteApprovalRequest(BaseModel):
         return v
 
 
-class QuoteApprovalAction(BaseModel):
+class QuotationApprovalAction(BaseModel):
     """Schema for approval actions."""
     
     action: str = Field(..., description="Approval action")
@@ -147,14 +147,14 @@ class QuoteApprovalAction(BaseModel):
 
 
 # Other operation schemas
-class QuoteDiscountRequest(BaseModel):
+class QuotationDiscountRequest(BaseModel):
     """Schema for applying overall quote discount."""
     
     discount_percentage: Decimal = Field(..., description="Discount percentage", ge=0, le=100)
     reason: Optional[str] = Field(None, description="Reason for discount", max_length=500)
 
 
-class QuoteSendRequest(BaseModel):
+class QuotationSendRequest(BaseModel):
     """Schema for sending quote to customer."""
     
     email_template: Optional[str] = Field(None, description="Email template to use", max_length=100)
@@ -162,13 +162,13 @@ class QuoteSendRequest(BaseModel):
     custom_message: Optional[str] = Field(None, description="Custom message", max_length=1000)
 
 
-class QuoteVersionRequest(BaseModel):
+class QuotationVersionRequest(BaseModel):
     """Schema for creating quote version."""
     
     reason: Optional[str] = Field(None, description="Reason for new version", max_length=500)
 
 
-class QuoteConversionRequest(BaseModel):
+class QuotationConversionRequest(BaseModel):
     """Schema for converting quote to order."""
     
     order_data: Optional[Dict[str, Any]] = Field(None, description="Additional order data")
@@ -184,7 +184,7 @@ class ValidityExtensionRequest(BaseModel):
 
 
 # Response schemas
-class QuoteLineItemResponse(BaseModel):
+class QuotationLineItemResponse(BaseModel):
     """Schema for quote line item responses."""
     
     id: int
@@ -212,7 +212,7 @@ class QuoteLineItemResponse(BaseModel):
         from_attributes = True
 
 
-class QuoteVersionResponse(BaseModel):
+class QuotationVersionResponse(BaseModel):
     """Schema for quote version responses."""
     
     id: int
@@ -230,7 +230,7 @@ class QuoteVersionResponse(BaseModel):
         from_attributes = True
 
 
-class QuoteApprovalResponse(BaseModel):
+class QuotationApprovalResponse(BaseModel):
     """Schema for quote approval responses."""
     
     id: int
@@ -260,7 +260,7 @@ class QuoteApprovalResponse(BaseModel):
         from_attributes = True
 
 
-class QuoteResponse(BaseModel):
+class QuotationResponse(BaseModel):
     """Schema for complete quote responses."""
     
     # Primary fields
@@ -330,26 +330,26 @@ class QuoteResponse(BaseModel):
     updated_at: Optional[datetime] = None
     
     # Related data (optional)
-    line_items: Optional[List[QuoteLineItemResponse]] = None
-    versions: Optional[List[QuoteVersionResponse]] = None
-    approvals: Optional[List[QuoteApprovalResponse]] = None
+    line_items: Optional[List[QuotationLineItemResponse]] = None
+    versions: Optional[List[QuotationVersionResponse]] = None
+    approvals: Optional[List[QuotationApprovalResponse]] = None
     
     class Config:
         from_attributes = True
         arbitrary_types_allowed = True
 
 
-class QuoteListResponse(BaseModel):
+class QuotationListResponse(BaseModel):
     """Schema for paginated quote list responses."""
     
-    data: List[QuoteResponse]  # Standardized to use 'data' key like other services
+    data: List[QuotationResponse]  # Standardized to use 'data' key like other services
     total_count: int
     page: int
     page_size: int
     total_pages: int
 
 
-class QuoteAnalyticsResponse(BaseModel):
+class QuotationAnalyticsResponse(BaseModel):
     """Schema for quote analytics responses."""
     
     summary: Dict[str, int]
@@ -377,7 +377,7 @@ class InventoryReservationResponse(BaseModel):
     quote_id: int
 
 
-class QuoteConversionResponse(BaseModel):
+class QuotationConversionResponse(BaseModel):
     """Schema for quote conversion responses."""
     
     success: bool
@@ -406,7 +406,7 @@ class APIResponse(BaseModel):
 
 
 # Query parameter schemas
-class QuoteQueryParams(BaseModel):
+class QuotationQueryParams(BaseModel):
     """Schema for quote list query parameters."""
     
     page: int = Field(1, description="Page number", ge=1)

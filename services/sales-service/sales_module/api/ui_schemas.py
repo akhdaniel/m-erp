@@ -35,10 +35,10 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "span": 1
             },
             {
-                "id": "quotes_metric",
+                "id": "quotations_metric",
                 "type": "metric",
-                "title": "Active Quotes",
-                "endpoint": "/api/v1/dashboard/metrics/quotes",
+                "title": "Active Quotations",
+                "endpoint": "/api/v1/dashboard/metrics/quotations",
                 "format": "number",
                 "icon": "file-text",
                 "color": "blue",
@@ -73,14 +73,14 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "height": 300
             },
             {
-                "id": "recent_quotes",
+                "id": "recent_quotations",
                 "type": "list",
-                "title": "Recent Quotes",
-                "endpoint": "/api/v1/dashboard/recent/quotes",
+                "title": "Recent Quotations",
+                "endpoint": "/api/v1/dashboard/recent/quotations",
                 "limit": 5,
                 "span": 1,
                 "columns": [
-                    {"field": "quote_number", "label": "Quote #"},
+                    {"field": "quotation_number", "label": "Quotation #"},
                     {"field": "customer_name", "label": "Customer"},
                     {"field": "total_amount", "label": "Amount", "formatter": "currency"}
                 ]
@@ -115,25 +115,25 @@ async def get_dashboard_schema() -> Dict[str, Any]:
     }
 
 
-# Quotes List Schema
-@router.get("/quotes/list")
-async def get_quotes_list_schema() -> Dict[str, Any]:
-    """Get quotes list UI schema"""
+# Quotations List Schema
+@router.get("/quotations/list")
+async def get_quotations_list_schema() -> Dict[str, Any]:
+    """Get quotations list UI schema"""
     return {
-        "title": "Sales Quotes",
+        "title": "Sales Quotations",
         "description": "Manage customer quotations",
         "viewType": "table",
-        "endpoint": "/api/v1/quotes/",
-        "dataPath": "quotes",  # Tell the UI where to find the data in the response
+        "endpoint": "/api/v1/quotations/",
+        "dataPath": "quotations",  # Tell the UI where to find the data in the response
         "searchable": True,
-        "searchPlaceholder": "Search quotes...",
+        "searchPlaceholder": "Search quotations...",
         "searchParam": "search",
         "paginated": True,
         "pageSize": 20,
         "columns": [
             {
-                "field": "quote_number",
-                "label": "Quote Number",
+                "field": "quotation_number",
+                "label": "Quotation Number",
                 "isTitle": True,
                 "sortable": True
             },
@@ -143,7 +143,7 @@ async def get_quotes_list_schema() -> Dict[str, Any]:
                 "sortable": True
             },
             {
-                "field": "quote_date",
+                "field": "quotation_date",
                 "label": "Date",
                 "formatter": "date",
                 "sortable": True
@@ -228,29 +228,29 @@ async def get_quotes_list_schema() -> Dict[str, Any]:
             }
         ],
         "createable": True,
-        "createLabel": "New Quote",
-        "createRoute": "/sales/quotes/new",
-        "editRoute": "/sales/quotes/{id}/edit",
+        "createLabel": "New Quotation",
+        "createRoute": "/sales/quotations/new",
+        "editRoute": "/sales/quotations/{id}/edit",
         "clickable": True,
         "rowActions": [
             {
                 "id": "view",
                 "label": "View",
                 "icon": "eye",
-                "route": "/sales/quotes/{id}"
+                "route": "/sales/quotations/{id}"
             },
             {
                 "id": "edit",
                 "label": "Edit",
                 "icon": "pencil",
-                "route": "/sales/quotes/{id}/edit",
+                "route": "/sales/quotations/{id}/edit",
                 "condition": {"field": "status", "value": "draft"}
             },
             {
                 "id": "send",
                 "label": "Send",
                 "icon": "send",
-                "action": "send_quote",
+                "action": "send_quotation",
                 "condition": {"field": "status", "value": "draft"}
             },
             {
@@ -264,27 +264,27 @@ async def get_quotes_list_schema() -> Dict[str, Any]:
     }
 
 
-# Quotes Form Schema
-@router.get("/quotes/form")
-async def get_quotes_form_schema() -> Dict[str, Any]:
-    """Get quotes form UI schema"""
+# Quotations Form Schema
+@router.get("/quotations/form")
+async def get_quotations_form_schema() -> Dict[str, Any]:
+    """Get quotations form UI schema"""
     return {
-        "title": "Quote Details",
-        "endpoint": "/api/v1/quotes",
+        "title": "Quotation Details",
+        "endpoint": "/api/v1/quotations",
         "method": "POST",
-        "successRoute": "/sales/quotes",
-        "cancelRoute": "/sales/quotes",
+        "successRoute": "/sales/quotations",
+        "cancelRoute": "/sales/quotations",
         "sections": [
             {
                 "id": "basic",
-                "title": "Quote Information",
+                "title": "Quotation Information",
                 "fields": [
                     {
                         "name": "title",
-                        "label": "Quote Title",
+                        "label": "Quotation Title",
                         "type": "text",
                         "required": True,
-                        "placeholder": "Enter a descriptive title for this quote"
+                        "placeholder": "Enter a descriptive title for this quotation"
                     },
                     {
                         "name": "customer_id",
@@ -297,8 +297,8 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
                         "placeholder": "Select a customer"
                     },
                     {
-                        "name": "quote_date",
-                        "label": "Quote Date",
+                        "name": "quotation_date",
+                        "label": "Quotation Date",
                         "type": "date",
                         "required": True,
                         "defaultValue": "today"
@@ -308,11 +308,11 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
                         "label": "Valid Until",
                         "type": "datetime-local",
                         "required": False,
-                        "help": "Quote expiration date",
+                        "help": "Quotation expiration date",
                         "compute": """
                             function(data) {
-                                if (data.quote_date) {
-                                    const date = new Date(data.quote_date);
+                                if (data.quotation_date) {
+                                    const date = new Date(data.quotation_date);
                                     date.setDate(date.getDate() + 30);
                                     return date.toISOString().slice(0, 16);
                                 }
@@ -326,25 +326,25 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
                         "type": "textarea",
                         "rows": 2,
                         "colSpan": 2,
-                        "placeholder": "Additional quote details or notes"
+                        "placeholder": "Additional quotation details or notes"
                     }
                 ]
             },
             {
                 "id": "items",
-                "title": "Quote Items",
+                "title": "Quotation Items",
                 "gridClass": "grid-cols-2",
                 "fields": [
                     {
                         "name": "line_items",
                         "type": "component",
                         "component": "LineItemsManager",
-                        "label": "Quote Items",
+                        "label": "Quotation Items",
                         "required": True,
                         "colSpan": 2,
                         "props": {
-                            # "title": "Quote Items",
-                            "entityType": "quote",
+                            # "title": "Quotation Items",
+                            "entityType": "quotation",
                             "taxRate": 0,
                             "productApiUrl": "http://localhost:8006/api/v1/products"
                         }
@@ -385,12 +385,12 @@ async def get_quotes_form_schema() -> Dict[str, Any]:
                         "label": "Terms and Conditions",
                         "type": "textarea",
                         "rows": 3,
-                        "placeholder": "Terms and conditions for the quote"
+                        "placeholder": "Terms and conditions for the quotation"
                     }
                 ]
             }
         ],
-        "submitLabel": "Save Quote",
+        "submitLabel": "Save Quotation",
         "cancelLabel": "Cancel"
     }
 
@@ -733,10 +733,10 @@ async def get_customers_list_schema() -> Dict[str, Any]:
                 "route": "/sales/orders?customer_id={id}"
             },
             {
-                "id": "quotes",
-                "label": "View Quotes",
+                "id": "quotations",
+                "label": "View Quotations",
                 "icon": "file-text",
-                "route": "/sales/quotes?customer_id={id}"
+                "route": "/sales/quotations?customer_id={id}"
             }
         ]
     }
@@ -1070,7 +1070,7 @@ async def get_analytics_dashboard_schema() -> Dict[str, Any]:
                 "endpoint": "/api/v1/analytics/conversion-metrics",
                 "span": 2,
                 "metrics": [
-                    {"label": "Quote to Order", "field": "quote_conversion", "format": "percentage"},
+                    {"label": "Quotation to Order", "field": "quotation_conversion", "format": "percentage"},
                     {"label": "Average Order Value", "field": "avg_order_value", "format": "currency"},
                     {"label": "Customer Retention", "field": "retention_rate", "format": "percentage"},
                     {"label": "Sales Growth", "field": "growth_rate", "format": "percentage"}

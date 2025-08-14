@@ -204,7 +204,7 @@ class Customer(CompanyBusinessObject):
     # contacts = relationship("CustomerContact", back_populates="customer", cascade="all, delete-orphan")
     # addresses = relationship("CustomerAddress", back_populates="customer", cascade="all, delete-orphan")
     # opportunities = relationship("SalesOpportunity", back_populates="customer")
-    # quotes = relationship("SalesQuote", back_populates="customer")
+    # quotes = relationship("SalesQuotation", back_populates="customer")
     # orders = relationship("SalesOrder", back_populates="customer")
     
     def __str__(self):

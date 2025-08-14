@@ -64,27 +64,27 @@ def verify_schema_definitions():
         
         # Expected schema classes
         expected_schemas = [
-            "class QuoteCreateRequest",
-            "class QuoteUpdateRequest", 
-            "class QuoteLineItemCreateRequest",
-            "class QuoteLineItemUpdateRequest",
-            "class QuoteApprovalRequest",
-            "class QuoteApprovalAction",
-            "class QuoteDiscountRequest",
-            "class QuoteSendRequest",
-            "class QuoteVersionRequest",
-            "class QuoteConversionRequest",
+            "class QuotationCreateRequest",
+            "class QuotationUpdateRequest", 
+            "class QuotationLineItemCreateRequest",
+            "class QuotationLineItemUpdateRequest",
+            "class QuotationApprovalRequest",
+            "class QuotationApprovalAction",
+            "class QuotationDiscountRequest",
+            "class QuotationSendRequest",
+            "class QuotationVersionRequest",
+            "class QuotationConversionRequest",
             "class ValidityExtensionRequest",
-            "class QuoteResponse",
-            "class QuoteLineItemResponse",
-            "class QuoteApprovalResponse",
-            "class QuoteListResponse",
-            "class QuoteAnalyticsResponse",
+            "class QuotationResponse",
+            "class QuotationLineItemResponse",
+            "class QuotationApprovalResponse",
+            "class QuotationListResponse",
+            "class QuotationAnalyticsResponse",
             "class InventoryValidationResponse",
             "class InventoryReservationResponse",
-            "class QuoteConversionResponse",
+            "class QuotationConversionResponse",
             "class APIResponse",
-            "class QuoteQueryParams"
+            "class QuotationQueryParams"
         ]
         
         found_schemas = 0
@@ -131,10 +131,10 @@ def verify_api_endpoints():
         # Expected endpoint patterns
         expected_endpoints = [
             # CRUD operations
-            '@router.post("/", response_model=QuoteResponse',
-            '@router.get("/", response_model=QuoteListResponse',
-            '@router.get("/{quote_id}", response_model=QuoteResponse',
-            '@router.put("/{quote_id}", response_model=QuoteResponse',
+            '@router.post("/", response_model=QuotationResponse',
+            '@router.get("/", response_model=QuotationListResponse',
+            '@router.get("/{quote_id}", response_model=QuotationResponse',
+            '@router.put("/{quote_id}", response_model=QuotationResponse',
             '@router.delete("/{quote_id}"',
             
             # Line items
@@ -142,7 +142,7 @@ def verify_api_endpoints():
             '@router.put("/{quote_id}/line-items/{line_item_id}"',
             '@router.delete("/{quote_id}/line-items/{line_item_id}"',
             
-            # Quote operations
+            # Quotation operations
             '@router.post("/{quote_id}/discount"',
             '@router.post("/{quote_id}/send"',
             '@router.post("/{quote_id}/versions"',
@@ -223,9 +223,9 @@ def verify_test_coverage():
         
         # Expected test classes
         expected_test_classes = [
-            "class TestQuoteCRUD:",
+            "class TestQuotationCRUD:",
             "class TestLineItemOperations:",
-            "class TestQuoteOperations:",
+            "class TestQuotationOperations:",
             "class TestApprovalWorkflow:",
             "class TestInventoryIntegration:",
             "class TestAnalytics:",
@@ -310,9 +310,9 @@ def verify_integration_points():
         
         # Check imports
         expected_imports = [
-            "from sales_module.services.quote_service import QuoteService",
+            "from sales_module.services.quote_service import QuotationService",
             "from sales_module.schemas.quote_schemas import",
-            "from sales_module.models import QuoteStatus"
+            "from sales_module.models import QuotationStatus"
         ]
         
         print("\n📦 Import Analysis:")

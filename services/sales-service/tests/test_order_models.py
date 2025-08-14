@@ -14,7 +14,7 @@ from sales_module.models.order import (
     SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice,
     OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus
 )
-from sales_module.models.quote import SalesQuote, SalesQuoteLineItem
+from sales_module.models.quote import SalesQuotation, SalesQuotationLineItem
 
 
 class TestOrderStatus:
@@ -941,7 +941,7 @@ class TestOrderInvoice:
             mock_audit.assert_not_called()
 
 
-class TestQuoteToOrderIntegration:
+class TestQuotationToOrderIntegration:
     """Test quote-to-order conversion functionality."""
     
     def setup_method(self):
@@ -949,7 +949,7 @@ class TestQuoteToOrderIntegration:
         self.quote_data = {
             "company_id": 1,
             "quote_number": "QT202500001",
-            "title": "Test Quote",
+            "title": "Test Quotation",
             "description": "Test quote description",
             "customer_id": 100,
             "prepared_by_user_id": 1,
@@ -982,7 +982,7 @@ class TestQuoteToOrderIntegration:
     
     def test_order_from_quote_creation(self):
         """Test creating an order from a quote."""
-        quote = SalesQuote(**self.quote_data)
+        quote = SalesQuotation(**self.quote_data)
         user_id = 5
         
         order = SalesOrder.from_quote(quote, user_id=user_id)
@@ -1015,7 +1015,7 @@ class TestQuoteToOrderIntegration:
     
     def test_order_from_quote_with_custom_data(self):
         """Test creating an order from quote with additional custom data."""
-        quote = SalesQuote(**self.quote_data)
+        quote = SalesQuotation(**self.quote_data)
         
         custom_data = {
             "order_number": "SO-CUSTOM-001",
@@ -1035,7 +1035,7 @@ class TestQuoteToOrderIntegration:
     
     def test_order_from_quote_uses_quote_user_when_no_user_provided(self):
         """Test that order uses quote's user when no user_id provided."""
-        quote = SalesQuote(**self.quote_data)
+        quote = SalesQuotation(**self.quote_data)
         
         order = SalesOrder.from_quote(quote)
         
@@ -1046,7 +1046,7 @@ class TestQuoteToOrderIntegration:
         """Test description generation when quote has no description."""
         quote_data = self.quote_data.copy()
         quote_data["description"] = None
-        quote = SalesQuote(**quote_data)
+        quote = SalesQuotation(**quote_data)
         
         order = SalesOrder.from_quote(quote)
         
@@ -1055,7 +1055,7 @@ class TestQuoteToOrderIntegration:
     
     def test_order_line_item_from_quote_line_item(self):
         """Test creating order line item from quote line item."""
-        quote_line = SalesQuoteLineItem(**self.quote_line_data)
+        quote_line = SalesQuotationLineItem(**self.quote_line_data)
         order_id = 10
         
         order_line = SalesOrderLineItem.from_quote_line_item(quote_line, order_id)
@@ -1090,7 +1090,7 @@ class TestQuoteToOrderIntegration:
     
     def test_order_line_item_from_quote_with_custom_data(self):
         """Test creating order line item with additional custom data."""
-        quote_line = SalesQuoteLineItem(**self.quote_line_data)
+        quote_line = SalesQuotationLineItem(**self.quote_line_data)
         order_id = 15
         
         custom_data = {
@@ -1118,7 +1118,7 @@ class TestQuoteToOrderIntegration:
         quote_line_data["discount_amount"] = Decimal("0.00")  # No discount
         quote_line_data["tax_percentage"] = Decimal("10.0")  # 10% tax
         
-        quote_line = SalesQuoteLineItem(**quote_line_data)
+        quote_line = SalesQuotationLineItem(**quote_line_data)
         order_id = 20
         
         order_line = SalesOrderLineItem.from_quote_line_item(quote_line, order_id)
@@ -1133,11 +1133,11 @@ class TestQuoteToOrderIntegration:
     def test_complete_quote_to_order_workflow(self):
         """Test complete quote-to-order conversion workflow."""
         # Create quote with line items
-        quote = SalesQuote(**self.quote_data)
+        quote = SalesQuotation(**self.quote_data)
         quote.id = 1  # Mock ID
         
-        quote_line_1 = SalesQuoteLineItem(**self.quote_line_data)
-        quote_line_2 = SalesQuoteLineItem(**{
+        quote_line_1 = SalesQuotationLineItem(**self.quote_line_data)
+        quote_line_2 = SalesQuotationLineItem(**{
             **self.quote_line_data,
             "line_number": 2,
             "item_name": "Second Product",
@@ -1184,7 +1184,7 @@ class TestQuoteToOrderIntegration:
             "gift_wrap": True
         }
         
-        quote_line = SalesQuoteLineItem(**quote_line_data)
+        quote_line = SalesQuotationLineItem(**quote_line_data)
         order_line = SalesOrderLineItem.from_quote_line_item(quote_line, order_id=25)
         
         # Check specifications preservation
@@ -1193,7 +1193,7 @@ class TestQuoteToOrderIntegration:
     
     def test_order_due_date_calculation_from_quote(self):
         """Test that order due date is calculated properly from quote data."""
-        quote = SalesQuote(**self.quote_data)
+        quote = SalesQuotation(**self.quote_data)
         quote.payment_terms_days = 15
         
         with patch('sales_module.models.order.datetime') as mock_datetime:
@@ -1210,7 +1210,7 @@ class TestQuoteToOrderIntegration:
     @patch('sales_module.framework.base.CompanyBusinessObject.publish_event')
     def test_quote_conversion_maintains_audit_capability(self, mock_publish, mock_audit):
         """Test that orders created from quotes maintain audit and event capabilities."""
-        quote = SalesQuote(**self.quote_data)
+        quote = SalesQuotation(**self.quote_data)
         order = SalesOrder.from_quote(quote, user_id=9)
         
         # Test that the order can still perform audit operations

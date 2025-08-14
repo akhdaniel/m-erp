@@ -19,8 +19,8 @@ from sqlalchemy.orm import Session
 sys.path.insert(0, os.path.dirname(__file__))
 
 from sales_module.models import (
-    SalesQuote, SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice,
-    OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus, QuoteStatus
+    SalesQuotation, SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice,
+    OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus, QuotationStatus
 )
 from sales_module.services import OrderService
 
@@ -36,16 +36,16 @@ class TestOrderServiceIntegration:
         # Mock current time for consistent testing
         self.test_time = datetime(2025, 1, 6, 15, 30, 0)
         
-    def create_test_quote(self) -> SalesQuote:
+    def create_test_quote(self) -> SalesQuotation:
         """Create a test quote for conversion testing"""
-        quote = SalesQuote(
+        quote = SalesQuotation(
             id=1,
             company_id=1,
             quote_number="Q-TEST-001",
-            title="Test Quote for Order Conversion",
+            title="Test Quotation for Order Conversion",
             description="Comprehensive test quote",
             customer_id=100,
-            status=QuoteStatus.ACCEPTED,
+            status=QuotationStatus.ACCEPTED,
             subtotal=Decimal('1500.00'),
             tax_amount=Decimal('150.00'),
             total_amount=Decimal('1650.00'),
@@ -156,7 +156,7 @@ class TestOrderServiceIntegration:
         self.mock_db_session.query.return_value.filter.return_value.first.return_value = None
         
         # Execute & Verify
-        with pytest.raises(ValueError, match="Quote 1 not found"):
+        with pytest.raises(ValueError, match="Quotation 1 not found"):
             self.order_service.create_order_from_quote(
                 quote_id=1,
                 user_id=1,
@@ -167,11 +167,11 @@ class TestOrderServiceIntegration:
         """Test order creation fails when quote not accepted"""
         # Setup
         quote = self.create_test_quote()
-        quote.status = QuoteStatus.DRAFT
+        quote.status = QuotationStatus.DRAFT
         self.mock_db_session.query.return_value.filter.return_value.first.return_value = quote
         
         # Execute & Verify
-        with pytest.raises(ValueError, match="Quote 1 must be accepted"):
+        with pytest.raises(ValueError, match="Quotation 1 must be accepted"):
             self.order_service.create_order_from_quote(
                 quote_id=1,
                 user_id=1,

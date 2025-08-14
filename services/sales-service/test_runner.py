@@ -52,11 +52,11 @@ def test_service_health():
     try:
         response = client.get("/api/v1/quotes/health")
         if response.status_code == 200:
-            print("✅ Quote API health endpoint working")
+            print("✅ Quotation API health endpoint working")
         else:
-            print(f"❌ Quote API health failed: {response.status_code}")
+            print(f"❌ Quotation API health failed: {response.status_code}")
     except Exception as e:
-        print(f"❌ Quote API health error: {e}")
+        print(f"❌ Quotation API health error: {e}")
 
 def test_openapi_docs():
     """Test OpenAPI documentation generation."""
@@ -90,34 +90,34 @@ def test_openapi_docs():
 
 def test_quote_endpoints():
     """Test quote API endpoints with mock data."""
-    print("\n🔍 Testing Quote API Endpoints\n")
+    print("\n🔍 Testing Quotation API Endpoints\n")
     
     client = TestClient(app)
     
     # Test quote list endpoint (will fail without database, but should return proper error)
     try:
         response = client.get("/api/v1/quotes/")
-        print(f"📊 Quote list endpoint: HTTP {response.status_code}")
+        print(f"📊 Quotation list endpoint: HTTP {response.status_code}")
         if response.status_code != 200:
             print(f"   Expected failure (no database): {response.json().get('detail', 'No detail')}")
     except Exception as e:
-        print(f"❌ Quote list error: {e}")
+        print(f"❌ Quotation list error: {e}")
     
     # Test quote creation endpoint (will fail without database)
     try:
         quote_data = {
-            "title": "Test Quote",
+            "title": "Test Quotation",
             "customer_id": 100,
             "currency_code": "USD",
             "contact_person": "John Doe",
             "contact_email": "john@example.com"
         }
         response = client.post("/api/v1/quotes/", json=quote_data)
-        print(f"📝 Quote creation endpoint: HTTP {response.status_code}")
+        print(f"📝 Quotation creation endpoint: HTTP {response.status_code}")
         if response.status_code != 201:
             print(f"   Expected failure (no database): {response.json().get('detail', 'No detail')}")
     except Exception as e:
-        print(f"❌ Quote creation error: {e}")
+        print(f"❌ Quotation creation error: {e}")
     
     # Test analytics endpoint
     try:
@@ -137,7 +137,7 @@ def test_validation():
     # Test invalid quote data
     try:
         invalid_data = {
-            "description": "Quote without required title",
+            "description": "Quotation without required title",
             "customer_id": -1  # Invalid customer ID
         }
         response = client.post("/api/v1/quotes/", json=invalid_data)
@@ -219,7 +219,7 @@ def main():
     print("   • Service URL: http://localhost:8006")
     print("   • API Documentation: http://localhost:8006/api/docs") 
     print("   • Health Check: http://localhost:8006/health")
-    print("   • Quote API: http://localhost:8006/api/v1/quotes/")
+    print("   • Quotation API: http://localhost:8006/api/v1/quotes/")
 
 if __name__ == "__main__":
     main()
