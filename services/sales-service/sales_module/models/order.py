@@ -163,7 +163,7 @@ class SalesOrder(CompanyBusinessObject):
     # Relationships
     # customer = relationship("Customer", back_populates="orders")
     # opportunity = relationship("SalesOpportunity", back_populates="orders")
-    # quote = relationship("SalesQuotation", back_populates="order")
+    # quote = relationship("SalesQuote", back_populates="order")
     # line_items = relationship("SalesOrderLineItem", back_populates="order", cascade="all, delete-orphan")
     # shipments = relationship("OrderShipment", back_populates="order", cascade="all, delete-orphan")
     # invoices = relationship("OrderInvoice", back_populates="order", cascade="all, delete-orphan")
@@ -242,7 +242,7 @@ class SalesOrder(CompanyBusinessObject):
         Create a sales order from an accepted quote.
         
         Args:
-            quote: SalesQuotation instance to convert
+            quote: SalesQuote instance to convert
             user_id: ID of user creating the order
             **kwargs: Additional order-specific data
             
@@ -551,7 +551,7 @@ class SalesOrderLineItem(CompanyBusinessObject):
         Create an order line item from a quote line item.
         
         Args:
-            quote_line_item: SalesQuotationLineItem instance to convert
+            quote_line_item: SalesQuoteLineItem instance to convert
             order_id: ID of the order this line item belongs to
             **kwargs: Additional line item-specific data
             

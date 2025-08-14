@@ -1,8 +1,8 @@
 """
-Tests for Quotation models.
+Tests for Quote models.
 
-Comprehensive test suite for SalesQuotation, SalesQuotationLineItem, 
-QuotationVersion, and QuotationApproval models.
+Comprehensive test suite for SalesQuote, SalesQuoteLineItem, 
+QuoteVersion, and QuoteApproval models.
 """
 
 import pytest
@@ -11,23 +11,23 @@ from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 
 from sales_module.models.quote import (
-    SalesQuotation, SalesQuotationLineItem, QuotationVersion, QuotationApproval,
-    QuotationStatus, ApprovalStatus, LineItemType
+    SalesQuote, SalesQuoteLineItem, QuoteVersion, QuoteApproval,
+    QuoteStatus, ApprovalStatus, LineItemType
 )
 
 
-class TestSalesQuotation:
-    """Test SalesQuotation model functionality."""
+class TestSalesQuote:
+    """Test SalesQuote model functionality."""
     
     def test_create_quote(self, db_session, sample_quote_data):
         """Test creating a new sales quote."""
-        quote = SalesQuotation(**sample_quote_data)
+        quote = SalesQuote(**sample_quote_data)
         db_session.add(quote)
         db_session.commit()
         
         assert quote.id is not None
         assert quote.quote_number == "QUO-2025-001"
-        assert quote.status == QuotationStatus.DRAFT
+        assert quote.status == QuoteStatus.DRAFT
         assert quote.version == 1
         assert quote.total_amount == Decimal("1080.00")
         assert quote.company_id == sample_quote_data["company_id"]
@@ -35,8 +35,8 @@ class TestSalesQuotation:
     
     def test_quote_string_representation(self, sample_quote):
         """Test quote string representation."""
-        assert str(sample_quote) == f"Quotation {sample_quote.quote_number} v{sample_quote.version}"
-        assert "SalesQuotation" in repr(sample_quote)
+        assert str(sample_quote) == f"Quote {sample_quote.quote_number} v{sample_quote.version}"
+        assert "SalesQuote" in repr(sample_quote)
         assert sample_quote.quote_number in repr(sample_quote)
     
     def test_quote_display_identifier(self, sample_quote):
@@ -50,7 +50,7 @@ class TestSalesQuotation:
         expired_data = sample_quote_data.copy()
         expired_data["quote_number"] = "QUO-EXPIRED"
         expired_data["valid_until"] = datetime.utcnow() - timedelta(days=1)
-        expired_quote = SalesQuotation(**expired_data)
+        expired_quote = SalesQuote(**expired_data)
         
         assert expired_quote.is_expired is True
         assert expired_quote.days_until_expiry == 0
@@ -59,7 +59,7 @@ class TestSalesQuotation:
         valid_data = sample_quote_data.copy()
         valid_data["quote_number"] = "QUO-VALID"
         valid_data["valid_until"] = datetime.utcnow() + timedelta(days=5)
-        valid_quote = SalesQuotation(**valid_data)
+        valid_quote = SalesQuote(**valid_data)
         
         assert valid_quote.is_expired is False
         assert valid_quote.days_until_expiry >= 4  # Allow for test execution time
@@ -67,20 +67,20 @@ class TestSalesQuotation:
     def test_quote_status_properties(self, sample_quote):
         """Test quote status properties."""
         # Test open status
-        sample_quote.status = QuotationStatus.DRAFT
+        sample_quote.status = QuoteStatus.DRAFT
         assert sample_quote.is_open is True
         assert sample_quote.is_closed is False
         
-        sample_quote.status = QuotationStatus.SENT
+        sample_quote.status = QuoteStatus.SENT
         assert sample_quote.is_open is True
         assert sample_quote.is_closed is False
         
         # Test closed status
-        sample_quote.status = QuotationStatus.ACCEPTED
+        sample_quote.status = QuoteStatus.ACCEPTED
         assert sample_quote.is_open is False
         assert sample_quote.is_closed is True
         
-        sample_quote.status = QuotationStatus.REJECTED
+        sample_quote.status = QuoteStatus.REJECTED
         assert sample_quote.is_open is False
         assert sample_quote.is_closed is True
     
@@ -128,7 +128,7 @@ class TestSalesQuotation:
         """Test sending quote to customer."""
         sample_quote.send_to_customer(user_id=1, email_template="standard")
         
-        assert sample_quote.status == QuotationStatus.SENT
+        assert sample_quote.status == QuoteStatus.SENT
         assert sample_quote.sent_date is not None
         assert sample_quote.sent_by_user_id == 1
         assert sample_quote.email_sent_count == 1
@@ -138,7 +138,7 @@ class TestSalesQuotation:
         """Test marking quote as accepted."""
         sample_quote.mark_accepted(user_id=1, notes="Customer accepted via email")
         
-        assert sample_quote.status == QuotationStatus.ACCEPTED
+        assert sample_quote.status == QuoteStatus.ACCEPTED
         assert sample_quote.customer_response_date is not None
         assert sample_quote.customer_response_notes == "Customer accepted via email"
     
@@ -146,7 +146,7 @@ class TestSalesQuotation:
         """Test marking quote as rejected."""
         sample_quote.mark_rejected("Price too high", user_id=1, notes="Customer wants discount")
         
-        assert sample_quote.status == QuotationStatus.REJECTED
+        assert sample_quote.status == QuoteStatus.REJECTED
         assert sample_quote.customer_response_date is not None
         assert sample_quote.rejection_reason == "Price too high"
         assert sample_quote.customer_response_notes == "Customer wants discount"
@@ -155,7 +155,7 @@ class TestSalesQuotation:
         """Test converting quote to order."""
         sample_quote.convert_to_order(user_id=1, order_id=123)
         
-        assert sample_quote.status == QuotationStatus.CONVERTED
+        assert sample_quote.status == QuoteStatus.CONVERTED
         assert sample_quote.converted_date is not None
         assert sample_quote.converted_by_user_id == 1
         assert sample_quote.converted_to_order_id == 123
@@ -167,7 +167,7 @@ class TestSalesQuotation:
         version_record = sample_quote.create_new_version(user_id=1, reason="Customer requested changes")
         
         assert sample_quote.version == original_version + 1
-        assert sample_quote.status == QuotationStatus.DRAFT
+        assert sample_quote.status == QuoteStatus.DRAFT
         assert version_record.version_number == original_version
         assert version_record.change_reason == "Customer requested changes"
     
@@ -175,7 +175,7 @@ class TestSalesQuotation:
         """Test quote validation constraints."""
         # Test missing required fields
         with pytest.raises(IntegrityError):
-            incomplete_quote = SalesQuotation(
+            incomplete_quote = SalesQuote(
                 company_id=sample_company_id,
                 # Missing quote_number, title, customer_id, prepared_by_user_id, valid_until
             )
@@ -183,15 +183,15 @@ class TestSalesQuotation:
             db_session.commit()
 
 
-class TestSalesQuotationLineItem:
-    """Test SalesQuotationLineItem model functionality."""
+class TestSalesQuoteLineItem:
+    """Test SalesQuoteLineItem model functionality."""
     
     def test_create_line_item(self, db_session, sample_quote, sample_line_item_data):
         """Test creating a new quote line item."""
         line_item_data = sample_line_item_data.copy()
         line_item_data["quote_id"] = sample_quote.id
         
-        line_item = SalesQuotationLineItem(**line_item_data)
+        line_item = SalesQuoteLineItem(**line_item_data)
         db_session.add(line_item)
         db_session.commit()
         
@@ -208,7 +208,7 @@ class TestSalesQuotationLineItem:
         """Test line item string representation."""
         expected_str = f"Line {sample_line_item.line_number}: {sample_line_item.item_name} (Qty: {sample_line_item.quantity})"
         assert str(sample_line_item) == expected_str
-        assert "SalesQuotationLineItem" in repr(sample_line_item)
+        assert "SalesQuoteLineItem" in repr(sample_line_item)
     
     def test_line_item_margin_calculations(self, sample_line_item):
         """Test line item margin calculations."""
@@ -291,8 +291,8 @@ class TestSalesQuotationLineItem:
         assert sample_line_item.line_total == Decimal("1500.00")
 
 
-class TestQuotationVersion:
-    """Test QuotationVersion model functionality."""
+class TestQuoteVersion:
+    """Test QuoteVersion model functionality."""
     
     def test_create_quote_version(self, db_session, sample_quote):
         """Test creating a quote version record."""
@@ -305,7 +305,7 @@ class TestQuotationVersion:
             "quote_data": sample_quote.to_dict()
         }
         
-        version = QuotationVersion(**version_data)
+        version = QuoteVersion(**version_data)
         db_session.add(version)
         db_session.commit()
         
@@ -317,7 +317,7 @@ class TestQuotationVersion:
     
     def test_version_string_representation(self, db_session, sample_quote):
         """Test version string representation."""
-        version = QuotationVersion(
+        version = QuoteVersion(
             company_id=sample_quote.company_id,
             quote_id=sample_quote.id,
             version_number=1,
@@ -326,11 +326,11 @@ class TestQuotationVersion:
         )
         
         assert str(version) == "Version 1 - Test version"
-        assert "QuotationVersion" in repr(version)
+        assert "QuoteVersion" in repr(version)
 
 
-class TestQuotationApproval:
-    """Test QuotationApproval model functionality."""
+class TestQuoteApproval:
+    """Test QuoteApproval model functionality."""
     
     def test_create_quote_approval(self, db_session, sample_quote):
         """Test creating a quote approval record."""
@@ -340,12 +340,12 @@ class TestQuotationApproval:
             "approval_level": 1,
             "requested_by_user_id": 1,
             "assigned_to_user_id": 2,
-            "request_reason": "Quotation exceeds approval threshold",
+            "request_reason": "Quote exceeds approval threshold",
             "due_date": datetime.utcnow() + timedelta(hours=24),
             "quote_total": sample_quote.total_amount
         }
         
-        approval = QuotationApproval(**approval_data)
+        approval = QuoteApproval(**approval_data)
         db_session.add(approval)
         db_session.commit()
         
@@ -357,7 +357,7 @@ class TestQuotationApproval:
     
     def test_approval_string_representation(self, db_session, sample_quote):
         """Test approval string representation."""
-        approval = QuotationApproval(
+        approval = QuoteApproval(
             company_id=sample_quote.company_id,
             quote_id=sample_quote.id,
             approval_level=2,
@@ -367,12 +367,12 @@ class TestQuotationApproval:
         
         expected_str = f"Approval Level 2 - {approval.status.value}"
         assert str(approval) == expected_str
-        assert "QuotationApproval" in repr(approval)
+        assert "QuoteApproval" in repr(approval)
     
     def test_approval_time_properties(self, db_session, sample_quote):
         """Test approval time-related properties."""
         # Create overdue approval
-        overdue_approval = QuotationApproval(
+        overdue_approval = QuoteApproval(
             company_id=sample_quote.company_id,
             quote_id=sample_quote.id,
             approval_level=1,
@@ -385,7 +385,7 @@ class TestQuotationApproval:
         assert overdue_approval.hours_remaining is None or overdue_approval.hours_remaining < 0
         
         # Create pending approval
-        pending_approval = QuotationApproval(
+        pending_approval = QuoteApproval(
             company_id=sample_quote.company_id,
             quote_id=sample_quote.id,
             approval_level=1,
@@ -403,7 +403,7 @@ class TestQuotationApproval:
         request_time = datetime.utcnow()
         response_time = request_time + timedelta(hours=3)
         
-        approval = QuotationApproval(
+        approval = QuoteApproval(
             company_id=sample_quote.company_id,
             quote_id=sample_quote.id,
             approval_level=1,
@@ -417,7 +417,7 @@ class TestQuotationApproval:
     
     def test_approve_quote(self, db_session, sample_quote):
         """Test approving a quote."""
-        approval = QuotationApproval(
+        approval = QuoteApproval(
             company_id=sample_quote.company_id,
             quote_id=sample_quote.id,
             approval_level=1,
@@ -427,16 +427,16 @@ class TestQuotationApproval:
         db_session.add(approval)
         db_session.commit()
         
-        approval.approve(approver_user_id=2, notes="Quotation looks good")
+        approval.approve(approver_user_id=2, notes="Quote looks good")
         
         assert approval.status == ApprovalStatus.APPROVED
         assert approval.response_date is not None
         assert approval.response_by_user_id == 2
-        assert approval.response_notes == "Quotation looks good"
+        assert approval.response_notes == "Quote looks good"
     
     def test_reject_quote(self, db_session, sample_quote):
         """Test rejecting a quote."""
-        approval = QuotationApproval(
+        approval = QuoteApproval(
             company_id=sample_quote.company_id,
             quote_id=sample_quote.id,
             approval_level=1,
@@ -455,7 +455,7 @@ class TestQuotationApproval:
     
     def test_escalate_approval(self, db_session, sample_quote):
         """Test escalating approval."""
-        approval = QuotationApproval(
+        approval = QuoteApproval(
             company_id=sample_quote.company_id,
             quote_id=sample_quote.id,
             approval_level=1,

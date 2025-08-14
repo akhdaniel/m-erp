@@ -225,7 +225,7 @@ class SalesOpportunity(CompanyBusinessObject):
     # customer = relationship("Customer", back_populates="opportunities")
     # stage = relationship("OpportunityStage", back_populates="opportunities")
     # activities = relationship("OpportunityActivity", back_populates="opportunity", cascade="all, delete-orphan")
-    # quotes = relationship("SalesQuotation", back_populates="opportunity")
+    # quotes = relationship("SalesQuote", back_populates="opportunity")
     # orders = relationship("SalesOrder", back_populates="opportunity")
     
     def __str__(self):

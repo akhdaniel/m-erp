@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from sales_module.framework.database import SessionLocal, engine
 from sales_module.framework.base import Base
-from sales_module.models.quote import SalesQuotation, SalesQuotationLineItem, QuotationStatus
+from sales_module.models.quote import SalesQuote, SalesQuoteLineItem, QuoteStatus
 from sales_module.models.order import SalesOrder, SalesOrderLineItem, OrderStatus, PaymentStatus, ShipmentStatus
 from sales_module.models.pricing_rules import PricingRule, PricingRuleType, DiscountType
 
@@ -31,8 +31,8 @@ def generate_sample_data():
         print("🧹 Cleaning existing data...")
         # Clean existing data (skip if tables don't exist)
         try:
-            db.query(SalesQuotationLineItem).delete()
-            db.query(SalesQuotation).delete()
+            db.query(SalesQuoteLineItem).delete()
+            db.query(SalesQuote).delete()
         except Exception as e:
             print(f"  Skipping quote table cleanup: {e}")
             db.rollback()
@@ -122,7 +122,7 @@ def generate_sample_data():
         
         print("📝 Creating quotes...")
         # Create quotes with various statuses
-        quote_statuses = [QuotationStatus.DRAFT, QuotationStatus.SENT, QuotationStatus.ACCEPTED, QuotationStatus.REJECTED, QuotationStatus.EXPIRED]
+        quote_statuses = [QuoteStatus.DRAFT, QuoteStatus.SENT, QuoteStatus.ACCEPTED, QuoteStatus.REJECTED, QuoteStatus.EXPIRED]
         quotes_created = 0
         
         for i in range(30):  # Create 30 quotes
@@ -133,12 +133,12 @@ def generate_sample_data():
             
             status = random.choice(quote_statuses)
             if days_ago > 30:
-                status = random.choice([QuotationStatus.ACCEPTED, QuotationStatus.REJECTED, QuotationStatus.EXPIRED])
+                status = random.choice([QuoteStatus.ACCEPTED, QuoteStatus.REJECTED, QuoteStatus.EXPIRED])
             
-            quote = SalesQuotation(
+            quote = SalesQuote(
                 quote_number=f"QT-2025-{1000 + i:04d}",
                 customer_id=customer["id"],
-                title=f"Quotation for {customer['name']}",
+                title=f"Quote for {customer['name']}",
                 valid_from=quote_date,
                 valid_until=quote_date + timedelta(days=valid_days),
                 status=status,
@@ -168,7 +168,7 @@ def generate_sample_data():
                 discount_amount = line_subtotal * (discount / 100)
                 line_total = line_subtotal - discount_amount
                 
-                item = SalesQuotationLineItem(
+                item = SalesQuoteLineItem(
                     quote_id=quote.id,
                     product_id=product["id"],
                     description=product["name"],
@@ -298,10 +298,10 @@ def generate_sample_data():
         print("=" * 50)
         
         # Active quotes
-        active_quotes = db.query(SalesQuotation).filter(
-            SalesQuotation.status.in_([QuotationStatus.DRAFT, QuotationStatus.SENT])
+        active_quotes = db.query(SalesQuote).filter(
+            SalesQuote.status.in_([QuoteStatus.DRAFT, QuoteStatus.SENT])
         ).count()
-        print(f"Active Quotations: {active_quotes}")
+        print(f"Active Quotes: {active_quotes}")
         
         # Pending orders
         pending_orders = db.query(SalesOrder).filter(
@@ -320,12 +320,12 @@ def generate_sample_data():
         print(f"Monthly Revenue: ${monthly_revenue:,.2f}")
         
         # Conversion rate
-        total_quotes = db.query(SalesQuotation).count()
-        accepted_quotes = db.query(SalesQuotation).filter(
-            SalesQuotation.status == QuotationStatus.ACCEPTED
+        total_quotes = db.query(SalesQuote).count()
+        accepted_quotes = db.query(SalesQuote).filter(
+            SalesQuote.status == QuoteStatus.ACCEPTED
         ).count()
         conversion_rate = (accepted_quotes / total_quotes * 100) if total_quotes > 0 else 0
-        print(f"Quotation Conversion Rate: {conversion_rate:.1f}%")
+        print(f"Quote Conversion Rate: {conversion_rate:.1f}%")
         
         # Top customers
         print("\nTop 5 Customers by Revenue:")

@@ -38,14 +38,14 @@ SALES_PERMISSIONS = [
     ),
     MenuPermission(
         code="view_quotes",
-        name="View Quotations",
+        name="View Quotes",
         description="Permission to view sales quotes",
         category="sales",
         action="view"
     ),
     MenuPermission(
         code="manage_quotes",
-        name="Manage Quotations",
+        name="Manage Quotes",
         description="Permission to create, edit, delete quotes",
         category="sales",
         action="manage"
@@ -124,8 +124,8 @@ SALES_MENUS = [
     ),
     MenuItem(
         code="sales_quotes",
-        title="Quotations",
-        description="Quotation Management",
+        title="Quotes",
+        description="Quote Management",
         parent_code="sales_management",
         order_index=1,  # Second item after Dashboard
         level=1,

@@ -47,7 +47,7 @@ async def get_dashboard_metrics(
     - Active quotes count
     - Pending orders count 
     - Monthly/period revenue
-    - Quotation conversion rate
+    - Quote conversion rate
     - Inventory metrics
     - Customer metrics
     """

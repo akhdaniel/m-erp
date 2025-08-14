@@ -13,15 +13,15 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 # Import only the enums and check structure
 try:
-    from sales_module.models.quote import QuotationStatus, ApprovalStatus, LineItemType
+    from sales_module.models.quote import QuoteStatus, ApprovalStatus, LineItemType
     print("✅ Successfully imported enums")
     
     # Check enum values
-    print(f"QuotationStatus values: {[status.value for status in QuotationStatus]}")
+    print(f"QuoteStatus values: {[status.value for status in QuoteStatus]}")
     print(f"ApprovalStatus values: {[status.value for status in ApprovalStatus]}")
     print(f"LineItemType values: {[item_type.value for item_type in LineItemType]}")
     
-    print("\n✅ Quotation model structure verification passed!")
+    print("\n✅ Quote model structure verification passed!")
     print("📋 Models are properly structured and ready for database testing")
     
 except ImportError as e:
@@ -44,7 +44,7 @@ except ImportError as e:
     
     print("\n📋 All model files are present and structured correctly")
 
-print("\n🎉 Quotation models are ready for implementation!")
+print("\n🎉 Quote models are ready for implementation!")
 print("Next steps:")
 print("1. ✅ Models defined with comprehensive business logic")
 print("2. ✅ Tests written following TDD approach")

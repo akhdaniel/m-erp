@@ -12,19 +12,19 @@ from datetime import datetime, timedelta
 sys.path.insert(0, os.path.dirname(__file__))
 
 from sales_module.models.quote import (
-    SalesQuotation, SalesQuotationLineItem, QuotationVersion, QuotationApproval,
-    QuotationStatus, ApprovalStatus, LineItemType
+    SalesQuote, SalesQuoteLineItem, QuoteVersion, QuoteApproval,
+    QuoteStatus, ApprovalStatus, LineItemType
 )
 
 
 def test_sales_quote_creation():
-    """Test creating a SalesQuotation instance."""
-    print("Testing SalesQuotation creation...")
+    """Test creating a SalesQuote instance."""
+    print("Testing SalesQuote creation...")
     
     quote_data = {
         "company_id": 1,
         "quote_number": "QUO-2025-001",
-        "title": "Test Quotation",
+        "title": "Test Quote",
         "description": "Test quote description",
         "customer_id": 100,
         "prepared_by_user_id": 1,
@@ -35,18 +35,18 @@ def test_sales_quote_creation():
         "currency_code": "USD"
     }
     
-    quote = SalesQuotation(**quote_data)
+    quote = SalesQuote(**quote_data)
     
     # Test basic properties
     assert quote.quote_number == "QUO-2025-001"
-    assert quote.status == QuotationStatus.DRAFT
+    assert quote.status == QuoteStatus.DRAFT
     assert quote.version == 1
     assert quote.total_amount == Decimal("1080.00")
     assert quote.framework_version == "1.0.0"
     
     # Test string representations
-    print(f"Quotation str: {str(quote)}")
-    print(f"Quotation repr: {repr(quote)}")
+    print(f"Quote str: {str(quote)}")
+    print(f"Quote repr: {repr(quote)}")
     print(f"Display ID: {quote.display_identifier}")
     
     # Test properties
@@ -55,13 +55,13 @@ def test_sales_quote_creation():
     print(f"Is open: {quote.is_open}")
     print(f"Is closed: {quote.is_closed}")
     
-    print("✅ SalesQuotation creation test passed!")
+    print("✅ SalesQuote creation test passed!")
     return quote
 
 
 def test_quote_line_item_creation():
-    """Test creating a SalesQuotationLineItem instance."""
-    print("\nTesting SalesQuotationLineItem creation...")
+    """Test creating a SalesQuoteLineItem instance."""
+    print("\nTesting SalesQuoteLineItem creation...")
     
     line_item_data = {
         "company_id": 1,
@@ -74,7 +74,7 @@ def test_quote_line_item_creation():
         "line_total": Decimal("1000.00")
     }
     
-    line_item = SalesQuotationLineItem(**line_item_data)
+    line_item = SalesQuoteLineItem(**line_item_data)
     
     # Test basic properties
     assert line_item.line_number == 1
@@ -97,13 +97,13 @@ def test_quote_line_item_creation():
     # Test effective unit price
     print(f"Effective unit price: {line_item.effective_unit_price}")
     
-    print("✅ SalesQuotationLineItem creation test passed!")
+    print("✅ SalesQuoteLineItem creation test passed!")
     return line_item
 
 
 def test_quote_version_creation():
-    """Test creating a QuotationVersion instance."""
-    print("\nTesting QuotationVersion creation...")
+    """Test creating a QuoteVersion instance."""
+    print("\nTesting QuoteVersion creation...")
     
     version_data = {
         "company_id": 1,
@@ -114,7 +114,7 @@ def test_quote_version_creation():
         "quote_data": {"test": "data"}
     }
     
-    version = QuotationVersion(**version_data)
+    version = QuoteVersion(**version_data)
     
     # Test basic properties
     assert version.version_number == 1
@@ -125,13 +125,13 @@ def test_quote_version_creation():
     print(f"Version str: {str(version)}")
     print(f"Version repr: {repr(version)}")
     
-    print("✅ QuotationVersion creation test passed!")
+    print("✅ QuoteVersion creation test passed!")
     return version
 
 
 def test_quote_approval_creation():
-    """Test creating a QuotationApproval instance."""
-    print("\nTesting QuotationApproval creation...")
+    """Test creating a QuoteApproval instance."""
+    print("\nTesting QuoteApproval creation...")
     
     approval_data = {
         "company_id": 1,
@@ -139,12 +139,12 @@ def test_quote_approval_creation():
         "approval_level": 1,
         "requested_by_user_id": 1,
         "assigned_to_user_id": 2,
-        "request_reason": "Quotation exceeds approval threshold",
+        "request_reason": "Quote exceeds approval threshold",
         "due_date": datetime.utcnow() + timedelta(hours=24),
         "quote_total": Decimal("1080.00")
     }
     
-    approval = QuotationApproval(**approval_data)
+    approval = QuoteApproval(**approval_data)
     
     # Test basic properties
     assert approval.approval_level == 1
@@ -159,7 +159,7 @@ def test_quote_approval_creation():
     print(f"Is overdue: {approval.is_overdue}")
     print(f"Hours remaining: {approval.hours_remaining}")
     
-    print("✅ QuotationApproval creation test passed!")
+    print("✅ QuoteApproval creation test passed!")
     return approval
 
 
@@ -191,7 +191,7 @@ def test_quote_methods():
     quote.mark_accepted(user_id=1, notes="Customer approved")
     print(f"After acceptance - Status: {quote.status}")
     
-    print("✅ Quotation methods test passed!")
+    print("✅ Quote methods test passed!")
 
 
 def test_line_item_methods():
@@ -233,7 +233,7 @@ def test_approval_methods():
     
     # Test approval
     print(f"Initial status: {approval.status}")
-    approval.approve(approver_user_id=2, notes="Quotation looks good")
+    approval.approve(approver_user_id=2, notes="Quote looks good")
     print(f"After approval - Status: {approval.status}")
     print(f"Response notes: {approval.response_notes}")
     
@@ -245,7 +245,7 @@ def test_approval_methods():
         "requested_by_user_id": 1,
         "assigned_to_user_id": 2
     }
-    rejection_approval = QuotationApproval(**rejection_data)
+    rejection_approval = QuoteApproval(**rejection_data)
     
     rejection_approval.reject(rejector_user_id=2, reason="Discount too high")
     print(f"Rejection status: {rejection_approval.status}")
@@ -268,7 +268,7 @@ def main():
         test_approval_methods()
         
         print("\n🎉 All tests passed successfully!")
-        print("✅ Quotation models are working correctly")
+        print("✅ Quote models are working correctly")
         
     except Exception as e:
         print(f"\n❌ Test failed with error: {e}")

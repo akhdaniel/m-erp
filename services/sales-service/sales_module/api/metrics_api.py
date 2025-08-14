@@ -71,7 +71,7 @@ async def get_quotes_metric(
         
         return {
             "value": sales_metrics.get("active_quotes", 0),
-            "label": "Active Quotations",
+            "label": "Active Quotes",
             "format": "number",
             "subtitle": f"{sales_metrics.get('quotes_sent', 0)} sent this month",
             "trend": {

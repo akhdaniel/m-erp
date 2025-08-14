@@ -20,8 +20,8 @@ from typing import Dict, Any, List
 sys.path.insert(0, os.path.dirname(__file__))
 
 from sales_module.models import (
-    SalesQuotation, SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice,
-    OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus, QuotationStatus
+    SalesQuote, SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice,
+    OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus, QuoteStatus
 )
 from sales_module.services import OrderService
 from sales_module.framework.database import get_db_session
@@ -73,7 +73,7 @@ class OrderWorkflowTester:
         """Create a test quote that can be converted to an order"""
         quote_data = {
             "quote_number": f"TEST-QUOTE-{int(datetime.now().timestamp())}",
-            "title": "End-to-End Test Quotation",
+            "title": "End-to-End Test Quote",
             "description": "Test quote for complete order workflow testing",
             "customer_id": 1,
             "status": "accepted",  # Ready for conversion
@@ -110,7 +110,7 @@ class OrderWorkflowTester:
             if response.status_code == 201:
                 quote_result = response.json()
                 self.test_data['quote'] = quote_result
-                self.log_step("Test quote created", f"Quotation ID: {quote_result['id']}")
+                self.log_step("Test quote created", f"Quote ID: {quote_result['id']}")
                 return quote_result
             else:
                 self.log_error("Test quote creation", f"HTTP {response.status_code} - {response.text}")

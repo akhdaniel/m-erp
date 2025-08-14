@@ -37,7 +37,7 @@ def run_complete_sales_process():
     tax_amount = subtotal * 0.0875  # 8.75% tax
     original_total = subtotal + tax_amount
     
-    print(f"✅ Quotation Created: {quote_number}")
+    print(f"✅ Quote Created: {quote_number}")
     print(f"   Customer: {customer['name']}")
     print(f"   Line Items: {len(products)}")
     
@@ -89,7 +89,7 @@ def run_complete_sales_process():
     else:
         print(f"✅ No Approval Required: Discount {discount_percentage:.1f}% within limits")
     
-    print(f"📋 Quotation Status: APPROVED")
+    print(f"📋 Quote Status: APPROVED")
     
     # STEP 4: CONVERT TO ORDER
     print("\n🔄 STEP 4: CONVERT QUOTE TO SALES ORDER")
@@ -102,7 +102,7 @@ def run_complete_sales_process():
     required_date = order_date + timedelta(days=14)
     
     print(f"✅ Sales Order Created: {order_number}")
-    print(f"📋 Converted from Quotation: {quote_number}")
+    print(f"📋 Converted from Quote: {quote_number}")
     print(f"🎯 Order Total: ${final_total:,.2f}")
     print(f"📅 Required Date: {required_date.strftime('%Y-%m-%d')}")
     print(f"🏪 Status: CONFIRMED")
@@ -175,7 +175,7 @@ def run_complete_sales_process():
     print("=" * 60)
     
     print("\n📅 PROCESS TIMELINE:")
-    print(f"   1. ✅ Quotation Created: {quote_number}")
+    print(f"   1. ✅ Quote Created: {quote_number}")
     print(f"   2. ✅ Pricing Applied: {discount_percentage:.1f}% total discount")
     print(f"   3. ✅ Approval: Manager approved")
     print(f"   4. ✅ Order Created: {order_number}")
@@ -192,12 +192,12 @@ def run_complete_sales_process():
     print(f"\n📊 BUSINESS METRICS:")
     print(f"   Line Items: {len(products)}")
     print(f"   Total Units: {total_items}")
-    print(f"   Quotation-to-Order Time: < 1 day")
+    print(f"   Quote-to-Order Time: < 1 day")
     print(f"   Order-to-Delivery Time: 3 days")
     print(f"   Payment Time: 15 days (50% faster than terms)")
     
     print(f"\n✅ SUCCESS INDICATORS:")
-    print(f"   🎯 Quotation Conversion: 100% (Quotation → Order)")
+    print(f"   🎯 Quote Conversion: 100% (Quote → Order)")
     print(f"   📦 Fulfillment: 100% (All items shipped)")
     print(f"   💳 Payment: 100% (Paid in full, early)")
     print(f"   😊 Customer Satisfaction: High (On-time delivery)")
@@ -208,10 +208,10 @@ def run_complete_sales_process():
     
     print("\n📋 XERPIUM SALES MODULE CAPABILITIES DEMONSTRATED:")
     capabilities = [
-        "✅ Quotation Creation & Management",
+        "✅ Quote Creation & Management",
         "✅ Dynamic Pricing & Discounts", 
         "✅ Approval Workflows",
-        "✅ Quotation-to-Order Conversion",
+        "✅ Quote-to-Order Conversion",
         "✅ Inventory Integration",
         "✅ Order Fulfillment Tracking",
         "✅ Shipping & Carrier Integration",

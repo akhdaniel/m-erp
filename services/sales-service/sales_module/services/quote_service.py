@@ -1,5 +1,5 @@
 """
-Quotation service for managing sales quotes and proposals.
+Quote service for managing sales quotes and proposals.
 
 Provides business logic for quote management including
 quote creation, pricing, approval workflows, and conversion to orders.
@@ -14,16 +14,16 @@ logger = logging.getLogger(__name__)
 
 from .base_service import BaseService
 from sales_module.models import (
-    SalesQuotation, SalesQuotationLineItem, QuotationVersion, QuotationApproval,
-    QuotationStatus, ApprovalStatus
+    SalesQuote, SalesQuoteLineItem, QuoteVersion, QuoteApproval,
+    QuoteStatus, ApprovalStatus
 )
 from sales_module.integrations.inventory_client import inventory_client
 from sales_module.messaging.event_publisher import sales_event_publisher
 
 
-class QuotationService(BaseService):
+class QuoteService(BaseService):
     """
-    Quotation service for comprehensive sales quote management.
+    Quote service for comprehensive sales quote management.
     
     Handles quote lifecycle, pricing calculations, approval workflows,
     versioning, and conversion to orders.
@@ -32,15 +32,15 @@ class QuotationService(BaseService):
     def __init__(self, db_session=None):
         """Initialize quote service."""
         super().__init__(db_session)
-        self.model_class = SalesQuotation
+        self.model_class = SalesQuote
     
     def create_quote(self, quote_data: Dict[str, Any], line_items: List[Dict[str, Any]] = None,
-                    user_id: int = None, company_id: int = None) -> SalesQuotation:
+                    user_id: int = None, company_id: int = None) -> SalesQuote:
         """
         Create new quote with line items and pricing calculations.
         
         Args:
-            quote_data: Quotation information
+            quote_data: Quote information
             line_items: List of line item data
             user_id: ID of user creating the quote
             company_id: Company ID for multi-company isolation
@@ -76,12 +76,12 @@ class QuotationService(BaseService):
         return quote
     
     def add_line_item(self, quote_id: int, line_item_data: Dict[str, Any],
-                     user_id: int = None, company_id: int = None) -> Optional[SalesQuotationLineItem]:
+                     user_id: int = None, company_id: int = None) -> Optional[SalesQuoteLineItem]:
         """
         Add line item to quote with inventory integration.
         
         Args:
-            quote_id: Quotation ID
+            quote_id: Quote ID
             line_item_data: Line item information
             user_id: ID of user adding the line item
             company_id: Company ID for isolation
@@ -124,7 +124,7 @@ class QuotationService(BaseService):
             line_item_data['line_number'] = self._get_next_line_number(quote_id, company_id)
         
         # Create line item
-        line_item = SalesQuotationLineItem(**line_item_data)
+        line_item = SalesQuoteLineItem(**line_item_data)
         
         # Calculate line totals
         line_item.calculate_line_total()
@@ -138,7 +138,7 @@ class QuotationService(BaseService):
     
     def update_line_item_pricing(self, line_item_id: int, new_unit_price: Decimal,
                                discount_percentage: Decimal = None, user_id: int = None,
-                               company_id: int = None) -> Optional[SalesQuotationLineItem]:
+                               company_id: int = None) -> Optional[SalesQuoteLineItem]:
         """
         Update line item pricing and recalculate totals.
         
@@ -153,14 +153,14 @@ class QuotationService(BaseService):
             Updated line item instance or None if not found
         """
         # In production, would fetch line item from database:
-        # line_item = self.db_session.query(SalesQuotationLineItem).filter(
-        #     SalesQuotationLineItem.id == line_item_id,
-        #     SalesQuotationLineItem.company_id == company_id,
-        #     SalesQuotationLineItem.is_active == True
+        # line_item = self.db_session.query(SalesQuoteLineItem).filter(
+        #     SalesQuoteLineItem.id == line_item_id,
+        #     SalesQuoteLineItem.company_id == company_id,
+        #     SalesQuoteLineItem.is_active == True
         # ).first()
         
         # For now, create a mock line item for demonstration
-        line_item = SalesQuotationLineItem(
+        line_item = SalesQuoteLineItem(
             id=line_item_id,
             company_id=company_id,
             quote_id=1,  # Would be actual quote ID
@@ -187,12 +187,12 @@ class QuotationService(BaseService):
         
         return line_item
     
-    def calculate_quote_totals(self, quote_id: int, company_id: int = None) -> Optional[SalesQuotation]:
+    def calculate_quote_totals(self, quote_id: int, company_id: int = None) -> Optional[SalesQuote]:
         """
         Calculate and update quote totals from line items.
         
         Args:
-            quote_id: Quotation ID
+            quote_id: Quote ID
             company_id: Company ID for isolation
             
         Returns:
@@ -216,12 +216,12 @@ class QuotationService(BaseService):
         return quote
     
     def apply_overall_discount(self, quote_id: int, discount_percentage: Decimal,
-                             user_id: int = None, company_id: int = None) -> Optional[SalesQuotation]:
+                             user_id: int = None, company_id: int = None) -> Optional[SalesQuote]:
         """
         Apply overall discount to quote.
         
         Args:
-            quote_id: Quotation ID
+            quote_id: Quote ID
             discount_percentage: Discount percentage to apply
             user_id: ID of user applying discount
             company_id: Company ID for isolation
@@ -239,12 +239,12 @@ class QuotationService(BaseService):
         return quote
     
     def send_quote_to_customer(self, quote_id: int, email_template: str = None,
-                              user_id: int = None, company_id: int = None) -> Optional[SalesQuotation]:
+                              user_id: int = None, company_id: int = None) -> Optional[SalesQuote]:
         """
         Send quote to customer via email.
         
         Args:
-            quote_id: Quotation ID
+            quote_id: Quote ID
             email_template: Email template to use
             user_id: ID of user sending the quote
             company_id: Company ID for isolation
@@ -257,8 +257,8 @@ class QuotationService(BaseService):
             return None
         
         # Validate quote is ready to send
-        if quote.status != QuotationStatus.APPROVED and quote.requires_approval:
-            raise ValueError("Quotation must be approved before sending to customer")
+        if quote.status != QuoteStatus.APPROVED and quote.requires_approval:
+            raise ValueError("Quote must be approved before sending to customer")
         
         quote.send_to_customer(user_id, email_template)
         
@@ -268,12 +268,12 @@ class QuotationService(BaseService):
         return quote
     
     def create_quote_version(self, quote_id: int, reason: str = None,
-                           user_id: int = None, company_id: int = None) -> Optional[QuotationVersion]:
+                           user_id: int = None, company_id: int = None) -> Optional[QuoteVersion]:
         """
         Create new version of quote for revision tracking.
         
         Args:
-            quote_id: Quotation ID
+            quote_id: Quote ID
             reason: Reason for creating new version
             user_id: ID of user creating version
             company_id: Company ID for isolation
@@ -290,12 +290,12 @@ class QuotationService(BaseService):
     
     def request_quote_approval(self, quote_id: int, approval_level: int = 1,
                              request_reason: str = None, urgency: str = "normal",
-                             user_id: int = None, company_id: int = None) -> Optional[QuotationApproval]:
+                             user_id: int = None, company_id: int = None) -> Optional[QuoteApproval]:
         """
         Request approval for quote.
         
         Args:
-            quote_id: Quotation ID
+            quote_id: Quote ID
             approval_level: Level of approval required
             request_reason: Reason for approval request
             urgency: Urgency level (low, normal, high, urgent)
@@ -324,17 +324,17 @@ class QuotationService(BaseService):
             'due_date': datetime.utcnow() + timedelta(hours=24)  # Default 24-hour SLA
         }
         
-        approval = QuotationApproval(**approval_data)
+        approval = QuoteApproval(**approval_data)
         approval.save(self.db_session, user_id)
         
         # Update quote status
-        quote.status = QuotationStatus.PENDING_APPROVAL
+        quote.status = QuoteStatus.PENDING_APPROVAL
         quote.save(self.db_session, user_id)
         
         return approval
     
     def approve_quote(self, approval_id: int, approver_notes: str = None,
-                     user_id: int = None, company_id: int = None) -> Optional[QuotationApproval]:
+                     user_id: int = None, company_id: int = None) -> Optional[QuoteApproval]:
         """
         Approve quote approval request.
         
@@ -348,14 +348,14 @@ class QuotationService(BaseService):
             Updated approval instance or None if not found
         """
         # In production, would fetch approval from database:
-        # approval = self.db_session.query(QuotationApproval).filter(
-        #     QuotationApproval.id == approval_id,
-        #     QuotationApproval.company_id == company_id,
-        #     QuotationApproval.status == ApprovalStatus.PENDING
+        # approval = self.db_session.query(QuoteApproval).filter(
+        #     QuoteApproval.id == approval_id,
+        #     QuoteApproval.company_id == company_id,
+        #     QuoteApproval.status == ApprovalStatus.PENDING
         # ).first()
         
         # For demonstration, create mock approval
-        approval = QuotationApproval(
+        approval = QuoteApproval(
             id=approval_id,
             company_id=company_id,
             quote_id=1,  # Would be actual quote ID
@@ -382,7 +382,7 @@ class QuotationService(BaseService):
         if self._is_final_approval(approval):
             quote = self.get_by_id(approval.quote_id, company_id)
             if quote:
-                quote.status = QuotationStatus.APPROVED
+                quote.status = QuoteStatus.APPROVED
                 quote.approved_by_user_id = user_id
                 quote.save(self.db_session, user_id)
                 
@@ -392,7 +392,7 @@ class QuotationService(BaseService):
         return approval
     
     def reject_quote_approval(self, approval_id: int, rejection_reason: str,
-                            user_id: int = None, company_id: int = None) -> Optional[QuotationApproval]:
+                            user_id: int = None, company_id: int = None) -> Optional[QuoteApproval]:
         """
         Reject quote approval request.
         
@@ -406,7 +406,7 @@ class QuotationService(BaseService):
             Updated approval instance or None if not found
         """
         # For demonstration, create mock approval
-        approval = QuotationApproval(
+        approval = QuoteApproval(
             id=approval_id,
             company_id=company_id,
             quote_id=1,  # Would be actual quote ID
@@ -429,7 +429,7 @@ class QuotationService(BaseService):
         # Update quote status back to draft for revision
         quote = self.get_by_id(approval.quote_id, company_id)
         if quote:
-            quote.status = QuotationStatus.DRAFT
+            quote.status = QuoteStatus.DRAFT
             quote.save(self.db_session, user_id)
         
         return approval
@@ -440,7 +440,7 @@ class QuotationService(BaseService):
         Convert accepted quote to sales order.
         
         Args:
-            quote_id: Quotation ID to convert
+            quote_id: Quote ID to convert
             order_data: Additional order information
             user_id: ID of user converting quote
             company_id: Company ID for isolation
@@ -450,11 +450,11 @@ class QuotationService(BaseService):
         """
         quote = self.get_by_id(quote_id, company_id)
         if not quote:
-            return {"success": False, "error": "Quotation not found"}
+            return {"success": False, "error": "Quote not found"}
         
         # Validate quote can be converted
-        if quote.status != QuotationStatus.ACCEPTED:
-            return {"success": False, "error": "Quotation must be accepted to convert to order"}
+        if quote.status != QuoteStatus.ACCEPTED:
+            return {"success": False, "error": "Quote must be accepted to convert to order"}
         
         # In production, would:
         # 1. Create sales order from quote data
@@ -463,7 +463,7 @@ class QuotationService(BaseService):
         # 4. Update quote status to converted
         # 5. Link quote to order
         
-        print(f"Quotation Service: Converting quote {quote.quote_number} to order")
+        print(f"Quote Service: Converting quote {quote.quote_number} to order")
         
         # Simulate order creation
         order_id = 12345  # Would be actual order ID
@@ -474,16 +474,16 @@ class QuotationService(BaseService):
             "success": True,
             "order_id": order_id,
             "quote_id": quote_id,
-            "message": f"Quotation {quote.quote_number} successfully converted to order"
+            "message": f"Quote {quote.quote_number} successfully converted to order"
         }
     
     def extend_quote_validity(self, quote_id: int, additional_days: int,
-                            user_id: int = None, company_id: int = None) -> Optional[SalesQuotation]:
+                            user_id: int = None, company_id: int = None) -> Optional[SalesQuote]:
         """
         Extend quote validity period.
         
         Args:
-            quote_id: Quotation ID
+            quote_id: Quote ID
             additional_days: Number of days to extend
             user_id: ID of user extending validity
             company_id: Company ID for isolation
@@ -542,7 +542,7 @@ class QuotationService(BaseService):
                 "approval_rate": 0.0
             },
             "top_quotes": [],  # Top quotes by value
-            "quote_trends": []  # Quotation volume over time
+            "quote_trends": []  # Quote volume over time
         }
     
     # Utility methods
@@ -570,14 +570,14 @@ class QuotationService(BaseService):
             if data['valid_until'] <= data['valid_from']:
                 raise ValueError("Valid until date must be after valid from date")
     
-    def validate_update_data(self, data: Dict[str, Any], quote: SalesQuotation) -> None:
+    def validate_update_data(self, data: Dict[str, Any], quote: SalesQuote) -> None:
         """Validate quote update data."""
         # Don't allow changing quote number
         if 'quote_number' in data and data['quote_number'] != quote.quote_number:
-            raise ValueError("Quotation number cannot be changed after creation")
+            raise ValueError("Quote number cannot be changed after creation")
         
         # Don't allow editing converted quotes
-        if quote.status == QuotationStatus.CONVERTED:
+        if quote.status == QuoteStatus.CONVERTED:
             raise ValueError("Cannot edit quotes that have been converted to orders")
     
     # Inventory Integration Methods
@@ -645,7 +645,7 @@ class QuotationService(BaseService):
         Validate inventory availability for all quote line items.
         
         Args:
-            quote_id: Quotation ID
+            quote_id: Quote ID
             company_id: Company ID for isolation
             
         Returns:
@@ -653,7 +653,7 @@ class QuotationService(BaseService):
         """
         quote = self.get_by_id(quote_id, company_id)
         if not quote:
-            return {"valid": False, "error": "Quotation not found"}
+            return {"valid": False, "error": "Quote not found"}
         
         validation_results = {
             "valid": True,
@@ -705,7 +705,7 @@ class QuotationService(BaseService):
         Reserve inventory for quote line items.
         
         Args:
-            quote_id: Quotation ID
+            quote_id: Quote ID
             company_id: Company ID for isolation
             expiry_hours: Hours until reservations expire
             
@@ -714,7 +714,7 @@ class QuotationService(BaseService):
         """
         quote = self.get_by_id(quote_id, company_id)
         if not quote:
-            return {"success": False, "error": "Quotation not found"}
+            return {"success": False, "error": "Quote not found"}
         
         reservations = []
         failed_reservations = []
@@ -770,17 +770,17 @@ class QuotationService(BaseService):
         Get next line number for quote line item.
         
         Args:
-            quote_id: Quotation ID
+            quote_id: Quote ID
             company_id: Company ID for isolation
             
         Returns:
             Next line number
         """
         # In production, would query database:
-        # max_line_number = self.db_session.query(func.max(SalesQuotationLineItem.line_number)).filter(
-        #     SalesQuotationLineItem.quote_id == quote_id,
-        #     SalesQuotationLineItem.company_id == company_id,
-        #     SalesQuotationLineItem.is_active == True
+        # max_line_number = self.db_session.query(func.max(SalesQuoteLineItem.line_number)).filter(
+        #     SalesQuoteLineItem.quote_id == quote_id,
+        #     SalesQuoteLineItem.company_id == company_id,
+        #     SalesQuoteLineItem.is_active == True
         # ).scalar() or 0
         # return max_line_number + 1
         
@@ -802,7 +802,7 @@ class QuotationService(BaseService):
         # For now, simulate escalation rules
         return user_id in [1, 2, 3]  # Mock admin users
     
-    def _is_final_approval(self, approval: QuotationApproval) -> bool:
+    def _is_final_approval(self, approval: QuoteApproval) -> bool:
         """
         Check if this is the final approval needed for the quote.
         
@@ -818,7 +818,7 @@ class QuotationService(BaseService):
     
     def escalate_approval(self, approval_id: int, escalation_reason: str,
                          escalate_to_user_id: int, user_id: int = None,
-                         company_id: int = None) -> Optional[QuotationApproval]:
+                         company_id: int = None) -> Optional[QuoteApproval]:
         """
         Escalate approval to higher authority.
         
@@ -833,7 +833,7 @@ class QuotationService(BaseService):
             Updated approval instance or None if not found
         """
         # For demonstration, create mock approval
-        approval = QuotationApproval(
+        approval = QuoteApproval(
             id=approval_id,
             company_id=company_id,
             quote_id=1,
@@ -882,14 +882,14 @@ class QuotationService(BaseService):
     
     # Event Publishing Methods
     
-    def _publish_quote_event(self, event_type: str, quote: SalesQuotation, 
+    def _publish_quote_event(self, event_type: str, quote: SalesQuote, 
                            user_id: int = None, company_id: int = None) -> None:
         """
         Publish quote-related event.
         
         Args:
             event_type: Type of event
-            quote: Quotation instance
+            quote: Quote instance
             user_id: User ID
             company_id: Company ID
         """
@@ -909,7 +909,7 @@ class QuotationService(BaseService):
         except Exception as e:
             logger.warning(f"Failed to publish quote event {event_type}: {e}")
     
-    def _publish_approval_event(self, event_type: str, approval: QuotationApproval,
+    def _publish_approval_event(self, event_type: str, approval: QuoteApproval,
                               user_id: int = None, company_id: int = None) -> None:
         """
         Publish approval-related event.

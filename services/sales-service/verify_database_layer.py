@@ -16,43 +16,43 @@ def verify_model_structure():
     try:
         # Import models to check structure
         from sales_module.models.quote import (
-            SalesQuotation, SalesQuotationLineItem, QuotationVersion, QuotationApproval,
-            QuotationStatus, ApprovalStatus, LineItemType
+            SalesQuote, SalesQuoteLineItem, QuoteVersion, QuoteApproval,
+            QuoteStatus, ApprovalStatus, LineItemType
         )
         from sales_module.framework.base import Base, CompanyBusinessObject
         
         print("✅ Model imports successful")
         
         # Check enum values
-        print(f"✅ QuotationStatus: {len(QuotationStatus)} statuses defined")
+        print(f"✅ QuoteStatus: {len(QuoteStatus)} statuses defined")
         print(f"✅ ApprovalStatus: {len(ApprovalStatus)} statuses defined")  
         print(f"✅ LineItemType: {len(LineItemType)} types defined")
         
         # Check inheritance
-        print(f"✅ SalesQuotation inherits from: {SalesQuotation.__bases__[0].__name__}")
-        print(f"✅ SalesQuotationLineItem inherits from: {SalesQuotationLineItem.__bases__[0].__name__}")
-        print(f"✅ QuotationVersion inherits from: {QuotationVersion.__bases__[0].__name__}")
-        print(f"✅ QuotationApproval inherits from: {QuotationApproval.__bases__[0].__name__}")
+        print(f"✅ SalesQuote inherits from: {SalesQuote.__bases__[0].__name__}")
+        print(f"✅ SalesQuoteLineItem inherits from: {SalesQuoteLineItem.__bases__[0].__name__}")
+        print(f"✅ QuoteVersion inherits from: {QuoteVersion.__bases__[0].__name__}")
+        print(f"✅ QuoteApproval inherits from: {QuoteApproval.__bases__[0].__name__}")
         
         # Check table names
-        print(f"✅ SalesQuotation table: {SalesQuotation.__tablename__}")
-        print(f"✅ SalesQuotationLineItem table: {SalesQuotationLineItem.__tablename__}")
-        print(f"✅ QuotationVersion table: {QuotationVersion.__tablename__}")
-        print(f"✅ QuotationApproval table: {QuotationApproval.__tablename__}")
+        print(f"✅ SalesQuote table: {SalesQuote.__tablename__}")
+        print(f"✅ SalesQuoteLineItem table: {SalesQuoteLineItem.__tablename__}")
+        print(f"✅ QuoteVersion table: {QuoteVersion.__tablename__}")
+        print(f"✅ QuoteApproval table: {QuoteApproval.__tablename__}")
         
         # Check relationships exist
-        if hasattr(SalesQuotation, 'line_items'):
-            print("✅ SalesQuotation -> line_items relationship defined")
-        if hasattr(SalesQuotation, 'versions'):
-            print("✅ SalesQuotation -> versions relationship defined")
-        if hasattr(SalesQuotation, 'approvals'):
-            print("✅ SalesQuotation -> approvals relationship defined")
-        if hasattr(SalesQuotationLineItem, 'quote'):
-            print("✅ SalesQuotationLineItem -> quote relationship defined")
-        if hasattr(QuotationVersion, 'quote'):
-            print("✅ QuotationVersion -> quote relationship defined")
-        if hasattr(QuotationApproval, 'quote'):
-            print("✅ QuotationApproval -> quote relationship defined")
+        if hasattr(SalesQuote, 'line_items'):
+            print("✅ SalesQuote -> line_items relationship defined")
+        if hasattr(SalesQuote, 'versions'):
+            print("✅ SalesQuote -> versions relationship defined")
+        if hasattr(SalesQuote, 'approvals'):
+            print("✅ SalesQuote -> approvals relationship defined")
+        if hasattr(SalesQuoteLineItem, 'quote'):
+            print("✅ SalesQuoteLineItem -> quote relationship defined")
+        if hasattr(QuoteVersion, 'quote'):
+            print("✅ QuoteVersion -> quote relationship defined")
+        if hasattr(QuoteApproval, 'quote'):
+            print("✅ QuoteApproval -> quote relationship defined")
         
         print("\n🎉 Database layer verification successful!")
         print("✅ All models properly structured with relationships")
@@ -136,9 +136,9 @@ def main():
     
     if all(results):
         print("\n🎉🎉 ALL VERIFICATIONS PASSED! 🎉🎉")
-        print("\n📋 Task 1: Quotation Creation & Management - Database Layer COMPLETE")
+        print("\n📋 Task 1: Quote Creation & Management - Database Layer COMPLETE")
         print("\n✅ Completed Components:")
-        print("   • Comprehensive Quotation models with business logic")
+        print("   • Comprehensive Quote models with business logic")
         print("   • Complete test suite following TDD approach") 
         print("   • Database migrations with multi-company isolation")
         print("   • SQLAlchemy relationships and constraints")

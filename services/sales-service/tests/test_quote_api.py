@@ -1,5 +1,5 @@
 """
-Comprehensive test suite for Quotation API endpoints.
+Comprehensive test suite for Quote API endpoints.
 
 Tests all quote management API endpoints including CRUD operations,
 workflow management, approvals, and inventory integration.
@@ -14,8 +14,8 @@ from datetime import datetime, timedelta
 import json
 
 from sales_module.api.quote_api import router as quote_router
-from sales_module.models import QuotationStatus, ApprovalStatus
-from sales_module.services.quote_service import QuotationService
+from sales_module.models import QuoteStatus, ApprovalStatus
+from sales_module.services.quote_service import QuoteService
 
 
 # Test fixture setup
@@ -36,7 +36,7 @@ def client(app):
 @pytest.fixture
 def mock_quote_service():
     """Create mock quote service."""
-    return Mock(spec=QuotationService)
+    return Mock(spec=QuoteService)
 
 
 @pytest.fixture
@@ -45,9 +45,9 @@ def mock_quote():
     quote = Mock()
     quote.id = 1
     quote.quote_number = "QUO-2025-001"
-    quote.title = "Test Quotation"
+    quote.title = "Test Quote"
     quote.description = "Test quote description"
-    quote.status = QuotationStatus.DRAFT
+    quote.status = QuoteStatus.DRAFT
     quote.customer_id = 100
     quote.contact_person = "John Doe"
     quote.contact_email = "john@example.com"
@@ -151,7 +151,7 @@ def mock_approval():
     return approval
 
 
-class TestQuotationCRUD:
+class TestQuoteCRUD:
     """Test quote CRUD operations."""
     
     @patch('sales_module.api.quote_api.get_quote_service')
@@ -168,7 +168,7 @@ class TestQuotationCRUD:
         
         # Test data
         quote_data = {
-            "title": "Test Quotation",
+            "title": "Test Quote",
             "description": "Test quote description",
             "customer_id": 100,
             "currency_code": "USD",
@@ -186,7 +186,7 @@ class TestQuotationCRUD:
         data = response.json()
         assert data["id"] == 1
         assert data["quote_number"] == "QUO-2025-001"
-        assert data["title"] == "Test Quotation"
+        assert data["title"] == "Test Quote"
         assert data["customer_id"] == 100
         
         # Service was called correctly
@@ -249,7 +249,7 @@ class TestQuotationCRUD:
         
         # Assertions
         assert response.status_code == 404
-        assert "Quotation not found" in response.json()["detail"]
+        assert "Quote not found" in response.json()["detail"]
     
     @patch('sales_module.api.quote_api.get_quote_service')
     @patch('sales_module.api.quote_api.get_current_user_id')
@@ -266,7 +266,7 @@ class TestQuotationCRUD:
         
         # Test data
         update_data = {
-            "title": "Updated Quotation Title",
+            "title": "Updated Quote Title",
             "description": "Updated description"
         }
         
@@ -362,7 +362,7 @@ class TestLineItemOperations:
         assert data["id"] == 1
 
 
-class TestQuotationOperations:
+class TestQuoteOperations:
     """Test quote operations."""
     
     @patch('sales_module.api.quote_api.get_quote_service')
@@ -431,7 +431,7 @@ class TestQuotationOperations:
             "success": True,
             "order_id": 12345,
             "quote_id": 1,
-            "message": "Quotation QUO-2025-001 successfully converted to order"
+            "message": "Quote QUO-2025-001 successfully converted to order"
         }
         
         # Test data

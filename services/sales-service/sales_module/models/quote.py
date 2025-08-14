@@ -1,5 +1,5 @@
 """
-Quotation management models for sales proposals and pricing.
+Quote management models for sales proposals and pricing.
 
 Provides comprehensive quote generation and management including
 versioning, approval workflows, and conversion to orders.
@@ -15,15 +15,15 @@ import enum
 from sales_module.framework.base import CompanyBusinessObject, BaseModel
 
 
-class QuotationStatus(str, enum.Enum):
-    """Quotation status enumeration"""
+class QuoteStatus(str, enum.Enum):
+    """Quote status enumeration"""
     DRAFT = "draft"  # Draft quote
     PENDING_APPROVAL = "pending_approval"  # Waiting for approval
     APPROVED = "approved"  # Approved quote
     SENT = "sent"  # Sent to customer
     ACCEPTED = "accepted"  # Accepted by customer
     REJECTED = "rejected"  # Rejected by customer
-    EXPIRED = "expired"  # Quotation expired
+    EXPIRED = "expired"  # Quote expired
     CONVERTED = "converted"  # Converted to order
     CANCELLED = "cancelled"  # Cancelled quote
 
@@ -46,9 +46,9 @@ class LineItemType(str, enum.Enum):
     MISC = "misc"  # Miscellaneous item
 
 
-class SalesQuotation(CompanyBusinessObject):
+class SalesQuote(CompanyBusinessObject):
     """
-    Sales Quotation model for managing customer quotes and proposals.
+    Sales Quote model for managing customer quotes and proposals.
     
     Comprehensive quote management including versioning, approval workflows,
     pricing calculations, and conversion to sales orders.
@@ -73,8 +73,8 @@ class SalesQuotation(CompanyBusinessObject):
         index=True
     )
     
-    # Quotation status and workflow
-    status = Column(Enum(QuotationStatus), nullable=False, default=QuotationStatus.DRAFT, index=True)
+    # Quote status and workflow
+    status = Column(Enum(QuoteStatus), nullable=False, default=QuoteStatus.DRAFT, index=True)
     version = Column(Integer, nullable=False, default=1)
     
     # Financial information
@@ -90,13 +90,13 @@ class SalesQuotation(CompanyBusinessObject):
     margin_percentage = Column(Numeric(5, 2), nullable=True)
     total_cost = Column(Numeric(15, 2), nullable=True)
     
-    # Quotation validity and terms
+    # Quote validity and terms
     valid_from = Column(DateTime, nullable=False, default=datetime.utcnow)
     valid_until = Column(DateTime, nullable=False, index=True)
     payment_terms_days = Column(Integer, nullable=False, default=30)
     delivery_terms = Column(String(255), nullable=True)
     
-    # Quotation preparation and sending
+    # Quote preparation and sending
     prepared_by_user_id = Column(Integer, nullable=False, index=True)
     approved_by_user_id = Column(Integer, nullable=True, index=True)
     sent_date = Column(DateTime, nullable=True, index=True)
@@ -139,9 +139,9 @@ class SalesQuotation(CompanyBusinessObject):
     is_active = Column(Boolean, default=True, nullable=False, index=True)
     
     # Relationships
-    line_items = relationship("SalesQuotationLineItem", back_populates="quote", cascade="all, delete-orphan")
-    versions = relationship("QuotationVersion", back_populates="quote", cascade="all, delete-orphan")
-    approvals = relationship("QuotationApproval", back_populates="quote", cascade="all, delete-orphan")
+    line_items = relationship("SalesQuoteLineItem", back_populates="quote", cascade="all, delete-orphan")
+    versions = relationship("QuoteVersion", back_populates="quote", cascade="all, delete-orphan")
+    approvals = relationship("QuoteApproval", back_populates="quote", cascade="all, delete-orphan")
     
     # External relationships (would be defined when integrating with other services)
     # customer = relationship("Customer", back_populates="quotes")
@@ -149,12 +149,12 @@ class SalesQuotation(CompanyBusinessObject):
     
     def __str__(self):
         """String representation of sales quote."""
-        return f"Quotation {self.quote_number} v{self.version}"
+        return f"Quote {self.quote_number} v{self.version}"
     
     def __repr__(self):
         """Detailed representation of sales quote."""
         return (
-            f"SalesQuotation(id={self.id}, number='{self.quote_number}', "
+            f"SalesQuote(id={self.id}, number='{self.quote_number}', "
             f"version={self.version}, status='{self.status.value}', total={self.total_amount})"
         )
     
@@ -177,8 +177,8 @@ class SalesQuotation(CompanyBusinessObject):
     @property
     def is_open(self) -> bool:
         """Check if quote is in open status."""
-        open_statuses = [QuotationStatus.DRAFT, QuotationStatus.PENDING_APPROVAL, 
-                        QuotationStatus.APPROVED, QuotationStatus.SENT]
+        open_statuses = [QuoteStatus.DRAFT, QuoteStatus.PENDING_APPROVAL, 
+                        QuoteStatus.APPROVED, QuoteStatus.SENT]
         return self.status in open_statuses
     
     @property
@@ -248,7 +248,7 @@ class SalesQuotation(CompanyBusinessObject):
     
     def send_to_customer(self, user_id: int, email_template: str = None) -> None:
         """Send quote to customer."""
-        self.status = QuotationStatus.SENT
+        self.status = QuoteStatus.SENT
         self.sent_date = datetime.utcnow()
         self.sent_by_user_id = user_id
         self.email_sent_count += 1
@@ -270,7 +270,7 @@ class SalesQuotation(CompanyBusinessObject):
     
     def mark_accepted(self, user_id: int = None, notes: str = None) -> None:
         """Mark quote as accepted by customer."""
-        self.status = QuotationStatus.ACCEPTED
+        self.status = QuoteStatus.ACCEPTED
         self.customer_response_date = datetime.utcnow()
         if notes:
             self.customer_response_notes = notes
@@ -290,7 +290,7 @@ class SalesQuotation(CompanyBusinessObject):
     
     def mark_rejected(self, reason: str, user_id: int = None, notes: str = None) -> None:
         """Mark quote as rejected by customer."""
-        self.status = QuotationStatus.REJECTED
+        self.status = QuoteStatus.REJECTED
         self.customer_response_date = datetime.utcnow()
         self.rejection_reason = reason
         if notes:
@@ -312,7 +312,7 @@ class SalesQuotation(CompanyBusinessObject):
     
     def convert_to_order(self, user_id: int, order_id: int = None) -> None:
         """Convert quote to sales order."""
-        self.status = QuotationStatus.CONVERTED
+        self.status = QuoteStatus.CONVERTED
         self.converted_date = datetime.utcnow()
         self.converted_by_user_id = user_id
         if order_id:
@@ -332,10 +332,10 @@ class SalesQuotation(CompanyBusinessObject):
             "total_amount": float(self.total_amount)
         })
     
-    def create_new_version(self, user_id: int, reason: str = None) -> 'SalesQuotation':
+    def create_new_version(self, user_id: int, reason: str = None) -> 'SalesQuote':
         """Create a new version of the quote."""
         # Archive current version
-        current_version = QuotationVersion(
+        current_version = QuoteVersion(
             company_id=self.company_id,
             quote_id=self.id,
             version_number=self.version,
@@ -346,7 +346,7 @@ class SalesQuotation(CompanyBusinessObject):
         
         # Increment version
         self.version += 1
-        self.status = QuotationStatus.DRAFT  # Reset to draft for editing
+        self.status = QuoteStatus.DRAFT  # Reset to draft for editing
         
         # Log audit trail
         self.log_audit_trail("new_version_created", user_id, {
@@ -357,9 +357,9 @@ class SalesQuotation(CompanyBusinessObject):
         return current_version
 
 
-class SalesQuotationLineItem(CompanyBusinessObject):
+class SalesQuoteLineItem(CompanyBusinessObject):
     """
-    Sales Quotation Line Item model for individual quoted products/services.
+    Sales Quote Line Item model for individual quoted products/services.
     
     Detailed line item information including product details,
     pricing, discounts, and calculations.
@@ -367,7 +367,7 @@ class SalesQuotationLineItem(CompanyBusinessObject):
     
     __tablename__ = "sales_quote_line_items"
     
-    # Quotation reference
+    # Quote reference
     quote_id = Column(
         Integer,
         ForeignKey("sales_quotes.id", ondelete="CASCADE"),
@@ -430,7 +430,7 @@ class SalesQuotationLineItem(CompanyBusinessObject):
     custom_attributes = Column(JSON)
     
     # Relationships
-    quote = relationship("SalesQuotation", back_populates="line_items")
+    quote = relationship("SalesQuote", back_populates="line_items")
     
     def __str__(self):
         """String representation of quote line item."""
@@ -439,7 +439,7 @@ class SalesQuotationLineItem(CompanyBusinessObject):
     def __repr__(self):
         """Detailed representation of quote line item."""
         return (
-            f"SalesQuotationLineItem(id={self.id}, line_number={self.line_number}, "
+            f"SalesQuoteLineItem(id={self.id}, line_number={self.line_number}, "
             f"item_name='{self.item_name}', quantity={self.quantity}, total={self.line_total})"
         )
     
@@ -510,9 +510,9 @@ class SalesQuotationLineItem(CompanyBusinessObject):
             self.calculate_line_total()
 
 
-class QuotationVersion(CompanyBusinessObject):
+class QuoteVersion(CompanyBusinessObject):
     """
-    Quotation Version model for tracking quote revision history.
+    Quote Version model for tracking quote revision history.
     
     Maintains complete history of quote changes with
     version control and change tracking.
@@ -520,7 +520,7 @@ class QuotationVersion(CompanyBusinessObject):
     
     __tablename__ = "quote_versions"
     
-    # Quotation reference
+    # Quote reference
     quote_id = Column(
         Integer,
         ForeignKey("sales_quotes.id", ondelete="CASCADE"),
@@ -542,7 +542,7 @@ class QuotationVersion(CompanyBusinessObject):
     is_active = Column(Boolean, default=True, nullable=False, index=True)
     
     # Relationships
-    quote = relationship("SalesQuotation", back_populates="versions")
+    quote = relationship("SalesQuote", back_populates="versions")
     
     def __str__(self):
         """String representation of quote version."""
@@ -551,14 +551,14 @@ class QuotationVersion(CompanyBusinessObject):
     def __repr__(self):
         """Detailed representation of quote version."""
         return (
-            f"QuotationVersion(id={self.id}, quote_id={self.quote_id}, "
+            f"QuoteVersion(id={self.id}, quote_id={self.quote_id}, "
             f"version={self.version_number}, reason='{self.change_reason}')"
         )
 
 
-class QuotationApproval(CompanyBusinessObject):
+class QuoteApproval(CompanyBusinessObject):
     """
-    Quotation Approval model for approval workflow management.
+    Quote Approval model for approval workflow management.
     
     Tracks approval requests, responses, and escalation
     for quotes requiring management approval.
@@ -566,7 +566,7 @@ class QuotationApproval(CompanyBusinessObject):
     
     __tablename__ = "quote_approvals"
     
-    # Quotation reference
+    # Quote reference
     quote_id = Column(
         Integer,
         ForeignKey("sales_quotes.id", ondelete="CASCADE"),
@@ -612,7 +612,7 @@ class QuotationApproval(CompanyBusinessObject):
     is_active = Column(Boolean, default=True, nullable=False, index=True)
     
     # Relationships
-    quote = relationship("SalesQuotation", back_populates="approvals")
+    quote = relationship("SalesQuote", back_populates="approvals")
     
     def __str__(self):
         """String representation of quote approval."""
@@ -621,7 +621,7 @@ class QuotationApproval(CompanyBusinessObject):
     def __repr__(self):
         """Detailed representation of quote approval."""
         return (
-            f"QuotationApproval(id={self.id}, quote_id={self.quote_id}, "
+            f"QuoteApproval(id={self.id}, quote_id={self.quote_id}, "
             f"level={self.approval_level}, status='{self.status.value}')"
         )
     

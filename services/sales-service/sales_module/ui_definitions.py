@@ -9,7 +9,7 @@ SALES_UI_PACKAGE = {
     "widgets": [
         {
             "id": "total-quotes",
-            "title": "Active Quotations",
+            "title": "Active Quotes",
             "type": "metric",
             "size": "small",
             "data_endpoint": "/api/v1/quotes/stats",
@@ -53,7 +53,7 @@ SALES_UI_PACKAGE = {
         },
         {
             "id": "conversion-rate",
-            "title": "Quotation Conversion Rate",
+            "title": "Quote Conversion Rate",
             "type": "metric",
             "size": "small",
             "data_endpoint": "/api/v1/quotes/analytics",
@@ -121,11 +121,11 @@ SALES_UI_PACKAGE = {
     "lists": [
         {
             "id": "quotes-list",
-            "title": "Quotations",
+            "title": "Quotes",
             "entity": "quotes",
             "data_endpoint": "/api/v1/quotes",
             "columns": [
-                {"key": "quote_number", "label": "Quotation #", "sortable": True},
+                {"key": "quote_number", "label": "Quote #", "sortable": True},
                 {"key": "title", "label": "Title", "sortable": True},
                 {"key": "customer_name", "label": "Customer", "sortable": True},
                 {"key": "total_amount", "label": "Amount", "format": "currency", "sortable": True},
@@ -213,13 +213,13 @@ SALES_UI_PACKAGE = {
     "forms": [
         {
             "id": "quote-form",
-            "title": "Quotation Details",
+            "title": "Quote Details",
             "entity": "quote",
             "mode": "create",
             "submit_endpoint": "/api/v1/quotes",
             "data_endpoint": "/api/v1/quotes/{id}",
             "fields": [
-                {"name": "title", "label": "Quotation Title", "type": "text", "required": True},
+                {"name": "title", "label": "Quote Title", "type": "text", "required": True},
                 {"name": "customer_id", "label": "Customer", "type": "select", 
                  "data_source": "/api/v1/partners?type=customer", "required": True},
                 {"name": "valid_until", "label": "Valid Until", "type": "date", "required": True},
@@ -254,7 +254,7 @@ SALES_UI_PACKAGE = {
                 {"name": "title", "label": "Order Title", "type": "text", "required": True},
                 {"name": "customer_id", "label": "Customer", "type": "select",
                  "data_source": "/api/v1/partners?type=customer", "required": True},
-                {"name": "quote_id", "label": "From Quotation", "type": "select",
+                {"name": "quote_id", "label": "From Quote", "type": "select",
                  "data_source": "/api/v1/quotes?status=accepted"},
                 {"name": "required_date", "label": "Required Date", "type": "date"},
                 {"name": "priority", "label": "Priority", "type": "select",

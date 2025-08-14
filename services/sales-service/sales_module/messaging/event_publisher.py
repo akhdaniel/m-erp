@@ -49,7 +49,7 @@ class SalesEventPublisher:
         
         Args:
             event_type: Type of event (created, updated, sent, etc.)
-            quote_data: Quotation information
+            quote_data: Quote information
             user_id: ID of user triggering the event
             company_id: Company ID for isolation
             

@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 try:
     from sales_module.models import (
-        SalesQuotation, SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice,
-        OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus, QuotationStatus
+        SalesQuote, SalesOrder, SalesOrderLineItem, OrderShipment, OrderInvoice,
+        OrderStatus, PaymentStatus, ShipmentStatus, InvoiceStatus, QuoteStatus
     )
     from sales_module.services import OrderService
     print("✅ Successfully imported sales module components")
@@ -50,9 +50,9 @@ class SimpleOrderServiceTest:
         quote.id = 1
         quote.company_id = 1
         quote.quote_number = "Q-TEST-001"
-        quote.title = "Test Quotation"
+        quote.title = "Test Quote"
         quote.customer_id = 100
-        quote.status = QuotationStatus.ACCEPTED
+        quote.status = QuoteStatus.ACCEPTED
         quote.total_amount = Decimal('1650.00')
         quote.currency_code = "USD"
         
@@ -141,10 +141,10 @@ class SimpleOrderServiceTest:
             
             # Verify
             assert result == mock_order
-            self.log_test("Create Order From Quotation", True, f"Order created from quote {quote.quote_number}")
+            self.log_test("Create Order From Quote", True, f"Order created from quote {quote.quote_number}")
             
         except Exception as e:
-            self.log_test("Create Order From Quotation", False, str(e))
+            self.log_test("Create Order From Quote", False, str(e))
     
     def test_quote_not_found_handling(self):
         """Test handling of quote not found scenario"""
@@ -159,17 +159,17 @@ class SimpleOrderServiceTest:
                     user_id=1,
                     company_id=1
                 )
-                self.log_test("Quotation Not Found Handling", False, "Expected ValueError not raised")
+                self.log_test("Quote Not Found Handling", False, "Expected ValueError not raised")
             except ValueError as ve:
-                if "Quotation 999 not found" in str(ve):
-                    self.log_test("Quotation Not Found Handling", True, "Correct error message for missing quote")
+                if "Quote 999 not found" in str(ve):
+                    self.log_test("Quote Not Found Handling", True, "Correct error message for missing quote")
                 else:
-                    self.log_test("Quotation Not Found Handling", False, f"Unexpected error message: {ve}")
+                    self.log_test("Quote Not Found Handling", False, f"Unexpected error message: {ve}")
             except Exception as e:
-                self.log_test("Quotation Not Found Handling", False, f"Unexpected exception type: {e}")
+                self.log_test("Quote Not Found Handling", False, f"Unexpected exception type: {e}")
                 
         except Exception as e:
-            self.log_test("Quotation Not Found Handling", False, str(e))
+            self.log_test("Quote Not Found Handling", False, str(e))
     
     @patch('sales_module.services.order_service.requests.get')
     def test_check_product_availability(self, mock_get):

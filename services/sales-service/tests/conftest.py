@@ -9,7 +9,7 @@ from decimal import Decimal
 from datetime import datetime, timedelta
 
 from sales_module.framework.base import Base
-from sales_module.models.quote import SalesQuotation, SalesQuotationLineItem, QuotationVersion, QuotationApproval
+from sales_module.models.quote import SalesQuote, SalesQuoteLineItem, QuoteVersion, QuoteApproval
 
 
 @pytest.fixture(scope="session")
@@ -55,7 +55,7 @@ def sample_quote_data(sample_company_id, sample_customer_id, sample_user_id):
     return {
         "company_id": sample_company_id,
         "quote_number": "QUO-2025-001",
-        "title": "Test Quotation",
+        "title": "Test Quote",
         "description": "Test quote description",
         "customer_id": sample_customer_id,
         "prepared_by_user_id": sample_user_id,
@@ -70,7 +70,7 @@ def sample_quote_data(sample_company_id, sample_customer_id, sample_user_id):
 @pytest.fixture
 def sample_quote(db_session, sample_quote_data):
     """Create sample quote for testing."""
-    quote = SalesQuotation(**sample_quote_data)
+    quote = SalesQuote(**sample_quote_data)
     db_session.add(quote)
     db_session.commit()
     db_session.refresh(quote)
@@ -96,7 +96,7 @@ def sample_line_item(db_session, sample_quote, sample_line_item_data):
     """Create sample line item for testing."""
     line_item_data = sample_line_item_data.copy()
     line_item_data["quote_id"] = sample_quote.id
-    line_item = SalesQuotationLineItem(**line_item_data)
+    line_item = SalesQuoteLineItem(**line_item_data)
     db_session.add(line_item)
     db_session.commit()
     db_session.refresh(line_item)

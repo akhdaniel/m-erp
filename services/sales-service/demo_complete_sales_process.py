@@ -6,10 +6,10 @@ This script demonstrates the entire order-to-cash workflow using
 the XERPIUM Sales Module implementation.
 
 Process Flow:
-1. Create Customer Quotation with Line Items
+1. Create Customer Quote with Line Items
 2. Apply Dynamic Pricing and Discounts  
 3. Process Approval Workflow
-4. Convert Quotation to Sales Order
+4. Convert Quote to Sales Order
 5. Reserve Inventory and Process Fulfillment
 6. Generate Invoice and Process Payment
 
@@ -27,10 +27,10 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 # Import the sales module services
 try:
-    from sales_module.services.quote_service import QuotationService
+    from sales_module.services.quote_service import QuoteService
     from sales_module.services.pricing_service import PricingService
     from sales_module.services.order_service import OrderService
-    from sales_module.models.quote import QuotationStatus, ApprovalStatus
+    from sales_module.models.quote import QuoteStatus, ApprovalStatus
     from sales_module.models.order import OrderStatus, PaymentStatus
     from sales_module.models.pricing import PriceListType, DiscountType
 except ImportError as e:
@@ -97,7 +97,7 @@ class SalesProcessDemo:
         print("\n🚀 STARTING COMPLETE SALES PROCESS DEMONSTRATION")
         print("=" * 60)
         
-        # Step 1: Create Quotation
+        # Step 1: Create Quote
         quote = self.step_1_create_quote()
         
         # Step 2: Apply Pricing
@@ -119,14 +119,14 @@ class SalesProcessDemo:
         self.display_process_summary(quote, order)
     
     def step_1_create_quote(self) -> Dict[str, Any]:
-        """Step 1: Create Customer Quotation with Line Items."""
+        """Step 1: Create Customer Quote with Line Items."""
         print("\n📋 STEP 1: CREATE CUSTOMER QUOTE")
         print("-" * 40)
         
         # Create quote data
         quote_data = {
             "quote_number": "QUO-2025-001",
-            "title": "Office Equipment Quotation for Acme Corp",
+            "title": "Office Equipment Quote for Acme Corp",
             "description": "Complete office setup including laptops, monitors, and furniture",
             "customer_id": self.customer_data["customer_id"],
             "prepared_by_user_id": 1,
@@ -169,7 +169,7 @@ class SalesProcessDemo:
         })
         
         # Display quote creation
-        print(f"✅ Quotation Created: {quote_data['quote_number']}")
+        print(f"✅ Quote Created: {quote_data['quote_number']}")
         print(f"   Customer: {self.customer_data['customer_name']}")
         print(f"   Line Items: {len(line_items)}")
         
@@ -229,7 +229,7 @@ class SalesProcessDemo:
         print(f"📈 Gross Margin: ${margin:,.2f} ({margin_percentage:.1f}%)")
     
     def step_3_process_approval(self, quote: Dict[str, Any]):
-        """Step 3: Process Quotation Approval Workflow."""
+        """Step 3: Process Quote Approval Workflow."""
         print("\n✍️  STEP 3: PROCESS APPROVAL WORKFLOW")
         print("-" * 40)
         
@@ -276,10 +276,10 @@ class SalesProcessDemo:
             print(f"✅ No Approval Required: Discount {discount_percentage:.1f}% within auto-approval limits")
             quote["quote_data"]["status"] = "approved"
         
-        print(f"📋 Quotation Status: {quote['quote_data']['status'].upper()}")
+        print(f"📋 Quote Status: {quote['quote_data']['status'].upper()}")
     
     def step_4_convert_to_order(self, quote: Dict[str, Any]) -> Dict[str, Any]:
-        """Step 4: Convert Quotation to Sales Order."""
+        """Step 4: Convert Quote to Sales Order."""
         print("\n🔄 STEP 4: CONVERT QUOTE TO SALES ORDER")
         print("-" * 40)
         
@@ -291,7 +291,7 @@ class SalesProcessDemo:
         # Convert to sales order
         order_data = {
             "order_number": "SO-2025-001",
-            "title": quote["quote_data"]["title"].replace("Quotation", "Order"),
+            "title": quote["quote_data"]["title"].replace("Quote", "Order"),
             "description": quote["quote_data"]["description"],
             "customer_id": quote["quote_data"]["customer_id"],
             "quote_id": quote["quote_id"],
@@ -325,7 +325,7 @@ class SalesProcessDemo:
             order_line_items.append(order_item)
         
         print(f"✅ Sales Order Created: {order_data['order_number']}")
-        print(f"📋 Converted from Quotation: {quote['quote_data']['quote_number']}")
+        print(f"📋 Converted from Quote: {quote['quote_data']['quote_number']}")
         print(f"🎯 Order Total: ${order_data['total_amount']:,.2f}")
         print(f"📅 Required Date: {order_data['required_date'].strftime('%Y-%m-%d')}")
         print(f"🏪 Status: {order_data['status'].upper()}")
@@ -473,7 +473,7 @@ class SalesProcessDemo:
         
         # Timeline summary
         print("\n📅 PROCESS TIMELINE:")
-        print(f"   1. Quotation Created: {quote['quote_data']['quote_number']}")
+        print(f"   1. Quote Created: {quote['quote_data']['quote_number']}")
         print(f"   2. Pricing Applied: {quote['quote_data']['overall_discount_percentage']:.1f}% total discount")
         print(f"   3. Approval: {'✅ Approved' if quote['quote_data']['status'] == 'approved' else '⏳ Pending'}")
         print(f"   4. Order Created: {order['order_data']['order_number']}")
@@ -500,13 +500,13 @@ class SalesProcessDemo:
         print(f"   Line Items: {line_item_count}")
         print(f"   Total Units: {total_items}")
         print(f"   Avg Unit Price: ${avg_item_price:,.2f}")
-        print(f"   Quotation-to-Order Time: < 1 day")
+        print(f"   Quote-to-Order Time: < 1 day")
         print(f"   Order-to-Delivery Time: 2 days")
         print(f"   Payment Time: 15 days (Early payment)")
         
         # Success indicators
         print(f"\n✅ SUCCESS INDICATORS:")
-        print(f"   🎯 Quotation Conversion: 100% (Quotation → Order)")
+        print(f"   🎯 Quote Conversion: 100% (Quote → Order)")
         print(f"   📦 Fulfillment: 100% (All items shipped)")
         print(f"   💳 Payment: 100% (Paid in full, early)")
         print(f"   😊 Customer Satisfaction: High (Early delivery)")
@@ -527,10 +527,10 @@ def main():
         print("🔧 For full functionality, ensure all dependencies are installed.")
     
     print("\n📋 SALES MODULE CAPABILITIES DEMONSTRATED:")
-    print("   ✅ Quotation Creation & Management")
+    print("   ✅ Quote Creation & Management")
     print("   ✅ Dynamic Pricing & Discounts")
     print("   ✅ Approval Workflows")
-    print("   ✅ Quotation-to-Order Conversion")
+    print("   ✅ Quote-to-Order Conversion")
     print("   ✅ Inventory Integration")
     print("   ✅ Order Fulfillment")
     print("   ✅ Shipping & Tracking")
