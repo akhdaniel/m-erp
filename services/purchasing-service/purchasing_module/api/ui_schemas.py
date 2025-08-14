@@ -44,7 +44,7 @@ async def get_purchase_order_form_schema_v2():
     return {
         "id": "purchase-order-form",
         "title": "New Purchase Order",
-        "submitUrl": "/api/v1/purchase-orders/",
+        "endpoint": "/api/v1/purchase-orders/",
         "method": "POST",
         "successRoute": "/purchasing/orders",
         "cancelRoute": "/purchasing/orders",
@@ -108,7 +108,11 @@ async def get_suppliers_list_schema_v2():
                 "filters": list_def.get("filters", []),
                 "actions": list_def.get("actions", []),
                 "pagination": list_def.get("pagination", True),
-                "pageSize": list_def.get("pageSize", 20)
+                "pageSize": list_def.get("pageSize", 20),
+                "createRoute": "/purchasing/suppliers/new",  # Enable New button
+                "editRoute": "/purchasing/suppliers/{id}/edit",  # Enable row click edit
+                "viewType": "table",
+                "createLabel": "New Supplier"
             }
     # Fallback to the existing static schema if not found
     return await get_suppliers_list_schema()
@@ -117,64 +121,58 @@ async def get_suppliers_list_schema_v2():
 @router.get("/ui-schemas/forms/supplier")
 async def get_supplier_form_schema():
     """Get form schema for supplier creation/editing."""
-    # Find the supplier form in the UI definitions
-    for form_def in PURCHASING_UI_PACKAGE.get("forms", []):
-        if form_def["id"] == "supplier-form":
-            # Convert from UI definition format to schema format
-            return {
-                "id": form_def["id"],
-                "title": form_def["title"],
-                "submit_endpoint": form_def["submit_endpoint"],
-                "mode": form_def.get("mode", "create"),
-                "layout": form_def.get("layout", "single"),
-                "sections": [
-                    {
-                        "title": "Form Fields",
-                        "fields": form_def.get("fields", [])
-                    }
-                ]
-            }
-    # Fallback to static schema if not found
+    # Always return the properly structured form schema
     return {
         "id": "supplier-form",
-        "title": "Supplier",
+        "title": "New Supplier",
+        "endpoint": "/api/v1/suppliers/",
+        "method": "POST",
+        "successRoute": "/purchasing/suppliers",
+        "cancelRoute": "/purchasing/suppliers",
         "sections": [
             {
                 "title": "Basic Information",
                 "fields": [
-                    {"key": "code", "label": "Supplier Code", "type": "text", "required": True},
-                    {"key": "name", "label": "Supplier Name", "type": "text", "required": True},
-                    {"key": "category", "label": "Category", "type": "select", "options": ["general", "preferred", "strategic"], "default": "general"},
-                    {"key": "status", "label": "Status", "type": "select", "options": ["active", "inactive", "suspended"], "default": "active"}
+                    {"name": "code", "label": "Supplier Code", "type": "text", "required": True, "placeholder": "e.g., SUP001"},
+                    {"name": "name", "label": "Supplier Name", "type": "text", "required": True, "placeholder": "Enter supplier company name"},
+                    {"name": "category", "label": "Category", "type": "select", "options": [
+                        {"value": "general", "label": "General"},
+                        {"value": "preferred", "label": "Preferred"},
+                        {"value": "strategic", "label": "Strategic"}
+                    ], "defaultValue": "general"},
+                    {"name": "is_active", "label": "Active", "type": "checkbox", "defaultValue": True}
                 ]
             },
             {
                 "title": "Contact Information",
                 "fields": [
-                    {"key": "contact_person", "label": "Contact Person", "type": "text"},
-                    {"key": "email", "label": "Email", "type": "email"},
-                    {"key": "phone", "label": "Phone", "type": "tel"},
-                    {"key": "website", "label": "Website", "type": "url"}
+                    {"name": "contact_person", "label": "Contact Person", "type": "text", "placeholder": "Primary contact name"},
+                    {"name": "email", "label": "Email", "type": "email", "placeholder": "supplier@example.com"},
+                    {"name": "phone", "label": "Phone", "type": "tel", "placeholder": "+1-555-0100"},
+                    {"name": "website", "label": "Website", "type": "url", "placeholder": "https://www.supplier.com"}
                 ]
             },
             {
                 "title": "Address",
                 "fields": [
-                    {"key": "address_line1", "label": "Address Line 1", "type": "text"},
-                    {"key": "address_line2", "label": "Address Line 2", "type": "text"},
-                    {"key": "city", "label": "City", "type": "text"},
-                    {"key": "state", "label": "State/Province", "type": "text"},
-                    {"key": "postal_code", "label": "Postal Code", "type": "text"},
-                    {"key": "country", "label": "Country", "type": "text"}
+                    {"name": "address", "label": "Street Address", "type": "text", "placeholder": "123 Main Street"},
+                    {"name": "city", "label": "City", "type": "text", "placeholder": "New York"},
+                    {"name": "state", "label": "State/Province", "type": "text", "placeholder": "NY"},
+                    {"name": "postal_code", "label": "Postal Code", "type": "text", "placeholder": "10001"},
+                    {"name": "country", "label": "Country", "type": "text", "placeholder": "USA", "defaultValue": "USA"}
                 ]
             },
             {
                 "title": "Business Terms",
                 "fields": [
-                    {"key": "payment_terms", "label": "Payment Terms", "type": "select", "options": ["Net 30", "Net 60", "Net 90", "COD", "Prepaid"], "default": "Net 30"},
-                    {"key": "currency_code", "label": "Currency", "type": "select", "options": ["USD", "EUR", "GBP"], "default": "USD"},
-                    {"key": "tax_id", "label": "Tax ID", "type": "text"},
-                    {"key": "bank_account", "label": "Bank Account", "type": "text"}
+                    {"name": "payment_terms_days", "label": "Payment Terms (Days)", "type": "number", "min": 0, "max": 365, "defaultValue": 30, "placeholder": "30"},
+                    {"name": "currency_code", "label": "Currency", "type": "select", "options": [
+                        {"value": "USD", "label": "USD"},
+                        {"value": "EUR", "label": "EUR"},
+                        {"value": "GBP", "label": "GBP"}
+                    ], "defaultValue": "USD"},
+                    {"name": "tax_id", "label": "Tax ID", "type": "text", "placeholder": "Tax identification number"},
+                    {"name": "rating", "label": "Initial Rating", "type": "number", "min": 1, "max": 5, "step": 0.5, "defaultValue": 3.0}
                 ]
             }
         ],
@@ -209,12 +207,12 @@ async def get_approvals_list_schema():
         "endpoint": "/api/v1/approvals/pending",
         "dataSource": "/api/v1/approvals/pending",
         "columns": [
-            {"key": "po_number", "label": "PO Number", "sortable": True},
-            {"key": "supplier_name", "label": "Supplier"},
-            {"key": "amount", "label": "Amount", "format": "currency"},
-            {"key": "requested_by", "label": "Requested By"},
-            {"key": "request_date", "label": "Request Date", "format": "date"},
-            {"key": "status", "label": "Status", "badge": True}
+            {"field": "po_number", "label": "PO Number", "sortable": True},
+            {"field": "supplier_name", "label": "Supplier"},
+            {"field": "amount", "label": "Amount", "formatter": "currency"},
+            {"field": "requested_by", "label": "Requested By"},
+            {"field": "request_date", "label": "Request Date", "formatter": "date"},
+            {"field": "status", "label": "Status", "badge": True}
         ],
         "filters": [
             {"key": "status", "label": "Status", "type": "select", "options": ["pending", "approved", "rejected"]},
@@ -454,12 +452,12 @@ async def get_purchase_orders_list_schema():
         "endpoint": "/api/v1/purchase-orders/",
         "dataSource": "/api/v1/purchase-orders/",
         "columns": [
-            {"key": "po_number", "label": "PO Number", "sortable": True, "searchable": True},
-            {"key": "supplier_name", "label": "Supplier", "sortable": True, "searchable": True},
-            {"key": "order_date", "label": "Order Date", "sortable": True, "format": "date"},
-            {"key": "total_amount", "label": "Amount", "sortable": True, "format": "currency"},
-            {"key": "status", "label": "Status", "badge": True},
-            {"key": "approval_status", "label": "Approval", "badge": True}
+            {"field": "po_number", "label": "PO Number", "sortable": True, "searchable": True},
+            {"field": "supplier_name", "label": "Supplier", "sortable": True, "searchable": True},
+            {"field": "order_date", "label": "Order Date", "sortable": True, "formatter": "date"},
+            {"field": "total_amount", "label": "Amount", "sortable": True, "formatter": "currency"},
+            {"field": "status", "label": "Status", "badge": True},
+            {"field": "approval_status", "label": "Approval", "badge": True}
         ],
         "filters": [
             {"key": "status", "label": "Status", "type": "select", "options": ["draft", "approved", "pending", "completed", "cancelled"]},
@@ -495,7 +493,7 @@ async def get_purchase_order_form_schema():
             return {
                 "id": form_def["id"],
                 "title": form_def["title"],
-                "submitUrl": "/api/v1/purchase-orders/",  # API endpoint for form submission
+                "endpoint": "/api/v1/purchase-orders/",  # API endpoint for form submission
                 "method": "POST",
                 "successRoute": "/purchasing/orders",  # Navigate to list after successful submission
                 "cancelRoute": "/purchasing/orders",  # Navigate to list on cancel
@@ -526,7 +524,7 @@ async def get_purchase_order_form_schema():
     return {
         "id": "purchase-order-form",
         "title": "Purchase Order",
-        "submitUrl": "/api/v1/purchase-orders/",
+        "endpoint": "/api/v1/purchase-orders/",
         "method": "POST",
         "successRoute": "/purchasing/orders",
         "cancelRoute": "/purchasing/orders",
@@ -600,13 +598,13 @@ async def get_suppliers_list_schema():
         "endpoint": "/api/v1/suppliers/",
         "dataSource": "/api/v1/suppliers/",
         "columns": [
-            {"key": "code", "label": "Code", "sortable": True, "searchable": True},
-            {"key": "name", "label": "Name", "sortable": True, "searchable": True},
-            {"key": "category", "label": "Category", "sortable": True},
-            {"key": "performance_rating", "label": "Rating", "format": "rating"},
-            {"key": "total_orders", "label": "Orders", "format": "number"},
-            {"key": "total_spend", "label": "Total Spend", "format": "currency"},
-            {"key": "status", "label": "Status", "badge": True}
+            {"field": "code", "label": "Code", "sortable": True, "searchable": True},
+            {"field": "name", "label": "Name", "sortable": True, "searchable": True},
+            {"field": "category", "label": "Category", "sortable": True},
+            {"field": "performance_rating", "label": "Rating", "formatter": "rating"},
+            {"field": "total_orders", "label": "Orders", "formatter": "number"},
+            {"field": "total_spend", "label": "Total Spend", "formatter": "currency"},
+            {"field": "status", "label": "Status", "badge": True}
         ],
         "filters": [
             {"key": "status", "label": "Status", "type": "select", "options": ["active", "inactive", "suspended"]},
@@ -620,5 +618,9 @@ async def get_suppliers_list_schema():
             {"label": "Deactivate", "action": "deactivate", "icon": "x-circle", "condition": {"status": ["active"]}}
         ],
         "pagination": True,
-        "pageSize": 20
+        "pageSize": 20,
+        "createRoute": "/purchasing/suppliers/new",
+        "editRoute": "/purchasing/suppliers/{id}/edit",
+        "viewType": "table",
+        "createLabel": "New Supplier"
     }

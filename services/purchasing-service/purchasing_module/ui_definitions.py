@@ -80,10 +80,10 @@ PURCHASING_UI_PACKAGE = {
             "path": "/purchasing/orders",
             "data_endpoint": "/api/v1/purchase-orders/",
             "columns": [
-                {"key": "po_number", "label": "PO Number", "sortable": True},
-                {"key": "supplier_name", "label": "Supplier", "sortable": True},
-                {"key": "total_amount", "label": "Amount", "format": "currency"},
-                {"key": "status", "label": "Status", "badge": True}
+                {"field": "po_number", "label": "PO Number", "sortable": True},
+                {"field": "supplier_name", "label": "Supplier", "sortable": True},
+                {"field": "total_amount", "label": "Amount", "formatter": "currency"},
+                {"field": "status", "label": "Status", "badge": True}
             ],
             "actions": [
                 {"type": "view", "label": "View"},
@@ -107,10 +107,10 @@ PURCHASING_UI_PACKAGE = {
             "path": "/purchasing/suppliers",
             "data_endpoint": "/api/v1/suppliers/",
             "columns": [
-                {"key": "name", "label": "Name", "sortable": True},
-                {"key": "category", "label": "Category"},
-                {"key": "performance_rating", "label": "Rating", "format": "rating"},
-                {"key": "status", "label": "Status", "badge": True}
+                {"field": "name", "label": "Name", "sortable": True},
+                {"field": "category", "label": "Category"},
+                {"field": "performance_rating", "label": "Rating", "formatter": "rating"},
+                {"field": "status", "label": "Status", "badge": True}
             ],
             "actions": [
                 {"type": "view", "label": "View"},
@@ -133,10 +133,10 @@ PURCHASING_UI_PACKAGE = {
             "path": "/purchasing/approvals",
             "data_endpoint": "/api/v1/approvals/pending/",
             "columns": [
-                {"key": "po_number", "label": "PO Number"},
-                {"key": "supplier_name", "label": "Supplier"},
-                {"key": "total_amount", "label": "Amount", "format": "currency"},
-                {"key": "urgency", "label": "Urgency", "badge": True}
+                {"field": "po_number", "label": "PO Number"},
+                {"field": "supplier_name", "label": "Supplier"},
+                {"field": "total_amount", "label": "Amount", "formatter": "currency"},
+                {"field": "urgency", "label": "Urgency", "badge": True}
             ],
             "actions": [
                 {"type": "approve", "label": "Approve"},
