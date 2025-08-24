@@ -11,10 +11,11 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 3000,
+    port: 9000,
+    allowedHosts: ['demo.xerpium.com'],
     proxy: {
       '/api': {
-        target: 'http://localhost:9080',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false
       }
