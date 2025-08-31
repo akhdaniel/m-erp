@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y \
 COPY services/audit-service/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy shared messaging library
-COPY shared/messaging/ ./messaging/
+# Copy shared messaging library to a location that's in the Python path
+COPY shared/messaging/ /usr/local/lib/python3.12/site-packages/messaging/
 
 # Copy application code
 COPY services/audit-service/ .
