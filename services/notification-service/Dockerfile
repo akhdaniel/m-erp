@@ -11,15 +11,15 @@ RUN apt-get update && apt-get install -y \
 COPY services/notification-service/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy shared messaging library
-COPY shared/messaging/ ./messaging/
-
-# Copy application code
-COPY services/notification-service/ .
-
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash app
-RUN chown -R app:app /app
+
+# Copy shared messaging library to a location that's in the Python path
+COPY --chown=app:app shared/messaging/ /usr/local/lib/python3.12/site-packages/messaging/
+
+# Copy the app directory contents
+COPY --chown=app:app services/notification-service/app/ ./app/
+
 USER app
 
 # Health check
