@@ -8,31 +8,31 @@ export class CompanyService {
     search?: string
     is_active?: boolean
   }): Promise<CompanyListResponse> {
-    return api.get<CompanyListResponse>('/v1/companies/', { params })
+    return api.get<CompanyListResponse>('/api/v1/companies/', { params })
   }
 
   async getCompany(id: number): Promise<Company> {
-    return api.get<Company>(`/v1/companies/${id}`)
+    return api.get<Company>(`/api/v1/companies/${id}`)
   }
 
   async createCompany(data: CompanyCreate): Promise<Company> {
-    return api.post<Company>('/v1/companies/', data)
+    return api.post<Company>('/api/v1/companies/', data)
   }
 
   async updateCompany(id: number, data: CompanyUpdate): Promise<Company> {
-    return api.put<Company>(`/v1/companies/${id}`, data)
+    return api.put<Company>(`/api/v1/companies/${id}`, data)
   }
 
   async deleteCompany(id: number): Promise<void> {
-    return api.delete<void>(`/v1/companies/${id}`)
+    return api.delete<void>(`/api/v1/companies/${id}`)
   }
 
   async activateCompany(id: number): Promise<Company> {
-    return api.post<Company>(`/v1/companies/${id}/activate`)
+    return api.post<Company>(`/api/v1/companies/${id}/activate`)
   }
 
   async deactivateCompany(id: number): Promise<Company> {
-    return api.post<Company>(`/v1/companies/${id}/deactivate`)
+    return api.post<Company>(`/api/v1/companies/${id}/deactivate`)
   }
 }
 

@@ -96,32 +96,32 @@ class UIRegistryService {
     if (type) params.append('type', type)
     
     const query = params.toString()
-    return api.get<UIComponent[]>(`/v1/ui-registry/components${query ? '?' + query : ''}`)
+    return api.get<UIComponent[]>(`/api/v1/ui-registry/components${query ? '?' + query : ''}`)
   }
 
   // Get dashboard widgets
   async getDashboardWidgets(): Promise<DashboardWidget[]> {
-    return api.get<DashboardWidget[]>('/v1/ui-registry/dashboard/widgets')
+    return api.get<DashboardWidget[]>('/api/v1/ui-registry/dashboard/widgets')
   }
 
   // Get list views
   async getListViews(): Promise<ListView[]> {
-    return api.get<ListView[]>('/v1/ui-registry/lists')
+    return api.get<ListView[]>('/api/v1/ui-registry/lists')
   }
 
   // Get form views
   async getFormViews(): Promise<FormView[]> {
-    return api.get<FormView[]>('/v1/ui-registry/forms')
+    return api.get<FormView[]>('/api/v1/ui-registry/forms')
   }
 
   // Get complete UI package for a service
   async getServiceUIPackage(service: string): Promise<UIPackage> {
-    return api.get<UIPackage>(`/v1/ui-registry/services/${service}/ui-package`)
+    return api.get<UIPackage>(`/api/v1/ui-registry/services/${service}/ui-package`)
   }
 
   // Get specific component
   async getComponent(service: string, componentId: string): Promise<UIComponent> {
-    return api.get<UIComponent>(`/v1/ui-registry/components/${service}/${componentId}`)
+    return api.get<UIComponent>(`/api/v1/ui-registry/components/${service}/${componentId}`)
   }
 
   // Get specific list view

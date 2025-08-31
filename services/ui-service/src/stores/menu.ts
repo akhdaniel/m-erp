@@ -23,7 +23,7 @@ export const useMenuStore = defineStore('menu', () => {
     error.value = null
 
     try {
-      const response = await api.get<MenuTreeResponse>('/v1/menus/tree')
+      const response = await api.get<MenuTreeResponse>('/api/v1/menus/tree')
       console.log('Menu API response:', response)
       // api.get already returns response.data, no need to access .data again
       menus.value = response.menus || []

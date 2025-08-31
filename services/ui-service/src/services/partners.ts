@@ -10,31 +10,31 @@ export class PartnerService {
     partner_type?: string
     is_active?: boolean
   }): Promise<PartnerListResponse> {
-    return api.get<PartnerListResponse>('/v1/partners/', { params })
+    return api.get<PartnerListResponse>('/api/v1/partners/', { params })
   }
 
   async getPartner(id: number): Promise<Partner> {
-    return api.get<Partner>(`/v1/partners/${id}`)
+    return api.get<Partner>(`/api/v1/partners/${id}`)
   }
 
   async createPartner(data: PartnerCreate): Promise<Partner> {
-    return api.post<Partner>('/v1/partners/', data)
+    return api.post<Partner>('/api/v1/partners/', data)
   }
 
   async updatePartner(id: number, data: PartnerUpdate): Promise<Partner> {
-    return api.put<Partner>(`/v1/partners/${id}`, data)
+    return api.put<Partner>(`/api/v1/partners/${id}`, data)
   }
 
   async deletePartner(id: number): Promise<void> {
-    return api.delete<void>(`/v1/partners/${id}`)
+    return api.delete<void>(`/api/v1/partners/${id}`)
   }
 
   async activatePartner(id: number): Promise<Partner> {
-    return api.post<Partner>(`/v1/partners/${id}/activate`)
+    return api.post<Partner>(`/api/v1/partners/${id}/activate`)
   }
 
   async deactivatePartner(id: number): Promise<Partner> {
-    return api.post<Partner>(`/v1/partners/${id}/deactivate`)
+    return api.post<Partner>(`/api/v1/partners/${id}/deactivate`)
   }
 }
 
