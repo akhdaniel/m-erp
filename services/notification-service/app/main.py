@@ -2,11 +2,11 @@
 Notification Service - Real-time notifications via Server-Sent Events.
 Consumes notification messages from Redis and serves them to connected clients.
 """
-import sys
-import os
 import asyncio
 import json
 import logging
+import os
+import sys
 from contextlib import asynccontextmanager
 from typing import Set
 
@@ -14,11 +14,9 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-# Add shared messaging library to path
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../shared'))
-
 from messaging import MessageConsumer, NotificationType
 from messaging.schemas import Notification
+
 
 # Configure logging
 logging.basicConfig(
@@ -152,14 +150,11 @@ app.add_middleware(
 
 
 @app.get("/")
-async def root():
-    """Root endpoint."""
-    return {
-        "service": "XERPIUM Notification Service",
-        "version": "1.0.0",
-        "status": "running",
-        "connected_clients": len(notification_service.clients)
-    }
+async def root(request: Request, user_id: int = None):
+    """Root endpoint that serves the notification stream."""
+    # Always serve the notification stream at the root when accessed through API gateway
+    # This is needed because Kong strips the path when strip_path: true
+    return await notification_stream(request, user_id)
 
 
 @app.get("/health")
@@ -174,6 +169,7 @@ async def health_check():
     }
 
 
+@app.get("/")
 @app.get("/notifications/stream")
 async def notification_stream(request: Request, user_id: int = None):
     """
