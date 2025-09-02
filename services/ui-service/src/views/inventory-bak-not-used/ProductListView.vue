@@ -271,7 +271,7 @@ const totalProducts = ref(0)
 const totalPages = computed(() => Math.ceil(totalProducts.value / pageSize.value))
 
 // API base URL
-const INVENTORY_API = 'http://localhost:8005/api/v1'
+const INVENTORY_API = import.meta.env.VITE_INVENTORY_API || '/api/v1'
 
 // Fetch products
 async function fetchProducts() {

@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 9000,
-    allowedHosts: ['demo.xerpium.com'],
+    allowedHosts: ['demo.xerpium.com', 'ui-service'],
     proxy: {
       '/api': {
         target: 'http://kong:8000',

@@ -88,7 +88,7 @@
       "id": "products-list",
       "title": "Products",
       "entity": "products",
-      "data_endpoint": "/api/v1/products",
+      "data_endpoint": "/v1/products",
       "columns": [
         {"key": "sku", "label": "SKU", "sortable": true},
         {"key": "name", "label": "Product Name", "sortable": true},

@@ -13,7 +13,7 @@ class MenuItemBase(BaseModel):
     title: str = Field(..., description="Display title for the menu item")
     description: Optional[str] = Field(None, description="Menu item description")
     url: Optional[str] = Field(None, description="Target URL for the menu item")
-    external_url: Optional[bool] = Field(False, description="Whether URL is external")
+    external_url: Optional[bool] = Field(False, description="Whether URL is external", alias="is_external")
     icon: Optional[str] = Field(None, description="Icon class for the menu item")
     order_index: int = Field(0, description="Display order within parent")
     level: int = Field(0, description="Hierarchy level (0 for root)")

@@ -19,3 +19,14 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useRoute } from 'vue-router'
+import { onMounted } from 'vue'
+
+const route = useRoute()
+
+onMounted(() => {
+  console.log('NotFoundView mounted for path:', route.path)
+})
+</script>

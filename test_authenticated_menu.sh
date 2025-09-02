@@ -2,11 +2,11 @@
 
 # Test authenticated menu access
 # First, login to get a token
-echo "Logging in as admin@example.com..."
+echo "Logging in as admin@m-erp.com..."
 
 LOGIN_RESPONSE=$(curl -s -X POST http://localhost:8001/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"admin123"}')
+  -d '{"email":"admin@m-erp.com","password":"admin123"}')
 
 TOKEN=$(echo $LOGIN_RESPONSE | python3 -c "import sys, json; print(json.load(sys.stdin).get('access_token', ''))")
 

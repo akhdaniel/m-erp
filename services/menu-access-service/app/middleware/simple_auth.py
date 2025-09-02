@@ -4,20 +4,16 @@ import jwt
 import logging
 from typing import Optional, Dict, Any
 from datetime import datetime
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-# This should match the secret in user-auth-service
-JWT_SECRET = "your-secret-key-here"  # In production, use environment variable
-JWT_ALGORITHM = "HS256"
-
 
 def decode_jwt_token(token: str) -> Optional[Dict[str, Any]]:
-    """Decode a JWT token without verification (for development)."""
+    """Decode a JWT token with verification."""
     try:
-        # For development, we'll decode without verification
-        # In production, you should verify the signature
-        payload = jwt.decode(token, options={"verify_signature": False})
+        # Verify the token signature using the service secret key
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         
         # Check if token is expired
         if "exp" in payload:
@@ -27,6 +23,12 @@ def decode_jwt_token(token: str) -> Optional[Dict[str, Any]]:
                 return None
         
         return payload
+    except jwt.ExpiredSignatureError:
+        logger.warning("Token signature has expired")
+        return None
+    except jwt.InvalidTokenError as e:
+        logger.error(f"Invalid token: {str(e)}")
+        return None
     except Exception as e:
         logger.error(f"Error decoding JWT token: {str(e)}")
         return None
@@ -41,9 +43,10 @@ async def get_user_from_token(token: str) -> Optional[Dict[str, Any]]:
     # Extract user information from token payload
     user_data = {
         "user_id": payload.get("user_id"),
-        "email": payload.get("email", "unknown"),
+        "email": payload.get("email", f"user_{payload.get('user_id', 'unknown')}@m-erp.com"),
         "permissions": payload.get("permissions", []),
         "is_active": True
     }
     
+    logger.debug(f"Extracted user data: {user_data}")
     return user_data

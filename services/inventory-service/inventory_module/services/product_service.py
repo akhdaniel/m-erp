@@ -15,6 +15,8 @@ from sqlalchemy import and_, or_, func, desc
 from inventory_module.models import Product, ProductCategory, ProductVariant, ProductType, ProductStatus
 from inventory_module.services.base_service import BaseService, ServiceError, ValidationError, NotFoundError
 
+import logging
+logger = logging.getLogger(__name__)
 
 class ProductCategoryService(BaseService):
     """
@@ -158,6 +160,7 @@ class ProductService(BaseService):
                       product_type: ProductType = ProductType.PHYSICAL,
                       **kwargs) -> Product:
         """Create a new product."""
+        logger.info(f"""{__name__} Create a new product.""")
         # Generate SKU if not provided
         if not sku:
             sku = self._generate_sku(kwargs.get('sku_prefix', 'PRD'))
@@ -269,6 +272,7 @@ class ProductService(BaseService):
                        status: ProductStatus = None,
                        limit: int = 50) -> List[Product]:
         """Search products by various criteria."""
+        logger.info(f"""{__name__} Search products by various criteria.""")
         search_fields = ['name', 'sku', 'description', 'manufacturer_part_number']
         query = self.db.query(Product)
         

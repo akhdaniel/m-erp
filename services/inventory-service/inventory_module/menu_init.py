@@ -8,6 +8,7 @@ import logging
 import os
 import sys
 
+
 from shared.menu_registration_client import (
     MenuRegistrationClient, 
     MenuItem, 
@@ -15,7 +16,9 @@ from shared.menu_registration_client import (
     register_service_menus
 )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('uvicorn')
+UI_REGISTRY_URL= os.getenv("UI_REGISTRY_URL")
+MENU_SERVICE_URL = os.getenv("MENU_SERVICE_URL")
 
 # Define inventory permissions
 INVENTORY_PERMISSIONS = [
@@ -82,6 +85,13 @@ INVENTORY_PERMISSIONS = [
         category="inventory",
         action="view"
     ),
+    MenuPermission(
+        code="manage_categories",
+        name="Manage Categories",
+        description="Permission to create, edit, delete product categories",
+        category="inventory",
+        action="manage"
+    ),
 ]
 
 # Define inventory menu structure
@@ -125,11 +135,23 @@ INVENTORY_MENUS = [
         required_permission="view_products"
     ),
     MenuItem(
+        code="inventory_categories",
+        title="Categories",
+        description="Product Categories",
+        parent_code="inventory_management",
+        order_index=3,
+        level=1,
+        url="/inventory/categories",
+        icon="tag",
+        item_type="link",
+        required_permission="view_products"
+    ),
+    MenuItem(
         code="inventory_stock",
         title="Stock",
         description="Stock Management",
         parent_code="inventory_management",
-        order_index=3,
+        order_index=4,
         level=1,
         url="/inventory/stock",
         icon="layers",
@@ -141,7 +163,7 @@ INVENTORY_MENUS = [
         title="Warehouses",
         description="Warehouse Management",
         parent_code="inventory_management",
-        order_index=4,
+        order_index=5,
         level=1,
         url="/inventory/warehouses",
         icon="building",
@@ -153,7 +175,7 @@ INVENTORY_MENUS = [
         title="Receiving",
         description="Receiving Operations",
         parent_code="inventory_management",
-        order_index=5,
+        order_index=6,
         level=1,
         url="/inventory/receiving",
         icon="download",
@@ -165,28 +187,40 @@ INVENTORY_MENUS = [
         title="Reports",
         description="Inventory Reports",
         parent_code="inventory_management",
-        order_index=6,
+        order_index=7,
         level=1,
         url="/inventory/reports",
         icon="file-text",
         item_type="link",
         required_permission="view_inventory_reports"
     ),
+    MenuItem(
+        code="analytic_reports",
+        title="Analytic Reports",
+        description="Inventory Analytic Reports",
+        parent_code="inventory_management",
+        order_index=8,
+        level=1,
+        url="/inventory/reports/analytics",
+        icon="file-text",
+        item_type="link",
+        required_permission="view_inventory_reports"
+    ),
+
 ]
 
 
 async def initialize_inventory_menus():
     """Initialize inventory menus on service startup"""
     try:
-        menu_service_url = os.getenv("MENU_SERVICE_URL", "http://menu-access-service:8000")
         
-        logger.info("Initializing inventory menus...")
+        logger.info(f"Initializing inventory menus...{MENU_SERVICE_URL}")
         
         success = await register_service_menus(
             service_name="inventory-service",
             permissions=INVENTORY_PERMISSIONS,
             menus=INVENTORY_MENUS,
-            menu_service_url=menu_service_url
+            menu_service_url=MENU_SERVICE_URL
         )
         
         if success:

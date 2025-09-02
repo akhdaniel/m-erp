@@ -29,11 +29,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Redis connection
+# Redis connection with connection pooling and retry configuration
 redis_client = redis.Redis(
-    host=os.getenv("REDIS_HOST", "localhost"),
+    host=os.getenv("REDIS_HOST", "172.19.0.13"),
     port=int(os.getenv("REDIS_PORT", 6379)),
-    decode_responses=True
+    decode_responses=True,
+    retry_on_timeout=True,
+    health_check_interval=30,
+    socket_keepalive=True,
+    socket_keepalive_options={},
+    socket_connect_timeout=5,
+    socket_timeout=5,
+    max_connections=20
 )
 
 # Pydantic models

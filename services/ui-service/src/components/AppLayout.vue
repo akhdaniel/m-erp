@@ -23,6 +23,15 @@
                 Dashboard
               </router-link>
               
+              <!-- Test link for debugging -->
+              <router-link
+                to="/test-navigation"
+                class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+                active-class="border-primary-500 text-gray-900"
+              >
+                Test Navigation
+              </router-link>
+              
               <!-- Dynamic menus from API -->
               <template v-for="menu in topLevelMenus" :key="menu.id">
                 <!-- Simple link menu -->
@@ -31,6 +40,7 @@
                   :to="menu.url"
                   class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
                   active-class="border-primary-500 text-gray-900"
+                  @click="handleMenuClick($event, menu)"
                 >
                   <span v-if="menu.icon" class="mr-1">
                     <i :class="menu.icon"></i>
@@ -164,6 +174,16 @@
             Dashboard
           </router-link>
           
+          <!-- Test link for debugging -->
+          <router-link
+            to="/test-navigation"
+            class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+            active-class="bg-primary-50 border-primary-500 text-primary-700"
+            @click="mobileMenuOpen = false"
+          >
+            Test Navigation
+          </router-link>
+          
           <!-- Dynamic menus from API -->
           <template v-for="menu in topLevelMenus" :key="menu.id">
             <!-- Simple link menu -->
@@ -172,7 +192,7 @@
               :to="menu.url"
               class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
               active-class="bg-primary-50 border-primary-500 text-primary-700"
-              @click="mobileMenuOpen = false"
+              @click="handleMobileMenuClick($event, menu)"
             >
               <span v-if="menu.icon" class="mr-2">
                 <i :class="menu.icon"></i>
@@ -293,6 +313,22 @@ async function handleLogout() {
   } catch (error) {
     console.error('Logout failed:', error)
   }
+}
+
+function handleMenuClick(event, menu) {
+  console.log('Menu clicked:', menu.title, menu.url)
+  console.log('Event:', event)
+  // Don't prevent default unless there's a specific reason
+  // event.preventDefault() // This would prevent navigation
+}
+
+function handleMobileMenuClick(event, menu) {
+  console.log('Mobile menu clicked:', menu.title, menu.url)
+  console.log('Event:', event)
+  // Close mobile menu
+  mobileMenuOpen.value = false
+  // Don't prevent default unless there's a specific reason
+  // event.preventDefault() // This would prevent navigation
 }
 
 // Fetch menus when component mounts

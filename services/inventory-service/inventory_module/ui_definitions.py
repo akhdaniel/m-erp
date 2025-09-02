@@ -375,5 +375,92 @@ INVENTORY_UI_PACKAGE = {
             "layout": "single",
             "permissions": ["manage_warehouses"]
         }
+    ],
+
+    "lists": [
+        {
+            "id": "categories-list",
+            "title": "Categories",
+            "entity": "categories",
+            "data_endpoint": "/api/v1/products/categories",
+            "columns": [
+                {"key": "code", "label": "Code", "sortable": True},
+                {"key": "name", "label": "Category Name", "sortable": True},
+                {"key": "parent_category_name", "label": "Parent Category", "sortable": True},
+                {"key": "product_count", "label": "Products", "format": "number", "sortable": True},
+                {"key": "is_active", "label": "Active", "format": "boolean"}
+            ],
+            "actions": [
+                {"id": "view", "label": "View", "icon": "eye"},
+                {"id": "edit", "label": "Edit", "icon": "edit"}
+            ],
+            "filters": [
+                {"key": "is_active", "label": "Active Status", "type": "select"},
+                {"key": "search", "label": "Search", "type": "text"}
+            ],
+            "permissions": ["view_products"]
+        }
+    ],
+
+    "forms": [
+        {
+            "id": "category-form",
+            "title": "Category",
+            "entity": "category",
+            "submit_endpoint": "/api/v1/products/categories",
+            "data_endpoint": "/api/v1/products/categories/{id}",
+            "fields": [
+                {
+                    "key": "name",
+                    "label": "Category Name",
+                    "type": "text",
+                    "required": True
+                },
+                {
+                    "key": "code",
+                    "label": "Code",
+                    "type": "text",
+                    "required": True,
+                    "validation": {"pattern": "^[A-Z0-9-]+$"}
+                },
+                {
+                    "key": "description",
+                    "label": "Description",
+                    "type": "textarea",
+                    "rows": 3
+                },
+                {
+                    "key": "parent_category_id",
+                    "label": "Parent Category",
+                    "type": "select",
+                    "data_source": "/api/v1/products/categories"
+                },
+                {
+                    "key": "display_order",
+                    "label": "Display Order",
+                    "type": "number",
+                    "min": 0,
+                    "default": 0
+                },
+                {
+                    "key": "color",
+                    "label": "Color",
+                    "type": "color"
+                },
+                {
+                    "key": "icon",
+                    "label": "Icon",
+                    "type": "text"
+                },
+                {
+                    "key": "is_active",
+                    "label": "Active",
+                    "type": "checkbox",
+                    "default": True
+                }
+            ],
+            "layout": "single",
+            "permissions": ["manage_products"]
+        }
     ]
 }

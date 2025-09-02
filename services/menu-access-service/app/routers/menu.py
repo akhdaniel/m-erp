@@ -30,6 +30,7 @@ async def get_menu_tree(
     """Get the complete menu tree for the current user."""
     # Get current user from request
     current_user = request.state.user
+    logger.info(f'currnet user:{current_user}')
     
     service = MenuService(db)
     
@@ -48,15 +49,15 @@ async def get_menu_tree(
     # Get all menus or user-specific menus
     if current_user:
         menus = await service.get_user_menus(user_permissions, user_role_level)
-        # Build hierarchical tree WITHOUT permission filtering (already filtered)
-        menu_tree = await service.build_menu_tree(menus)
+        # Build hierarchical tree WITHOUT additional permission filtering (already filtered)
+        menu_tree = await service.build_menu_tree(menus, user_permissions=None)
     else:
         # For unauthenticated requests, return public menus only
         menus = await service.get_all_menus(active_only=active_only)
         # Filter to only show menus without required permissions
         public_menus = [m for m in menus if not m.required_permission]
         # Build tree without permission filtering
-        menu_tree = await service.build_menu_tree(public_menus)
+        menu_tree = await service.build_menu_tree(public_menus, user_permissions=None)
     
     response = MenuTreeResponse(
         menus=menu_tree,
@@ -66,6 +67,7 @@ async def get_menu_tree(
     if include_permissions:
         response.user_permissions = user_permissions
     
+    logger.info(f"Returning menu tree with {len(menu_tree)} root menus")
     return response
 
 
@@ -249,7 +251,8 @@ async def get_user_specific_menus(
         user_role_level = current_user.get('role_level', None)
     
     menus = await service.get_user_menus(user_permissions, user_role_level)
-    menu_tree = await service.build_menu_tree(menus, user_permissions, user_role_level)
+    # Build hierarchical tree WITHOUT additional permission filtering (already filtered)
+    menu_tree = await service.build_menu_tree(menus)
     
     response = MenuTreeResponse(
         menus=menu_tree,

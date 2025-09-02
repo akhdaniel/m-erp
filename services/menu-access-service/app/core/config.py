@@ -15,6 +15,10 @@ class Settings(BaseModel):
         "postgresql+asyncpg://postgres:password@localhost:5432/menu_access_db"
     )
     
+    # JWT Settings
+    secret_key: str = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
+    algorithm: str = "HS256"
+    
     # Environment
     environment: str = os.getenv("ENVIRONMENT", "development")
     debug: bool = os.getenv("DEBUG", "true").lower() == "true"

@@ -27,7 +27,7 @@ export const notificationStore = reactive<NotificationStore>({
 })
 
 class NotificationService {
-  private baseUrl = 'http://localhost:8009'  // Notification service URL (external port)
+  private baseUrl = import.meta.env.VITE_NOTIFICATIONS_BASE_URL || '/api/v1/notifications'  // Notification service URL through API gateway
   private eventSource: EventSource | null = null
   private maxNotifications = 50
   
@@ -41,8 +41,8 @@ class NotificationService {
     
     // Construct URL with user ID if provided
     const url = userId 
-      ? `${this.baseUrl}/notifications/stream?user_id=${userId}`
-      : `${this.baseUrl}/notifications/stream`
+      ? `${this.baseUrl}/stream?user_id=${userId}`
+      : `${this.baseUrl}/stream`
     
     console.log('🔌 Connecting to notification stream:', url)
     

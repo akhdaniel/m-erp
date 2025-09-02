@@ -25,7 +25,7 @@ class Settings(BaseModel):
   # Auth Service Integration
   auth_service_url: str = os.getenv("AUTH_SERVICE_URL", "http://localhost:8001")
   auth_service_token: Optional[str] = os.getenv("AUTH_SERVICE_TOKEN")
-  service_key: str = os.getenv("SERVICE_KEY", "company-partner-service-key")
+  service_key: str = os.getenv("SERVICE_KEY", "company-partner-service-key-1234567890123456")
   
   # Redis (for caching and future rate limiting)
   redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/1")

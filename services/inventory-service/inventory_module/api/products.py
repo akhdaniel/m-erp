@@ -16,6 +16,9 @@ from inventory_module.models import Product, ProductCategory, ProductVariant, Pr
 from inventory_module.services import ProductService, ProductCategoryService, ProductVariantService
 from inventory_module.database import get_db
 
+import logging
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/products", tags=["products"])
 
 
@@ -323,17 +326,21 @@ async def delete_category(
 
 # Product endpoints
 @router.post("/", response_model=ProductResponse, status_code=201)
+@router.post("", response_model=ProductResponse, status_code=201)  # Handle both with and without trailing slash
 async def create_product(
     product_data: ProductCreate,
     service: ProductService = Depends(get_product_service)
 ):
     """Create a new product."""
+    logger.info(f"""{__name__}Create a new product.""")
     try:
         product = service.create_product(**product_data.dict())
         service.commit()
+        logger.info('--sukses create produt')
         return ProductResponse.from_orm(product)
     except Exception as e:
         service.rollback()
+        logger.error('--error create produt')
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -348,6 +355,7 @@ async def list_products(
     service: ProductService = Depends(get_product_service)
 ):
     """List products with filtering and pagination."""
+    logger.info(f"""{__name__} List products with filtering and pagination.""")
     # Calculate offset from page and page_size
     offset = (page - 1) * page_size
     

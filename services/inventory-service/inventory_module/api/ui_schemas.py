@@ -532,3 +532,220 @@ async def get_categories_tree_schema() -> Dict[str, Any]:
             }
         ]
     }
+
+
+@router.get("/categories/list")
+async def get_categories_list_schema() -> Dict[str, Any]:
+    """Get UI schema for product categories list view"""
+    return {
+        "title": "Product Categories",
+        "description": "Manage product categories",
+        "viewType": "table",
+        "endpoint": "/api/v1/products/categories",
+        "keyField": "id",
+        "searchable": True,
+        "searchPlaceholder": "Search categories by name or code...",
+        "searchParam": "search",
+        "paginated": True,
+        "pageSize": 20,
+        "refreshable": True,
+        "createable": True,
+        "createLabel": "New Category",
+        "createRoute": "/inventory/categories/new",
+        "editRoute": "/inventory/categories/{id}/edit",
+        "clickable": True,
+        
+        "columns": [
+            {
+                "field": "name",
+                "label": "Category Name",
+                "visible": True,
+                "isTitle": True,
+                "cellClass": "font-medium text-gray-900"
+            },
+            {
+                "field": "code",
+                "label": "Code",
+                "visible": True
+            },
+            {
+                "field": "parent_category_name",
+                "label": "Parent Category",
+                "visible": True
+            },
+            {
+                "field": "product_count",
+                "label": "Products",
+                "visible": True,
+                "formatter": "number"
+            },
+            {
+                "field": "is_active",
+                "label": "Status",
+                "visible": True,
+                "formatter": "boolean",
+                "cellClassFunction": """
+                    function(value) {
+                        return value ? 'text-green-600' : 'text-gray-400';
+                    }
+                """
+            }
+        ],
+        
+        "filters": [
+            {
+                "field": "is_active",
+                "label": "Status",
+                "type": "select",
+                "placeholder": "All Status",
+                "options": [
+                    {"label": "Active", "value": "true"},
+                    {"label": "Inactive", "value": "false"}
+                ]
+            }
+        ],
+        
+        "rowActions": [
+            {
+                "id": "edit",
+                "label": "Edit",
+                "route": "/inventory/categories/{id}/edit"
+            }
+        ],
+        
+        "headerActions": [
+            {
+                "id": "export",
+                "label": "Export",
+                "icon": "download",
+                "variant": "secondary"
+            }
+        ]
+    }
+
+
+@router.get("/categories/form")
+async def get_categories_form_schema() -> Dict[str, Any]:
+    """Get UI schema for category form (create/edit)"""
+    return {
+        "title": "Category Details",
+        "description": "Enter category information",
+        "endpoint": "/api/v1/products/categories",
+        "successRoute": "/inventory/categories",
+        "cancelRoute": "/inventory/categories",
+        "submitLabel": "Save Category",
+        "cancelLabel": "Cancel",
+        
+        "breadcrumbs": [
+            {"label": "Categories", "route": "/inventory/categories"},
+            {"label": "Category Details"}
+        ],
+        
+        "sections": [
+            {
+                "id": "basic",
+                "title": "Basic Information",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+                "fields": [
+                    {
+                        "name": "name",
+                        "label": "Category Name",
+                        "type": "text",
+                        "required": True,
+                        "placeholder": "Enter category name",
+                        "colSpan": 2
+                    },
+                    {
+                        "name": "code",
+                        "label": "Code",
+                        "type": "text",
+                        "required": True,
+                        "placeholder": "e.g., ELECTRONICS, CLOTHING",
+                        "help": "Unique code for this category"
+                    },
+                    {
+                        "name": "parent_category_id",
+                        "label": "Parent Category",
+                        "type": "select",
+                        "placeholder": "Select a parent category (optional)",
+                        "optionsEndpoint": "/api/v1/products/categories?active_only=true",
+                        "optionLabelField": "name",
+                        "optionValueField": "id"
+                    },
+                    {
+                        "name": "display_order",
+                        "label": "Display Order",
+                        "type": "number",
+                        "min": 0,
+                        "defaultValue": 0,
+                        "help": "Categories will be displayed in ascending order"
+                    },
+                    {
+                        "name": "color",
+                        "label": "Color",
+                        "type": "color",
+                        "placeholder": "Select a color for this category"
+                    },
+                    {
+                        "name": "icon",
+                        "label": "Icon",
+                        "type": "text",
+                        "placeholder": "e.g., box, tag, shopping-cart"
+                    }
+                ]
+            },
+            {
+                "id": "description",
+                "title": "Description",
+                "gridClass": "grid grid-cols-1 gap-6",
+                "fields": [
+                    {
+                        "name": "description",
+                        "label": "Description",
+                        "type": "textarea",
+                        "rows": 3,
+                        "placeholder": "Enter category description"
+                    }
+                ]
+            },
+            {
+                "id": "seo",
+                "title": "SEO Information",
+                "gridClass": "grid grid-cols-1 gap-6",
+                "fields": [
+                    {
+                        "name": "slug",
+                        "label": "URL Slug",
+                        "type": "text",
+                        "placeholder": "e.g., electronics-category"
+                    },
+                    {
+                        "name": "meta_title",
+                        "label": "Meta Title",
+                        "type": "text",
+                        "maxLength": 255
+                    },
+                    {
+                        "name": "meta_description",
+                        "label": "Meta Description",
+                        "type": "textarea",
+                        "rows": 2,
+                        "maxLength": 500
+                    }
+                ]
+            },
+            {
+                "id": "status",
+                "title": "Status",
+                "gridClass": "grid grid-cols-1 gap-6",
+                "fields": [
+                    {
+                        "name": "is_active",
+                        "label": "Category is active",
+                        "type": "checkbox",
+                        "defaultValue": True
+                    }
+                ]
+            }
+        ]
+    }

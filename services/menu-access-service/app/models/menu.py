@@ -50,6 +50,8 @@ class MenuItem(BaseModel):
     # Additional configuration
     metadata_info = Column(JSON, default=dict)  # Additional menu configuration
     css_class = Column(String(255))  # Custom CSS classes
+    badge_text = Column(String(50))  # Badge text to display
+    badge_class = Column(String(100))  # CSS class for badge
     
     # Relationships
     

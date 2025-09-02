@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # PostgreSQL Database
   postgres:
@@ -19,7 +17,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
   # Redis for messaging and caching
   redis:
     image: redis:7-alpine
@@ -34,7 +38,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
   # User Authentication Service
   user-auth-service:
     build:
@@ -59,6 +69,13 @@ services:
     volumes:
       - ./services/user-auth-service:/app
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
   # Company Partner Service
   company-partner-service:
@@ -70,8 +87,8 @@ services:
       - "8002:8000"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/company_partner_db
-      AUTH_SERVICE_URL: http://kong:8000
-      SERVICE_KEY: company-partner-service-key
+      AUTH_SERVICE_URL: http://user-auth-service:8000
+      SERVICE_KEY: company-partner-service-key-1234567890123456
       ENVIRONMENT: development
       DEBUG: "true"
       REDIS_HOST: redis
@@ -87,17 +104,26 @@ services:
     volumes:
       - ./services/company-partner-service:/app
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
   # Menu Access Service
   menu-access-service:
     build: ./services/menu-access-service
     container_name: m-erp-menu-access
     ports:
-      - "8003:8000"
+      - "8003:8003"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/menu_access_db
       AUTH_SERVICE_URL: http://user-auth-service:8000
       SERVICE_KEY: menu-access-service-key
+      SERVICE_SECRET: menu-access-service-secret-key-that-is-long-enough
+      SECRET_KEY: development-secret-key-change-in-production
       ENVIRONMENT: development
       DEBUG: "true"
     depends_on:
@@ -110,6 +136,13 @@ services:
     volumes:
       - ./services/menu-access-service:/app
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
   # Service Registry
   service-registry:
@@ -126,12 +159,21 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    volumes:
+      - ./services/service-registry:/app
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
   # API Gateway (Kong)
   kong:
@@ -147,7 +189,7 @@ services:
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
       KONG_PROXY_LISTEN: 0.0.0.0:8000
     ports:
-      - "9080:8000"  # Proxy port (main API gateway)
+      - "8000:8000"  # Proxy port (main API gateway)
       - "9001:8001"  # Admin API port
     volumes:
       - ./services/api-gateway/kong.yml:/kong/kong.yml:ro
@@ -161,6 +203,13 @@ services:
       interval: 10s
       timeout: 10s
       retries: 10
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
   # UI Service (Vue.js Frontend)
   ui-service:
@@ -169,7 +218,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: m-erp-ui
     ports:
-      - "3000:3000"  # Vite dev server
+      - "9000:9000"  # Vite dev server
     environment:
       NODE_ENV: development
       VITE_API_URL: http://kong:8000
@@ -186,6 +235,14 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
+
 
   # Notification Service
   notification-service:
@@ -210,6 +267,13 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
   # Audit Service
   audit-service:
@@ -231,12 +295,21 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    volumes:
+      - ./services/audit-service:/app
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
   # Inventory Service
   inventory-service:
@@ -251,9 +324,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SERVICE_NAME: inventory-service
+      SERVICE_KEY: inventory-service-key
+      SERVICE_SECRET: inventory-service-secret-key-that-is-long-enough
+      AUTH_SERVICE_URL: http://user-auth-service:8000
       ENVIRONMENT: development
       DEBUG: "true"
-      MENU_SERVICE_URL: http://menu-access-service:8000
+      MENU_SERVICE_URL: http://menu-access-service:8003
+      NOTIFICATION_URL: http://notification-service:8009
       UI_REGISTRY_URL: http://ui-registry-service:8010
     depends_on:
       postgres:
@@ -269,6 +346,13 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
   # Sales Service
   sales-service:
@@ -290,7 +374,7 @@ services:
       PARTNER_SERVICE_URL: http://company-partner-service:8000
       CURRENCY_SERVICE_URL: http://company-partner-service:8000
       AUDIT_SERVICE_URL: http://audit-service:8006
-      MENU_SERVICE_URL: http://menu-access-service:8000
+      MENU_SERVICE_URL: http://menu-access-service:8003
       UI_REGISTRY_URL: http://ui-registry-service:8010
     depends_on:
       postgres:
@@ -307,6 +391,13 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
   # UI Registry Service
   ui-registry-service:
@@ -322,12 +413,21 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    volumes:
+      - ./services/ui-registry-service:/app
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
   purchasing-service:
     build:
@@ -347,7 +447,7 @@ services:
       PARTNER_SERVICE_URL: http://company-partner-service:8000
       CURRENCY_SERVICE_URL: http://company-partner-service:8000
       AUDIT_SERVICE_URL: http://audit-service:8006
-      MENU_SERVICE_URL: http://menu-access-service:8000
+      MENU_SERVICE_URL: http://menu-access-service:8003
       UI_REGISTRY_URL: http://ui-registry-service:8010
     depends_on:
       postgres:
@@ -363,7 +463,18 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - chat_odoo_network
 
 volumes:
   postgres_data:
   redis_data:
+
+networks:
+  chat_odoo_network:
+    external: true

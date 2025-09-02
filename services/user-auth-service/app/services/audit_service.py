@@ -32,7 +32,7 @@ class AuditService:
         severity: Optional[AuditSeverity] = None,
         success: bool = True,
         error_message: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        additional_data: Optional[Dict[str, Any]] = None,
         tags: Optional[List[str]] = None
     ) -> AuditLog:
         """
@@ -52,7 +52,7 @@ class AuditService:
             severity: Log severity level
             success: Whether action succeeded
             error_message: Error message if action failed
-            metadata: Additional metadata
+            additional_data: Additional metadata
             tags: Tags for categorization
             
         Returns:
@@ -91,7 +91,7 @@ class AuditService:
             severity=severity or AuditSeverity.LOW,
             success=success,
             error_message=error_message,
-            metadata=metadata,
+            additional_data=additional_data,
             tags=tags,
             session_id=session_id,
             request_id=request_id
@@ -123,7 +123,7 @@ class AuditService:
             request=request,
             severity=AuditSeverity.LOW,
             success=True,
-            metadata={"login_method": login_method},
+            additional_data={"login_method": login_method},
             tags=["authentication", "success"]
         )
     
@@ -146,7 +146,7 @@ class AuditService:
             severity=severity,
             success=False,
             error_message=reason,
-            metadata={"email": email, "reason": reason, "attempt_count": attempt_count},
+            additional_data={"email": email, "reason": reason, "attempt_count": attempt_count},
             tags=["authentication", "failure"]
         )
     
@@ -168,8 +168,8 @@ class AuditService:
             request=request,
             severity=AuditSeverity.CRITICAL,
             success=False,
-            metadata={
-                **(metadata or {}),
+            additional_data={
+                **(additional_data or {}),
                 "activity_type": activity_type
             },
             tags=["security", "suspicious", activity_type]
@@ -191,7 +191,7 @@ class AuditService:
             request=request,
             severity=AuditSeverity.HIGH,
             success=False,
-            metadata={
+            additional_data={
                 "identifier": identifier,
                 "endpoint": endpoint,
                 "limit": limit
@@ -219,8 +219,8 @@ class AuditService:
             request=request,
             severity=AuditSeverity.MEDIUM,
             success=True,
-            metadata={
-                **(metadata or {}),
+            additional_data={
+                **(additional_data or {}),
                 "action_type": action_type
             },
             tags=["admin", "management", action_type]
@@ -247,7 +247,7 @@ class AuditService:
             request=request,
             severity=AuditSeverity.LOW,
             success=success,
-            metadata=metadata,
+            additional_data=additional_data,
             tags=["service", "inter_service"]
         )
     
@@ -408,7 +408,7 @@ class AuditService:
                             db=db,
                             activity_type="multiple_failed_logins",
                             description=f"Multiple failed login attempts from IP {audit_log.ip_address}",
-                            metadata={
+                            additional_data={
                                 "ip_address": audit_log.ip_address,
                                 "failure_count": recent_failures,
                                 "time_window_minutes": 15
@@ -473,9 +473,9 @@ async def audit_admin_action(
     description: str,
     target_user_id: Optional[int] = None,
     request: Optional[Request] = None,
-    metadata: Optional[Dict[str, Any]] = None
+    additional_data: Optional[Dict[str, Any]] = None
 ) -> AuditLog:
     """Convenience function for logging admin actions."""
     return await AuditService.log_admin_action(
-        db, admin_user_id, action_type, description, target_user_id, request, metadata
+        db, admin_user_id, action_type, description, target_user_id, request, additional_data
     )

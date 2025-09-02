@@ -5,7 +5,7 @@ Authentication middleware for inter-service communication.
 import httpx
 import logging
 from typing import Optional, Dict, Any
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.core.config import settings
@@ -33,7 +33,7 @@ class AuthClient:
             
             headers = {"Authorization": f"Bearer {service_token}"}
             response = await self.client.post(
-                f"{self.auth_service_url}/api/validate/token",
+                f"{self.auth_service_url}/api/validate/user-token",
                 headers=headers,
                 json={"token": token}
             )
@@ -99,7 +99,7 @@ auth_client = AuthClient()
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> Dict[str, Any]:
     """
     Dependency to get the current user from JWT token.
@@ -111,15 +111,40 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    # First try to validate as user token
     user_data = await auth_client.validate_token(credentials.credentials)
-    if not user_data:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    if user_data:
+        return user_data
     
-    return user_data
+    # If user token validation fails, try to validate as service token
+    try:
+        import httpx
+        from app.core.config import settings
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{settings.auth_service_url}/api/services/validate",
+                json={"token": credentials.credentials}
+            )
+            
+            if response.status_code == 200:
+                service_data = response.json()
+                # Return service data as user data (treat as admin user)
+                return {
+                    "user_id": 0,
+                    "email": f"service@{service_data.get('service_name', 'unknown')}.local",
+                    "permissions": ["admin:all"],  # Services have admin permissions
+                    "is_active": True,
+                    "role_level": 0  # Highest level
+                }
+    except Exception as e:
+        logger.error(f"Error validating service token: {str(e)}")
+    
+    # If both validations fail, raise authentication error
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or expired token",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
 
 
 async def get_current_active_user(

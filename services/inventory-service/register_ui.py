@@ -7,9 +7,12 @@ This demonstrates the service-driven UI architecture.
 import requests
 import json
 import sys
+import os
+from dotenv import load_dotenv
 
 # UI Registry endpoint
-UI_REGISTRY_URL = "http://localhost:8010"
+load_dotenv()
+UI_REGISTRY_URL = os.getenv("UI_REGISTRY_URL") or os.getenv("UI_REGISTRY_SERVICE") or "http://localhost:8010"
 
 # Inventory UI Package Definition
 INVENTORY_UI_PACKAGE = {
@@ -147,6 +150,26 @@ INVENTORY_UI_PACKAGE = {
                 {"key": "quantity", "label": "Quantity", "format": "number"},
                 {"key": "user", "label": "User"}
             ]
+        },
+        {
+            "id": "categories-list",
+            "title": "Product Categories",
+            "entity": "categories",
+            "data_endpoint": "/api/v1/products/categories",
+            "columns": [
+                {"key": "code", "label": "Code", "sortable": True},
+                {"key": "name", "label": "Category Name", "sortable": True},
+                {"key": "parent_category_name", "label": "Parent Category"},
+                {"key": "product_count", "label": "Products", "format": "number"},
+                {"key": "is_active", "label": "Active", "format": "badge"}
+            ],
+            "actions": [
+                {"id": "view", "label": "View", "icon": "eye"},
+                {"id": "edit", "label": "Edit", "icon": "edit"}
+            ],
+            "filters": [
+                {"field": "is_active", "type": "select", "label": "Status", "options": ["active", "inactive"]}
+            ]
         }
     ],
     "forms": [
@@ -196,6 +219,24 @@ INVENTORY_UI_PACKAGE = {
                 {"name": "quantity", "label": "Quantity", "type": "number", "min": 1, "required": True},
                 {"name": "reason", "label": "Reason", "type": "textarea", "required": True}
             ]
+        },
+        {
+            "id": "category-form",
+            "title": "Category Details",
+            "entity": "category",
+            "submit_endpoint": "/api/v1/products/categories",
+            "data_endpoint": "/api/v1/products/categories/{id}",
+            "fields": [
+                {"name": "name", "label": "Category Name", "type": "text", "required": True},
+                {"name": "code", "label": "Code", "type": "text", "required": True},
+                {"name": "description", "label": "Description", "type": "textarea"},
+                {"name": "parent_category_id", "label": "Parent Category", "type": "select", "data_source": "/api/v1/products/categories"},
+                {"name": "display_order", "label": "Display Order", "type": "number", "min": 0, "default": 0},
+                {"name": "color", "label": "Color", "type": "color"},
+                {"name": "icon", "label": "Icon", "type": "text"},
+                {"name": "is_active", "label": "Active", "type": "checkbox", "default": True}
+            ],
+            "layout": "single"
         }
     ],
     "components": [

@@ -24,6 +24,49 @@
 - **Message Queue:** Redis (optimal for ERP workloads - fast, simple, persistent)
 - **Event System:** Redis Streams for event sourcing and inter-service communication
 
+
+## Default admin user for testing
+- user: admin@m-erp.com
+- password: admin123
+
+## Containerization
+- **Docker compose**: use docker compose command, not docker-compose
+- **Server**: on VM cloud with domain demo.xerpium.com, IP address 8.215.67.59
+
+## Service driven US
+- all menus and dashboard items in the UI are triggered by the service it self
+- services has modulename-service/modulename_module/menu_init.py for requesting menu to display
+- services has modulename-service/register_ui.py for requesting dashboard items to display
+
+## Standard Services
+- **UI Servce**: 
+	- port: 9000
+	- use external network chat_odoo_network so that reachable from external nginx proxy  contianer
+- **Kong Servce**: 
+	- port: 8000
+- **Redit Service**: 
+	- port: 6379
+- **PostgreSQL**: 
+	- port: 5432
+- **user-auth-service**: 
+	- port: 8001
+- **company-partner-service**: 
+	- port: 8002
+- **menu-access-service**: 
+	- port 8003
+- **service-registry**: 
+	- port: 8004
+- **inventory-service**: 
+	- port: 8005
+- **sales-service**: 
+	- port: 8006
+- **purchasing-service**: 
+	- port: 8007
+- **notification-registry**: 
+	- port: 8009
+- **ui-registry**: 
+	- port: 8010
+ 
 ## Frontend Stack
 
 ### JavaScript Framework

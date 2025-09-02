@@ -350,7 +350,7 @@ const productId = computed(() => route.params.id as string)
 const isEditMode = computed(() => productId.value && productId.value !== 'new')
 
 // API base URL
-const INVENTORY_API = 'http://localhost:8005/api/v1'
+const INVENTORY_API = import.meta.env.VITE_INVENTORY_API || '/api/v1'
 
 // Load product for editing
 async function loadProduct() {
@@ -429,6 +429,7 @@ async function saveProduct() {
     }
     
     // Success - navigate back to list
+    console.log('------- Success - navigate back to list ')
     router.push('/inventory/products')
   } catch (err: any) {
     error.value = err.message || 'Failed to save product'

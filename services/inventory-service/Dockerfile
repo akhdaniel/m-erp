@@ -19,8 +19,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy shared modules
 COPY services/shared /app/shared
 
-# Copy application code from services/inventory-service
-COPY services/inventory-service/. /app/
+# Copy application code from services/inventory-service (excluding shared directory)
+COPY services/inventory-service/requirements.txt /app/
+COPY services/inventory-service/main.py /app/
+COPY services/inventory-service/inventory_module /app/inventory_module
+COPY services/inventory-service/register_ui.py /app/
+COPY services/inventory-service/ui_package.json /app/
+COPY services/inventory-service/restart /app/
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app

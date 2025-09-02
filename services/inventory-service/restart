@@ -1,0 +1,1 @@
+docker compose restart inventory-service && docker compose logs -f -n 20 inventory-service

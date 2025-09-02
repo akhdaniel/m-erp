@@ -1,0 +1,3 @@
+# M-ERP Shared Messaging Library Requirements
+redis[hiredis]==5.0.1
+pydantic==2.5.0

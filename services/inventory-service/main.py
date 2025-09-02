@@ -9,9 +9,11 @@ and receiving functionality.
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 import uvicorn
 import asyncio
 import logging
+import os 
 
 from inventory_module.api import (
     products_router,
@@ -21,8 +23,41 @@ from inventory_module.api import (
 )
 from inventory_module.api.ui_schemas import router as ui_schemas_router
 from inventory_module.ui_definitions import INVENTORY_UI_PACKAGE
+logger = logging.getLogger("uvicorn")
+UI_REGISTRY_URL = os.getenv("UI_REGISTRY_URL")
+NOTIFICATION_URL= os.getenv("NOTIFICATION_URL")
+MENU_SERVICE_URL = os.getenv("MENU_SERVICE_URL")
 
-logger = logging.getLogger(__name__)
+logger.info(f"UI_REGISTRY_URL={UI_REGISTRY_URL}, NOTIFICATION_URL={NOTIFICATION_URL}, MENU_SERVICE_URL={MENU_SERVICE_URL}")
+
+# Custom middleware to handle forwarded headers for reverse proxy and rewrite redirect Location headers
+class ForwardedHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        print(f"Middleware called for {request.method} {request.url}")
+        # Get the host header from the request
+        host_header = request.headers.get("host", "localhost:8000")
+        print(f"Host header: {host_header}")
+        
+        response = await call_next(request)
+        print(f"Response status: {response.status_code}")
+        
+        # If it's a redirect response, rewrite the Location header
+        if response.status_code in (301, 302, 303, 307, 308) and "location" in response.headers:
+            location = response.headers["location"]
+            print(f"Original location header: {location}")
+            
+            # Check if the location points to the internal service
+            if location.startswith("http://inventory-service:8005/"):
+                # Rewrite to use the host header from the request
+                # Extract the path from the original location
+                path = location[29:]  # Remove "http://inventory-service:8005"
+                
+                # Use the original host header from the request
+                new_location = f"http://{host_header}{path}"
+                response.headers["location"] = new_location
+                print(f"Rewrote Location header from {location} to {new_location}")  # Simple debug print
+                
+        return response
 
 # Create FastAPI application
 app = FastAPI(
@@ -31,8 +66,12 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
-    openapi_url="/api/openapi.json"
+    openapi_url="/api/openapi.json",
+    root_path=""  # Reset root_path
 )
+
+# Add middleware
+app.add_middleware(ForwardedHeadersMiddleware)
 
 # Configure CORS
 app.add_middleware(
@@ -82,13 +121,13 @@ async def health_check():
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize service on startup"""
+    logger.info("""Initialize service on startup""")
     # Schedule menu and UI registration to run in background
     asyncio.create_task(initialize_menus_and_ui())
 
 
 async def initialize_menus_and_ui():
-    """Initialize menus and UI components in background"""
+    logger.info("""Initialize menus and UI components in background""")
     await asyncio.sleep(5)  # Give time for other services to start
     
     try:
@@ -118,7 +157,7 @@ async def initialize_menus_and_ui():
             try:
                 # Get dashboard schema from our own endpoint
                 logger.info("Fetching dashboard schema from local endpoint...")
-                dashboard_response = await client.get("http://localhost:8005/api/v1/ui-schemas/dashboard")
+                dashboard_response = await client.get(NOTIFICATION_URL+"/api/v1/ui-schemas/dashboard")
                 if dashboard_response.status_code == 200:
                     dashboard_config = dashboard_response.json()
                     logger.info(f"Got dashboard config: {dashboard_config.get('title', 'Unknown')}")
@@ -126,7 +165,7 @@ async def initialize_menus_and_ui():
                     # Register with UI Registry
                     logger.info("Registering dashboard with UI Registry...")
                     registry_response = await client.post(
-                        "http://ui-registry-service:8010/api/v1/services/inventory/dashboard",
+                        UI_REGISTRY_URL + "/api/v1/services/inventory/dashboard",
                         json=dashboard_config
                     )
                     if registry_response.status_code == 200:
@@ -156,7 +195,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 if __name__ == "__main__":
-    # Development server
+    logger.info("Starting Development server")
     uvicorn.run(
         "main:app",
         host="0.0.0.0",

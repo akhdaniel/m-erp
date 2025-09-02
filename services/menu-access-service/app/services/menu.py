@@ -35,8 +35,12 @@ class MenuService:
             if not parent:
                 raise NotFoundException(f"Parent menu item with ID {menu_data.parent_id} not found")
         
-        # Create menu item
-        menu_item = MenuItem(**menu_data.model_dump())
+        # Create menu item - map external_url to is_external
+        menu_dict = menu_data.model_dump()
+        if 'external_url' in menu_dict:
+            menu_dict['is_external'] = menu_dict.pop('external_url')
+        
+        menu_item = MenuItem(**menu_dict)
         self.db.add(menu_item)
         await self.db.commit()
         await self.db.refresh(menu_item)
@@ -77,6 +81,10 @@ class MenuService:
             )
             if existing.scalar_one_or_none():
                 raise BadRequestException(f"Menu item with code '{update_data['code']}' already exists")
+        
+        # Map external_url to is_external if present
+        if 'external_url' in update_data:
+            update_data['is_external'] = update_data.pop('external_url')
         
         # Update fields
         for field, value in update_data.items():
@@ -176,12 +184,19 @@ class MenuService:
                     children_by_parent[menu.parent_id] = []
                 children_by_parent[menu.parent_id].append(menu)
         
+        logger.debug(f"Children mapping: {children_by_parent}")
+        for parent_id, children in children_by_parent.items():
+            logger.debug(f"Parent {parent_id} has children: {[c.code for c in children]}")
+        
         # Build the tree
         root_menus = []
         for menu in menus:
             logger.debug(f"Processing menu: {menu.code}, parent_id: {menu.parent_id}")
             
             # Skip if user doesn't have access
+            # Only apply permission filtering if menus are NOT pre-filtered
+            # When menus are pre-filtered (user-specific), user_permissions should be passed as None
+            # to avoid double filtering
             if user_permissions is not None:
                 can_access = await self._can_access_menu(menu, user_permissions, user_role_level)
                 logger.debug(f"Can access {menu.code}: {can_access}")
@@ -195,6 +210,7 @@ class MenuService:
                     menu, children_by_parent, user_permissions, user_role_level
                 )
                 if menu_with_children:  # Only add if has accessible items
+                    logger.debug(f"Root menu {menu.code} has {len(menu_with_children.children)} children")
                     root_menus.append(menu_with_children)
                     logger.info(f"Added root menu to tree: {menu.code}")
                 else:
@@ -213,10 +229,8 @@ class MenuService:
         user_role_level: Optional[int] = None
     ) -> Optional[MenuItemWithChildren]:
         """Build a menu item with its children."""
-        # Skip if user doesn't have access
-        if user_permissions is not None:
-            if not await self._can_access_menu(menu, user_permissions, user_role_level):
-                return None
+        import logging
+        logger = logging.getLogger(__name__)
         
         # Create menu response
         menu_data = MenuItemResponse.model_validate(menu)
@@ -225,19 +239,29 @@ class MenuService:
         # Add children if any
         children = []
         if menu.id in children_by_parent:
+            logger.debug(f"Menu {menu.code} (id: {menu.id}) has {len(children_by_parent[menu.id])} children")
             for child in children_by_parent[menu.id]:
+                logger.debug(f"Processing child {child.code} (id: {child.id}, parent_id: {child.parent_id}) for parent {menu.code}")
                 child_with_children = await self._build_menu_with_children(
                     child, children_by_parent, user_permissions, user_role_level
                 )
                 if child_with_children:
                     children.append(child_with_children)
+                    logger.debug(f"Added child {child.code} to parent {menu.code}")
+                else:
+                    logger.debug(f"Skipped child {child.code} for parent {menu.code}")
+        else:
+            logger.debug(f"Menu {menu.code} (id: {menu.id}) has no children in mapping")
         
         # Sort children by order_index
         children.sort(key=lambda x: x.order_index)
         menu_with_children.children = children
+        logger.debug(f"Set {len(children)} children for menu {menu.code}")
         
         # For dropdown menus without accessible children, don't include them
-        if menu.item_type == 'dropdown' and not children:
+        # But only apply this logic when we're doing permission filtering
+        if user_permissions is not None and menu.item_type == 'dropdown' and not children:
+            logger.debug(f"Skipping dropdown menu {menu.code} with no children")
             return None
         
         return menu_with_children

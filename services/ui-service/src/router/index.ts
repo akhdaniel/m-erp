@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useMenuStore } from '@/stores/menu'
 import type { RouteRecordRaw } from 'vue-router'
+import type { MenuItem } from '@/types/menu'
 
-const routes: RouteRecordRaw[] = [
+const staticRoutes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'Login',
@@ -20,279 +22,16 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true, title: 'Dashboard' }
   },
   {
-    path: '/companies',
-    name: 'Companies',
-    component: () => import('@/views/companies/CompanyListView.vue'),
-    meta: { requiresAuth: true, title: 'Companies' }
-  },
-  {
-    path: '/companies/create',
-    name: 'CreateCompany',
-    component: () => import('@/views/companies/CompanyFormView.vue'),
-    meta: { requiresAuth: true, title: 'Create Company' }
-  },
-  {
-    path: '/companies/:id/edit',
-    name: 'EditCompany',
-    component: () => import('@/views/companies/CompanyFormView.vue'),
-    meta: { requiresAuth: true, title: 'Edit Company' }
-  },
-  {
-    path: '/partners',
-    name: 'Partners',
-    component: () => import('@/views/partners/PartnerListView.vue'),
-    meta: { requiresAuth: true, title: 'Partners' }
-  },
-  {
-    path: '/partners/create',
-    name: 'CreatePartner',
-    component: () => import('@/views/partners/PartnerFormView.vue'),
-    meta: { requiresAuth: true, title: 'Create Partner' }
-  },
-  {
-    path: '/partners/:id/edit',
-    name: 'EditPartner',
-    component: () => import('@/views/partners/PartnerFormView.vue'),
-    meta: { requiresAuth: true, title: 'Edit Partner' }
-  },
-  {
-    path: '/users',
-    name: 'Users',
-    component: () => import('@/views/users/UserListView.vue'),
-    meta: { requiresAuth: true, title: 'Users', requiresAdmin: true }
-  },
-  {
-    path: '/users/create',
-    name: 'CreateUser',
-    component: () => import('@/views/users/UserFormView.vue'),
-    meta: { requiresAuth: true, title: 'Create User', requiresAdmin: true }
-  },
-  {
-    path: '/users/:id/edit',
-    name: 'EditUser',
-    component: () => import('@/views/users/UserFormView.vue'),
-    meta: { requiresAuth: true, title: 'Edit User', requiresAdmin: true }
-  },
-  {
     path: '/profile',
     name: 'Profile',
     component: () => import('@/views/profile/ProfileView.vue'),
     meta: { requiresAuth: true, title: 'My Profile' }
   },
-  // Inventory Management Routes
   {
-    path: '/inventory',
-    name: 'Inventory',
-    component: () => import('@/views/DynamicDashboard.vue'),
-    meta: { requiresAuth: true, title: 'Inventory Management' }
-  },
-  {
-    path: '/inventory/products',
-    name: 'ProductList',
+    path: '/test-navigation',
+    name: 'TestNavigation',
     component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Products - Inventory' }
-  },
-  {
-    path: '/inventory/products/new',
-    name: 'ProductCreate',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'New Product - Inventory' }
-  },
-  {
-    path: '/inventory/products/:id/edit',
-    name: 'ProductEdit',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Edit Product - Inventory' }
-  },
-  {
-    path: '/inventory/categories',
-    redirect: '/inventory'
-  },
-  {
-    path: '/inventory/stock-movements',
-    redirect: '/inventory'
-  },
-  {
-    path: '/inventory/stock-levels',
-    redirect: '/inventory'
-  },
-  {
-    path: '/inventory/warehouses',
-    redirect: '/inventory'
-  },
-  {
-    path: '/inventory/receiving',
-    redirect: '/inventory'
-  },
-  {
-    path: '/inventory/suppliers',
-    redirect: '/partners'
-  },
-  // Sales Management Routes
-  {
-    path: '/sales',
-    redirect: '/sales/dashboard'
-  },
-  {
-    path: '/sales/dashboard',
-    name: 'SalesDashboard',
-    component: () => import('@/views/DynamicDashboard.vue'),
-    meta: { requiresAuth: true, title: 'Sales Dashboard' }
-  },
-  {
-    path: '/sales/quotations',
-    name: 'QuotationsList',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Sales Quotations' }
-  },
-  {
-    path: '/sales/quotations/new',
-    name: 'QuotationCreate',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'New Quotation' }
-  },
-  {
-    path: '/sales/quotations/:id',
-    name: 'QuotationView',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'View Quotation' }
-  },
-  {
-    path: '/sales/quotations/:id/edit',
-    name: 'QuotationEdit',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Edit Quotation' }
-  },
-  {
-    path: '/sales/orders',
-    name: 'OrdersList',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Sales Orders' }
-  },
-  {
-    path: '/sales/orders/new',
-    name: 'OrderCreate',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'New Order' }
-  },
-  {
-    path: '/sales/orders/:id',
-    name: 'OrderView',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'View Order' }
-  },
-  {
-    path: '/sales/orders/:id/edit',
-    name: 'OrderEdit',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Edit Order' }
-  },
-  {
-    path: '/sales/pricing',
-    name: 'PricingList',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Pricing Rules' }
-  },
-  {
-    path: '/sales/pricing/new',
-    name: 'PricingCreate',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'New Pricing Rule' }
-  },
-  {
-    path: '/sales/pricing/:id/edit',
-    name: 'PricingEdit',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Edit Pricing Rule' }
-  },
-  {
-    path: '/sales/customers',
-    name: 'CustomersList',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Customers' }
-  },
-  {
-    path: '/sales/analytics',
-    name: 'SalesAnalytics',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Sales Analytics' }
-  },
-  // Purchasing Management Routes
-  {
-    path: '/purchasing',
-    redirect: '/purchasing/dashboard'
-  },
-  {
-    path: '/purchasing/dashboard',
-    name: 'PurchasingDashboard',
-    component: () => import('@/views/DynamicDashboard.vue'),
-    meta: { requiresAuth: true, title: 'Purchasing Dashboard' }
-  },
-  {
-    path: '/purchasing/orders',
-    name: 'PurchaseOrdersList',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Purchase Orders' }
-  },
-  {
-    path: '/purchasing/orders/new',
-    name: 'PurchaseOrderCreate',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'New Purchase Order' }
-  },
-  {
-    path: '/purchasing/orders/:id',
-    name: 'PurchaseOrderView',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'View Purchase Order' }
-  },
-  {
-    path: '/purchasing/orders/:id/edit',
-    name: 'PurchaseOrderEdit',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Edit Purchase Order' }
-  },
-  {
-    path: '/purchasing/suppliers',
-    name: 'SuppliersList',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Suppliers' }
-  },
-  {
-    path: '/purchasing/suppliers/new',
-    name: 'SupplierCreate',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'New Supplier' }
-  },
-  {
-    path: '/purchasing/suppliers/:id',
-    name: 'SupplierView',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'View Supplier' }
-  },
-  {
-    path: '/purchasing/suppliers/:id/edit',
-    name: 'SupplierEdit',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Edit Supplier' }
-  },
-  {
-    path: '/purchasing/approvals',
-    name: 'PurchaseApprovals',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Purchase Approvals' }
-  },
-  {
-    path: '/purchasing/reports',
-    name: 'PurchasingReports',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Purchasing Reports' }
-  },
-  {
-    path: '/purchasing/settings',
-    name: 'PurchasingSettings',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Purchasing Settings' }
+    meta: { requiresAuth: true, title: 'Test Navigation' }
   },
   {
     path: '/:pathMatch(.*)*',
@@ -302,20 +41,181 @@ const routes: RouteRecordRaw[] = [
   }
 ]
 
+// Function to generate dynamic routes from menu items
+function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
+  const dynamicRoutes: RouteRecordRaw[] = []
+  
+  function processMenu(menu: MenuItem) {
+    // Skip hidden menus
+    if (!menu.is_visible) return
+    
+    // Generate route for this menu if it has a URL
+    if (menu.url && menu.item_type === 'link') {
+      // For inventory, sales, purchasing, and other dynamic modules, use DynamicView
+      if (menu.url.startsWith('/inventory') || 
+          menu.url.startsWith('/sales') || 
+          menu.url.startsWith('/purchasing') ||
+          menu.url.startsWith('/settings')) {
+        dynamicRoutes.push({
+          path: menu.url,
+          name: menu.code || `dynamic-${menu.id}`,
+          component: () => import('@/views/DynamicView.vue'),
+          meta: { 
+            requiresAuth: true, 
+            title: menu.title,
+            requiredPermission: menu.required_permission
+          }
+        })
+        
+        // Add edit route if this is a list view
+        if (menu.url.includes('/products') || 
+            menu.url.includes('/orders') || 
+            menu.url.includes('/suppliers') ||
+            menu.url.includes('/quotations') ||
+            menu.url.includes('/pricing') ||
+            menu.url.includes('/warehouses') ||
+            menu.url.includes('/categories') ||
+            menu.url.includes('/customers') ||
+            menu.url.includes('/receiving') ||
+            menu.url.includes('/stock')) {
+          dynamicRoutes.push({
+            path: `${menu.url}/:id/edit`,
+            name: `${menu.code || `dynamic-${menu.id}`}-edit`,
+            component: () => import('@/views/DynamicView.vue'),
+            meta: { 
+              requiresAuth: true, 
+              title: `Edit ${menu.title}`,
+              requiredPermission: menu.required_permission
+            }
+          })
+          
+          // Add create route if this is a list view
+          dynamicRoutes.push({
+            path: `${menu.url}/new`,
+            name: `${menu.code || `dynamic-${menu.id}`}-create`,
+            component: () => import('@/views/DynamicView.vue'),
+            meta: { 
+              requiresAuth: true, 
+              title: `New ${menu.title.replace(' List', '').replace('s', '')}`,
+              requiredPermission: menu.required_permission
+            }
+          })
+        }
+      }
+      // For dashboard views, use DynamicDashboard
+      else if (menu.url.includes('/dashboard')) {
+        dynamicRoutes.push({
+          path: menu.url,
+          name: menu.code || `dynamic-dashboard-${menu.id}`,
+          component: () => import('@/views/DynamicDashboard.vue'),
+          meta: { 
+            requiresAuth: true, 
+            title: menu.title,
+            requiredPermission: menu.required_permission
+          }
+        })
+      }
+    }
+    
+    // Process child menus recursively
+    //console.log('Process child menus recursively......')
+    if (menu.children && menu.children.length > 0) {
+      menu.children.forEach(processMenu)
+    }
+  }
+  
+
+
+  //console.log('Process all top-level menus...', menus)
+  menus.forEach(processMenu)
+  
+  return dynamicRoutes
+}
+
+// Initialize routes with static routes
+let routes: RouteRecordRaw[] = [...staticRoutes]
+
+// Create router with initial static routes
 const router = createRouter({
   history: createWebHistory(),
   routes
 })
 
+// Track if dynamic routes have been added
+let dynamicRoutesAdded = false
+
+// Function to add dynamic routes from menu data
+async function addDynamicRoutes() {
+  if (dynamicRoutesAdded) {
+    console.log('Dynamic routes already added, skipping')
+    return
+  }
+  
+  const authStore = useAuthStore()
+  const menuStore = useMenuStore()
+  
+  console.log('Adding dynamic routes, auth status:', authStore.isAuthenticated)
+  console.log('Menu store has menus:', menuStore.hasMenus)
+  
+  // Only add dynamic routes if user is authenticated
+  if (authStore.isAuthenticated) {
+    try {
+      // Fetch menus if not already loaded
+      if (!menuStore.hasMenus) {
+        console.log('Fetching menus...')
+        await menuStore.fetchMenus()
+      }
+      
+      console.log('Menus loaded:', menuStore.menus)
+      
+      // Generate and add dynamic routes
+      const dynamicRoutes = generateDynamicRoutes(menuStore.menus)
+      console.log('Generated routes:', dynamicRoutes.map(r => ({path: r.path, name: r.name})))
+      
+      dynamicRoutes.forEach(route => {
+        console.log('Adding route to router:', route.path)
+        router.addRoute(route)
+      })
+      
+      dynamicRoutesAdded = true
+      console.log(`Added ${dynamicRoutes.length} dynamic routes`)
+      
+      // Log all current routes for debugging
+      console.log('Current router routes:', router.getRoutes().map(r => r.path))
+    } catch (error) {
+      console.error('Failed to add dynamic routes:', error)
+    }
+  } else {
+    console.log('User not authenticated, skipping dynamic routes')
+  }
+}
+
 // Navigation guards
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
+  console.log('Navigation guard - to:', to.path, 'from:', from.path)
+  console.log('Auth status:', authStore.isAuthenticated, 'Token:', !!authStore.token)
+  
+  // Check if this is a route that should have a dynamic route
+  if (to.path.startsWith('/inventory') || to.path.startsWith('/sales') || to.path.startsWith('/purchasing')) {
+    console.log('This is a dynamic route path:', to.path)
+    // Check if dynamic routes have been added
+    console.log('Dynamic routes added:', dynamicRoutesAdded)
+    if (dynamicRoutesAdded) {
+      // Check if the route exists
+      const route = router.resolve(to.path)
+      console.log('Resolved route:', route.name, route.path)
+    }
+  }
+  
   // Set page title
   document.title = to.meta.title ? `${to.meta.title} - XERPIUM` : 'XERPIUM'
+  console.log('Setting page title:', document.title)
   
   // Initialize auth if we have a token but no user data
   if (authStore.token && !authStore.user) {
+    console.log('Initializing auth...')
     try {
       await authStore.initializeAuth()
     } catch (error) {
@@ -329,24 +229,57 @@ router.beforeEach(async (to, from, next) => {
     }
   }
   
+  // Ensure user data is fresh for routes that require permissions
+  if (to.meta.requiredPermission && authStore.token) {
+    try {
+      // Refresh user data to ensure permissions are up to date
+      await authStore.fetchCurrentUser()
+      console.log('Refreshed user data for permission check')
+      console.log('User now has permissions:', authStore.user?.permissions)
+    } catch (error) {
+      console.error('Failed to refresh user data:', error)
+      // Continue with existing user data
+    }
+  }
+  
+  // Add dynamic routes if not already added and user is authenticated
+  if (authStore.isAuthenticated && !dynamicRoutesAdded) {
+    console.log('Adding dynamic routes...')
+    await addDynamicRoutes()
+  }
+  
   // Check if route requires authentication
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    console.log('Route requires auth, redirecting to login')
     next({ name: 'Login', query: { redirect: to.fullPath } })
     return
   }
   
   // Check if route requires admin privileges
   if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    console.log('Route requires admin, redirecting to dashboard')
+    next({ name: 'Dashboard' })
+    return
+  }
+  
+  // Check if route requires specific permission
+  if (to.meta.requiredPermission && !authStore.hasPermission(to.meta.requiredPermission)) {
+    console.log('Route requires permission, redirecting to dashboard')
+    console.log('Required permission:', to.meta.requiredPermission)
+    console.log('User permissions:', authStore.user?.permissions)
+    console.log('Has permission:', authStore.hasPermission(to.meta.requiredPermission))
     next({ name: 'Dashboard' })
     return
   }
   
   // Redirect to dashboard if trying to access login while authenticated
   if (to.name === 'Login' && authStore.isAuthenticated) {
+    console.log('Already authenticated, redirecting to dashboard')
     next({ name: 'Dashboard' })
     return
   }
   
+  console.log('Allowing navigation to:', to.path)
   next()
 })
 

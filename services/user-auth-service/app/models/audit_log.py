@@ -101,7 +101,7 @@ class AuditLog(Base):
     response_status = Column(Integer, nullable=True)
     
     # Additional metadata
-    additional_data = Column(JSON, nullable=True)  # Flexible additional data
+    additional_data = Column("metadata", JSON, nullable=True)  # Flexible additional data
     tags = Column(JSON, nullable=True)  # For categorization and searching
     
     # Outcome and impact
@@ -141,7 +141,7 @@ class AuditLog(Base):
         severity: AuditSeverity = AuditSeverity.LOW,
         success: bool = True,
         error_message: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        additional_data: Optional[Dict[str, Any]] = None,
         tags: Optional[list[str]] = None,
         session_id: Optional[str] = None,
         request_id: Optional[str] = None
@@ -165,7 +165,7 @@ class AuditLog(Base):
             severity: Log severity level
             success: Whether action succeeded
             error_message: Error message if action failed
-            metadata: Additional metadata
+            additional_data: Additional metadata
             tags: Tags for categorization
             session_id: Session identifier
             request_id: Request identifier
@@ -197,7 +197,7 @@ class AuditLog(Base):
             response_status=response_status,
             success=success,
             error_message=error_message,
-            metadata=metadata,
+            additional_data=additional_data,
             tags=tags,
             session_id=session_id,
             request_id=request_id
@@ -280,7 +280,7 @@ class AuditLog(Base):
             "response_status": self.response_status,
             "success": self.success,
             "error_message": self.error_message,
-            "metadata": self.metadata,
+            "metadata": self.additional_data,
             "tags": self.tags,
             "created_at": self.created_at.isoformat() if self.created_at else None
         }

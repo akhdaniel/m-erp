@@ -18,6 +18,10 @@ export const useAuthStore = defineStore('auth', () => {
   // Getters
   const isAuthenticated = computed(() => !!token.value && !!user.value)
   const isAdmin = computed(() => user.value?.is_superuser || false)
+  const hasPermission = (permission: string) => {
+    if (!user.value) return false
+    return user.value.permissions?.includes(permission) || false
+  }
 
   // Actions
   async function login(credentials: LoginCredentials): Promise<void> {
@@ -123,6 +127,7 @@ export const useAuthStore = defineStore('auth', () => {
     // Getters
     isAuthenticated,
     isAdmin,
+    hasPermission,
     
     // Actions
     login,

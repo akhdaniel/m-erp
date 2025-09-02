@@ -15,7 +15,7 @@ import sys
 from sales_module.services.quote_service import QuotationService
 from sales_module.framework.database import get_db_session
 from sqlalchemy.orm import Session
-from sales_module.schemas.quotation_schemas import (
+from sales_module.schemas.quote_schemas import (
     QuotationCreateRequest, QuotationUpdateRequest, QuotationResponse, QuotationListResponse,
     QuotationLineItemCreateRequest, QuotationLineItemUpdateRequest, QuotationLineItemResponse,
     QuotationApprovalRequest, QuotationApprovalAction, QuotationApprovalResponse,

@@ -1,0 +1,299 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:17
+    container_name: m-erp-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: m_erp_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - xerpium_network
+  # Redis for messaging and caching
+  redis:
+    image: redis:7-alpine
+    container_name: m-erp-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - xerpium_network
+  # Service Registry
+  service-registry:
+    build: ./services/service-registry
+    container_name: m-erp-service-registry
+    ports:
+      - "8004:8000"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      KONG_ADMIN_URL: http://kong:8001
+      AUTH_SERVICE_URL: http://user-auth-service:8000
+      DEBUG: "true"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - xerpium_network
+
+  # API Gateway (Kong)
+  kong:
+    image: kong:3.4
+    container_name: m-erp-kong
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+    ports:
+      - "8000:8000"  # Proxy port (main API gateway)
+      - "9001:8001"  # Admin API port
+    volumes:
+      - ./services/api-gateway/kong.yml:/kong/kong.yml:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - xerpium_network
+
+  # Notification Service
+  notification-service:
+    build:
+      context: .
+      dockerfile: ./services/notification-service/Dockerfile
+    container_name: m-erp-notifications
+    ports:
+      - "8009:8005"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: notification-service
+      ENVIRONMENT: development
+      DEBUG: "true"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - xerpium_network
+
+  # Audit Service
+  audit-service:
+    build:
+      context: .
+      dockerfile: ./services/audit-service/Dockerfile
+    container_name: m-erp-audit
+    ports:
+      - "8008:8006"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/audit_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: audit-service
+      ENVIRONMENT: development
+      DEBUG: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - xerpium_network
+
+  # Menu Access Service
+  menu-access-service:
+    build: ./services/menu-access-service
+    container_name: m-erp-menu-access
+    ports:
+      - "8003:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/menu_access_db
+      AUTH_SERVICE_URL: http://user-auth-service:8000
+      SERVICE_KEY: menu-access-service-key
+      ENVIRONMENT: development
+      DEBUG: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      user-auth-service:
+        condition: service_started
+    volumes:
+      - ./services/menu-access-service:/app
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - xerpium_network        
+  # UI Service (Vue.js Frontend)
+  ui-service:
+    build:
+      context: ./services/ui-service
+      dockerfile: Dockerfile.dev
+    container_name: m-erp-ui
+    ports:
+      - "9000:9000"  # Vite dev server
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://kong:8000
+    volumes:
+      - ./services/ui-service:/app
+      - /app/node_modules  # Prevent overwriting node_modules
+    depends_on:
+      - kong
+      - user-auth-service
+      - menu-access-service
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - xerpium_network
+  # User Authentication Service
+  user-auth-service:
+    build:
+      context: .
+      dockerfile: ./services/user-auth-service/Dockerfile
+    container_name: m-erp-user-auth
+    ports:
+      - "8001:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/user_auth_db
+      SECRET_KEY: development-secret-key-change-in-production
+      ENVIRONMENT: development
+      DEBUG: "true"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: user-auth-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/user-auth-service:/app
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - xerpium_network
+  # UI Registry Service
+  ui-registry-service:
+    build: ./services/ui-registry-service
+    container_name: m-erp-ui-registry
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SERVICE_NAME: ui-registry-service
+      DEBUG: "true"
+    ports:
+      - "8010:8010"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - xerpium_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  xerpium_network:
+    driver: host
