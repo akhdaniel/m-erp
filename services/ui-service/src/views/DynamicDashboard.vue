@@ -210,17 +210,22 @@ const currentService = computed(() => {
 
 // Service URL mapping
 const serviceUrls: Record<string, string> = {
-  sales: 'http://localhost:8006',
-  inventory: 'http://localhost:8005',
-  purchasing: 'http://localhost:8007',
-  main: 'http://localhost:8001'
+  sales: import.meta.env.VITE_SALES_API || '',
+  inventory: import.meta.env.VITE_INVENTORY_API || '',
+  purchasing: import.meta.env.VITE_PURCHASING_API || '',
+  main: import.meta.env.VITE_API_BASE_URL || ''
 }
 
 // Fetch dashboard configuration from service
 async function fetchDashboardConfig() {
   try {
     // First try to get from UI Registry
-    const registryResponse = await fetch(`http://localhost:8010/api/v1/services/${currentService.value}/dashboard`)
+    const uiRegistryUrl = import.meta.env.VITE_UI_REGISTRY_API || '/api'
+    const registryEndpoint = `/api/v1/services/${currentService.value}/dashboard`
+    const registryFullUrl = uiRegistryUrl && registryEndpoint.startsWith('/api/v1')
+      ? `${uiRegistryUrl.replace(/\/api\/v1$/, '')}${registryEndpoint}`
+      : `${uiRegistryUrl}${registryEndpoint}`
+    const registryResponse = await fetch(registryFullUrl)
     
     if (registryResponse.ok) {
       dashboardConfig.value = await registryResponse.json()
@@ -228,7 +233,11 @@ async function fetchDashboardConfig() {
       // Fallback to service's own endpoint
       const serviceUrl = serviceUrls[currentService.value]
       if (serviceUrl) {
-        const response = await fetch(`${serviceUrl}/api/v1/ui-schemas/dashboard`)
+        const dashboardEndpoint = `/api/v1/ui-schemas/dashboard`
+        const dashboardFullUrl = serviceUrl && dashboardEndpoint.startsWith('/api/v1')
+          ? `${serviceUrl.replace(/\/api\/v1$/, '')}${dashboardEndpoint}`
+          : `${serviceUrl}${dashboardEndpoint}`
+        const response = await fetch(dashboardFullUrl)
         if (response.ok) {
           dashboardConfig.value = await response.json()
         } else {

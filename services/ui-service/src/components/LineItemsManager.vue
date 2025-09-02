@@ -290,7 +290,7 @@ const props = defineProps({
   },
   productApiUrl: {
     type: String,
-    default: 'http://localhost:8006/api/v1/products'
+    default: import.meta.env.VITE_SALES_API || '/api/v1/products'
   }
 })
 

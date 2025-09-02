@@ -68,23 +68,33 @@ const loadingSchema = ref(true)
 const schemaError = ref('')
 
 // Service mapping - would normally come from a registry
-// All requests go through Kong API Gateway on port 9080
+// All requests go through Kong API Gateway
 const SERVICE_MAPPING: Record<string, string> = {
-  'inventory': 'http://localhost:9080',
-  'sales': 'http://localhost:9080',
-  'purchasing': 'http://localhost:9080',
-  'partners': 'http://localhost:9080',
-  'users': 'http://localhost:9080'
+  'inventory': import.meta.env.VITE_INVENTORY_API || import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  'sales': import.meta.env.VITE_SALES_API || import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  'purchasing': import.meta.env.VITE_PURCHASING_API || import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  'partners': import.meta.env.VITE_PARTNERS_API || import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  'users': import.meta.env.VITE_USERS_API || import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  'menu': import.meta.env.VITE_MENU_API || import.meta.env.VITE_API_URL || 'http://localhost:8000'
 }
 
 // Computed
 const serviceName = computed(() => {
   // Extract service name from route (e.g., /inventory/products -> inventory)
   const pathParts = route.path.split('/')
-  return pathParts[1] || ''
+  const firstSegment = pathParts[1] || ''
+  
+  // Handle special cases
+  if (firstSegment === 'inventory') return 'inventory'
+  if (firstSegment === 'sales') return 'sales'
+  if (firstSegment === 'purchasing') return 'purchasing'
+  if (firstSegment === 'settings') return 'menu' // Settings routes go to menu service
+  
+  return firstSegment
 })
 
 const serviceUrl = computed(() => {
+  console.log('serviceUrl', serviceName.value)
   return SERVICE_MAPPING[serviceName.value] || ''
 })
 
@@ -160,7 +170,11 @@ async function loadSchema() {
       return
     }
     
-    const response = await fetch(`${serviceUrl.value}${schemaEndpoint}`)
+    // Ensure we don't duplicate /api/v1 in the URL
+    const fullUrl = serviceUrl.value && schemaEndpoint.startsWith('/api/v1') 
+      ? `${serviceUrl.value.replace(/\/api\/v1$/, '')}${schemaEndpoint}`
+      : `${serviceUrl.value}${schemaEndpoint}`
+    const response = await fetch(fullUrl)
     if (!response.ok) {
       throw new Error(`Failed to load schema: ${response.status}`)
     }
@@ -209,6 +223,18 @@ function getSchemaEndpoint(): string {
     }
   }
   
+  // Settings routes
+  if (path.includes('/settings')) {
+    if (path.includes('/menus')) {
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/menus/form'
+      }
+      return '/api/v1/ui-schemas/menus/list'
+    }
+    // Default settings route
+    return '/api/v1/ui-schemas/menus/list'
+  }
+  
   // Sales routes
   if (path.includes('/sales')) {
     if (path.includes('/dashboard')) {
@@ -241,26 +267,46 @@ function getSchemaEndpoint(): string {
   }
   
   // Inventory routes
-  if (path.includes('/products')) {
-    if (path.includes('/new') || path.includes('/edit')) {
-      return '/api/v1/ui-schemas/products/form'
+  if (path.includes('/inventory')) {
+    if (path.includes('/dashboard')) {
+      return '/api/v1/ui-schemas/dashboard'
     }
-    return '/api/v1/ui-schemas/products/list'
-  }
-  
-  if (path.includes('/warehouses')) {
-    if (path.includes('/new') || path.includes('/edit')) {
-      return '/api/v1/ui-schemas/warehouses/form'
+    if (path.includes('/products')) {
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/products/form'
+      }
+      return '/api/v1/ui-schemas/products/list'
     }
-    return '/api/v1/ui-schemas/warehouses/list'
-  }
-  
-  if (path.includes('/stock/movements')) {
-    return '/api/v1/ui-schemas/stock/movements'
-  }
-  
-  if (path.includes('/categories')) {
-    return '/api/v1/ui-schemas/categories/tree'
+    if (path.includes('/warehouses')) {
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/warehouses/form'
+      }
+      return '/api/v1/ui-schemas/warehouses/list'
+    }
+    if (path.includes('/stock')) {
+      if (path.includes('/movements')) {
+        return '/api/v1/ui-schemas/stock/movements'
+      }
+      return '/api/v1/ui-schemas/stock/list'
+    }
+    if (path.includes('/categories')) {
+      return '/api/v1/ui-schemas/categories/tree'
+    }
+    if (path.includes('/receiving')) {
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/receiving/form'
+      }
+      return '/api/v1/ui-schemas/receiving/list'
+    }
+    if (path.includes('/suppliers')) {
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/suppliers/form'
+      }
+      return '/api/v1/ui-schemas/suppliers/list'
+    }
+    if (path.includes('/reports')) {
+      return '/api/v1/ui-schemas/reports/list'
+    }
   }
   
   return ''
@@ -391,6 +437,15 @@ function handleCancel() {
 watch(() => route.path, () => {
   loadSchema()
 })
+
+// Also watch route name and params for more comprehensive updates
+watch(() => route.name, () => {
+  loadSchema()
+})
+
+watch(() => route.params, () => {
+  loadSchema()
+}, { deep: true })
 
 // Initialize
 onMounted(() => {

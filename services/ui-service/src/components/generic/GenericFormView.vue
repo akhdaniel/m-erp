@@ -381,7 +381,12 @@ const isEditMode = computed(() => !!recordId.value && recordId.value !== 'new')
 const apiUrl = computed(() => {
   if (props.endpoint) return props.endpoint
   if (props.schema.endpoint) {
-    const baseUrl = props.serviceUrl ? `${props.serviceUrl}${props.schema.endpoint}` : props.schema.endpoint
+    let baseUrl
+    console.log('props.serviceUrl',props.serviceUrl, 'props.schema.endpoint', props.schema.endpoint)
+    if (props.schema.endpoint.startsWith('/api'))
+       baseUrl = props.schema.endpoint
+    else
+       baseUrl = props.serviceUrl ? `${props.serviceUrl}${props.schema.endpoint}` : props.schema.endpoint
     return isEditMode.value ? `${baseUrl}/${recordId.value}` : baseUrl
   }
   return ''
@@ -506,7 +511,10 @@ async function loadOptions(field: any) {
     let url = field.optionsEndpoint
     if (!field.optionsEndpoint.startsWith('http://') && !field.optionsEndpoint.startsWith('https://')) {
       // Only prepend serviceUrl if the endpoint is not already a full URL
-      url = props.serviceUrl 
+      if (field.optionsEndpoint.startsWith('/api'))
+         url = field.optionsEndpoint
+      else
+         url = props.serviceUrl 
         ? `${props.serviceUrl}${field.optionsEndpoint}`
         : field.optionsEndpoint
     }
@@ -572,6 +580,7 @@ async function handleSubmit() {
       delete submitData.line_items
     }
     
+    console.log('handleSubmit-----', apiUrl.value)
     const response = await fetch(apiUrl.value, {
       method,
       headers: {
@@ -588,6 +597,7 @@ async function handleSubmit() {
     const result = await response.json()
     
     // Navigate to success route or emit event
+    console.log('submitted go back to', props.schema.successRoute)
     if (props.schema.successRoute) {
       router.push(props.schema.successRoute)
     } else {

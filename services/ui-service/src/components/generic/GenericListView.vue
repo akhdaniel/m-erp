@@ -326,14 +326,20 @@ const visibleColumns = computed(() => {
 
 // API URL
 const apiUrl = computed(() => {
+  console.log('==props.endpoint', props.endpoint)
   if (props.endpoint) return props.endpoint
   if (props.schema.endpoint) {
     // If the endpoint is already a full URL, use it as-is
     if (props.schema.endpoint.startsWith('http://') || props.schema.endpoint.startsWith('https://')) {
+      console.log('==If the endpoint is already a full URL, use it as-is', props.schema.endpoint)
       return props.schema.endpoint
     }
     // Otherwise, prepend the service URL if provided
-    return props.serviceUrl ? `${props.serviceUrl}${props.schema.endpoint}` : props.schema.endpoint
+    console.log('==Otherwise, prepend the service URL if provided', props.serviceUrl, props.schema.endpoint)
+    if (props.schema.endpoint.startsWith('/api'))
+	return props.schema.endpoint
+    else
+    	return props.serviceUrl ? `${props.serviceUrl}${props.schema.endpoint}` : props.schema.endpoint
   }
   return ''
 })
