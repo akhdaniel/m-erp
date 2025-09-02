@@ -290,7 +290,10 @@ function getSchemaEndpoint(): string {
       return '/api/v1/ui-schemas/stock/list'
     }
     if (path.includes('/categories')) {
-      return '/api/v1/ui-schemas/categories/tree'
+      if (path.includes('/new') || path.includes('/edit')) {
+        return '/api/v1/ui-schemas/categories/form'
+      }
+      return '/api/v1/ui-schemas/categories/list'
     }
     if (path.includes('/receiving')) {
       if (path.includes('/new') || path.includes('/edit')) {

@@ -381,13 +381,9 @@ const isEditMode = computed(() => !!recordId.value && recordId.value !== 'new')
 const apiUrl = computed(() => {
   if (props.endpoint) return props.endpoint
   if (props.schema.endpoint) {
-    let baseUrl
-    console.log('props.serviceUrl',props.serviceUrl, 'props.schema.endpoint', props.schema.endpoint)
-    if (props.schema.endpoint.startsWith('/api'))
-       baseUrl = props.schema.endpoint
-    else
-       baseUrl = props.serviceUrl ? `${props.serviceUrl}${props.schema.endpoint}` : props.schema.endpoint
-    return isEditMode.value ? `${baseUrl}/${recordId.value}` : baseUrl
+    // For API endpoints, use relative URLs that go through the Vite proxy
+    // The proxy is configured to forward /api requests to http://kong:8000
+    return isEditMode.value ? `${props.schema.endpoint}/${recordId.value}` : props.schema.endpoint
   }
   return ''
 })
@@ -434,7 +430,22 @@ async function loadRecord() {
   error.value = ''
   
   try {
-    const response = await fetch(apiUrl.value)
+    // Get auth token from cookies
+    const token = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('auth_token='))
+      ?.split('=')[1]
+    
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    }
+    
+    // Add authorization header if token exists
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+    
+    const response = await fetch(apiUrl.value, { headers })
     if (!response.ok) throw new Error('Failed to load record')
     
     const data = await response.json()
@@ -510,16 +521,26 @@ async function loadOptions(field: any) {
     // Check if the optionsEndpoint is already a full URL
     let url = field.optionsEndpoint
     if (!field.optionsEndpoint.startsWith('http://') && !field.optionsEndpoint.startsWith('https://')) {
-      // Only prepend serviceUrl if the endpoint is not already a full URL
-      if (field.optionsEndpoint.startsWith('/api'))
-         url = field.optionsEndpoint
-      else
-         url = props.serviceUrl 
-        ? `${props.serviceUrl}${field.optionsEndpoint}`
-        : field.optionsEndpoint
+      // For API endpoints, use relative URLs that go through the Vite proxy
+      url = field.optionsEndpoint
     }
-      
-    const response = await fetch(url)
+    
+    // Get auth token from cookies
+    const token = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('auth_token='))
+      ?.split('=')[1]
+    
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    }
+    
+    // Add authorization header if token exists
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+    
+    const response = await fetch(url, { headers })
     if (!response.ok) throw new Error('Failed to load options')
     
     const data = await response.json()
@@ -571,8 +592,35 @@ async function handleSubmit() {
   try {
     const method = isEditMode.value ? 'PUT' : 'POST'
     
-    // Prepare submission data - handle line_items special case
+    // Prepare submission data - handle line_items special case and clean up empty values
     const submitData = { ...formData.value }
+    
+    // Clean up form data - convert empty strings to null for optional fields
+    Object.keys(submitData).forEach(key => {
+      // Handle parent_category_id - convert empty string to null
+      if (key === 'parent_category_id' && submitData[key] === '') {
+        submitData[key] = null
+      }
+      // Handle color field - convert empty string to null
+      else if (key === 'color' && submitData[key] === '') {
+        submitData[key] = null
+      }
+      // Handle other fields that should be null instead of empty string
+      else if (submitData[key] === '') {
+        // Check if this field is not required - if so, we can set it to null
+        let isRequired = false
+        props.schema.sections?.forEach((section: any) => {
+          const field = section.fields?.find((f: any) => f.name === key)
+          if (field && field.required) {
+            isRequired = true
+          }
+        })
+        // Only set to null if not required
+        if (!isRequired) {
+          submitData[key] = null
+        }
+      }
+    })
     
     // If we have line_items, we may need to rename it to items for the API
     if (submitData.line_items && !submitData.items) {
@@ -581,17 +629,47 @@ async function handleSubmit() {
     }
     
     console.log('handleSubmit-----', apiUrl.value)
+    // Get auth token from cookies
+    const token = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('auth_token='))
+      ?.split('=')[1]
+    
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    }
+    
+    // Add authorization header if token exists
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+    
     const response = await fetch(apiUrl.value, {
       method,
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers,
       body: JSON.stringify(submitData)
     })
     
     if (!response.ok) {
       const errorData = await response.json()
-      throw new Error(errorData.detail || 'Failed to save')
+      let errorMessage = 'Failed to save'
+      
+      // Handle detailed validation errors
+      if (errorData.detail) {
+        if (Array.isArray(errorData.detail)) {
+          // Pydantic validation errors
+          const errorMessages = errorData.detail.map((err: any) => {
+            // Extract field name from location path
+            const fieldPath = err.loc?.slice(1).join('.') || 'field'
+            return `${fieldPath}: ${err.msg}`
+          })
+          errorMessage = errorMessages.join(', ')
+        } else if (typeof errorData.detail === 'string') {
+          errorMessage = errorData.detail
+        }
+      }
+      
+      throw new Error(errorMessage)
     }
     
     const result = await response.json()
