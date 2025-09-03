@@ -424,6 +424,575 @@ async def get_warehouses_list_schema() -> Dict[str, Any]:
     }
 
 
+@router.get("/warehouses/form")
+async def get_warehouses_form_schema() -> Dict[str, Any]:
+    """Get UI schema for warehouse form (create/edit)"""
+    return {
+        "title": "Warehouse Details",
+        "description": "Enter warehouse information",
+        "endpoint": "/api/v1/warehouses",
+        "successRoute": "/inventory/warehouses",
+        "cancelRoute": "/inventory/warehouses",
+        "submitLabel": "Save Warehouse",
+        "cancelLabel": "Cancel",
+        
+        "breadcrumbs": [
+            {"label": "Warehouses", "route": "/inventory/warehouses"},
+            {"label": "Warehouse Details"}
+        ],
+        
+        "sections": [
+            {
+                "id": "basic",
+                "title": "Basic Information",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+                "fields": [
+                    {
+                        "name": "name",
+                        "label": "Warehouse Name",
+                        "type": "text",
+                        "required": True,
+                        "placeholder": "Enter warehouse name",
+                        "colSpan": 2
+                    },
+                    {
+                        "name": "code",
+                        "label": "Code",
+                        "type": "text",
+                        "required": True,
+                        "placeholder": "e.g., WH-001, MAIN",
+                        "help": "Unique code for this warehouse"
+                    },
+                    {
+                        "name": "warehouse_type",
+                        "label": "Warehouse Type",
+                        "type": "select",
+                        "defaultValue": "main",
+                        "options": [
+                            {"label": "Main Warehouse", "value": "main"},
+                            {"label": "Distribution Center", "value": "distribution"},
+                            {"label": "Retail Store", "value": "retail"},
+                            {"label": "Manufacturing", "value": "manufacturing"},
+                            {"label": "Transit", "value": "transit"},
+                            {"label": "Third Party", "value": "third_party"},
+                            {"label": "Virtual", "value": "virtual"}
+                        ]
+                    },
+                    {
+                        "name": "description",
+                        "label": "Description",
+                        "type": "textarea",
+                        "rows": 3,
+                        "placeholder": "Enter warehouse description",
+                        "colSpan": 2
+                    }
+                ]
+            },
+            {
+                "id": "address",
+                "title": "Address Information",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+                "fields": [
+                    {
+                        "name": "address_line_1",
+                        "label": "Address Line 1",
+                        "type": "text",
+                        "placeholder": "Street address"
+                    },
+                    {
+                        "name": "address_line_2",
+                        "label": "Address Line 2",
+                        "type": "text",
+                        "placeholder": "Apartment, suite, etc. (optional)"
+                    },
+                    {
+                        "name": "city",
+                        "label": "City",
+                        "type": "text",
+                        "placeholder": "City"
+                    },
+                    {
+                        "name": "state_province",
+                        "label": "State/Province",
+                        "type": "text",
+                        "placeholder": "State or province"
+                    },
+                    {
+                        "name": "postal_code",
+                        "label": "Postal Code",
+                        "type": "text",
+                        "placeholder": "Postal code"
+                    },
+                    {
+                        "name": "country_code",
+                        "label": "Country",
+                        "type": "text",
+                        "placeholder": "Country code (e.g., US, CA)",
+                        "defaultValue": "US"
+                    }
+                ]
+            },
+            {
+                "id": "contact",
+                "title": "Contact Information",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+                "fields": [
+                    {
+                        "name": "contact_person",
+                        "label": "Contact Person",
+                        "type": "text",
+                        "placeholder": "Primary contact person"
+                    },
+                    {
+                        "name": "phone",
+                        "label": "Phone",
+                        "type": "text",
+                        "placeholder": "Phone number"
+                    },
+                    {
+                        "name": "email",
+                        "label": "Email",
+                        "type": "email",
+                        "placeholder": "Contact email"
+                    }
+                ]
+            },
+            {
+                "id": "operations",
+                "title": "Operational Settings",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+                "fields": [
+                    {
+                        "name": "timezone",
+                        "label": "Timezone",
+                        "type": "text",
+                        "placeholder": "e.g., UTC, America/New_York",
+                        "defaultValue": "UTC"
+                    },
+                    {
+                        "name": "currency_code",
+                        "label": "Currency",
+                        "type": "text",
+                        "placeholder": "Currency code (e.g., USD, EUR)",
+                        "defaultValue": "USD"
+                    },
+                    {
+                        "name": "allow_negative_stock",
+                        "label": "Allow negative stock levels",
+                        "type": "checkbox",
+                        "defaultValue": False
+                    },
+                    {
+                        "name": "require_location_tracking",
+                        "label": "Require location tracking",
+                        "type": "checkbox",
+                        "defaultValue": True
+                    },
+                    {
+                        "name": "enable_cycle_counting",
+                        "label": "Enable cycle counting",
+                        "type": "checkbox",
+                        "defaultValue": True
+                    }
+                ]
+            },
+            {
+                "id": "capacity",
+                "title": "Capacity Information",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-3",
+                "fields": [
+                    {
+                        "name": "total_area_sqm",
+                        "label": "Total Area (sqm)",
+                        "type": "number",
+                        "min": 0,
+                        "step": 0.01,
+                        "placeholder": "Total area in square meters"
+                    },
+                    {
+                        "name": "storage_area_sqm",
+                        "label": "Storage Area (sqm)",
+                        "type": "number",
+                        "min": 0,
+                        "step": 0.01,
+                        "placeholder": "Storage area in square meters"
+                    },
+                    {
+                        "name": "ceiling_height_m",
+                        "label": "Ceiling Height (m)",
+                        "type": "number",
+                        "min": 0,
+                        "step": 0.01,
+                        "placeholder": "Ceiling height in meters"
+                    },
+                    {
+                        "name": "dock_doors_count",
+                        "label": "Dock Doors",
+                        "type": "number",
+                        "min": 0,
+                        "placeholder": "Number of dock doors"
+                    }
+                ]
+            },
+            {
+                "id": "costs",
+                "title": "Cost Information",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-3",
+                "fields": [
+                    {
+                        "name": "default_cost_center",
+                        "label": "Default Cost Center",
+                        "type": "text",
+                        "placeholder": "Cost center code"
+                    },
+                    {
+                        "name": "labor_cost_per_hour",
+                        "label": "Labor Cost per Hour",
+                        "type": "number",
+                        "min": 0,
+                        "step": 0.01,
+                        "prefix": "$",
+                        "placeholder": "0.00"
+                    },
+                    {
+                        "name": "storage_cost_per_sqm",
+                        "label": "Storage Cost per sqm",
+                        "type": "number",
+                        "min": 0,
+                        "step": 0.0001,
+                        "prefix": "$",
+                        "placeholder": "0.0000"
+                    }
+                ]
+            },
+            {
+                "id": "status",
+                "title": "Status",
+                "gridClass": "grid grid-cols-1 gap-6",
+                "fields": [
+                    {
+                        "name": "is_active",
+                        "label": "Warehouse is active",
+                        "type": "checkbox",
+                        "defaultValue": True
+                    },
+                    {
+                        "name": "is_primary",
+                        "label": "Primary warehouse",
+                        "type": "checkbox",
+                        "defaultValue": False,
+                        "help": "Set this as the primary warehouse for the company"
+                    }
+                ]
+            }
+        ]
+    }
+
+
+@router.get("/warehouses/{warehouse_id}/locations/list")
+async def get_warehouse_locations_list_schema() -> Dict[str, Any]:
+    """Get UI schema for warehouse locations list view"""
+    return {
+        "title": "Warehouse Locations",
+        "description": "Manage storage locations within warehouse",
+        "viewType": "table",
+        "endpoint": "/api/v1/warehouses/{warehouse_id}/locations",
+        "keyField": "id",
+        "createLabel": "New Location",
+        "createRoute": "/inventory/warehouses/{warehouse_id}/locations/new",
+        "editRoute": "/inventory/warehouses/{warehouse_id}/locations/{id}/edit",
+        "clickable": True,
+        
+        "columns": [
+            {
+                "field": "code",
+                "label": "Location Code",
+                "isTitle": True
+            },
+            {
+                "field": "name",
+                "label": "Name"
+            },
+            {
+                "field": "location_type",
+                "label": "Type"
+            },
+            {
+                "field": "level",
+                "label": "Level"
+            },
+            {
+                "field": "current_items",
+                "label": "Items",
+                "formatter": "number"
+            },
+            {
+                "field": "is_active",
+                "label": "Status",
+                "formatter": "boolean"
+            }
+        ]
+    }
+
+
+@router.get("/warehouses/{warehouse_id}/locations/form")
+async def get_warehouse_locations_form_schema() -> Dict[str, Any]:
+    """Get UI schema for warehouse location form (create/edit)"""
+    return {
+        "title": "Location Details",
+        "description": "Enter location information",
+        "endpoint": "/api/v1/warehouses/{warehouse_id}/locations",
+        "successRoute": "/inventory/warehouses/{warehouse_id}/locations",
+        "cancelRoute": "/inventory/warehouses/{warehouse_id}/locations",
+        "submitLabel": "Save Location",
+        "cancelLabel": "Cancel",
+        
+        "breadcrumbs": [
+            {"label": "Warehouses", "route": "/inventory/warehouses"},
+            {"label": "Warehouse Locations", "route": "/inventory/warehouses/{warehouse_id}/locations"},
+            {"label": "Location Details"}
+        ],
+        
+        "sections": [
+            {
+                "id": "basic",
+                "title": "Basic Information",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+                "fields": [
+                    {
+                        "name": "name",
+                        "label": "Location Name",
+                        "type": "text",
+                        "required": True,
+                        "placeholder": "Enter location name",
+                        "colSpan": 2
+                    },
+                    {
+                        "name": "code",
+                        "label": "Code",
+                        "type": "text",
+                        "required": True,
+                        "placeholder": "e.g., A-01-001, REC-001",
+                        "help": "Unique code for this location"
+                    },
+                    {
+                        "name": "barcode",
+                        "label": "Barcode",
+                        "type": "text",
+                        "placeholder": "Optional barcode for scanning"
+                    },
+                    {
+                        "name": "location_type",
+                        "label": "Location Type",
+                        "type": "select",
+                        "required": True,
+                        "options": [
+                            {"label": "Zone", "value": "zone"},
+                            {"label": "Aisle", "value": "aisle"},
+                            {"label": "Rack", "value": "rack"},
+                            {"label": "Shelf", "value": "shelf"},
+                            {"label": "Bin", "value": "bin"},
+                            {"label": "Floor", "value": "floor"},
+                            {"label": "Dock", "value": "dock"},
+                            {"label": "Staging", "value": "staging"},
+                            {"label": "Quality Control", "value": "quality"},
+                            {"label": "Damaged Goods", "value": "damaged"}
+                        ]
+                    },
+                    {
+                        "name": "parent_location_id",
+                        "label": "Parent Location",
+                        "type": "select",
+                        "placeholder": "Select a parent location (optional)",
+                        "optionsEndpoint": "/api/v1/warehouses/{warehouse_id}/locations?active_only=true&location_type=zone,aisle,rack,shelf",
+                        "optionLabelField": "code",
+                        "optionValueField": "id"
+                    }
+                ]
+            },
+            {
+                "id": "capacity",
+                "title": "Capacity Limits",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-3",
+                "fields": [
+                    {
+                        "name": "max_weight_kg",
+                        "label": "Max Weight (kg)",
+                        "type": "number",
+                        "min": 0,
+                        "step": 0.01,
+                        "placeholder": "Maximum weight capacity"
+                    },
+                    {
+                        "name": "max_volume_cbm",
+                        "label": "Max Volume (cbm)",
+                        "type": "number",
+                        "min": 0,
+                        "step": 0.0001,
+                        "placeholder": "Maximum volume capacity"
+                    },
+                    {
+                        "name": "max_items",
+                        "label": "Max Items",
+                        "type": "number",
+                        "min": 0,
+                        "placeholder": "Maximum item count"
+                    }
+                ]
+            },
+            {
+                "id": "settings",
+                "title": "Location Settings",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+                "fields": [
+                    {
+                        "name": "allow_mixed_products",
+                        "label": "Allow mixed products",
+                        "type": "checkbox",
+                        "defaultValue": True
+                    },
+                    {
+                        "name": "allow_mixed_batches",
+                        "label": "Allow mixed batches",
+                        "type": "checkbox",
+                        "defaultValue": True
+                    },
+                    {
+                        "name": "require_picking_confirmation",
+                        "label": "Require picking confirmation",
+                        "type": "checkbox",
+                        "defaultValue": False
+                    },
+                    {
+                        "name": "climate_controlled",
+                        "label": "Climate controlled",
+                        "type": "checkbox",
+                        "defaultValue": False
+                    }
+                ]
+            },
+            {
+                "id": "climate",
+                "title": "Climate Control Settings",
+                "condition": "climate_controlled",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-4",
+                "fields": [
+                    {
+                        "name": "temperature_min",
+                        "label": "Min Temperature (°C)",
+                        "type": "number",
+                        "step": 0.1,
+                        "placeholder": "Minimum temperature"
+                    },
+                    {
+                        "name": "temperature_max",
+                        "label": "Max Temperature (°C)",
+                        "type": "number",
+                        "step": 0.1,
+                        "placeholder": "Maximum temperature"
+                    },
+                    {
+                        "name": "humidity_min",
+                        "label": "Min Humidity (%)",
+                        "type": "number",
+                        "min": 0,
+                        "max": 100,
+                        "placeholder": "Minimum humidity"
+                    },
+                    {
+                        "name": "humidity_max",
+                        "label": "Max Humidity (%)",
+                        "type": "number",
+                        "min": 0,
+                        "max": 100,
+                        "placeholder": "Maximum humidity"
+                    }
+                ]
+            },
+            {
+                "id": "optimization",
+                "title": "Optimization Settings",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+                "fields": [
+                    {
+                        "name": "pick_sequence",
+                        "label": "Pick Sequence",
+                        "type": "number",
+                        "min": 0,
+                        "defaultValue": 0,
+                        "help": "Lower numbers are picked first"
+                    },
+                    {
+                        "name": "putaway_sequence",
+                        "label": "Putaway Sequence",
+                        "type": "number",
+                        "min": 0,
+                        "defaultValue": 0,
+                        "help": "Lower numbers receive stock first"
+                    },
+                    {
+                        "name": "abc_classification",
+                        "label": "ABC Classification",
+                        "type": "select",
+                        "placeholder": "Select classification",
+                        "options": [
+                            {"label": "A - Fast Moving", "value": "A"},
+                            {"label": "B - Medium Moving", "value": "B"},
+                            {"label": "C - Slow Moving", "value": "C"}
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "access",
+                "title": "Access Control",
+                "gridClass": "grid grid-cols-1 gap-6",
+                "fields": [
+                    {
+                        "name": "restricted_access",
+                        "label": "Restricted access",
+                        "type": "checkbox",
+                        "defaultValue": False
+                    },
+                    {
+                        "name": "hazmat_approved",
+                        "label": "Hazmat approved",
+                        "type": "checkbox",
+                        "defaultValue": False
+                    }
+                ]
+            },
+            {
+                "id": "maintenance",
+                "title": "Maintenance Settings",
+                "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+                "fields": [
+                    {
+                        "name": "inspection_frequency_days",
+                        "label": "Inspection Frequency (days)",
+                        "type": "number",
+                        "min": 1,
+                        "defaultValue": 90
+                    }
+                ]
+            },
+            {
+                "id": "status",
+                "title": "Status",
+                "gridClass": "grid grid-cols-1 gap-6",
+                "fields": [
+                    {
+                        "name": "is_active",
+                        "label": "Location is active",
+                        "type": "checkbox",
+                        "defaultValue": True
+                    }
+                ]
+            }
+        ]
+    }
+
+
 @router.get("/stock/movements")
 async def get_stock_movements_schema() -> Dict[str, Any]:
     """Get UI schema for stock movements view"""

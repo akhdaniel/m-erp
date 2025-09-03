@@ -381,6 +381,24 @@ const isEditMode = computed(() => !!recordId.value && recordId.value !== 'new')
 const apiUrl = computed(() => {
   if (props.endpoint) return props.endpoint
   if (props.schema.endpoint) {
+    // If we have a serviceUrl, use it as the base
+    if (props.serviceUrl) {
+      // Check if the endpoint already starts with the serviceUrl to avoid duplication
+      if (props.schema.endpoint.startsWith(props.serviceUrl)) {
+        // Endpoint already includes the service URL, use it as-is
+        return isEditMode.value ? `${props.schema.endpoint}/${recordId.value}` : props.schema.endpoint
+      }
+      
+      // Combine serviceUrl and endpoint, being careful about slashes
+      const base = props.serviceUrl.endsWith('/') ? props.serviceUrl.slice(0, -1) : props.serviceUrl
+      let endpoint = props.schema.endpoint
+      if (endpoint.startsWith('/')) {
+        // If endpoint starts with /, remove it to avoid double slashes
+        endpoint = endpoint.substring(1)
+      }
+      const fullEndpoint = endpoint ? `${base}/${endpoint}` : base
+      return isEditMode.value ? `${fullEndpoint}/${recordId.value}` : fullEndpoint
+    }
     // For API endpoints, use relative URLs that go through the Vite proxy
     // The proxy is configured to forward /api requests to http://kong:8000
     return isEditMode.value ? `${props.schema.endpoint}/${recordId.value}` : props.schema.endpoint

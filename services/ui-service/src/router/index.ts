@@ -28,12 +28,6 @@ const staticRoutes: RouteRecordRaw[] = [
     meta: { requiresAuth: true, title: 'My Profile' }
   },
   {
-    path: '/test-navigation',
-    name: 'TestNavigation',
-    component: () => import('@/views/DynamicView.vue'),
-    meta: { requiresAuth: true, title: 'Test Navigation' }
-  },
-  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@/views/NotFoundView.vue'),

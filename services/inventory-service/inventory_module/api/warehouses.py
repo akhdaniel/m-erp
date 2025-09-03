@@ -129,7 +129,7 @@ class WarehouseResponse(BaseModel):
 
 
 class LocationCreate(BaseModel):
-    warehouse_id: int
+    warehouse_id: Optional[int] = None
     name: str = Field(..., min_length=1, max_length=255)
     code: str = Field(..., min_length=1, max_length=100)
     barcode: Optional[str] = Field(None, max_length=100)

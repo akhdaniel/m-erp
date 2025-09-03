@@ -25,6 +25,7 @@ class WarehouseService(BaseService):
     
     def create_warehouse(self, name: str, code: str, 
                         warehouse_type: WarehouseType = WarehouseType.MAIN,
+                        create_default_locations: bool = True,
                         **kwargs) -> Warehouse:
         """Create a new warehouse."""
         # Validate warehouse code uniqueness within company
@@ -48,7 +49,7 @@ class WarehouseService(BaseService):
         warehouse = self.create(Warehouse, warehouse_data)
         
         # Create default locations if specified
-        if kwargs.get('create_default_locations', True):
+        if create_default_locations:
             self._create_default_locations(warehouse)
         
         return warehouse
