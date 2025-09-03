@@ -94,7 +94,6 @@ const serviceName = computed(() => {
 })
 
 const serviceUrl = computed(() => {
-  console.log('serviceUrl', serviceName.value)
   return SERVICE_MAPPING[serviceName.value] || ''
 })
 

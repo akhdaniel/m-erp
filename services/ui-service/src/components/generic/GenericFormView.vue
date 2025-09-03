@@ -379,7 +379,9 @@ const recordId = computed(() => props.id || route.params.id)
 const isEditMode = computed(() => !!recordId.value && recordId.value !== 'new')
 
 const apiUrl = computed(() => {
-  if (props.endpoint) return props.endpoint
+  if (props.endpoint) {
+    return props.endpoint
+  }
   if (props.schema.endpoint) {
     // If we have a serviceUrl, use it as the base
     if (props.serviceUrl) {

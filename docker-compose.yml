@@ -221,7 +221,15 @@ services:
       - "9000:9000"  # Vite dev server
     environment:
       NODE_ENV: development
-      VITE_API_URL: http://kong:8000
+      VITE_INVENTORY_API: /api/v1
+      VITE_SALES_API: /api/v1
+      VITE_PURCHASING_API: /api/v1
+      VITE_PARTNERS_API: /api/v1
+      VITE_USERS_API: /api/v1
+      VITE_COMPANY_PARTNER_API: /api/v1
+      VITE_MENU_ACCESS_API: /api/v1
+      VITE_MENU_API: /api/v1
+      VITE_UI_REGISTRY_API: /api/v1
     volumes:
       - ./services/ui-service:/app
       - /app/node_modules  # Prevent overwriting node_modules
