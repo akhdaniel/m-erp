@@ -259,6 +259,7 @@ def get_location_service(db: Session = Depends(get_db)) -> WarehouseLocationServ
 
 # Warehouse endpoints
 @router.post("/", response_model=WarehouseResponse, status_code=201)
+@router.post("", response_model=WarehouseResponse, status_code=201)
 async def create_warehouse(
     warehouse_data: WarehouseCreate,
     service: WarehouseService = Depends(get_warehouse_service)
