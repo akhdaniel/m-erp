@@ -13,7 +13,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 import logging
 
-from inventory_module.models import StockLevel, StockMovement, StockMovementType
+from inventory_module.models import StockLevel, StockMovement, StockMovementType, Product, WarehouseLocation
 from inventory_module.services import StockService, StockMovementService
 from inventory_module.database import get_db
 
@@ -387,16 +387,27 @@ async def get_recent_movements(
 ):
     """Get recent stock movements for dashboard."""
     try:
-        movements = service.get_recent_movements(limit=limit)
+        # Get recent movements with joined data for dashboard
+        from sqlalchemy.orm import joinedload
+        from inventory_module.models import Product, WarehouseLocation
+        from sqlalchemy import desc
+        
+        movements = service.db.query(StockMovement)\
+            .options(joinedload(StockMovement.product))\
+            .options(joinedload(StockMovement.warehouse_location))\
+            .order_by(desc(StockMovement.created_at))\
+            .limit(limit)\
+            .all()
+        
         return [
             {
-                "product": m.product.name if hasattr(m, 'product') and m.product else "Unknown Product",
-                "type": m.movement_type if hasattr(m, 'movement_type') else "Unknown",
-                "quantity": m.quantity if hasattr(m, 'quantity') else 0,
-                "warehouse": m.location.warehouse.name if hasattr(m, 'location') and m.location and hasattr(m.location, 'warehouse') else "Unknown",
-                "time": m.created_at.isoformat() if hasattr(m, 'created_at') else datetime.utcnow().isoformat()
+                "product_name": movement.product.name if movement.product else "Unknown Product",
+                "movement_type": movement.movement_type.value if hasattr(movement, 'movement_type') else "Unknown",
+                "quantity": float(movement.quantity) if hasattr(movement, 'quantity') else 0,
+                "location_name": movement.warehouse_location.name if movement.warehouse_location else "Unknown Location",
+                "created_at": movement.created_at.isoformat() if hasattr(movement, 'created_at') else datetime.utcnow().isoformat()
             }
-            for m in movements
+            for movement in movements
         ] if movements else []
     except Exception as e:
         logger.error(f"Error getting recent movements: {e}")

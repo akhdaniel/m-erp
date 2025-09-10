@@ -30,7 +30,7 @@ async def get_menu_tree(
     """Get the complete menu tree for the current user."""
     # Get current user from request
     current_user = request.state.user
-    logger.info(f'currnet user:{current_user}')
+    logger.info(f'------------------------------------------------------------ currnet user:{current_user}')
     
     service = MenuService(db)
     

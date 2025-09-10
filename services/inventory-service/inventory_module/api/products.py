@@ -13,8 +13,9 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from inventory_module.models import Product, ProductCategory, ProductVariant, ProductType, ProductStatus
-from inventory_module.services import ProductService, ProductCategoryService, ProductVariantService
+from inventory_module.services import ProductService, ProductCategoryService, ProductVariantService, StockService
 from inventory_module.database import get_db
+from inventory_module.api.stock import get_stock_service
 
 import logging
 logger = logging.getLogger(__name__)
@@ -438,6 +439,16 @@ async def get_product_stats(
         "inactive": inactive,
         "categories": categories
     }
+
+@router.get("/top-movers", response_model=List[Dict[str, Any]])
+async def get_top_moving_products(
+    limit: int = Query(10, ge=1, le=50, description="Number of top products to return"),
+    days_back: int = Query(30, ge=1, le=365, description="Number of days to analyze"),
+    stock_service: StockService = Depends(get_stock_service)
+):
+    """Get top moving products by movement count."""
+    top_movers = stock_service.get_top_moving_products(limit=limit, days_back=days_back)
+    return top_movers
 
 
 @router.get("/{product_id}", response_model=ProductResponse)

@@ -348,6 +348,14 @@ class ReceivingService(BaseService):
         """Calculate receiving statistics for reporting."""
         since_date = datetime.utcnow() - timedelta(days=days_back)
         
+        # Get pending receipts count (DRAFT or IN_PROGRESS status)
+        pending_count = self.db.query(func.count(ReceivingRecord.id)).filter(
+            and_(
+                ReceivingRecord.status.in_([ReceivingStatus.DRAFT, ReceivingStatus.IN_PROGRESS]),
+                ReceivingRecord.created_at >= since_date
+            )
+        ).scalar() or 0
+        
         # Overall statistics
         query = self.db.query(
             func.count(ReceivingRecord.id).label('total_receipts'),
@@ -376,6 +384,7 @@ class ReceivingService(BaseService):
         return {
             'period_days': days_back,
             'total_receipts': overall.total_receipts or 0,
+            'pending_count': pending_count,
             'total_quantity_expected': float(overall.total_expected or 0),
             'total_quantity_received': float(overall.total_received or 0),
             'total_value_received': float(overall.total_value or 0),

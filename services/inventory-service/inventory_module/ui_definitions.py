@@ -10,12 +10,24 @@ INVENTORY_UI_PACKAGE = {
         {
             "id": "inventory-dashboard",
             "type": "dashboard",
-            "title": "Inventory Dashboard 2",
+            "title": "Inventory Dashboard",
             "description": "Overview of inventory metrics and status",
             "path": "/inventory",
-            "icon": "warehouse",
+            "icon": "package",
             "permissions": ["access_inventory"],
-            "order": 1
+            "order": 1,
+            "config": {
+                "layout": [
+                    {"widget": "total-products", "row": 0, "col": 0},
+                    {"widget": "active-products", "row": 0, "col": 1},
+                    {"widget": "stock-value", "row": 0, "col": 2},
+                    {"widget": "low-stock-alerts", "row": 0, "col": 3},
+                    {"widget": "warehouse-count", "row": 1, "col": 0},
+                    {"widget": "pending-receipts", "row": 1, "col": 1},
+                    {"widget": "recent-movements", "row": 2, "col": 0, "colspan": 4},
+                    {"widget": "low-stock-list", "row": 3, "col": 0, "colspan": 4}
+                ]
+            }
         }
     ],
     
@@ -31,6 +43,20 @@ INVENTORY_UI_PACKAGE = {
                 "format": "number",
                 "icon": "package",
                 "color": "blue"
+            },
+            "permissions": ["view_products"]
+        },
+        {
+            "id": "active-products",
+            "title": "Active Products",
+            "type": "metric",
+            "size": "small",
+            "data_endpoint": "/api/v1/products/stats",
+            "config": {
+                "field": "active",
+                "format": "number",
+                "icon": "check-circle",
+                "color": "green"
             },
             "permissions": ["view_products"]
         },
@@ -76,6 +102,20 @@ INVENTORY_UI_PACKAGE = {
                 "color": "purple"
             },
             "permissions": ["view_warehouses"]
+        },
+        {
+            "id": "pending-receipts",
+            "title": "Pending Receipts",
+            "type": "metric",
+            "size": "small",
+            "data_endpoint": "/api/v1/receiving/stats",
+            "config": {
+                "field": "pending_count",
+                "format": "number",
+                "icon": "inbox",
+                "color": "orange"
+            },
+            "permissions": ["view_receiving"]
         },
         {
             "id": "recent-movements",
@@ -169,6 +209,28 @@ INVENTORY_UI_PACKAGE = {
                 {"id": "locations", "label": "Manage Locations", "icon": "map-pin"}
             ],
             "permissions": ["view_warehouses"]
+        },
+        {
+            "id": "categories-list",
+            "title": "Categories",
+            "entity": "categories",
+            "data_endpoint": "/api/v1/products/categories",
+            "columns": [
+                {"key": "code", "label": "Code", "sortable": True},
+                {"key": "name", "label": "Category Name", "sortable": True},
+                {"key": "parent_category_name", "label": "Parent Category", "sortable": True},
+                {"key": "product_count", "label": "Products", "format": "number", "sortable": True},
+                {"key": "is_active", "label": "Active", "format": "boolean"}
+            ],
+            "actions": [
+                {"id": "view", "label": "View", "icon": "eye"},
+                {"id": "edit", "label": "Edit", "icon": "edit"}
+            ],
+            "filters": [
+                {"key": "is_active", "label": "Active Status", "type": "select"},
+                {"key": "search", "label": "Search", "type": "text"}
+            ],
+            "permissions": ["view_products"]
         }
     ],
     
@@ -374,35 +436,7 @@ INVENTORY_UI_PACKAGE = {
             ],
             "layout": "single",
             "permissions": ["manage_warehouses"]
-        }
-    ],
-
-    "lists": [
-        {
-            "id": "categories-list",
-            "title": "Categories",
-            "entity": "categories",
-            "data_endpoint": "/api/v1/products/categories",
-            "columns": [
-                {"key": "code", "label": "Code", "sortable": True},
-                {"key": "name", "label": "Category Name", "sortable": True},
-                {"key": "parent_category_name", "label": "Parent Category", "sortable": True},
-                {"key": "product_count", "label": "Products", "format": "number", "sortable": True},
-                {"key": "is_active", "label": "Active", "format": "boolean"}
-            ],
-            "actions": [
-                {"id": "view", "label": "View", "icon": "eye"},
-                {"id": "edit", "label": "Edit", "icon": "edit"}
-            ],
-            "filters": [
-                {"key": "is_active", "label": "Active Status", "type": "select"},
-                {"key": "search", "label": "Search", "type": "text"}
-            ],
-            "permissions": ["view_products"]
-        }
-    ],
-
-    "forms": [
+        },
         {
             "id": "category-form",
             "title": "Category",
@@ -462,5 +496,6 @@ INVENTORY_UI_PACKAGE = {
             "layout": "single",
             "permissions": ["manage_products"]
         }
-    ]
-}
+    ],
+
+    }

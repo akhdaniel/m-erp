@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
-export type ThemeColor = 'blue' | 'dark-red' | 'purple'
+export type ThemeColor = 'blue' | 'dark-red' | 'purple' | 'light'
 
 interface ThemeConfig {
   name: string
@@ -52,6 +52,18 @@ const themes: Record<ThemeColor, ThemeConfig> = {
     textSecondary: '#a855f7',
     buttonPrimary: '#9333ea',
     buttonHover: '#7e22ce'
+  },
+  'light': {
+    name: 'Light Mode',
+    color: 'light',
+    primaryGradient: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+    secondaryGradient: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+    glassBackground: 'rgba(255, 255, 255, 0.8)',
+    glassBorder: 'rgba(229, 231, 235, 0.8)',
+    textPrimary: '#1f2937',
+    textSecondary: '#374151',
+    buttonPrimary: '#1f2937',
+    buttonHover: '#111827'
   }
 }
 
@@ -79,6 +91,9 @@ export const useThemeStore = defineStore('theme', () => {
     root.style.setProperty('--theme-text-secondary', theme.textSecondary)
     root.style.setProperty('--theme-button-primary', theme.buttonPrimary)
     root.style.setProperty('--theme-button-hover', theme.buttonHover)
+    
+    // Set data-theme attribute for CSS selectors
+    root.setAttribute('data-theme', theme.color)
   }
 
   // Set theme

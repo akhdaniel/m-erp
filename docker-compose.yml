@@ -23,7 +23,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
   # Redis for messaging and caching
   redis:
     image: redis:7-alpine
@@ -44,7 +44,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
   # User Authentication Service
   user-auth-service:
     build:
@@ -75,7 +75,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
   # Company Partner Service
   company-partner-service:
@@ -110,7 +110,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
   # Menu Access Service
   menu-access-service:
@@ -142,7 +142,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
   # Service Registry
   service-registry:
@@ -173,7 +173,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
   # API Gateway (Kong)
   kong:
@@ -209,7 +209,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
   # UI Service (Vue.js Frontend)
   ui-service:
@@ -249,7 +249,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
 
   # Notification Service
@@ -281,7 +281,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
   # Audit Service
   audit-service:
@@ -317,7 +317,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
   # Inventory Service
   inventory-service:
@@ -360,7 +360,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
   # Sales Service
   sales-service:
@@ -405,7 +405,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
   # UI Registry Service
   ui-registry-service:
@@ -435,7 +435,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
   purchasing-service:
     build:
@@ -477,12 +477,12 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_odoo_network
+      - chat_default
 
 volumes:
   postgres_data:
   redis_data:
 
 networks:
-  chat_odoo_network:
+  chat_default:
     external: true

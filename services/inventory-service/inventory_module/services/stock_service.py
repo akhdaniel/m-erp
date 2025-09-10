@@ -487,3 +487,43 @@ class StockMovementService(BaseService):
             }
         
         return statistics
+    
+    def get_recent_movements(self, limit: int = 10) -> List[StockMovement]:
+        """Get recent stock movements for dashboard."""
+        query = self.db.query(StockMovement)
+        query = self._apply_company_filter(query, StockMovement)
+        query = query.order_by(StockMovement.created_at.desc())
+        query = query.limit(limit)
+        return query.all()
+    
+    def get_top_moving_products(self, limit: int = 10, days_back: int = 30) -> List[Dict[str, Any]]:
+        """Get top moving products by movement count."""
+        since_date = datetime.utcnow() - timedelta(days=days_back)
+        
+        # Join with Product table and group by product
+        query = self.db.query(
+            Product.name.label('product_name'),
+            func.count(StockMovement.id).label('movement_count'),
+            func.sum(StockMovement.quantity).label('total_quantity')
+        ).join(Product, StockMovement.product_id == Product.id).filter(
+            and_(
+                StockMovement.created_at >= since_date,
+                Product.is_active == True
+            )
+        )
+        
+        query = self._apply_company_filter(query, StockMovement)
+        query = query.group_by(Product.id, Product.name)
+        query = query.order_by(desc(func.count(StockMovement.id)))
+        query = query.limit(limit)
+        
+        results = query.all()
+        
+        return [
+            {
+                'product_name': result.product_name,
+                'movement_count': result.movement_count,
+                'total_quantity': float(result.total_quantity or 0)
+            }
+            for result in results
+        ]
