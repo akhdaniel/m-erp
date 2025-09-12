@@ -259,6 +259,18 @@ class BaseService:
         
         return query.limit(limit).all()
     
+    def count(self, model_class, *filters):
+        """Count records with optional filters."""
+        query = self.db.query(func.count(model_class.id))
+        query = self._apply_company_filter(query, model_class)
+        
+        # Apply additional filters if provided
+        if filters:
+            query = query.filter(*filters)
+            
+        result = query.first()
+        return result[0] if result else 0
+    
     def _validate_model(self, model: T) -> None:
         """Validate model before save. Override in subclasses."""
         # Basic validation

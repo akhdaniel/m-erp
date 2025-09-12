@@ -618,3 +618,24 @@ async def delete_location(
     except Exception as e:
         service.rollback()
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/stats")
+async def get_warehouse_statistics(
+    service: WarehouseService = Depends(get_warehouse_service)
+):
+    """Get warehouse statistics for dashboard."""
+    try:
+        # Get total warehouse count
+        total_warehouses = service.count(Warehouse)
+        
+        # Get active warehouse count
+        active_warehouses = service.count(Warehouse, Warehouse.is_active == True)
+        
+        return {
+            "total": total_warehouses,
+            "active": active_warehouses
+        }
+    except Exception as e:
+        logger.error(f"Error getting warehouse statistics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve warehouse statistics")

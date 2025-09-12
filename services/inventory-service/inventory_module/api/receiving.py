@@ -422,3 +422,20 @@ async def perform_quality_inspection(
     except Exception as e:
         service.rollback()
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/stats")
+async def get_receiving_statistics(
+    service: ReceivingService = Depends(get_receiving_service)
+):
+    """Get receiving statistics for dashboard."""
+    try:
+        # Get pending receipts count
+        pending_count = service.count_pending_receipts()
+        
+        return {
+            "pending_count": pending_count
+        }
+    except Exception as e:
+        logger.error(f"Error getting receiving statistics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve receiving statistics")

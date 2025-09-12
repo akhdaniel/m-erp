@@ -8,8 +8,12 @@ from typing import Any, Dict
 
 router = APIRouter(prefix="/ui-schemas", tags=["UI Schemas"])
 
+# Additional router for prefixed routes to avoid conflicts with other services
+inventory_prefixed_router = APIRouter(prefix="/ui-schemas/inventory", tags=["UI Schemas - Inventory Prefixed"])
+
 
 @router.get("/dashboard")
+@inventory_prefixed_router.get("/dashboard")
 async def get_dashboard_schema() -> Dict[str, Any]:
     """Get UI schema for inventory dashboard"""
     return {
@@ -92,7 +96,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "stock_movements",
                 "type": "list",
                 "title": "Recent Stock Movements",
-                "endpoint": "/api/v1/stock/movements?limit=5",
+                "endpoint": "/api/v1/stock/movements/recent?limit=5",
                 "limit": 5,
                 "span": 2,
                 "columns": [

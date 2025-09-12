@@ -56,9 +56,11 @@ def create_application() -> FastAPI:
     # Include API routers
     from app.routers import menu
     from app.api import ui_schemas
-    application.include_router(menu.router, prefix="/api/v1")
-    application.include_router(ui_schemas.router, prefix="/api/v1")
+    #application.include_router(menu.router, prefix="/api/v1")
+    #application.include_router(ui_schemas.router, prefix="/api/v1")
     
+    application.include_router(menu.router, )
+    application.include_router(ui_schemas.router, )
     return application
 
 

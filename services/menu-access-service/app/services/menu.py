@@ -21,30 +21,44 @@ class MenuService:
         self.db = db
     
     async def create_menu_item(self, menu_data: MenuItemCreate) -> MenuItem:
-        """Create a new menu item."""
+        """Create a new menu item or update existing one."""
         # Check if code already exists
         existing = await self.db.execute(
             select(MenuItem).where(MenuItem.code == menu_data.code)
         )
-        if existing.scalar_one_or_none():
-            raise BadRequestException(f"Menu item with code '{menu_data.code}' already exists")
+        existing_menu = existing.scalar_one_or_none()
         
-        # Validate parent if provided
-        if menu_data.parent_id:
-            parent = await self.get_menu_item(menu_data.parent_id)
-            if not parent:
-                raise NotFoundException(f"Parent menu item with ID {menu_data.parent_id} not found")
-        
-        # Create menu item - map external_url to is_external
-        menu_dict = menu_data.model_dump()
-        if 'external_url' in menu_dict:
-            menu_dict['is_external'] = menu_dict.pop('external_url')
-        
-        menu_item = MenuItem(**menu_dict)
-        self.db.add(menu_item)
-        await self.db.commit()
-        await self.db.refresh(menu_item)
-        return menu_item
+        if existing_menu:
+            # Update existing menu item
+            update_data = menu_data.model_dump(exclude_unset=True)
+            # Map external_url to is_external if present
+            if 'external_url' in update_data:
+                update_data['is_external'] = update_data.pop('external_url')
+            
+            # Update fields
+            for field, value in update_data.items():
+                setattr(existing_menu, field, value)
+            
+            await self.db.commit()
+            await self.db.refresh(existing_menu)
+            return existing_menu
+        else:
+            # Validate parent if provided
+            if menu_data.parent_id:
+                parent = await self.get_menu_item(menu_data.parent_id)
+                if not parent:
+                    raise NotFoundException(f"Parent menu item with ID {menu_data.parent_id} not found")
+            
+            # Create new menu item - map external_url to is_external
+            menu_dict = menu_data.model_dump()
+            if 'external_url' in menu_dict:
+                menu_dict['is_external'] = menu_dict.pop('external_url')
+            
+            menu_item = MenuItem(**menu_dict)
+            self.db.add(menu_item)
+            await self.db.commit()
+            await self.db.refresh(menu_item)
+            return menu_item
     
     async def get_menu_item(self, menu_id: int) -> Optional[MenuItem]:
         """Get a single menu item by ID."""

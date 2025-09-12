@@ -15,7 +15,9 @@ from inventory_module.framework.base import CompanyBusinessObject, BaseModel
 
 class ReceivingStatus(str, enum.Enum):
     """Receiving record status enumeration"""
+    DRAFT = "draft"  # Awaiting delivery
     PENDING = "pending"  # Awaiting delivery
+    IN_PROGRESS= "in_progress"  # Awaiting delivery
     PARTIAL = "partial"  # Partially received
     COMPLETE = "complete"  # Fully received
     CANCELLED = "cancelled"  # Cancelled receipt

@@ -527,3 +527,39 @@ class StockMovementService(BaseService):
             }
             for result in results
         ]
+    
+    def calculate_total_stock_value(self) -> Decimal:
+        """Calculate total stock value across all products and locations."""
+        # Join StockLevel with Product to get price information
+        query = self.db.query(
+            func.sum(StockLevel.quantity_on_hand * Product.list_price).label('total_value')
+        ).join(Product, StockLevel.product_id == Product.id).filter(
+            and_(
+                StockLevel.quantity_on_hand > 0,
+                Product.list_price > 0,
+                Product.is_active == True
+            )
+        )
+        
+        query = self._apply_company_filter(query, StockLevel)
+        result = query.first()
+        
+        return result.total_value or Decimal('0.00')
+    
+    def count_low_stock_items(self) -> int:
+        """Count items that are below their minimum stock level."""
+        # Join StockLevel with Product to get reorder point information
+        query = self.db.query(func.count(StockLevel.id)).join(
+            Product, StockLevel.product_id == Product.id
+        ).filter(
+            and_(
+                StockLevel.quantity_on_hand < Product.reorder_point,
+                Product.reorder_point > 0,
+                Product.is_active == True
+            )
+        )
+        
+        query = self._apply_company_filter(query, StockLevel)
+        result = query.first()
+        
+        return result[0] if result else 0

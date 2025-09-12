@@ -17,7 +17,7 @@ from app.core.exceptions import NotFoundException, BadRequestException
 logger = logging.getLogger(__name__)
 
 
-router = APIRouter(prefix="/menus", tags=["menus"])
+router = APIRouter(tags=["menus"])
 
 
 @router.get("/tree", response_model=MenuTreeResponse)

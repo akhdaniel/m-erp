@@ -395,6 +395,15 @@ class ReceivingService(BaseService):
             )
         }
     
+    def count_pending_receipts(self) -> int:
+        """Count pending receiving records."""
+        query = self.db.query(func.count(ReceivingRecord.id)).filter(
+            ReceivingRecord.status == ReceivingStatus.PENDING
+        )
+        query = self._apply_company_filter(query, ReceivingRecord)
+        result = query.first()
+        return result[0] if result else 0
+    
     def _generate_receipt_number(self, prefix: str = "REC") -> str:
         """Generate unique receipt number."""
         # In production, would use company settings and sequence numbers

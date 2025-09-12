@@ -21,7 +21,7 @@ from inventory_module.api import (
     warehouses_router,
     receiving_router
 )
-from inventory_module.api.ui_schemas import router as ui_schemas_router
+from inventory_module.api.ui_schemas import router as ui_schemas_router, inventory_prefixed_router
 from inventory_module.ui_definitions import INVENTORY_UI_PACKAGE
 logger = logging.getLogger("uvicorn")
 UI_REGISTRY_URL = os.getenv("UI_REGISTRY_URL")
@@ -88,6 +88,7 @@ app.include_router(stock_router, prefix="/api/v1")
 app.include_router(warehouses_router, prefix="/api/v1")
 app.include_router(receiving_router, prefix="/api/v1")
 app.include_router(ui_schemas_router, prefix="/api/v1")
+app.include_router(inventory_prefixed_router, prefix="/api/v1")
 
 
 @app.get("/")
@@ -157,7 +158,7 @@ async def initialize_menus_and_ui():
             try:
                 # Get dashboard schema from our own endpoint
                 logger.info("Fetching dashboard schema from local endpoint...")
-                dashboard_response = await client.get(NOTIFICATION_URL+"/api/v1/ui-schemas/dashboard")
+                dashboard_response = await client.get("http://inventory-service:8005/api/v1/ui-schemas/dashboard")
                 if dashboard_response.status_code == 200:
                     dashboard_config = dashboard_response.json()
                     logger.info(f"Got dashboard config: {dashboard_config.get('title', 'Unknown')}")

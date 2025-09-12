@@ -404,7 +404,6 @@ async def get_recent_movements(
                 "product_name": movement.product.name if movement.product else "Unknown Product",
                 "movement_type": movement.movement_type.value if hasattr(movement, 'movement_type') else "Unknown",
                 "quantity": float(movement.quantity) if hasattr(movement, 'quantity') else 0,
-                "location_name": movement.warehouse_location.name if movement.warehouse_location else "Unknown Location",
                 "created_at": movement.created_at.isoformat() if hasattr(movement, 'created_at') else datetime.utcnow().isoformat()
             }
             for movement in movements
@@ -499,6 +498,27 @@ async def reverse_movement(
     except Exception as e:
         service.rollback()
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/stats")
+async def get_stock_statistics(
+    service: StockService = Depends(get_stock_service)
+):
+    """Get stock statistics for dashboard."""
+    try:
+        # Get total stock value
+        total_value = service.calculate_total_stock_value()
+        
+        # Get low stock count
+        low_stock_count = service.count_low_stock_items()
+        
+        return {
+            "total_value": float(total_value) if total_value else 0.0,
+            "low_stock_count": low_stock_count
+        }
+    except Exception as e:
+        logger.error(f"Error getting stock statistics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve stock statistics")
 
 
 @router.get("/movements/statistics", response_model=Dict[str, Any])

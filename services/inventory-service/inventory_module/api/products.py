@@ -597,3 +597,24 @@ async def delete_variant(
     except Exception as e:
         service.rollback()
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/stats")
+async def get_product_statistics(
+    service: ProductService = Depends(get_product_service)
+):
+    """Get product statistics for dashboard."""
+    try:
+        # Get total product count
+        total_products = service.count(Product)
+        
+        # Get active product count
+        active_products = service.count(Product, Product.is_active == True)
+        
+        return {
+            "total": total_products,
+            "active": active_products
+        }
+    except Exception as e:
+        logger.error(f"Error getting product statistics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve product statistics")

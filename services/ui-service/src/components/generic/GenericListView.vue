@@ -118,7 +118,7 @@
               v-for="column in visibleColumns" 
               :key="column.field"
               scope="col" 
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               :class="column.headerClass"
             >
               {{ column.label }}
@@ -187,7 +187,7 @@
             <div v-if="column.isTitle" class="text-lg font-medium text-gray-900 mb-2">
               {{ getNestedValue(item, column.field) }}
             </div>
-            <div v-else class="text-sm text-gray-500">
+            <div v-else class="text-sm text-gray-900">
               <span class="font-medium">{{ column.label }}:</span>
               {{ formatValue(getNestedValue(item, column.field), column.formatter, item) || '-' }}
             </div>

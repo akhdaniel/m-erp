@@ -57,15 +57,13 @@ services:
     routes:
       - name: menu-access-routes
         paths:
-          - /api/v1/permissions
-          - /api/v1/roles
           - /api/v1/menus
-        strip_path: false
+        strip_path: true
         preserve_host: false
       - name: menu-access-ui-schemas
         paths:
           - /api/v1/ui-schemas/menus
-        strip_path: false
+        strip_path: true 
         preserve_host: false
         methods: ["GET", "OPTIONS"]
       - name: menu-access-prefix-routes
@@ -117,7 +115,6 @@ services:
       - name: service-registry-routes
         paths:
           - /api/v1/services
-          - /api/services
         strip_path: false
         preserve_host: false
         methods: ["GET", "POST", "PUT", "DELETE"]
@@ -137,23 +134,14 @@ services:
       - name: inventory-routes
         paths:
           - /api/v1/inventory
-          - /api/v1/products
-          - /api/v1/stock
-          - /api/v1/warehouses
-          - /api/v1/receiving
-          - /inventory
-        strip_path: false
+        strip_path: true
         preserve_host: false 
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
         
       - name: inventory-ui-schemas
         paths:
-          - /api/v1/ui-schemas/products
-          - /api/v1/ui-schemas/warehouses
-          - /api/v1/ui-schemas/stock
-          - /api/v1/ui-schemas/receiving
-          - /api/v1/ui-schemas/categories
-        strip_path: false
+          - /api/v1/inventory
+        strip_path: true
         preserve_host: false
         service: inventory-service
         methods: ["GET", "OPTIONS"]
@@ -166,17 +154,29 @@ services:
 
   # UI Registry Service
   - name: ui-registry-service
-    url: http://ui-registry-service:8010
+    url: http://ui-registry-service:8010/api/v1
     tags:
       - xerpium
       - ui-registry
     routes:
-      - name: ui-registry-routes
+      - name: ui-registry-base
         paths:
-          - /api/v1/ui-registry
-        strip_path: false
+          - /api/v1/ui-registry/
+        strip_path: true
         preserve_host: false
-        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+        methods: ["GET"]
+      - name: ui-registry-service-dashboard
+        paths:
+          - /api/v1/ui-registry/
+        strip_path: true
+        preserve_host: false
+        methods: ["GET"]
+      - name: ui-registry-dashboard-widgets
+        paths:
+          - /api/v1/ui-registry/
+        strip_path: true
+        preserve_host: false
+        methods: ["GET"]
       - name: ui-registry-health
         paths:
           - /ui-registry-health
@@ -224,30 +224,22 @@ services:
       - name: purchasing-routes-all
         paths:
           - /api/v1/purchasing
-          - /api/v1/purchase-orders
-          - /api/v1/suppliers  
-          - /api/v1/approvals
-        strip_path: false
+        strip_path: true 
         preserve_host: true
         request_buffering: false
         response_buffering: false
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
       - name: purchasing-dashboard
         paths:
-          - /api/v1/dashboard
-        strip_path: false
+          - /api/v1/purchasing
+        strip_path: true 
         preserve_host: false
         service: purchasing-service
         methods: ["GET", "OPTIONS"]
       - name: purchasing-ui-schemas
         paths:
-          - /api/v1/ui-schemas/lists/purchase-orders
-          - /api/v1/ui-schemas/lists/suppliers
-          - /api/v1/ui-schemas/lists/approvals
-          - /api/v1/ui-schemas/forms/purchase-order
-          - /api/v1/ui-schemas/forms/supplier
-          - /api/v1/ui-schemas/dashboard
-        strip_path: false
+          - /api/v1/ui-schemas/purchasing
+        strip_path: true 
         preserve_host: false
         service: purchasing-service
         methods: ["GET", "OPTIONS"]
@@ -267,21 +259,13 @@ services:
       - name: sales-routes
         paths:
           - /api/v1/sales
-          - /api/v1/quotes
-          - /api/v1/orders
-          - /api/v1/pricing
-          - /sales
-        strip_path: false
+        strip_path: true
         preserve_host: false
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
       - name: sales-ui-schemas
         paths:
-          - /api/v1/ui-schemas/quotes
-          - /api/v1/ui-schemas/orders
-          - /api/v1/ui-schemas/pricing
-          - /api/v1/ui-schemas/customers
-          - /api/v1/ui-schemas/analytics
-        strip_path: false
+          - /api/v1/ui-schemas/sales
+        strip_path: true 
         preserve_host: false
         service: sales-service
         methods: ["GET", "OPTIONS"]

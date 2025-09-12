@@ -75,7 +75,7 @@ body, html {
   );
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  /*border: 1px solid rgba(255, 255, 255, 0.4);*/
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
 }
 
@@ -308,7 +308,7 @@ nav {
       rgba(31, 41, 55, 0.95) 0%,
       rgba(31, 41, 55, 0.85) 100%
     );
-    border: 1px solid rgba(75, 85, 99, 0.3);
+    /*border: 1px solid rgba(75, 85, 99, 0.3);*/
   }
 
   .glass-panel {
@@ -397,7 +397,7 @@ nav {
   }
   
   nav a {
-    color: #f3f4f6 !important;
+    color: #5f98e8 !important;
     font-weight: 500;
   }
   
@@ -482,10 +482,10 @@ nav {
     color: #374151 !important;
   }
   
-  nav a {
+  /*nav a {
     color: #1f2937 !important;
     font-weight: 500;
-  }
+  }*/
   
   table th {
     color: #111827 !important;
@@ -531,7 +531,7 @@ nav {
       rgba(255, 255, 255, 0.95) 0%,
       rgba(255, 255, 255, 0.9) 100%
     );
-    border: 1px solid rgba(229, 231, 235, 0.8);
+    /*border: 1px solid rgba(229, 231, 235, 0.8);*/
   }
 
   .glass-panel {
@@ -553,7 +553,7 @@ nav {
   }
 
   thead {
-    background: rgba(249, 250, 251, 0.95) !important;
+    background: rgba(188, 204, 219, 0.95) !important;
   }
 
   tbody tr:hover {

@@ -219,29 +219,43 @@ const serviceUrls: Record<string, string> = {
 // Fetch dashboard configuration from service
 async function fetchDashboardConfig() {
   try {
-    // First try to get from UI Registry
-    const uiRegistryUrl = import.meta.env.VITE_UI_REGISTRY_API || '/api'
-    const registryEndpoint = `/api/v1/services/${currentService.value}/dashboard`
-    const registryFullUrl = uiRegistryUrl && registryEndpoint.startsWith('/api/v1')
-      ? `${uiRegistryUrl.replace(/\/api\/v1$/, '')}${registryEndpoint}`
-      : `${uiRegistryUrl}${registryEndpoint}`
-    const registryResponse = await fetch(registryFullUrl)
-    
-    if (registryResponse.ok) {
-      dashboardConfig.value = await registryResponse.json()
+    // For inventory service, use the direct service endpoint
+    if (currentService.value === 'inventory') {
+      const serviceUrl = import.meta.env.VITE_INVENTORY_API || 'http://inventory-service:8005'
+      const dashboardEndpoint = '/api/v1/ui-schemas/inventory/dashboard'
+      const dashboardFullUrl = `${serviceUrl}${dashboardEndpoint}`
+      
+      const response = await fetch(dashboardFullUrl)
+      if (response.ok) {
+        dashboardConfig.value = await response.json()
+      } else {
+        throw new Error(`Dashboard configuration not found: ${response.status}`)
+      }
     } else {
-      // Fallback to service's own endpoint
-      const serviceUrl = serviceUrls[currentService.value]
-      if (serviceUrl) {
-        const dashboardEndpoint = `/api/v1/ui-schemas/dashboard`
-        const dashboardFullUrl = serviceUrl && dashboardEndpoint.startsWith('/api/v1')
-          ? `${serviceUrl.replace(/\/api\/v1$/, '')}${dashboardEndpoint}`
-          : `${serviceUrl}${dashboardEndpoint}`
-        const response = await fetch(dashboardFullUrl)
-        if (response.ok) {
-          dashboardConfig.value = await response.json()
-        } else {
-          throw new Error('Dashboard configuration not found')
+      // First try to get from UI Registry
+      const uiRegistryUrl = import.meta.env.VITE_UI_REGISTRY_API || '/api'
+      const registryEndpoint = `/api/v1/services/${currentService.value}/dashboard`
+      const registryFullUrl = uiRegistryUrl && registryEndpoint.startsWith('/api/v1')
+        ? `${uiRegistryUrl.replace(/\/api\/v1$/, '')}${registryEndpoint}`
+        : `${uiRegistryUrl}${registryEndpoint}`
+      const registryResponse = await fetch(registryFullUrl)
+      
+      if (registryResponse.ok) {
+        dashboardConfig.value = await registryResponse.json()
+      } else {
+        // Fallback to service's own endpoint
+        const serviceUrl = serviceUrls[currentService.value]
+        if (serviceUrl) {
+          const dashboardEndpoint = `/api/v1/ui-schemas/dashboard`
+          const dashboardFullUrl = serviceUrl && dashboardEndpoint.startsWith('/api/v1')
+            ? `${serviceUrl.replace(/\/api\/v1$/, '')}${dashboardEndpoint}`
+            : `${serviceUrl}${dashboardEndpoint}`
+          const response = await fetch(dashboardFullUrl)
+          if (response.ok) {
+            dashboardConfig.value = await response.json()
+          } else {
+            throw new Error(`Dashboard configuration not found: ${response.status}`)
+          }
         }
       }
     }
@@ -255,7 +269,14 @@ async function fetchDashboardConfig() {
 async function fetchWidgetData() {
   if (!dashboardConfig.value || !dashboardConfig.value.widgets) return
 
-  const serviceUrl = serviceUrls[currentService.value]
+  // Get the correct service URL based on current service
+  let serviceUrl = serviceUrls[currentService.value]
+  
+  // For inventory service, use the VITE_INVENTORY_API environment variable
+  if (currentService.value === 'inventory') {
+    serviceUrl = import.meta.env.VITE_INVENTORY_API || 'http://inventory-service:8005'
+  }
+  
   if (!serviceUrl) return
 
   // Fetch data for each widget in parallel
