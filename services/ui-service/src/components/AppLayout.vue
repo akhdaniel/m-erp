@@ -221,7 +221,7 @@
                 <span v-if="menu.icon" class="mr-2">
                   <i :class="menu.icon"></i>
                 </span>
-                {{ menu.title }}
+                {{ menu.title }} dsds
               </router-link>
             </template>
           </div>
@@ -350,7 +350,6 @@ const topLevelMenus = computed(() => menuStore.topLevelMenus)
 
 // Filter service menus (top-level dropdown menus like Sales, Inventory, etc.)
 const serviceMenus = computed(() => {
-  console.log('--------------->>topLevelMenus', menuStore.topLevelMenus)
   return menuStore.topLevelMenus.filter(menu => 
     menu.item_type === 'dropdown' && 
     menu.children && 
