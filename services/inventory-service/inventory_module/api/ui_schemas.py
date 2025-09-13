@@ -6,14 +6,13 @@ Provides schema definitions for generic UI components
 from fastapi import APIRouter, Depends
 from typing import Any, Dict
 
-router = APIRouter(prefix="/ui-schemas", tags=["UI Schemas"])
+#router = APIRouter(prefix="/ui-schemas", tags=["UI Schemas"])
+router = APIRouter(tags=["UI Schemas"])
 
 # Additional router for prefixed routes to avoid conflicts with other services
-inventory_prefixed_router = APIRouter(prefix="/ui-schemas/inventory", tags=["UI Schemas - Inventory Prefixed"])
 
 
-@router.get("/dashboard")
-@inventory_prefixed_router.get("/dashboard")
+@router.get("/dashboard/ui-schemas")
 async def get_dashboard_schema() -> Dict[str, Any]:
     """Get UI schema for inventory dashboard"""
     return {
@@ -30,7 +29,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "total_products",
                 "type": "metric",
                 "title": "Total Products",
-                "endpoint": "/api/v1/products/stats",
+                "endpoint": "/api/v1/inventory/products/stats",
                 "valueField": "total",
                 "format": "number",
                 "icon": "package",
@@ -41,7 +40,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "active_products",
                 "type": "metric",
                 "title": "Active Products",
-                "endpoint": "/api/v1/products/stats",
+                "endpoint": "/api/v1/inventory/products/stats",
                 "valueField": "active",
                 "format": "number",
                 "icon": "check-circle",
@@ -52,7 +51,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "low_stock",
                 "type": "metric",
                 "title": "Low Stock Items",
-                "endpoint": "/api/v1/stock/stats",
+                "endpoint": "/api/v1/inventory/stock/stats",
                 "valueField": "low_stock_count",
                 "format": "number",
                 "icon": "alert-triangle",
@@ -63,7 +62,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "stock_value",
                 "type": "metric",
                 "title": "Total Stock Value",
-                "endpoint": "/api/v1/stock/stats",
+                "endpoint": "/api/v1/inventory/stock/stats",
                 "valueField": "total_value",
                 "format": "currency",
                 "icon": "dollar-sign",
@@ -74,7 +73,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "warehouses",
                 "type": "metric",
                 "title": "Active Warehouses",
-                "endpoint": "/api/v1/warehouses/stats",
+                "endpoint": "/api/v1/inventory/warehouses/stats",
                 "valueField": "active",
                 "format": "number",
                 "icon": "building",
@@ -85,7 +84,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "pending_receipts",
                 "type": "metric",
                 "title": "Pending Receipts",
-                "endpoint": "/api/v1/receiving/stats",
+                "endpoint": "/api/v1/inventory/receiving/stats",
                 "valueField": "pending_count",
                 "format": "number",
                 "icon": "inbox",
@@ -96,7 +95,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "stock_movements",
                 "type": "list",
                 "title": "Recent Stock Movements",
-                "endpoint": "/api/v1/stock/movements/recent?limit=5",
+                "endpoint": "/api/v1/inventory/stock/movements/recent?limit=5",
                 "limit": 5,
                 "span": 2,
                 "columns": [
@@ -110,7 +109,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "stock_levels_chart",
                 "type": "chart",
                 "title": "Stock Levels by Category",
-                "endpoint": "/api/v1/stock/by-category",
+                "endpoint": "/api/v1/inventory/stock/by-category",
                 "chartType": "bar",
                 "span": 1,
                 "height": 300
@@ -119,14 +118,14 @@ async def get_dashboard_schema() -> Dict[str, Any]:
     }
 
 
-@router.get("/products/list")
+@router.get("/products/ui-schemas/list")
 async def get_products_list_schema() -> Dict[str, Any]:
     """Get UI schema for products list view"""
     return {
         "title": "Products",
         "description": "Manage your product catalog and inventory items",
         "viewType": "table",
-        "endpoint": "/api/v1/products/",
+        "endpoint": "/api/v1/inventory/products/",
         "keyField": "id",
         "searchable": True,
         "searchPlaceholder": "Search products by name, SKU, or category...",
@@ -196,7 +195,7 @@ async def get_products_list_schema() -> Dict[str, Any]:
                 "label": "Category",
                 "type": "select",
                 "placeholder": "All Categories",
-                "optionsEndpoint": "/api/v1/products/categories"
+                "optionsEndpoint": "/api/v1/inventory/products/categories"
             },
             {
                 "field": "is_active",
@@ -229,13 +228,13 @@ async def get_products_list_schema() -> Dict[str, Any]:
     }
 
 
-@router.get("/products/form")
+@router.get("/products/ui-schemas/form")
 async def get_products_form_schema() -> Dict[str, Any]:
     """Get UI schema for product form (create/edit)"""
     return {
         "title": "Product Details",
         "description": "Enter product information",
-        "endpoint": "/api/v1/products",
+        "endpoint": "/api/v1/inventory/products",
         "successRoute": "/inventory/products",
         "cancelRoute": "/inventory/products",
         "submitLabel": "Save Product",
@@ -279,7 +278,7 @@ async def get_products_form_schema() -> Dict[str, Any]:
                         "label": "Category",
                         "type": "select",
                         "placeholder": "Select a category",
-                        "optionsEndpoint": "/api/v1/products/categories",
+                        "optionsEndpoint": "/api/v1/inventory/products/categories",
                         "optionLabelField": "name",
                         "optionValueField": "id"
                     },
@@ -386,14 +385,14 @@ async def get_products_form_schema() -> Dict[str, Any]:
     }
 
 
-@router.get("/warehouses/list")
+@router.get("/warehouses/ui-schemas/list")
 async def get_warehouses_list_schema() -> Dict[str, Any]:
     """Get UI schema for warehouses list view"""
     return {
         "title": "Warehouses",
         "description": "Manage warehouse locations and facilities",
         "viewType": "cards",
-        "endpoint": "/api/v1/warehouses/",
+        "endpoint": "/api/v1/inventory/warehouses/",
         "keyField": "id",
         "createLabel": "New Warehouse",
         "createRoute": "/inventory/warehouses/new",
@@ -428,13 +427,13 @@ async def get_warehouses_list_schema() -> Dict[str, Any]:
     }
 
 
-@router.get("/warehouses/form")
+@router.get("/warehouses/ui-schemas/form")
 async def get_warehouses_form_schema() -> Dict[str, Any]:
     """Get UI schema for warehouse form (create/edit)"""
     return {
         "title": "Warehouse Details",
         "description": "Enter warehouse information",
-        "endpoint": "/api/v1/warehouses",
+        "endpoint": "/api/v1/inventory/warehouses",
         "successRoute": "/inventory/warehouses",
         "cancelRoute": "/inventory/warehouses",
         "submitLabel": "Save Warehouse",
@@ -693,14 +692,14 @@ async def get_warehouses_form_schema() -> Dict[str, Any]:
     }
 
 
-@router.get("/warehouses/{warehouse_id}/locations/list")
+@router.get("/warehouses/ui-schemas/{warehouse_id}/locations/list")
 async def get_warehouse_locations_list_schema() -> Dict[str, Any]:
     """Get UI schema for warehouse locations list view"""
     return {
         "title": "Warehouse Locations",
         "description": "Manage storage locations within warehouse",
         "viewType": "table",
-        "endpoint": "/api/v1/warehouses/{warehouse_id}/locations",
+        "endpoint": "/api/v1/inventory/warehouses/{warehouse_id}/locations",
         "keyField": "id",
         "createLabel": "New Location",
         "createRoute": "/inventory/warehouses/{warehouse_id}/locations/new",
@@ -739,13 +738,13 @@ async def get_warehouse_locations_list_schema() -> Dict[str, Any]:
     }
 
 
-@router.get("/warehouses/{warehouse_id}/locations/form")
+@router.get("/warehouses/ui-schemas/{warehouse_id}/locations/form")
 async def get_warehouse_locations_form_schema() -> Dict[str, Any]:
     """Get UI schema for warehouse location form (create/edit)"""
     return {
         "title": "Location Details",
         "description": "Enter location information",
-        "endpoint": "/api/v1/warehouses/{warehouse_id}/locations",
+        "endpoint": "/api/v1/inventory/warehouses/{warehouse_id}/locations",
         "successRoute": "/inventory/warehouses/{warehouse_id}/locations",
         "cancelRoute": "/inventory/warehouses/{warehouse_id}/locations",
         "submitLabel": "Save Location",
@@ -808,7 +807,7 @@ async def get_warehouse_locations_form_schema() -> Dict[str, Any]:
                         "label": "Parent Location",
                         "type": "select",
                         "placeholder": "Select a parent location (optional)",
-                        "optionsEndpoint": "/api/v1/warehouses/{warehouse_id}/locations?active_only=true&location_type=zone,aisle,rack,shelf",
+                        "optionsEndpoint": "/api/v1/inventory/warehouses/{warehouse_id}/locations?active_only=true&location_type=zone,aisle,rack,shelf",
                         "optionLabelField": "code",
                         "optionValueField": "id"
                     }
@@ -997,14 +996,14 @@ async def get_warehouse_locations_form_schema() -> Dict[str, Any]:
     }
 
 
-@router.get("/stock/movements")
+@router.get("/stock_movements/ui-schemas/list")
 async def get_stock_movements_schema() -> Dict[str, Any]:
     """Get UI schema for stock movements view"""
     return {
         "title": "Stock Movements",
         "description": "Track inventory movements and adjustments",
         "viewType": "table",
-        "endpoint": "/api/v1/stock/movements/",
+        "endpoint": "/api/v1/inventory/stock/movements/",
         "keyField": "id",
         "searchable": True,
         "searchPlaceholder": "Search by product or reference...",
@@ -1070,14 +1069,14 @@ async def get_stock_movements_schema() -> Dict[str, Any]:
     }
 
 
-@router.get("/categories/tree")
+@router.get("/categories/ui-schemas/tree")
 async def get_categories_tree_schema() -> Dict[str, Any]:
     """Get UI schema for product categories tree view"""
     return {
         "title": "Product Categories",
         "description": "Organize products into categories",
         "viewType": "tree",
-        "endpoint": "/api/v1/products/categories/tree",
+        "endpoint": "/api/v1/inventory/products/categories/tree",
         "keyField": "id",
         "parentField": "parent_id",
         "labelField": "name",
@@ -1107,14 +1106,14 @@ async def get_categories_tree_schema() -> Dict[str, Any]:
     }
 
 
-@router.get("/categories/list")
+@router.get("/categories/ui-schemas/list")
 async def get_categories_list_schema() -> Dict[str, Any]:
     """Get UI schema for product categories list view"""
     return {
         "title": "Product Categories",
         "description": "Manage product categories",
         "viewType": "table",
-        "endpoint": "/api/v1/products/categories",
+        "endpoint": "/api/v1/inventory/products/categories",
         "keyField": "id",
         "searchable": True,
         "searchPlaceholder": "Search categories by name or code...",
@@ -1203,7 +1202,7 @@ async def get_categories_form_schema() -> Dict[str, Any]:
     return {
         "title": "Category Details",
         "description": "Enter category information",
-        "endpoint": "/api/v1/products/categories",
+        "endpoint": "/api/v1/inventory/products/categories",
         "successRoute": "/inventory/categories",
         "cancelRoute": "/inventory/categories",
         "submitLabel": "Save Category",
@@ -1241,7 +1240,7 @@ async def get_categories_form_schema() -> Dict[str, Any]:
                         "label": "Parent Category",
                         "type": "select",
                         "placeholder": "Select a parent category (optional)",
-                        "optionsEndpoint": "/api/v1/products/categories?active_only=true",
+                        "optionsEndpoint": "/api/v1/inventory/products/categories?active_only=true",
                         "optionLabelField": "name",
                         "optionValueField": "id"
                     },

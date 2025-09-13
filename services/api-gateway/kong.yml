@@ -137,14 +137,7 @@ services:
         strip_path: true
         preserve_host: false 
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
-        
-      - name: inventory-ui-schemas
-        paths:
-          - /api/v1/inventory
-        strip_path: true
-        preserve_host: false
-        service: inventory-service
-        methods: ["GET", "OPTIONS"]
+
       - name: inventory-health
         paths:
           - /inventory-health

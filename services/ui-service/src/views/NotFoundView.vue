@@ -11,7 +11,7 @@
       <div class="mt-10">
         <router-link
           to="/dashboard"
-          class="btn btn-primary"
+          class="btn btn-primary text-gray-500"
         >
           Go back home
         </router-link>

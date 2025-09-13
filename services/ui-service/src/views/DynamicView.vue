@@ -95,6 +95,7 @@ const serviceName = computed(() => {
 })
 
 const serviceUrl = computed(() => {
+  console.log('serviceUrl === ', SERVICE_MAPPING[serviceName.value])
   return SERVICE_MAPPING[serviceName.value] || ''
 })
 
@@ -102,7 +103,7 @@ const viewType = computed(() => {
   // Determine view type from route
   const path = route.path
   
-  console.log('view type, ', route.name)
+  console.log('view type ===', route.name, 'path==',path)
 
   if (path.endsWith('/new')) return 'form-create'
   if (path.endsWith('/edit')) return 'form-edit'
@@ -113,12 +114,7 @@ const viewType = computed(() => {
   if (route.name?.includes('Form')) return 'form'
   if (route.name?.includes('Dashboard')) return 'dashboard'
   
-  // Default based on path
-  const lastSegment = path.split('/').pop()
-  if (lastSegment === 'products' || lastSegment === 'warehouses' || lastSegment === 'stock') {
-    return 'list'
-  }
-  
+  console.log('return === list')
   return 'list' // default
 })
 
@@ -196,7 +192,18 @@ async function loadSchema() {
 
 function getSchemaEndpoint(): string {
   const path = route.path
-  return path
+  console.log('getSchemaEndpoint=====', route.path, route.name, viewType.value)
+  if (path.includes('dashboard'))
+  {
+    return '/api/v1'+path+'/ui-schemas'
+  }
+  else if(path.includes('/edit')){
+    // /inventory/products/14/edit => /inventory/products/ui-schemas/form
+    const segments = path.split("/").filter(segment => segment !== "");
+    return '/api/v1/'+segments[0]+'/'+segments[1]+'/ui-schemas/form'
+  }
+  else
+    return '/api/v1'+path+'/ui-schemas/'+viewType.value
   
   // Purchasing routes
   if (path.includes('/purchasing')) {

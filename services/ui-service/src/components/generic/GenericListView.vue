@@ -326,7 +326,7 @@ const visibleColumns = computed(() => {
 
 // API URL
 const apiUrl = computed(() => {
-  console.log('==props.endpoint', props.endpoint)
+  console.log('==props.', props)
   if (props.endpoint) return props.endpoint
   if (props.schema.endpoint) {
     // If the endpoint is already a full URL, use it as-is
