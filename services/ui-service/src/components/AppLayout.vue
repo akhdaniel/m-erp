@@ -62,7 +62,7 @@
                   <span v-if="menu.icon" class="mr-1">
                     <i :class="menu.icon"></i>
                   </span>
-                  {{ menu.title }}
+                  {{ menu.title }} aa
                 </router-link>
                 
                 <!-- Dropdown menu for service sub-menus -->
@@ -71,7 +71,7 @@
                     <span v-if="menu.icon" class="mr-1">
                       <i :class="menu.icon"></i>
                     </span>
-                    {{ menu.title }}
+                    {{ menu.title }} bb
                     <ChevronDownIcon class="ml-1 h-4 w-4" />
                   </MenuButton>
                   
@@ -358,11 +358,7 @@ const serviceMenus = computed(() => {
 })
 
 // Get active service menus (sub-menus of the selected service)
-const activeServiceMenus = computed(() => {
-  console.log('---- 1 activeServiceMenu..', menuStore.topLevelMenus)
-  // if (!activeService.value) return []
-  // console.log('---- 2 activeServiceMenu..', activeService.value)
-  
+const activeServiceMenus = computed(() => {  
   const serviceMenu = menuStore.topLevelMenus.find(menu => 
     menu.item_type === 'dropdown' && 
     menu.title === activeService.value
