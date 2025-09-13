@@ -350,7 +350,7 @@ const topLevelMenus = computed(() => menuStore.topLevelMenus)
 
 // Filter service menus (top-level dropdown menus like Sales, Inventory, etc.)
 const serviceMenus = computed(() => {
-  console.log('--------------->>', menuStore)
+  console.log('--------------->>topLevelMenus', menuStore.topLevelMenus)
   return menuStore.topLevelMenus.filter(menu => 
     menu.item_type === 'dropdown' && 
     menu.children && 
@@ -366,7 +366,7 @@ const activeServiceMenus = computed(() => {
     menu.item_type === 'dropdown' && 
     menu.title === activeService.value
   )
-  console.log('======== serviceMenu', serviceMenu)
+  console.log('========>> serviceMenu', serviceMenu)
   return serviceMenu ? serviceMenu.children || [] : []
 })
 
