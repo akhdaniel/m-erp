@@ -360,8 +360,8 @@ const serviceMenus = computed(() => {
 // Get active service menus (sub-menus of the selected service)
 const activeServiceMenus = computed(() => {
   console.log('---- 1 activeServiceMenu..', activeService.value)
-  if (!activeService.value) return []
-  console.log('---- 2 activeServiceMenu..', activeService.value)
+  // if (!activeService.value) return []
+  // console.log('---- 2 activeServiceMenu..', activeService.value)
   
   const serviceMenu = menuStore.topLevelMenus.find(menu => 
     menu.item_type === 'dropdown' && 
