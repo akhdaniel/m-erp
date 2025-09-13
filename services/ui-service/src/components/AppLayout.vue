@@ -359,7 +359,7 @@ const serviceMenus = computed(() => {
 
 // Get active service menus (sub-menus of the selected service)
 const activeServiceMenus = computed(() => {
-  console.log('---- 1 activeServiceMenu..', activeService.value)
+  console.log('---- 1 activeServiceMenu..', menuStore.topLevelMenus)
   // if (!activeService.value) return []
   // console.log('---- 2 activeServiceMenu..', activeService.value)
   
