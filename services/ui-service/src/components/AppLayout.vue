@@ -13,7 +13,6 @@
               <!-- XERPIUM Brand Menu -->
               <Menu v-if="serviceMenus.length > 0" as="div" class="relative">
                 <MenuButton class="text-xl font-bold inline-flex items-center border-primary-500 text-gray-900 router-link-exact-active border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
-                <!-- <MenuButton class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors inline-flex items-center"> -->
                   XERPIUM
                   <ChevronDownIcon class="ml-1 h-4 w-4" />
                 </MenuButton>
@@ -351,6 +350,7 @@ const topLevelMenus = computed(() => menuStore.topLevelMenus)
 
 // Filter service menus (top-level dropdown menus like Sales, Inventory, etc.)
 const serviceMenus = computed(() => {
+  console.log('--------------->>', menuStore)
   return menuStore.topLevelMenus.filter(menu => 
     menu.item_type === 'dropdown' && 
     menu.children && 
