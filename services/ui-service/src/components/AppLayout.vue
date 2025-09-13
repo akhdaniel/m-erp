@@ -23,9 +23,48 @@
                 Dashboard
               </router-link>
               
-              <!-- Dynamic menus from API -->
-              <template v-for="menu in topLevelMenus" :key="menu.id">
-                <!-- Simple link menu -->
+              <!-- XERPIUM Brand Menu -->
+              <Menu v-if="serviceMenus.length > 0" as="div" class="relative">
+                <MenuButton class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors inline-flex items-center">
+                  XERPIUM
+                  <ChevronDownIcon class="ml-1 h-4 w-4" />
+                </MenuButton>
+                
+                <transition
+                  enter-active-class="transition ease-out duration-100"
+                  enter-from-class="transform opacity-0 scale-95"
+                  enter-to-class="transform opacity-100 scale-100"
+                  leave-active-class="transition ease-in duration-75"
+                  leave-from-class="transform opacity-100 scale-100"
+                  leave-to-class="transform opacity-0 scale-95"
+                >
+                  <MenuItems class="absolute left-0 mt-2 w-56 origin-top-left rounded-md glass-panel py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" style="z-index: 9999;">
+                    <MenuItem
+                      v-for="menu in serviceMenus"
+                      :key="menu.id"
+                      v-slot="{ active }"
+                    >
+                      <router-link
+                        v-if="menu && menu.url"
+                        :to="menu.url"
+                        :class="[
+                          active ? 'bg-gray-100' : '',
+                          'block px-4 py-2 text-sm text-gray-700'
+                        ]"
+                        @click="selectService(menu)"
+                      >
+                        <span v-if="menu.icon" class="mr-2">
+                          <i :class="menu.icon"></i>
+                        </span>
+                        {{ menu.title }}
+                      </router-link>
+                    </MenuItem>
+                  </MenuItems>
+                </transition>
+              </Menu>
+              
+              <!-- Service-specific menus (shown when a service is selected) -->
+              <template v-for="menu in activeServiceMenus" :key="menu.id">
                 <router-link
                   v-if="menu.item_type === 'link' && menu.url"
                   :to="menu.url"
@@ -39,7 +78,7 @@
                   {{ menu.title }}
                 </router-link>
                 
-                <!-- Dropdown menu -->
+                <!-- Dropdown menu for service sub-menus -->
                 <Menu v-else-if="menu.item_type === 'dropdown' && menu.children && menu.children.length > 0" as="div" class="relative">
                   <MenuButton class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors inline-flex items-center">
                     <span v-if="menu.icon" class="mr-1">
@@ -165,16 +204,36 @@
             Dashboard
           </router-link>
           
+          <!-- XERPIUM Brand Menu for Mobile -->
+          <div v-if="serviceMenus.length > 0" class="border-transparent text-gray-700 font-semibold block pl-3 pr-4 py-2 border-l-4 text-base">
+            XERPIUM Services
+          </div>
+          <div class="space-y-1">
+            <template v-for="menu in serviceMenus" :key="menu.id">
+              <router-link
+                v-if="menu && menu.url"
+                :to="menu.url"
+                class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 block pl-8 pr-4 py-2 border-l-4 text-base font-medium"
+                active-class="bg-primary-50 border-primary-500 text-primary-700"
+                @click="selectService(menu); mobileMenuOpen = false"
+              >
+                <span v-if="menu.icon" class="mr-2">
+                  <i :class="menu.icon"></i>
+                </span>
+                {{ menu.title }}
+              </router-link>
+            </template>
+          </div>
           
-          <!-- Dynamic menus from API -->
-          <template v-for="menu in topLevelMenus" :key="menu.id">
+          <!-- Service-specific menus for mobile (shown when a service is selected) -->
+          <template v-for="menu in activeServiceMenus" :key="menu.id">
             <!-- Simple link menu -->
             <router-link
               v-if="menu.item_type === 'link' && menu.url"
               :to="menu.url"
-              class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+              class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 block pl-8 pr-4 py-2 border-l-4 text-base font-medium"
               active-class="bg-primary-50 border-primary-500 text-primary-700"
-              @click="handleMobileMenuClick($event, menu)"
+              @click="mobileMenuOpen = false"
             >
               <span v-if="menu.icon" class="mr-2">
                 <i :class="menu.icon"></i>
@@ -184,18 +243,18 @@
             
             <!-- Dropdown menu (expanded for mobile) -->
             <div v-else-if="menu.item_type === 'dropdown' && menu.children && menu.children.length > 0">
-              <div class="border-transparent text-gray-700 font-semibold block pl-3 pr-4 py-2 border-l-4 text-base">
+              <div class="border-transparent text-gray-700 font-semibold block pl-8 pr-4 py-2 border-l-4 text-base">
                 <span v-if="menu.icon" class="mr-2">
                   <i :class="menu.icon"></i>
                 </span>
                 {{ menu.title }}
               </div>
-              <div class="space-y-1">
+              <div class="space-y-1 ml-4">
                 <template v-for="child in menu.children" :key="child.id">
                   <router-link
                     v-if="child && child.url"
                     :to="child.url"
-                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 block pl-8 pr-4 py-2 border-l-4 text-base font-medium"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 block pl-12 pr-4 py-2 border-l-4 text-base font-medium"
                     active-class="bg-primary-50 border-primary-500 text-primary-700"
                     @click="mobileMenuOpen = false"
                   >
@@ -277,6 +336,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 const menuStore = useMenuStore()
 const mobileMenuOpen = ref(false)
+const activeService = ref<string | null>(null)
 
 const userInitials = computed(() => {
   if (!authStore.user) return ''
@@ -286,6 +346,32 @@ const userInitials = computed(() => {
 })
 
 const topLevelMenus = computed(() => menuStore.topLevelMenus)
+
+// Filter service menus (top-level dropdown menus like Sales, Inventory, etc.)
+const serviceMenus = computed(() => {
+  return menuStore.topLevelMenus.filter(menu => 
+    menu.item_type === 'dropdown' && 
+    menu.children && 
+    menu.children.length > 0
+  )
+})
+
+// Get active service menus (sub-menus of the selected service)
+const activeServiceMenus = computed(() => {
+  if (!activeService.value) return []
+  
+  const serviceMenu = menuStore.topLevelMenus.find(menu => 
+    menu.item_type === 'dropdown' && 
+    menu.title === activeService.value
+  )
+  
+  return serviceMenu ? serviceMenu.children || [] : []
+})
+
+function selectService(menu) {
+  activeService.value = menu.title
+  console.log('Selected service:', menu.title)
+}
 
 async function handleLogout() {
   try {
@@ -331,5 +417,11 @@ watch(() => authStore.isAuthenticated, async (isAuthenticated) => {
   } else {
     menuStore.clearMenus()
   }
+})
+
+// Watch for menu changes to reset active service if needed
+watch(() => menuStore.menus, () => {
+  // Reset active service when menus change
+  activeService.value = null
 })
 </script>
