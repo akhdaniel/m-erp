@@ -43,7 +43,7 @@
                         <span v-if="menu.icon" class="mr-2">
                           <i :class="menu.icon"></i>
                         </span>
-                        {{ menu.title }}
+                        {{ menu.title }} ss
                       </router-link>
                     </MenuItem>
                   </MenuItems>
@@ -221,7 +221,7 @@
                 <span v-if="menu.icon" class="mr-2">
                   <i :class="menu.icon"></i>
                 </span>
-                {{ menu.title }} dsds
+                {{ menu.title }} 
               </router-link>
             </template>
           </div>
