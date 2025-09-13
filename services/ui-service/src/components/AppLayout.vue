@@ -366,7 +366,7 @@ const activeServiceMenus = computed(() => {
     menu.item_type === 'dropdown' && 
     menu.title === activeService.value
   )
-  
+  console.log('======== serviceMenu', serviceMenu)
   return serviceMenu ? serviceMenu.children || [] : []
 })
 
