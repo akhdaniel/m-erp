@@ -13,7 +13,7 @@
               <!-- XERPIUM Brand Menu -->
               <Menu v-if="serviceMenus.length > 0" as="div" class="relative">
                 <MenuButton class="text-xl font-bold inline-flex items-center border-primary-500 text-gray-900 router-link-exact-active border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors">
-                  <Squares2X2Icon class="ml-1 h-4 w-4"/>
+                  <Squares2X2Icon class="h-7 w-7"/>
                 </MenuButton>
                 <transition
                   enter-active-class="transition ease-out duration-100"
