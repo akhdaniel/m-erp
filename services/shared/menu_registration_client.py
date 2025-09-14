@@ -152,7 +152,7 @@ class MenuRegistrationClient:
                     if menu.parent_code:
                         # First, try to find the parent menu by code
                         parent_response = await self.client.get(
-                            f"{self.menu_service_url}/api/v1/menus/code/{menu.parent_code}",
+                            f"{self.menu_service_url}/menus/code/{menu.parent_code}",
                             headers=self._get_headers()
                         )
                         
@@ -172,11 +172,11 @@ class MenuRegistrationClient:
                     # Add service token to headers for authentication
                     headers = self._get_headers()
                     headers["Authorization"] = f"Bearer {service_token}"
-                    logger.debug(f"Making POST request to {self.menu_service_url}/api/v1/menus/ with headers: {list(headers.keys())}")
+                    logger.debug(f"Making POST request to {self.menu_service_url}/ with headers: {list(headers.keys())}")
                     
                     # Make API call to create menu
                     response = await self.client.post(
-                        f"{self.menu_service_url}/api/v1/menus/",
+                        f"{self.menu_service_url}/",
                         json=menu_dict,
                         headers=headers
                     )
@@ -232,7 +232,7 @@ class MenuRegistrationClient:
                 try:
                     # First, find the menu by code to get its ID
                     response = await self.client.get(
-                        f"{self.menu_service_url}/api/v1/menus/code/{code}",
+                        f"{self.menu_service_url}/menus/code/{code}",
                         headers=auth_headers
                     )
                     
@@ -242,7 +242,7 @@ class MenuRegistrationClient:
                         
                         # Now delete the menu by ID
                         delete_response = await self.client.delete(
-                            f"{self.menu_service_url}/api/v1/menus/{menu_id}",
+                            f"{self.menu_service_url}/menus/{menu_id}",
                             headers=auth_headers
                         )
                         
