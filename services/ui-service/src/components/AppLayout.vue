@@ -16,7 +16,6 @@
                   XERPIUM
                   <ChevronDownIcon class="ml-1 h-4 w-4" />
                 </MenuButton>
-                
                 <transition
                   enter-active-class="transition ease-out duration-100"
                   enter-from-class="transform opacity-0 scale-95"
@@ -29,28 +28,25 @@
                     <MenuItem
                       v-for="menu in serviceMenus"
                       :key="menu.id"
-                      to="#"
                       v-slot="{ active }"
-                      @click="selectService(menu)"
                     >
-                      <router-link
+                      <a
                         v-if="menu && menu.url"
                         :class="[
                           active ? 'bg-gray-100' : '',
-                          'block px-4 py-2 text-sm text-gray-700'
+                          'block px-4 py-2 text-sm text-gray-700 cursor-pointer'
                         ]"
-                        
+                        @click="handleMenuClick(menu)"
                       >
                         <span v-if="menu.icon" class="mr-2">
                           <i :class="menu.icon"></i>
                         </span>
-                        {{ menu.title }} 
-                      </router-link>
+                        {{ menu.title }}
+                      </a>
                     </MenuItem>
                   </MenuItems>
                 </transition>
               </Menu>
-              
               <!-- Service-specific menus (shown when a service is selected) -->
               <template v-for="menu in activeServiceMenus" :key="menu.id">
                 <router-link
