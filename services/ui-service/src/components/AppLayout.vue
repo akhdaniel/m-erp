@@ -59,7 +59,7 @@
                   <span v-if="menu.icon" class="mr-1">
                     <i :class="menu.icon"></i>
                   </span>
-                  {{ menu.title }} aa
+                  {{ menu.title }}
                 </router-link>
                 
                 <!-- Dropdown menu for service sub-menus -->
