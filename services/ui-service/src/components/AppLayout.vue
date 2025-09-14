@@ -61,11 +61,10 @@
                   </MenuItems>
                 </transition>
               </Menu>
-
-              <MenuButton>
-                {{activeService}}
-              </MenuButton>
               
+                {{activeService}}
+              
+
               <!-- Service-specific menus (shown when a service is selected) -->
               <template v-for="menu in activeServiceMenus" :key="menu.id">
                 <router-link
