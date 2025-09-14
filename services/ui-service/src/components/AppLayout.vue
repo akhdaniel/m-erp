@@ -106,7 +106,8 @@
                     </MenuItems>
                   </transition>
                 </Menu>
-              </template>              
+              </template>
+              
             </div>
             
             <!-- Primary Navigation -->
