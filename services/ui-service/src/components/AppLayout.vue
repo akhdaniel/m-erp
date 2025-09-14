@@ -31,6 +31,7 @@
                       :key="menu.id"
                       to="#"
                       v-slot="{ active }"
+                      @click="selectService(menu)"
                     >
                       <router-link
                         v-if="menu && menu.url"
@@ -38,7 +39,7 @@
                           active ? 'bg-gray-100' : '',
                           'block px-4 py-2 text-sm text-gray-700'
                         ]"
-                        @click="selectService(menu)"
+                        
                       >
                         <span v-if="menu.icon" class="mr-2">
                           <i :class="menu.icon"></i>
