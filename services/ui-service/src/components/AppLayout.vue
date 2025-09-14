@@ -29,6 +29,7 @@
                     <MenuItem
                       v-for="menu in serviceMenus"
                       :key="menu.id"
+                      to="#"
                       v-slot="{ active }"
                     >
                       <router-link
