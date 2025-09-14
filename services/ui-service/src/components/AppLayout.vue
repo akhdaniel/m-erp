@@ -62,7 +62,7 @@
                 </transition>
               </Menu>
               
-                {{activeService}}
+              <div class="text-h2">{{activeService}}</div>
               
 
               <!-- Service-specific menus (shown when a service is selected) -->
