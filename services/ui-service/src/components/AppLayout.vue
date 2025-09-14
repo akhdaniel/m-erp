@@ -62,7 +62,7 @@
                 </transition>
               </Menu>
               
-              <div class="text-2xl text-bold text-white">{{activeService}}</div>
+              <div class="text-xl text-bold text-white">{{activeService}}</div>
               
 
               <!-- Service-specific menus (shown when a service is selected) -->
@@ -70,7 +70,7 @@
                 <router-link
                   v-if="menu.item_type === 'link' && menu.url"
                   :to="menu.url"
-                  class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+                  class="text-gray-500 hover:text-gray-700 hover:background-gray-700 whitespace-nowrap font-medium text-sm transition-colors px-3 py-0"
                   active-class="border-primary-500 text-gray-900"
                   @click="handleMenuClick($event, menu)"
                 >
