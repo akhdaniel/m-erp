@@ -28,7 +28,7 @@
 
                     <!-- Primary Navigation -->
                     <MenuItem 
-                      as="dashboard"
+                      as="div"
                       v-slot="{ active }"
                     >
                       <!-- Always show Dashboard -->
