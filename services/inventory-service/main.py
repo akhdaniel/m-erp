@@ -99,10 +99,10 @@ async def root():
         "status": "operational",
         "description": "Comprehensive inventory management service",
         "endpoints": {
-            "products": "/api/v1/products",
-            "stock": "/api/v1/stock",
-            "warehouses": "/api/v1/warehouses",
-            "receiving": "/api/v1/receiving",
+            "products": "/products",
+            "stock": "/stock",
+            "warehouses": "/warehouses",
+            "receiving": "/receiving",
             "docs": "/api/docs",
             "redoc": "/api/redoc"
         }
@@ -157,7 +157,7 @@ async def initialize_menus_and_ui():
             try:
                 # Get dashboard schema from our own endpoint
                 logger.info("Fetching dashboard schema from local endpoint...")
-                dashboard_response = await client.get("http://inventory-service:8005/api/v1/ui-schemas/dashboard")
+                dashboard_response = await client.get("http://inventory-service:8005/ui-schemas/dashboard")
                 if dashboard_response.status_code == 200:
                     dashboard_config = dashboard_response.json()
                     logger.info(f"Got dashboard config: {dashboard_config.get('title', 'Unknown')}")
@@ -165,7 +165,7 @@ async def initialize_menus_and_ui():
                     # Register with UI Registry
                     logger.info("Registering dashboard with UI Registry...")
                     registry_response = await client.post(
-                        UI_REGISTRY_URL + "/api/v1/services/inventory/dashboard",
+                        UI_REGISTRY_URL + "/services/inventory/dashboard",
                         json=dashboard_config
                     )
                     if registry_response.status_code == 200:
