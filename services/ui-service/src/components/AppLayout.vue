@@ -33,7 +33,7 @@
                     >
                       <router-link
                         v-if="menu && menu.url"
-                        :to="menu.url"
+                        
                         :class="[
                           active ? 'bg-gray-100' : '',
                           'block px-4 py-2 text-sm text-gray-700'
@@ -43,7 +43,7 @@
                         <span v-if="menu.icon" class="mr-2">
                           <i :class="menu.icon"></i>
                         </span>
-                        {{ menu.title }} cc
+                        {{ menu.title }} 
                       </router-link>
                     </MenuItem>
                   </MenuItems>
