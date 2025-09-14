@@ -358,7 +358,7 @@ const serviceMenus = computed(() => {
 
 // Get active service menus (sub-menus of the selected service)
 const activeServiceMenus = computed(() => {  
-  console.log('activeServiceMenus----',menuStore.topLevelMenus )
+  console.log('activeServiceMenus----',menuStore.topLevelMenus, activeService.value )
   const serviceMenu = menuStore.topLevelMenus.find(menu => 
     menu.item_type === 'dropdown' && 
     menu.title === activeService.value
