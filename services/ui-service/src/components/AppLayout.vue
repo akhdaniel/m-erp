@@ -29,7 +29,7 @@
                     <MenuItem
                       v-for="menu in serviceMenus"
                       :key="menu.id"
-                      :to="menu.url"
+                      to="#"
                       v-slot="{ active }"
                     >
                       <router-link
