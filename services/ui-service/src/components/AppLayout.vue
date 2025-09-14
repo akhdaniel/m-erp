@@ -367,6 +367,7 @@ const activeServiceMenus = computed(() => {
 })
 
 function selectService(menu) {
+  console.log('select Service===', menu)
   activeService.value = menu.title
   console.log('Selected service:', menu.title)
 }
