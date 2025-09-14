@@ -27,7 +27,7 @@
                   <MenuItems class="absolute left-0 mt-2 w-56 origin-top-left rounded-md glass-panel py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" style="z-index: 9999;">
 
                     <!-- Primary Navigation -->
-                    <MenuItem>
+                    <MenuItem key="dashboard">
                       <!-- Always show Dashboard -->
                       <router-link
                         to="/dashboard"
