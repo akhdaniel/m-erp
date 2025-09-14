@@ -33,7 +33,6 @@
                     >
                       <router-link
                         v-if="menu && menu.url"
-                        
                         :class="[
                           active ? 'bg-gray-100' : '',
                           'block px-4 py-2 text-sm text-gray-700'
@@ -359,6 +358,7 @@ const serviceMenus = computed(() => {
 
 // Get active service menus (sub-menus of the selected service)
 const activeServiceMenus = computed(() => {  
+  console.log('activeServiceMenus----',menuStore.topLevelMenus )
   const serviceMenu = menuStore.topLevelMenus.find(menu => 
     menu.item_type === 'dropdown' && 
     menu.title === activeService.value
