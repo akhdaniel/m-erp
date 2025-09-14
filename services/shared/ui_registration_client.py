@@ -123,7 +123,7 @@ class UIRegistrationClient:
             data["service"] = self.service_name
             
             response = self.session.post(
-                f"{self.registry_url}/api/v1/components",
+                f"{self.registry_url}/components",
                 json=data
             )
             response.raise_for_status()
@@ -140,7 +140,7 @@ class UIRegistrationClient:
             data["service"] = self.service_name
             
             response = self.session.post(
-                f"{self.registry_url}/api/v1/dashboard/widgets",
+                f"{self.registry_url}/dashboard/widgets",
                 json=data
             )
             response.raise_for_status()
@@ -157,7 +157,7 @@ class UIRegistrationClient:
             data["service"] = self.service_name
             
             response = self.session.post(
-                f"{self.registry_url}/api/v1/lists",
+                f"{self.registry_url}/lists",
                 json=data
             )
             response.raise_for_status()
@@ -174,7 +174,7 @@ class UIRegistrationClient:
             data["service"] = self.service_name
             
             response = self.session.post(
-                f"{self.registry_url}/api/v1/forms",
+                f"{self.registry_url}/forms",
                 json=data
             )
             response.raise_for_status()
@@ -188,7 +188,7 @@ class UIRegistrationClient:
         """Register a complete UI package for the service"""
         try:
             response = self.session.post(
-                f"{self.registry_url}/api/v1/services/{self.service_name}/ui-package",
+                f"{self.registry_url}/services/{self.service_name}/ui-package",
                 json=package
             )
             response.raise_for_status()
