@@ -996,7 +996,7 @@ async def get_warehouse_locations_form_schema() -> Dict[str, Any]:
     }
 
 
-@router.get("/stock_movements/ui-schemas/list")
+@router.get("/stock-movements/ui-schemas/list")
 async def get_stock_movements_schema() -> Dict[str, Any]:
     """Get UI schema for stock movements view"""
     return {
