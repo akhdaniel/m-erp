@@ -378,7 +378,7 @@ const activeServiceMenus = computed(() => {
 function selectService(menu) {
   activeService.value = menu.title
   localStorage.setItem('activeService', activeService.value)
-  console.log('Selected service:===', menu.title)
+  // console.log('Selected service:===', menu.title)
 }
 
 async function handleLogout() {
@@ -392,8 +392,8 @@ async function handleLogout() {
 }
 
 function handleMenuClick(event, menu) {
-  console.log('Menu clicked:', menu.title, menu.url)
-  console.log('Event:', event)
+  // console.log('Menu clicked:', menu.title, menu.url)
+  // console.log('Event:', event)
   // Don't prevent default unless there's a specific reason
   // event.preventDefault() // This would prevent navigation
 }
@@ -411,11 +411,9 @@ function handleMobileMenuClick(event, menu) {
 onMounted(async () => {
   console.log('AppLayout mounted, auth status:', authStore.isAuthenticated)
   if (authStore.isAuthenticated) {
-    console.log('Fetching menus...')
     await menuStore.fetchMenus()
-    console.log('Menus loaded:', menuStore.menus)
-    console.log('Top level menus:', menuStore.topLevelMenus)
-
+    // console.log('Menus loaded:', menuStore.menus)
+    // console.log('Top level menus:', menuStore.topLevelMenus)
   }
 })
 
