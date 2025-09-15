@@ -95,7 +95,7 @@ const serviceName = computed(() => {
 })
 
 const serviceUrl = computed(() => {
-  console.log('serviceUrl === ', SERVICE_MAPPING[serviceName.value])
+  // console.log('serviceUrl === ', SERVICE_MAPPING[serviceName.value])
   return SERVICE_MAPPING[serviceName.value] || ''
 })
 
@@ -103,7 +103,7 @@ const viewType = computed(() => {
   // Determine view type from route
   const path = route.path
   
-  console.log('view type ===', route.name, 'path==',path)
+  // console.log('view type ===', route.name, 'path==',path)
 
   if (path.endsWith('/new')) return 'form-create'
   if (path.endsWith('/edit')) return 'form-edit'
@@ -114,7 +114,7 @@ const viewType = computed(() => {
   if (route.name?.includes('Form')) return 'form'
   if (route.name?.includes('Dashboard')) return 'dashboard'
   
-  console.log('return === list')
+  // console.log('return === list')
   return 'list' // default
 })
 
