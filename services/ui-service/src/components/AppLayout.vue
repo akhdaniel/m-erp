@@ -89,7 +89,7 @@
                     <span v-if="menu.icon" class="mr-1">
                       <i :class="menu.icon"></i>
                     </span>
-                    {{ menu.title }} bb
+                    {{ menu.title }}
                     <ChevronDownIcon class="ml-1 h-4 w-4" />
                   </MenuButton>
                   
