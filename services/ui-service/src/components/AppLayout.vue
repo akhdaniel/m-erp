@@ -372,9 +372,6 @@ const activeServiceMenus = computed(() => {
 function selectService(menu) {
   activeService.value = menu.title
   localStorage.setItem('activeService', activeService.value)
-
-  // const activeService = localStorage.getItem('activeService') as activeService
-
   console.log('Selected service:===', menu.title)
 }
 
@@ -412,6 +409,7 @@ onMounted(async () => {
     await menuStore.fetchMenus()
     console.log('Menus loaded:', menuStore.menus)
     console.log('Top level menus:', menuStore.topLevelMenus)
+
   }
 })
 
@@ -427,6 +425,8 @@ watch(() => authStore.isAuthenticated, async (isAuthenticated) => {
 // Watch for menu changes to reset active service if needed
 watch(() => menuStore.menus, () => {
   // Reset active service when menus change
-  activeService.value = null
+  // activeService.value = null
+  activeService.value = localStorage.getItem('activeService') 
+
 })
 </script>
