@@ -61,7 +61,7 @@ app.include_router(pricing_router)
 app.include_router(dashboard_router)
 app.include_router(metrics_router)
 app.include_router(recent_router)
-app.include_router(ui_schemas_router, prefix="/api/v1")
+app.include_router(ui_schemas_router)
 app.include_router(products_router)
 
 # Root endpoint
