@@ -134,18 +134,7 @@ INVENTORY_MENUS = [
         item_type="link",
         required_permission="view_products"
     ),
-    MenuItem(
-        code="inventory_categories",
-        title="Categories",
-        description="Product Categories",
-        parent_code="inventory_management",
-        order_index=3,
-        level=1,
-        url="/inventory/categories",
-        icon="tag",
-        item_type="link",
-        required_permission="view_products"
-    ),
+
     MenuItem(
         code="inventory_stock",
         title="Stock",
@@ -187,9 +176,9 @@ INVENTORY_MENUS = [
         code="analytic_reports",
         title="Analytic Reports",
         description="Inventory Analytic Reports",
-        parent_code="inventory_management",
-        order_index=8,
-        level=1,
+        parent_code="inventory_reports",
+        order_index=1,
+        level=2,
         url="/inventory/reports/analytics",
         icon="file-text",
         item_type="link",
@@ -213,13 +202,24 @@ INVENTORY_MENUS = [
         description="Warehouse Management",
         parent_code="inventory_settings",
         order_index=5,
-        level=1,
+        level=2,
         url="/inventory/warehouses",
         icon="building",
         item_type="link",
         required_permission="view_warehouses"
     ),
-
+    MenuItem(
+        code="inventory_categories",
+        title="Categories",
+        description="Product Categories",
+        parent_code="inventory_settings",
+        order_index=3,
+        level=2,
+        url="/inventory/categories",
+        icon="tag",
+        item_type="link",
+        required_permission="view_products"
+    ),
 ]
 
 
