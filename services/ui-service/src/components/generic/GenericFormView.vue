@@ -3,13 +3,13 @@
     <!-- Header -->
     <div class="mb-6">
       <nav v-if="schema.breadcrumbs" class="flex" aria-label="Breadcrumb">
-        <ol class="flex items-center space-x-4">
-          <li v-for="(crumb, index) in schema.breadcrumbs" :key="index">
+        <ol class="flex items-center space-x-4 whitespace-nowrap">
+          <li v-for="(crumb, index) in schema.breadcrumbs" :key="index" class="flex items-center">
             <router-link v-if="crumb.route" :to="crumb.route" class="text-gray-400 hover:text-gray-500">
               {{ crumb.label }}
             </router-link>
             <span v-else class="text-gray-500">{{ crumb.label }}</span>
-            <svg v-if="index < schema.breadcrumbs.length - 1" class="flex-shrink-0 h-5 w-5 text-gray-300 ml-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <svg v-if="index < schema.breadcrumbs.length - 1" class="flex-shrink-0 w-4 h-4 text-gray-300 ml-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
               <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
             </svg>
           </li>
