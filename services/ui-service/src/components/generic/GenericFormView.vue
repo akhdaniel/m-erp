@@ -2,7 +2,7 @@
   <div class="max-w-4xl mx-auto">
     <!-- Header -->
     <div class="mb-6">
-      <nav v-if="schema.breadcrumbs" class="flex" aria-label="Breadcrumb">
+      <div v-if="schema.breadcrumbs" class="flex" aria-label="Breadcrumb">
         <ol class="flex items-center space-x-4 whitespace-nowrap">
           <li v-for="(crumb, index) in schema.breadcrumbs" :key="index" class="flex items-center">
             <router-link v-if="crumb.route" :to="crumb.route" class="text-gray-400 hover:text-gray-500">
@@ -14,7 +14,7 @@
             </svg>
           </li>
         </ol>
-      </nav>
+      </div>
       <div class="mt-4">
         <h1 class="text-2xl font-semibold text-gray-900">
           {{ schema.title || (isEditMode ? 'Edit' : 'Create') }}

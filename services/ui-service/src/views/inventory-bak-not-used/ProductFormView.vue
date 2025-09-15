@@ -3,7 +3,7 @@
     <div class="max-w-4xl mx-auto">
       <!-- Header -->
       <div class="mb-6">
-        <nav class="flex" aria-label="Breadcrumb">
+        <div class="flex" aria-label="Breadcrumb">
           <ol class="flex items-center space-x-4">
             <li>
               <router-link to="/inventory/products" class="text-gray-400 hover:text-gray-500">
@@ -19,7 +19,7 @@
               </span>
             </li>
           </ol>
-        </nav>
+        </div>
         <div class="mt-4">
           <h1 class="text-2xl font-semibold text-gray-900">
             {{ isEditMode ? 'Edit Product' : 'Create New Product' }}
