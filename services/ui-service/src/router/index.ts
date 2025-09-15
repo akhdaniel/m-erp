@@ -148,34 +148,34 @@ async function addDynamicRoutes() {
   const authStore = useAuthStore()
   const menuStore = useMenuStore()
   
-  console.log('Adding dynamic routes, auth status:', authStore.isAuthenticated)
-  console.log('Menu store has menus:', menuStore.hasMenus)
+  // console.log('Adding dynamic routes, auth status:', authStore.isAuthenticated)
+  // console.log('Menu store has menus:', menuStore.hasMenus)
   
   // Only add dynamic routes if user is authenticated
   if (authStore.isAuthenticated) {
     try {
       // Fetch menus if not already loaded
       if (!menuStore.hasMenus) {
-        console.log('Fetching menus...')
+        // console.log('Fetching menus...')
         await menuStore.fetchMenus()
       }
       
-      console.log('Menus loaded:', menuStore.menus)
+      // console.log('Menus loaded:', menuStore.menus)
       
       // Generate and add dynamic routes
       const dynamicRoutes = generateDynamicRoutes(menuStore.menus)
-      console.log('Generated routes:', dynamicRoutes.map(r => ({path: r.path, name: r.name})))
+      // console.log('Generated routes:', dynamicRoutes.map(r => ({path: r.path, name: r.name})))
       
       dynamicRoutes.forEach(route => {
-        console.log('Adding route to router:', route.path)
+        // console.log('Adding route to router:', route.path)
         router.addRoute(route)
       })
       
       dynamicRoutesAdded = true
-      console.log(`Added ${dynamicRoutes.length} dynamic routes`)
+      // console.log(`Added ${dynamicRoutes.length} dynamic routes`)
       
       // Log all current routes for debugging
-      console.log('Current router routes:', router.getRoutes().map(r => r.path))
+      // console.log('Current router routes:', router.getRoutes().map(r => r.path))
     } catch (error) {
       console.error('Failed to add dynamic routes:', error)
     }
@@ -188,28 +188,28 @@ async function addDynamicRoutes() {
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
-  console.log('Navigation guard - to:', to.path, 'from:', from.path)
-  console.log('Auth status:', authStore.isAuthenticated, 'Token:', !!authStore.token)
+  // console.log('Navigation guard - to:', to.path, 'from:', from.path)
+  // console.log('Auth status:', authStore.isAuthenticated, 'Token:', !!authStore.token)
   
   // Check if this is a route that should have a dynamic route
   if (to.path.startsWith('/inventory') || to.path.startsWith('/sales') || to.path.startsWith('/purchasing')) {
-    console.log('This is a dynamic route path:', to.path)
+    // console.log('This is a dynamic route path:', to.path)
     // Check if dynamic routes have been added
-    console.log('Dynamic routes added:', dynamicRoutesAdded)
+    // console.log('Dynamic routes added:', dynamicRoutesAdded)
     if (dynamicRoutesAdded) {
       // Check if the route exists
       const route = router.resolve(to.path)
-      console.log('Resolved route:', route.name, route.path)
+      // console.log('Resolved route:', route.name, route.path)
     }
   }
   
   // Set page title
   document.title = to.meta.title ? `${to.meta.title} - XERPIUM` : 'XERPIUM'
-  console.log('Setting page title:', document.title)
+  // console.log('Setting page title:', document.title)
   
   // Initialize auth if we have a token but no user data
   if (authStore.token && !authStore.user) {
-    console.log('Initializing auth...')
+    // console.log('Initializing auth...')
     try {
       await authStore.initializeAuth()
     } catch (error) {
@@ -228,8 +228,8 @@ router.beforeEach(async (to, from, next) => {
     try {
       // Refresh user data to ensure permissions are up to date
       await authStore.fetchCurrentUser()
-      console.log('Refreshed user data for permission check')
-      console.log('User now has permissions:', authStore.user?.permissions)
+      // console.log('Refreshed user data for permission check')
+      // console.log('User now has permissions:', authStore.user?.permissions)
     } catch (error) {
       console.error('Failed to refresh user data:', error)
       // Continue with existing user data
@@ -238,42 +238,42 @@ router.beforeEach(async (to, from, next) => {
   
   // Add dynamic routes if not already added and user is authenticated
   if (authStore.isAuthenticated && !dynamicRoutesAdded) {
-    console.log('Adding dynamic routes...')
+    // console.log('Adding dynamic routes...')
     await addDynamicRoutes()
   }
   
   // Check if route requires authentication
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    console.log('Route requires auth, redirecting to login')
+    // console.log('Route requires auth, redirecting to login')
     next({ name: 'Login', query: { redirect: to.fullPath } })
     return
   }
   
   // Check if route requires admin privileges
   if (to.meta.requiresAdmin && !authStore.isAdmin) {
-    console.log('Route requires admin, redirecting to dashboard')
+    // console.log('Route requires admin, redirecting to dashboard')
     next({ name: 'Dashboard' })
     return
   }
   
   // Check if route requires specific permission
   if (to.meta.requiredPermission && !authStore.hasPermission(to.meta.requiredPermission)) {
-    console.log('Route requires permission, redirecting to dashboard')
-    console.log('Required permission:', to.meta.requiredPermission)
-    console.log('User permissions:', authStore.user?.permissions)
-    console.log('Has permission:', authStore.hasPermission(to.meta.requiredPermission))
+    // console.log('Route requires permission, redirecting to dashboard')
+    // console.log('Required permission:', to.meta.requiredPermission)
+    // console.log('User permissions:', authStore.user?.permissions)
+    // console.log('Has permission:', authStore.hasPermission(to.meta.requiredPermission))
     next({ name: 'Dashboard' })
     return
   }
   
   // Redirect to dashboard if trying to access login while authenticated
   if (to.name === 'Login' && authStore.isAuthenticated) {
-    console.log('Already authenticated, redirecting to dashboard')
+    // console.log('Already authenticated, redirecting to dashboard')
     next({ name: 'Dashboard' })
     return
   }
   
-  console.log('Allowing navigation to:', to.path)
+  // console.log('Allowing navigation to:', to.path)
   next()
 })
 
