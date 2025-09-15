@@ -370,9 +370,12 @@ const activeServiceMenus = computed(() => {
 })
 
 function selectService(menu) {
-  console.log('select Service===', menu)
   activeService.value = menu.title
-  console.log('Selected service:', menu.title)
+  localStorage.setItem('activeService', activeService.value)
+
+  // const activeService = localStorage.getItem('activeService') as activeService
+
+  console.log('Selected service:===', menu.title)
 }
 
 async function handleLogout() {
