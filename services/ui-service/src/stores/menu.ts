@@ -24,11 +24,8 @@ export const useMenuStore = defineStore('menu', () => {
 
     try {
       const response = await api.get<MenuTreeResponse>('/api/v1/menus/tree')
-      console.log('Menu API response:', response)
       // api.get already returns response.data, no need to access .data again
       menus.value = response.menus || []
-      console.log('Stored menus:', menus.value)
-      console.log('Menu count:', menus.value.length)
       lastFetch.value = new Date()
     } catch (err: any) {
       error.value = err.response?.data?.detail || 'Failed to fetch menus'

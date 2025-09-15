@@ -160,9 +160,6 @@ async function loadSchema() {
   try {
     // Determine schema endpoint based on route
     const schemaEndpoint = getSchemaEndpoint()
-    console.log('Debug - Route path:', route.path)
-    console.log('Debug - Service URL:', serviceUrl.value)
-    console.log('Debug - Schema endpoint:', schemaEndpoint)
     if (!schemaEndpoint) {
       schemaError.value = 'No schema endpoint configured for this view'
       return
@@ -192,7 +189,6 @@ async function loadSchema() {
 
 function getSchemaEndpoint(): string {
   const path = route.path
-  console.log('getSchemaEndpoint=====', route.path, route.name, viewType.value)
   if (path.includes('dashboard'))
   {
     return '/api/v1'+path+'/ui-schemas'
@@ -204,126 +200,7 @@ function getSchemaEndpoint(): string {
   }
   else
     return '/api/v1'+path+'/ui-schemas/'+viewType.value
-  
-  // Purchasing routes
-  if (path.includes('/purchasing')) {
-    if (path.includes('/dashboard')) {
-      return '/api/v1/ui-schemas/dashboard'
-    }
-    if (path.includes('/orders')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/forms/purchase-order'
-      }
-      return '/api/v1/ui-schemas/lists/purchase-orders'
-    }
-    if (path.includes('/suppliers')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/forms/supplier'
-      }
-      return '/api/v1/ui-schemas/lists/suppliers'
-    }
-    if (path.includes('/approvals')) {
-      return '/api/v1/ui-schemas/lists/approvals'
-    }
-    if (path.includes('/reports')) {
-      return '/api/v1/ui-schemas/views/reports'
-    }
-    if (path.includes('/settings')) {
-      return '/api/v1/ui-schemas/views/settings'
-    }
-  }
-  
-  // Settings routes
-  if (path.includes('/settings')) {
-    if (path.includes('/menus')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/menus/form'
-      }
-      return '/api/v1/ui-schemas/menus/list'
-    }
-    // Default settings route
-    return '/api/v1/ui-schemas/menus/list'
-  }
-  
-  // Sales routes
-  if (path.includes('/sales')) {
-    if (path.includes('/dashboard')) {
-      return '/api/v1/ui-schemas/dashboard'
-    }
-    if (path.includes('/quotes')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/quotes/form'
-      }
-      return '/api/v1/ui-schemas/quotes/list'
-    }
-    if (path.includes('/orders')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/orders/form'
-      }
-      return '/api/v1/ui-schemas/orders/list'
-    }
-    if (path.includes('/pricing')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/pricing/form'
-      }
-      return '/api/v1/ui-schemas/pricing/list'
-    }
-    if (path.includes('/customers')) {
-      return '/api/v1/ui-schemas/customers/list'
-    }
-    if (path.includes('/analytics')) {
-      return '/api/v1/ui-schemas/analytics/dashboard'
-    }
-  }
-  
-  // Inventory routes
-  console.log('=========================', path)
-  if (path.includes('/inventory')) {
-    if (path.includes('/dashboard')) {
-      return '/api/v1/ui-schemas/dashboard'
-    }
-    if (path.includes('/products')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/products/form'
-      }
-      return '/api/v1/ui-schemas/inventory/products/list'
-    }
-    if (path.includes('/warehouses')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/warehouses/form'
-      }
-      return '/api/v1/ui-schemas/warehouses/list'
-    }
-    if (path.includes('/stock')) {
-      if (path.includes('/movements')) {
-        return '/api/v1/ui-schemas/stock/movements'
-      }
-      return '/api/v1/ui-schemas/stock/list'
-    }
-    if (path.includes('/categories')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/categories/form'
-      }
-      return '/api/v1/ui-schemas/categories/list'
-    }
-    if (path.includes('/receiving')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/receiving/form'
-      }
-      return '/api/v1/ui-schemas/receiving/list'
-    }
-    if (path.includes('/suppliers')) {
-      if (path.includes('/new') || path.includes('/edit')) {
-        return '/api/v1/ui-schemas/suppliers/form'
-      }
-      return '/api/v1/ui-schemas/suppliers/list'
-    }
-    if (path.includes('/reports')) {
-      return '/api/v1/ui-schemas/reports/list'
-    }
-  }
-  
-  return ''
+
 }
 
 function processSchema(schema: any) {
