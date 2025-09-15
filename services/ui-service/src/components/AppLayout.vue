@@ -63,6 +63,8 @@
                     </MenuItem>
                   </MenuItems>
                 </transition>
+                <!-- Theme Selector -->
+                <ThemeSelector />                 
               </Menu>
               
               <div class="text-xl text-bold text-white">{{activeService}}</div>
@@ -180,8 +182,7 @@
                     </button>
                   </MenuItem>
 
-                  <!-- Theme Selector -->
-                  <ThemeSelector />                  
+                 
                 </MenuItems>
               </transition>
             </Menu>
