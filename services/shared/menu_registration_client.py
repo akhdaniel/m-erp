@@ -143,10 +143,48 @@ class MenuRegistrationClient:
             registered_menus = []
             failed_menus = []
             
+            # First, register all menus to ensure they exist (this handles creation/update)
+            menu_responses = {}
             for menu in menus:
                 try:
                     # Convert MenuItem to dict for API call
                     menu_dict = menu.model_dump()
+                    
+                    # Remove parent_code as it's not in the API schema (we'll handle it later)
+                    menu_dict.pop('parent_code', None)
+                    
+                    # Add service token to headers for authentication
+                    headers = self._get_headers()
+                    headers["Authorization"] = f"Bearer {service_token}"
+                    logger.debug(f"Making POST request to {self.menu_service_url}/ with headers: {list(headers.keys())}")
+                    
+                    # Make API call to create/update menu
+                    response = await self.client.post(
+                        f"{self.menu_service_url}/",
+                        json=menu_dict,
+                        headers=headers
+                    )
+                    
+                    if response.status_code in [200, 201]:
+                        menu_data = response.json()
+                        menu_responses[menu.code] = menu_data
+                        logger.info(f"Successfully registered menu: {menu.code}")
+                    else:
+                        failed_menus.append((menu.code, response.status_code, response.text))
+                        logger.error(f"Failed to register menu {menu.code}: {response.status_code} - {response.text}")
+                        
+                except Exception as e:
+                    failed_menus.append((menu.code, str(e)))
+                    logger.error(f"Exception while registering menu {menu.code}: {e}")
+            
+            # Now handle parent-child relationships
+            for menu in menus:
+                if menu.code not in menu_responses:
+                    continue  # Skip if menu registration failed
+                    
+                try:
+                    menu_data = menu_responses[menu.code]
+                    menu_id = menu_data['id']
                     
                     # Handle parent_code to parent_id conversion
                     if menu.parent_code:
@@ -160,39 +198,31 @@ class MenuRegistrationClient:
                         
                         if parent_response.status_code == 200:
                             parent_data = parent_response.json()
-                            menu_dict['parent_id'] = parent_data['id']
-                            # Remove parent_code as it's not in the API schema
-                            menu_dict.pop('parent_code', None)
+                            parent_id = parent_data['id']
+                            
+                            # Update the menu item with the parent_id if it's different
+                            # Use the reorder endpoint which properly handles parent changes
+                            if menu_data.get('parent_id') != parent_id:
+                                reorder_data = {
+                                    "menu_id": menu_id,
+                                    "new_order": menu.order_index,
+                                    "new_parent_id": parent_id
+                                }
+                                update_response = await self.client.post(
+                                    f"{self.menu_service_url}/reorder",
+                                    json=reorder_data,
+                                    headers=headers
+                                )
+                                
+                                if update_response.status_code not in [200, 201]:
+                                    logger.warning(f"Failed to update parent for menu {menu.code}: {update_response.status_code} - {update_response.text}")
                         else:
                             logger.warning(f"Parent menu {menu.parent_code} not found for {menu.code}")
-                            # Remove parent_code as it's not in the API schema
-                            menu_dict.pop('parent_code', None)
-                    else:
-                        # Remove parent_code as it's not in the API schema
-                        menu_dict.pop('parent_code', None)
                     
-                    # Add service token to headers for authentication
-                    headers = self._get_headers()
-                    headers["Authorization"] = f"Bearer {service_token}"
-                    logger.debug(f"Making POST request to {self.menu_service_url}/ with headers: {list(headers.keys())}")
-                    
-                    # Make API call to create menu
-                    response = await self.client.post(
-                        f"{self.menu_service_url}/",
-                        json=menu_dict,
-                        headers=headers
-                    )
-                    
-                    if response.status_code in [200, 201]:
-                        registered_menus.append(menu.code)
-                        logger.info(f"Successfully registered menu: {menu.code}")
-                    else:
-                        failed_menus.append((menu.code, response.status_code, response.text))
-                        logger.error(f"Failed to register menu {menu.code}: {response.status_code} - {response.text}")
+                    registered_menus.append(menu.code)
                         
                 except Exception as e:
-                    failed_menus.append((menu.code, str(e)))
-                    logger.error(f"Exception while registering menu {menu.code}: {e}")
+                    logger.error(f"Exception while updating parent for menu {menu.code}: {e}")
             
             logger.info(f"Successfully registered {len(registered_menus)} menus for {self.service_name}")
             

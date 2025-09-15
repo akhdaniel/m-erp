@@ -108,7 +108,7 @@ async def get_service_token(
         return ServiceTokenResponse(
             access_token=access_token,
             token_type="bearer",
-            expires_in=ServiceAuthService.SERVICE_TOKEN_EXPIRE_HOURS * 3600,
+            expires_in=ServiceAuthService.SERVICE_TOKEN_EXPIRE_HOURS * 3600 * 2,
             scopes=granted_scopes
         )
         
