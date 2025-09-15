@@ -409,7 +409,7 @@ function handleMobileMenuClick(event, menu) {
 
 // Fetch menus when component mounts
 onMounted(async () => {
-  console.log('AppLayout mounted, auth status:', authStore.isAuthenticated)
+  // console.log('AppLayout mounted, auth status:', authStore.isAuthenticated)
   if (authStore.isAuthenticated) {
     await menuStore.fetchMenus()
     // console.log('Menus loaded:', menuStore.menus)
