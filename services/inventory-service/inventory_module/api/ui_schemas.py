@@ -1003,7 +1003,7 @@ async def get_stock_movements_schema() -> Dict[str, Any]:
         "title": "Stock Movements",
         "description": "Track inventory movements and adjustments",
         "viewType": "table",
-        "endpoint": "/api/v1/inventory/stock/movements/",
+        "endpoint": "/api/v1/inventory/stock/movements",
         "keyField": "id",
         "searchable": True,
         "searchPlaceholder": "Search by product or reference...",
