@@ -152,7 +152,7 @@ class MenuRegistrationClient:
                     if menu.parent_code:
                         # First, try to find the parent menu by code
                         parent_response = await self.client.get(
-                            f"{self.menu_service_url}/menus/code/{menu.parent_code}",
+                            f"{self.menu_service_url}/code/{menu.parent_code}",
                             headers=self._get_headers()
                         )
                         
