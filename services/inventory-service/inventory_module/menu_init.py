@@ -202,9 +202,9 @@ INVENTORY_MENUS = [
         parent_code="inventory_management",
         order_index=8,
         level=1,
-        url="/inventory/settings",
+        url="#",
         icon="cogs",
-        item_type="link",
+        item_type="dropdown",
         required_permission="view_inventory_reports"
     ),
      MenuItem(
