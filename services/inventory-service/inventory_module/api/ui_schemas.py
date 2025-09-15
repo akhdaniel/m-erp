@@ -1069,6 +1069,79 @@ async def get_stock_movements_schema() -> Dict[str, Any]:
     }
 
 
+@router.get("/stock-levels/ui-schemas/list")
+async def get_stock_levels_schema() -> Dict[str, Any]:
+    """Get UI schema for stock level view"""
+    return {
+        "title": "Stock Levels",
+        "description": "Track inventory levels and adjustments",
+        "viewType": "table",
+        "endpoint": "/api/v1/inventory/stock/levels",
+        "keyField": "id",
+        "searchable": True,
+        "searchPlaceholder": "Search by product or reference...",
+        "paginated": True,
+        "refreshable": True,
+        
+        "columns": [
+            {
+                "field": "movement_date",
+                "label": "Date",
+                "formatter": "datetime"
+            },
+            {
+                "field": "product_name",
+                "label": "Product"
+            },
+            {
+                "field": "movement_type",
+                "label": "Type"
+            },
+            {
+                "field": "quantity",
+                "label": "Quantity",
+                "formatter": "number"
+            },
+            {
+                "field": "from_location",
+                "label": "From"
+            },
+            {
+                "field": "to_location",
+                "label": "To"
+            },
+            {
+                "field": "reference_number",
+                "label": "Reference"
+            }
+        ],
+        
+        "filters": [
+            {
+                "field": "movement_type",
+                "label": "Type",
+                "type": "select",
+                "options": [
+                    {"label": "Receipt", "value": "receipt"},
+                    {"label": "Issue", "value": "issue"},
+                    {"label": "Transfer", "value": "transfer"},
+                    {"label": "Adjustment", "value": "adjustment"}
+                ]
+            },
+            {
+                "field": "date_from",
+                "label": "From Date",
+                "type": "date"
+            },
+            {
+                "field": "date_to",
+                "label": "To Date",
+                "type": "date"
+            }
+        ]
+    }
+
+
 @router.get("/categories/ui-schemas/tree")
 async def get_categories_tree_schema() -> Dict[str, Any]:
     """Get UI schema for product categories tree view"""
