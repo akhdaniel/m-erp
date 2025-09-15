@@ -158,18 +158,7 @@ INVENTORY_MENUS = [
         item_type="link",
         required_permission="view_stock"
     ),
-    MenuItem(
-        code="inventory_warehouses",
-        title="Warehouses",
-        description="Warehouse Management",
-        parent_code="inventory_management",
-        order_index=5,
-        level=1,
-        url="/inventory/warehouses",
-        icon="building",
-        item_type="link",
-        required_permission="view_warehouses"
-    ),
+   
     MenuItem(
         code="inventory_receiving",
         title="Receiving",
@@ -205,6 +194,30 @@ INVENTORY_MENUS = [
         icon="file-text",
         item_type="link",
         required_permission="view_inventory_reports"
+    ),
+    MenuItem(
+        code="inventory_settings",
+        title="Settings",
+        description="Inventory Settings",
+        parent_code="inventory_management",
+        order_index=8,
+        level=1,
+        url="/inventory/settings",
+        icon="cogs",
+        item_type="link",
+        required_permission="view_inventory_reports"
+    ),
+     MenuItem(
+        code="inventory_warehouses",
+        title="Warehouses",
+        description="Warehouse Management",
+        parent_code="inventory_settings",
+        order_index=5,
+        level=1,
+        url="/inventory/warehouses",
+        icon="building",
+        item_type="link",
+        required_permission="view_warehouses"
     ),
 
 ]
