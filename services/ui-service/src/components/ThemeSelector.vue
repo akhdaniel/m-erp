@@ -131,6 +131,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  console.log('theme selector unmounted=====')
   document.removeEventListener('click', handleClickOutside)
 })
 
