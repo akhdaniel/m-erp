@@ -118,7 +118,7 @@ async def health():
 
 # Component Registration
 
-@app.post("/api/v1/components")
+@app.post("/components")
 async def register_component(component: UIComponent):
     """Register a UI component"""
     key = f"ui:component:{component.service}:{component.id}"
@@ -131,7 +131,7 @@ async def register_component(component: UIComponent):
     redis_client.sadd(f"ui:service:{component.service}:components", component.id)
     return {"status": "registered", "component_id": component.id}
 
-@app.get("/api/v1/components")
+@app.get("/components")
 async def list_components(
     service: Optional[str] = None,
     type: Optional[str] = None
@@ -153,7 +153,7 @@ async def list_components(
     
     return components
 
-@app.get("/api/v1/components/{service}/{component_id}")
+@app.get("/components/{service}/{component_id}")
 async def get_component(service: str, component_id: str):
     """Get a specific component"""
     key = f"ui:component:{service}:{component_id}"
@@ -164,7 +164,7 @@ async def get_component(service: str, component_id: str):
     
     return json.loads(data)
 
-@app.delete("/api/v1/components/{service}/{component_id}")
+@app.delete("/components/{service}/{component_id}")
 async def unregister_component(service: str, component_id: str):
     """Unregister a UI component"""
     key = f"ui:component:{service}:{component_id}"
@@ -174,7 +174,7 @@ async def unregister_component(service: str, component_id: str):
 
 # Dashboard Registration
 
-@app.post("/api/v1/services/{service}/dashboard")
+@app.post("/services/{service}/dashboard")
 async def register_dashboard(service: str, dashboard: Dict[str, Any]):
     """Register a complete dashboard configuration for a service"""
     key = f"ui:dashboard:{service}"
@@ -185,7 +185,7 @@ async def register_dashboard(service: str, dashboard: Dict[str, Any]):
     )
     return {"status": "registered", "service": service}
 
-@app.get("/api/v1/services/{service}/dashboard")
+@app.get("/services/{service}/dashboard")
 async def get_dashboard(service: str):
     """Get the dashboard configuration for a service"""
     key = f"ui:dashboard:{service}"
@@ -198,7 +198,7 @@ async def get_dashboard(service: str):
 
 # Dashboard Widget Registration
 
-@app.post("/api/v1/dashboard/widgets")
+@app.post("/dashboard/widgets")
 async def register_dashboard_widget(widget: DashboardWidget):
     """Register a dashboard widget"""
     key = f"ui:dashboard:widget:{widget.service}:{widget.id}"
@@ -210,7 +210,7 @@ async def register_dashboard_widget(widget: DashboardWidget):
     redis_client.sadd(f"ui:dashboard:widgets", f"{widget.service}:{widget.id}")
     return {"status": "registered", "widget_id": widget.id}
 
-@app.get("/api/v1/dashboard/widgets")
+@app.get("/dashboard/widgets")
 async def list_dashboard_widgets():
     """List all dashboard widgets"""
     widget_keys = redis_client.smembers("ui:dashboard:widgets")
@@ -227,7 +227,7 @@ async def list_dashboard_widgets():
 
 # List View Registration
 
-@app.post("/api/v1/lists")
+@app.post("/lists")
 async def register_list_view(list_view: ListView):
     """Register a list view configuration"""
     key = f"ui:list:{list_view.service}:{list_view.id}"
@@ -239,7 +239,7 @@ async def register_list_view(list_view: ListView):
     redis_client.sadd(f"ui:lists", f"{list_view.service}:{list_view.id}")
     return {"status": "registered", "list_id": list_view.id}
 
-@app.get("/api/v1/lists")
+@app.get("/lists")
 async def list_list_views():
     """List all list view configurations"""
     list_keys = redis_client.smembers("ui:lists")
@@ -256,7 +256,7 @@ async def list_list_views():
 
 # Form View Registration
 
-@app.post("/api/v1/forms")
+@app.post("/forms")
 async def register_form_view(form_view: FormView):
     """Register a form view configuration"""
     key = f"ui:form:{form_view.service}:{form_view.id}"
@@ -268,7 +268,7 @@ async def register_form_view(form_view: FormView):
     redis_client.sadd(f"ui:forms", f"{form_view.service}:{form_view.id}")
     return {"status": "registered", "form_id": form_view.id}
 
-@app.get("/api/v1/forms")
+@app.get("/forms")
 async def list_form_views():
     """List all form view configurations"""
     form_keys = redis_client.smembers("ui:forms")
@@ -285,7 +285,7 @@ async def list_form_views():
 
 # Service UI Package Registration
 
-@app.post("/api/v1/services/{service}/ui-package")
+@app.post("/services/{service}/ui-package")
 async def register_service_ui_package(service: str, package: Dict[str, Any]):
     """
     Register a complete UI package for a service.
@@ -322,7 +322,7 @@ async def register_service_ui_package(service: str, package: Dict[str, Any]):
     
     return {"status": "package registered", "service": service}
 
-@app.get("/api/v1/services/{service}/ui-package")
+@app.get("/services/{service}/ui-package")
 async def get_service_ui_package(service: str):
     """Get the complete UI package for a service"""
     key = f"ui:package:{service}"

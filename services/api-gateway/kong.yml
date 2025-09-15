@@ -154,19 +154,19 @@ services:
     routes:
       - name: ui-registry-base
         paths:
-          - /api/v1/ui-registry/
+          - /api/v1/ui-registry
         strip_path: true
         preserve_host: false
         methods: ["GET"]
       - name: ui-registry-service-dashboard
         paths:
-          - /api/v1/ui-registry/
+          - /api/v1/ui-registry
         strip_path: true
         preserve_host: false
         methods: ["GET"]
       - name: ui-registry-dashboard-widgets
         paths:
-          - /api/v1/ui-registry/
+          - /api/v1/ui-registry
         strip_path: true
         preserve_host: false
         methods: ["GET"]
