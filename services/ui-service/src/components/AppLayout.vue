@@ -42,6 +42,7 @@
                     <MenuItem
                       v-for="menu in serviceMenus"
                       :key="menu.id"
+                      :to="menu.url"
                       v-slot="{ active }"
                     >
                       <a
