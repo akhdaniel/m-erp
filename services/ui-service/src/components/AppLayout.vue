@@ -85,7 +85,9 @@
                 
                 <!-- Dropdown menu for service sub-menus -->
                 <Menu v-else-if="menu.item_type === 'dropdown' && menu.children && menu.children.length > 0" as="div" class="relative">
-                  <MenuButton class="text-gray-500 hover:text-gray-700 hover:background-gray-700 whitespace-nowrap font-medium text-sm transition-colors px-3 py-0">
+                  <MenuButton 
+                      style="width: 110px; display: flex; align-items: center; white-space: nowrap;" 
+                      class="text-gray-500 hover:text-gray-700 hover:background-gray-700 font-medium text-sm transition-colors px-3 py-0">
                     <span v-if="menu.icon" class="mr-1">
                       <i :class="menu.icon"></i>
                     </span>
