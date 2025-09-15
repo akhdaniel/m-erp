@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
-export type ThemeColor = 'blue' | 'dark-red' | 'purple' | 'light'
+export type ThemeColor = 'light' | 'blue' | 'dark-red' | 'purple' 
 
 interface ThemeConfig {
   name: string
@@ -69,7 +69,7 @@ const themes: Record<ThemeColor, ThemeConfig> = {
 
 export const useThemeStore = defineStore('theme', () => {
   // Load saved theme from localStorage or default to blue
-  const savedTheme = localStorage.getItem('userTheme') as ThemeColor || 'blue'
+  const savedTheme = localStorage.getItem('userTheme') as ThemeColor || 'light'
   const currentTheme = ref<ThemeColor>(savedTheme)
   const themeConfig = ref<ThemeConfig>(themes[savedTheme])
 
