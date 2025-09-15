@@ -253,15 +253,8 @@ services:
         paths:
           - /api/v1/sales
         strip_path: true
-        preserve_host: false
+        preserve_host: false        
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
-      - name: sales-ui-schemas
-        paths:
-          - /api/v1/ui-schemas/sales
-        strip_path: true 
-        preserve_host: false
-        service: sales-service
-        methods: ["GET", "OPTIONS"]
       - name: sales-health
         paths:
           - /sales-health

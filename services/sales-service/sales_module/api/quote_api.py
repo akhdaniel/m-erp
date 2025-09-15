@@ -29,7 +29,7 @@ from sales_module.models import QuotationStatus, SalesQuotation
 logger = logging.getLogger(__name__)
 
 # Create API router
-router = APIRouter(prefix="/api/v1/quotations", tags=["quotations"])
+router = APIRouter(prefix="/quotations", tags=["quotations"])
 
 # In-memory storage for demo purposes
 mock_quotations_db = []

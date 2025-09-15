@@ -7,11 +7,11 @@ from fastapi import APIRouter, Depends
 from typing import Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
-router = APIRouter(prefix="/ui-schemas", tags=["UI Schemas"])
+router = APIRouter(tags=["UI Schemas"])
 
 
 # Dashboard Schema
-@router.get("/dashboard")
+@router.get("/dashboard/ui-schemas")
 async def get_dashboard_schema() -> Dict[str, Any]:
     """Get dashboard UI schema"""
     return {
@@ -116,7 +116,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
 
 
 # Quotations List Schema
-@router.get("/quotations/list")
+@router.get("/quotations/ui-schemas/list")
 async def get_quotations_list_schema() -> Dict[str, Any]:
     """Get quotations list UI schema"""
     return {
@@ -265,7 +265,7 @@ async def get_quotations_list_schema() -> Dict[str, Any]:
 
 
 # Quotations Form Schema
-@router.get("/quotations/form")
+@router.get("/quotations/ui-schemas/form")
 async def get_quotations_form_schema() -> Dict[str, Any]:
     """Get quotations form UI schema"""
     return {
@@ -396,7 +396,7 @@ async def get_quotations_form_schema() -> Dict[str, Any]:
 
 
 # Orders List Schema
-@router.get("/orders/list")
+@router.get("/orders/ui-schemas/list")
 async def get_orders_list_schema() -> Dict[str, Any]:
     """Get orders list UI schema"""
     return {
@@ -537,7 +537,7 @@ async def get_orders_list_schema() -> Dict[str, Any]:
 
 
 # Pricing Rules List Schema
-@router.get("/pricing/list")
+@router.get("/pricing/ui-schemas/list")
 async def get_pricing_rules_list_schema() -> Dict[str, Any]:
     """Get pricing rules list UI schema"""
     return {
@@ -662,7 +662,7 @@ async def get_pricing_rules_list_schema() -> Dict[str, Any]:
 
 
 # Customer List Schema (redirects to partners but with customer filter)
-@router.get("/customers/list")
+@router.get("/customers/ui-schemas/list")
 async def get_customers_list_schema() -> Dict[str, Any]:
     """Get customers list UI schema"""
     return {
@@ -743,7 +743,7 @@ async def get_customers_list_schema() -> Dict[str, Any]:
 
 
 # Orders Form Schema
-@router.get("/orders/form")
+@router.get("/orders/ui-schemas/form")
 async def get_orders_form_schema() -> Dict[str, Any]:
     """Get orders form UI schema"""
     return {
@@ -867,7 +867,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
 
 
 # Pricing Rules Form Schema
-@router.get("/pricing/form")
+@router.get("/pricing/ui-schemas/form")
 async def get_pricing_rules_form_schema() -> Dict[str, Any]:
     """Get pricing rules form UI schema"""
     return {
@@ -1024,7 +1024,7 @@ async def get_pricing_rules_form_schema() -> Dict[str, Any]:
 
 
 # Analytics View Schema
-@router.get("/analytics/dashboard")
+@router.get("/analytics/ui-schemas/dashboard")
 async def get_analytics_dashboard_schema() -> Dict[str, Any]:
     """Get sales analytics dashboard schema"""
     return {
