@@ -52,7 +52,7 @@
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
             </svg>
           </button>
-                    
+
           <!-- Blue Theme -->
           <button
             @click="selectTheme('blue')"
@@ -116,6 +116,7 @@ const showDropdown = ref(false)
 
 // Simple click outside handler
 function handleClickOutside(event: MouseEvent) {
+  console.log('handleClickOutside====')
   const dropdown = document.querySelector('.theme-dropdown')
   const button = document.querySelector('.theme-selector-button')
   if (dropdown && !dropdown.contains(event.target as Node) && 
@@ -125,6 +126,7 @@ function handleClickOutside(event: MouseEvent) {
 }
 
 onMounted(() => {
+  console.log('theme selector mounted=====')
   document.addEventListener('click', handleClickOutside)
 })
 
