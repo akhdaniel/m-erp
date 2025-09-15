@@ -128,8 +128,7 @@
           
           <!-- User menu -->
           <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
-            <!-- Theme Selector -->
-            <ThemeSelector />
+            
             
             <Menu as="div" class="ml-3 relative">
               <div>
@@ -175,6 +174,9 @@
                       Sign out
                     </button>
                   </MenuItem>
+
+                  <!-- Theme Selector -->
+                  <ThemeSelector />                  
                 </MenuItems>
               </transition>
             </Menu>
