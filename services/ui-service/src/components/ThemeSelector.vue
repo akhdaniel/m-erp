@@ -36,7 +36,23 @@
           <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-2">
             Select Theme
           </h3>
-          
+
+          <!-- Light Theme -->
+          <button
+            @click="selectTheme('light')"
+            class="theme-option"
+            :class="{ 'theme-option-active': themeStore.currentTheme === 'light' }"
+          >
+            <div class="theme-preview" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)"></div>
+            <div class="flex-1 text-left">
+              <div class="font-medium text-gray-300">Light Mode</div>
+              <div class="text-xs text-gray-500">Clean & Minimal</div>
+            </div>
+            <svg v-if="themeStore.currentTheme === 'light'" class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+                    
           <!-- Blue Theme -->
           <button
             @click="selectTheme('blue')"
@@ -85,21 +101,6 @@
             </svg>
           </button>
 
-          <!-- Light Theme -->
-          <button
-            @click="selectTheme('light')"
-            class="theme-option"
-            :class="{ 'theme-option-active': themeStore.currentTheme === 'light' }"
-          >
-            <div class="theme-preview" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)"></div>
-            <div class="flex-1 text-left">
-              <div class="font-medium text-gray-300">Light Mode</div>
-              <div class="text-xs text-gray-500">Clean & Minimal</div>
-            </div>
-            <svg v-if="themeStore.currentTheme === 'light'" class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-            </svg>
-          </button>
         </div>
       </div>
     </transition>
