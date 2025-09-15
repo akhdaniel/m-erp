@@ -18,7 +18,7 @@ from inventory_module.services import StockService, StockMovementService
 from inventory_module.database import get_db
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/stock", tags=["stock"])
+router = APIRouter(prefix="", tags=["stock"])
 
 
 # Pydantic schemas
@@ -140,7 +140,7 @@ def get_movement_service(db: Session = Depends(get_db)) -> StockMovementService:
 
 
 # Stock level endpoints
-@router.get("/stock/levels", response_model=List[StockLevelResponse])
+@router.get("/levels", response_model=List[StockLevelResponse])
 async def list_stock_levels(
     location_id: Optional[int] = Query(None, description="Filter by location ID"),
     product_id: Optional[int] = Query(None, description="Filter by product ID"),
@@ -168,7 +168,7 @@ async def list_stock_levels(
     return [StockLevelResponse.from_orm(sl) for sl in stock_levels[:limit]]
 
 
-@router.get("/stock/levels/{stock_level_id}", response_model=StockLevelResponse)
+@router.get("/levels/{stock_level_id}", response_model=StockLevelResponse)
 async def get_stock_level(
     stock_level_id: int = Path(..., description="Stock level ID"),
     service: StockService = Depends(get_stock_service)
@@ -178,7 +178,7 @@ async def get_stock_level(
     return StockLevelResponse.from_orm(stock_level)
 
 
-@router.get("/stock/levels/product/{product_id}/location/{location_id}", response_model=Optional[StockLevelResponse])
+@router.get("/levels/product/{product_id}/location/{location_id}", response_model=Optional[StockLevelResponse])
 async def get_product_location_stock(
     product_id: int = Path(..., description="Product ID"),
     location_id: int = Path(..., description="Location ID"),
@@ -216,7 +216,7 @@ async def check_stock_availability(
     return StockAvailabilityResponse(**availability)
 
 
-@router.get("/stock/stats", response_model=Dict[str, Any])
+@router.get("/stats", response_model=Dict[str, Any])
 async def get_stock_stats(
     warehouse_id: Optional[int] = Query(None, description="Filter by warehouse ID"),
     service: StockService = Depends(get_stock_service)
@@ -247,7 +247,7 @@ async def get_stock_stats(
         }
 
 
-@router.get("/stock/low-stock", response_model=List[Dict[str, Any]])
+@router.get("/low-stock", response_model=List[Dict[str, Any]])
 async def get_low_stock_items(
     warehouse_id: Optional[int] = Query(None, description="Filter by warehouse ID"),
     limit: int = Query(100, ge=1, le=500, description="Maximum number of items"),
@@ -257,7 +257,7 @@ async def get_low_stock_items(
     return service.get_low_stock_items(warehouse_id=warehouse_id, limit=limit)
 
 
-@router.get("/stock/value", response_model=Dict[str, Any])
+@router.get("/value", response_model=Dict[str, Any])
 async def calculate_stock_value(
     location_id: Optional[int] = Query(None, description="Filter by location ID"),
     product_id: Optional[int] = Query(None, description="Filter by product ID"),
@@ -267,7 +267,7 @@ async def calculate_stock_value(
     return service.calculate_stock_value(location_id=location_id, product_id=product_id)
 
 
-@router.get("/stock/by-category", response_model=List[Dict[str, Any]])
+@router.get("/by-category", response_model=List[Dict[str, Any]])
 async def get_stock_by_category(
     db: Session = Depends(get_db)
 ):
@@ -314,7 +314,7 @@ async def get_stock_by_category(
 
 
 # Stock adjustment endpoints
-@router.post("/stock/adjust", response_model=StockLevelResponse)
+@router.post("/adjust", response_model=StockLevelResponse)
 async def adjust_stock(
     request: StockAdjustmentRequest,
     service: StockService = Depends(get_stock_service)
@@ -338,7 +338,7 @@ async def adjust_stock(
 
 
 # Stock reservation endpoints
-@router.post("/stock/reserve", response_model=Dict[str, str])
+@router.post("/reserve", response_model=Dict[str, str])
 async def reserve_stock(
     request: StockReservationRequest,
     service: StockService = Depends(get_stock_service)
@@ -359,7 +359,7 @@ async def reserve_stock(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.post("/stock/release-reservation", response_model=Dict[str, str])
+@router.post("/release-reservation", response_model=Dict[str, str])
 async def release_reservation(
     request: StockReservationRequest,
     service: StockService = Depends(get_stock_service)
@@ -380,7 +380,7 @@ async def release_reservation(
 
 
 # Stock movement endpoints
-@router.get("/stock/movements/recent", response_model=List[Dict[str, Any]])
+@router.get("/movements/recent", response_model=List[Dict[str, Any]])
 async def get_recent_movements(
     limit: int = Query(10, ge=1, le=100, description="Number of recent movements to return"),
     service: StockService = Depends(get_stock_service)
@@ -413,7 +413,7 @@ async def get_recent_movements(
         return []
 
 
-@router.get("/stock/movements", response_model=List[StockMovementResponse])
+@router.get("/movements", response_model=List[StockMovementResponse])
 async def list_stock_movements(
     product_id: Optional[int] = Query(None, description="Filter by product ID"),
     movement_type: Optional[StockMovementType] = Query(None, description="Filter by movement type"),
@@ -447,7 +447,7 @@ async def list_stock_movements(
     return [StockMovementResponse.from_orm(movement) for movement in movements]
 
 
-@router.get("/stock/movements/{movement_id}", response_model=StockMovementResponse)
+@router.get("/movements/{movement_id}", response_model=StockMovementResponse)
 async def get_stock_movement(
     movement_id: int = Path(..., description="Movement ID"),
     service: StockMovementService = Depends(get_movement_service)
@@ -457,7 +457,7 @@ async def get_stock_movement(
     return StockMovementResponse.from_orm(movement)
 
 
-@router.get("/stock/movements/pending-approvals", response_model=List[StockMovementResponse])
+@router.get("/movements/pending-approvals", response_model=List[StockMovementResponse])
 async def get_pending_approvals(
     limit: int = Query(50, ge=1, le=200, description="Maximum number of movements"),
     service: StockMovementService = Depends(get_movement_service)
@@ -467,7 +467,7 @@ async def get_pending_approvals(
     return [StockMovementResponse.from_orm(movement) for movement in movements]
 
 
-@router.put("/stock/movements/{movement_id}/approve", response_model=StockMovementResponse)
+@router.put("/movements/{movement_id}/approve", response_model=StockMovementResponse)
 async def approve_movement(
     movement_id: int = Path(..., description="Movement ID"),
     service: StockMovementService = Depends(get_movement_service)
@@ -483,7 +483,7 @@ async def approve_movement(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.post("/stock/movements/{movement_id}/reverse", response_model=StockMovementResponse)
+@router.post("/movements/{movement_id}/reverse", response_model=StockMovementResponse)
 async def reverse_movement(
     movement_id: int = Path(..., description="Movement ID"),
     reason: str = Query(..., min_length=1, description="Reason for reversal"),
@@ -500,7 +500,7 @@ async def reverse_movement(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/stock/movements/statistics", response_model=Dict[str, Any])
+@router.get("/movements/statistics", response_model=Dict[str, Any])
 async def get_movement_statistics(
     days_back: int = Query(30, ge=1, le=365, description="Number of days to analyze"),
     service: StockMovementService = Depends(get_movement_service)
