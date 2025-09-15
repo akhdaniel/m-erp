@@ -131,11 +131,11 @@
               
             </div>
           </div>
-          <!-- Theme Selector -->
-          <ThemeSelector />               
+             
           <!-- User menu -->
           <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
-             
+            <!-- Theme Selector -->
+            <ThemeSelector />               
             <Menu as="div" class="ml-3 relative">
               <div>
                 <MenuButton class="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
