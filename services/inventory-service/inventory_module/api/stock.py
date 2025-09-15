@@ -18,7 +18,7 @@ from inventory_module.services import StockService, StockMovementService
 from inventory_module.database import get_db
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="", tags=["stock"])
+router = APIRouter(prefix="/stock", tags=["stock"])
 
 
 # Pydantic schemas
