@@ -61,7 +61,7 @@ app.include_router(purchase_order_router)
 app.include_router(supplier_router)
 app.include_router(approval_router)
 app.include_router(dashboard_router)
-app.include_router(ui_schemas_router, prefix="/api/v1")
+app.include_router(ui_schemas_router)
 
 # Root endpoint
 @app.get("/")
