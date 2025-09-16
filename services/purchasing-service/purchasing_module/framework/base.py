@@ -127,6 +127,12 @@ class CompanyBusinessObject(BaseModel):
         In production, this would be handled by the Business Object Framework
         service layer with proper database session management.
         """
+        # Set id if not set (mock implementation)
+        if not hasattr(self, 'id') or self.id is None:
+            # Generate a mock ID (in production, this would be set by the database)
+            import random
+            self.id = random.randint(1, 10000)
+        
         # Update timestamp
         self.updated_at = datetime.utcnow()
         

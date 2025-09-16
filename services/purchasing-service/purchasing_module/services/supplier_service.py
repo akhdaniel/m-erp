@@ -266,7 +266,7 @@ class SupplierService:
             
             # Price metrics
             performance.price_variance_percentage = Decimal(str((supplier_id % 3 - 1) * 2.5))  # -2.5% to +2.5%
-            performance.cost_savings_amount = Decimal(str(max(0, performance.total_value * 0.02)))
+            performance.cost_savings_amount = Decimal(str(max(0, float(performance.total_value) * 0.02)))
             
             # Communication metrics
             performance.response_time_hours = Decimal(str(4 + (supplier_id % 3) * 2))

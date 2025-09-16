@@ -162,10 +162,10 @@ class PurchaseOrderService:
                 product_code=item_data.get('product_code'),
                 product_name=item_data['product_name'],
                 description=item_data.get('description', ''),
-                quantity=Decimal(str(item_data['quantity'])),
+                quantity_ordered=Decimal(str(item_data['quantity'])),
                 unit_price=Decimal(str(item_data['unit_price'])),
                 unit_of_measure=item_data.get('unit_of_measure', 'each'),
-                expected_delivery_date=item_data.get('expected_delivery_date'),
+                required_date=item_data.get('expected_delivery_date'),
                 notes=item_data.get('notes')
             )
             

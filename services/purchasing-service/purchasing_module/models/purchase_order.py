@@ -56,13 +56,11 @@ class PurchaseOrder(CompanyBusinessObject):
     # Supplier Information (Partner integration)
     supplier_id = Column(
         Integer,
-        ForeignKey("partners.id", ondelete="RESTRICT"),
         nullable=False,
         index=True
     )
     supplier_contact_id = Column(
         Integer,
-        ForeignKey("partner_contacts.id", ondelete="SET NULL"),
         nullable=True,
         index=True
     )
@@ -84,6 +82,7 @@ class PurchaseOrder(CompanyBusinessObject):
     order_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     required_date = Column(DateTime, nullable=True, index=True)
     promised_date = Column(DateTime, nullable=True)
+    expected_delivery_date = Column(DateTime, nullable=True)
     approved_date = Column(DateTime, nullable=True)
     sent_date = Column(DateTime, nullable=True)
     
@@ -96,6 +95,7 @@ class PurchaseOrder(CompanyBusinessObject):
     notes = Column(Text)
     internal_notes = Column(Text)
     reference_number = Column(String(100))
+    created_by_user_id = Column(Integer, nullable=True, index=True)
     
     # Delivery Information
     delivery_address = Column(Text)
@@ -243,7 +243,7 @@ class PurchaseOrder(CompanyBusinessObject):
         return True
 
 
-class PurchaseOrderLineItem(BaseModel):
+class PurchaseOrderLineItem(CompanyBusinessObject):
     """
     Purchase Order Line Item model.
     
@@ -262,6 +262,7 @@ class PurchaseOrderLineItem(BaseModel):
     
     # Line item details
     line_number = Column(Integer, nullable=False)
+    product_name = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
     
     # Product information (could link to product catalog in future)

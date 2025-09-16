@@ -44,7 +44,6 @@ class SupplierPerformance(CompanyBusinessObject):
     # Supplier reference (Partner integration)
     supplier_id = Column(
         Integer,
-        ForeignKey("partners.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -102,7 +101,7 @@ class SupplierPerformance(CompanyBusinessObject):
     
     # Relationships - these would be proper relationships in production
     # supplier = relationship("Partner", back_populates="performance_records")
-    # performance_metrics = relationship("PerformanceMetric", back_populates="performance_record", cascade="all, delete-orphan")
+    performance_metrics = relationship("PerformanceMetric", back_populates="performance_record", cascade="all, delete-orphan")
     
     def __str__(self):
         """String representation of supplier performance."""
@@ -325,7 +324,7 @@ class PerformanceMetric(BaseModel):
     performance_impact = Column(Text)
     
     # Relationships
-    # performance_record = relationship("SupplierPerformance", back_populates="performance_metrics")
+    performance_record = relationship("SupplierPerformance", back_populates="performance_metrics")
     
     def __str__(self):
         """String representation of performance metric."""

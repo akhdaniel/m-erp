@@ -95,166 +95,15 @@ async def health_check():
 async def register_menus():
     """Register purchasing menus with the menu service."""
     try:
-        from shared.menu_registration_client import MenuRegistrationClient
+        from purchasing_module.menu_init import init_menus_on_startup
         
-        client = MenuRegistrationClient(
-            menu_service_url=os.getenv('MENU_SERVICE_URL', 'http://menu-access-service:8003')
-        )
-        
-        # Define purchasing menus
-        menus = [
-            {
-                "code": "purchasing",
-                "name": "Purchasing",
-                "path": "/purchasing",
-                "icon": "shopping-cart",
-                "sequence": 30,
-                "parent_id": None,
-                "permission": "purchasing.access"
-            },
-            {
-                "code": "purchasing.orders",
-                "name": "Purchase Orders",
-                "path": "/purchasing/orders",
-                "icon": "file-text",
-                "sequence": 10,
-                "parent_code": "purchasing",
-                "permission": "purchasing.orders.read"
-            },
-            {
-                "code": "purchasing.suppliers",
-                "name": "Suppliers",
-                "path": "/purchasing/suppliers",
-                "icon": "truck",
-                "sequence": 20,
-                "parent_code": "purchasing",
-                "permission": "purchasing.suppliers.read"
-            },
-            {
-                "code": "purchasing.approvals",
-                "name": "Approvals",
-                "path": "/purchasing/approvals",
-                "icon": "check-circle",
-                "sequence": 30,
-                "parent_code": "purchasing",
-                "permission": "purchasing.approvals.read"
-            },
-            {
-                "code": "purchasing.reports",
-                "name": "Reports",
-                "path": "/purchasing/reports",
-                "icon": "bar-chart",
-                "sequence": 40,
-                "parent_code": "purchasing",
-                "permission": "purchasing.reports.read"
-            },
-            {
-                "code": "purchasing.settings",
-                "name": "Settings",
-                "path": "/purchasing/settings",
-                "icon": "settings",
-                "sequence": 50,
-                "parent_code": "purchasing",
-                "permission": "purchasing.settings.read"
-            }
-        ]
-        
-        # Convert menu dicts to MenuItem objects
-        from shared.menu_registration_client import MenuItem, MenuPermission
-        
-        menu_items = []
-        for menu in menus:
-            menu_item = MenuItem(
-                code=menu['code'],
-                title=menu['name'],
-                description=menu.get('name'),
-                parent_code=menu.get('parent_code'),
-                order_index=menu.get('sequence', 0),
-                url=menu.get('path', '#'),
-                icon=menu.get('icon'),
-                required_permission=menu.get('permission')
-            )
-            menu_items.append(menu_item)
-        
-        # Register all menus at once
-        success = await client.register_menus(menu_items)
+        # Initialize menus using the menu_init module
+        success = init_menus_on_startup()
         if success:
-            logger.info(f"Registered {len(menu_items)} menus successfully")
+            logger.info("Purchasing menus registered successfully")
         else:
-            logger.warning("Failed to register menus")
-        
-        # Register permissions
-        permissions = [
-            MenuPermission(
-                code="purchasing.access",
-                name="Purchasing Management",
-                description="Access to purchasing module",
-                category="purchasing"
-            ),
-            MenuPermission(
-                code="purchasing.orders.read",
-                name="View Purchase Orders",
-                description="View purchase orders",
-                category="purchasing",
-                action="read"
-            ),
-            MenuPermission(
-                code="purchasing.orders.write",
-                name="Create/Edit Purchase Orders",
-                description="Create and edit purchase orders",
-                category="purchasing",
-                action="write"
-            ),
-            MenuPermission(
-                code="purchasing.suppliers.read",
-                name="View Suppliers",
-                description="View supplier information",
-                category="purchasing",
-                action="read"
-            ),
-            MenuPermission(
-                code="purchasing.suppliers.write",
-                name="Manage Suppliers",
-                description="Create and edit suppliers",
-                category="purchasing",
-                action="write"
-            ),
-            MenuPermission(
-                code="purchasing.approvals.read",
-                name="View Approvals",
-                description="View approval workflows",
-                category="purchasing",
-                action="read"
-            ),
-            MenuPermission(
-                code="purchasing.approvals.write",
-                name="Manage Approvals",
-                description="Approve or reject purchase orders",
-                category="purchasing",
-                action="write"
-            ),
-            MenuPermission(
-                code="purchasing.reports.read",
-                name="View Reports",
-                description="View purchasing reports",
-                category="purchasing",
-                action="read"
-            ),
-            MenuPermission(
-                code="purchasing.settings.read",
-                name="View Settings",
-                description="View purchasing settings",
-                category="purchasing",
-                action="read"
-            ),
-        ]
-        
-        success = await client.register_permissions(permissions)
-        if success:
-            logger.info(f"Registered {len(permissions)} permissions successfully")
-        
-        logger.info("Menu registration completed successfully")
-        
+            logger.warning("Failed to register purchasing menus")
+            
     except Exception as e:
         logger.error(f"Failed to register menus: {e}")
 
@@ -262,19 +111,19 @@ async def register_menus():
 async def register_ui_components():
     """Register UI components with the UI Registry Service."""
     try:
-        ui_registry_url = os.getenv('UI_REGISTRY_URL', 'http://ui-registry-service:8010')
+        # Import and run the register_ui script
+        import subprocess
+        import sys
         
-        async with httpx.AsyncClient() as client:
-            # Register complete UI package
-            response = await client.post(
-                f"{ui_registry_url}/api/v1/services/purchasing/ui-package",
-                json=PURCHASING_UI_PACKAGE
-            )
-            
-            if response.status_code == 200:
-                logger.info("UI package registered successfully")
-            else:
-                logger.warning(f"Failed to register UI package: {response.status_code}")
+        # Run the register_ui.py script
+        result = subprocess.run([sys.executable, "register_ui.py"], 
+                              cwd="/opt/m-erp/services/purchasing-service",
+                              capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            logger.info("UI components registered successfully")
+        else:
+            logger.warning(f"Failed to register UI components: {result.stderr}")
         
     except Exception as e:
         logger.error(f"Failed to register UI components: {e}")
