@@ -123,7 +123,7 @@ async def get_quotations_list_schema() -> Dict[str, Any]:
         "title": "Sales Quotations",
         "description": "Manage customer quotations",
         "viewType": "table",
-        "endpoint": "/quotations/",
+        "endpoint": "/sales/quotations",
         "dataPath": "quotations",  # Tell the UI where to find the data in the response
         "searchable": True,
         "searchPlaceholder": "Search quotations...",
