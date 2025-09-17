@@ -459,11 +459,11 @@ async def autocomplete_products(
         for product in filtered_products:
             results.append({
                 "id": product.id,
-                "sku": product.sku,
-                "name": product.name,
-                "display": f"{product.sku} - {product.name}",
-                "price": float(product.list_price),
-                "unit": product.unit_of_measure
+                "sku": product.sku or "",
+                "name": product.name or "",
+                "display": f"{product.sku or ""} - {product.name}",
+                "price": product.list_price or 0,
+                "unit": product.unit_of_measure or ""
             })
         
         return results
