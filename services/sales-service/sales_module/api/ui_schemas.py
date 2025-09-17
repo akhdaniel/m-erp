@@ -403,7 +403,7 @@ async def get_orders_list_schema() -> Dict[str, Any]:
         "title": "Sales Orders",
         "description": "Manage customer orders",
         "viewType": "table",
-        "endpoint": "/orders/",
+        "endpoint": "/orders",
         "searchable": True,
         "searchPlaceholder": "Search orders...",
         "paginated": True,
