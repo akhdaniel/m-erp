@@ -129,7 +129,7 @@ async def startup_event():
             try:
                 # Get dashboard schema from our own endpoint
                 logger.info("Fetching dashboard schema from local endpoint...")
-                dashboard_response = await client.get("http://localhost:8006/api/v1/ui-schemas/dashboard")
+                dashboard_response = await client.get("http://localhost:8006/ui-schemas/dashboard")
                 if dashboard_response.status_code == 200:
                     dashboard_config = dashboard_response.json()
                     logger.info(f"Got dashboard config: {dashboard_config.get('title', 'Unknown')}")
@@ -137,7 +137,7 @@ async def startup_event():
                     # Register with UI Registry
                     logger.info("Registering dashboard with UI Registry...")
                     registry_response = await client.post(
-                        "http://ui-registry-service:8010/api/v1/services/sales/dashboard",
+                        "http://ui-registry-service:8010/services/sales/dashboard",
                         json=dashboard_config
                     )
                     if registry_response.status_code == 200:
