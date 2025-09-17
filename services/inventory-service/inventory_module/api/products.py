@@ -619,3 +619,61 @@ async def get_product_statistics(
     except Exception as e:
         logger.error(f"Error getting product statistics: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve product statistics")
+
+
+@router.get("/autocomplete", response_model=List[Dict[str, Any]])
+async def autocomplete_products(
+    q: str = Query(..., min_length=2, description="Search query (minimum 2 characters)"),
+    limit: int = Query(10, ge=1, le=50, description="Maximum results to return"),
+    service: ProductService = Depends(get_product_service)
+):
+    """
+    Autocomplete endpoint for product selection dropdowns.
+    
+    Returns a simplified list of products for quick selection in forms.
+    Optimized for performance with minimal data returned.
+    """
+    try:
+        # Fetch products from inventory service
+        # For now, get all products and filter locally
+        # products_data = await fetch_from_inventory("/api/v1/products/", {})
+        """Search products."""
+        filtered_products = service.search_products(
+            search_term=q,
+            limit=limit
+        )
+        if not filtered_products:
+            return []
+        
+        # Return simplified product data for autocomplete
+        results = []
+        # Handle both array and object response formats
+        # products_list = products_data if isinstance(products_data, list) else products_data.get("items", [])
+        
+        # Filter products by search query (case-insensitive)
+        # q_lower = q.lower()
+        # filtered_products = []
+        # for product in products_list:
+        #     if (q_lower in product.get("name", "").lower() or 
+        #         q_lower in product.get("sku", "").lower() or
+        #         q_lower in product.get("description", "").lower()):
+        #         filtered_products.append(product)
+        #         if len(filtered_products) >= limit:
+        #             break
+        
+        for product in filtered_products:
+            results.append({
+                "id": product["id"],
+                "sku": product.get("sku", ""),
+                "name": product["name"],
+                "display": f"{product.get('sku', '')} - {product['name']}",
+                "price": float(product.get("list_price", 0)),
+                "unit": product.get("unit_of_measure", "unit")
+            })
+        
+        return results
+        
+    except Exception as e:
+        logger.error(f"Error in product autocomplete: {e}")
+        return []
+
