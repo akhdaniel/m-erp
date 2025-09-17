@@ -55,6 +55,7 @@ def get_current_company_id() -> int:
 
 # Quotation CRUD endpoints
 @router.post("/", response_model=QuotationResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=QuotationResponse, status_code=status.HTTP_201_CREATED)
 async def create_quotation(
     request: Dict[str, Any] = Body(...),
     quotation_service: QuotationService = Depends(get_quotation_service),
@@ -181,6 +182,7 @@ async def create_quotation(
 
 
 @router.get("/", response_model=QuotationListResponse)
+@router.get("", response_model=QuotationListResponse)
 async def list_quotes(
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
