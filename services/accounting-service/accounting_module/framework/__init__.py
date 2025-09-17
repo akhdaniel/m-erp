@@ -1,0 +1,3 @@
+"""
+Accounting Module Framework Package
+"""

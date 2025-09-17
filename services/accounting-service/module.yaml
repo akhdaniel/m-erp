@@ -1,0 +1,249 @@
+name: accounting-module
+version: 1.0.0
+display_name: Accounting Management Module
+description: Complete accounting management with chart of accounts, journal entries, bank transactions, and financial reporting
+author: XERPIUM Development Team
+author_email: dev@m-erp.com
+license: MIT
+type: full_module
+
+# Module dependencies
+dependencies:
+  - name: business-object-framework
+    version: ">=1.0.0"
+    type: module
+    description: Core business object infrastructure
+  - name: company-partner-service
+    version: ">=1.0.0"
+    type: service
+    description: Partner integration for customers and suppliers
+  - name: currency-service
+    version: ">=1.0.0"
+    type: service
+    description: Multi-currency support for international accounting
+
+# Entry points for module initialization
+entry_points:
+  main: accounting_module.main:initialize_module
+  health_check: accounting_module.main:check_health
+
+# API endpoints provided by this module
+endpoints:
+  # Chart of Accounts
+  - path: /accounts
+    method: GET
+    handler: accounting_module.api.accounts:list_accounts
+    description: List chart of accounts with filtering
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.view"]
+    
+  - path: /accounts
+    method: POST
+    handler: accounting_module.api.accounts:create_account
+    description: Create new account
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.create"]
+    
+  - path: /accounts/{id}
+    method: GET
+    handler: accounting_module.api.accounts:get_account
+    description: Get account by ID
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.view"]
+    
+  - path: /accounts/{id}
+    method: PUT
+    handler: accounting_module.api.accounts:update_account
+    description: Update account
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.edit"]
+    
+  # Journal Entries
+  - path: /journal-entries
+    method: GET
+    handler: accounting_module.api.journal_entries:list_journal_entries
+    description: List journal entries with filtering
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.view"]
+    
+  - path: /journal-entries
+    method: POST
+    handler: accounting_module.api.journal_entries:create_journal_entry
+    description: Create new journal entry
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.create"]
+    
+  - path: /journal-entries/{id}
+    method: GET
+    handler: accounting_module.api.journal_entries:get_journal_entry
+    description: Get journal entry by ID
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.view"]
+    
+  # Cash and Bank Transactions
+  - path: /bank-transactions
+    method: GET
+    handler: accounting_module.api.bank:list_bank_transactions
+    description: List bank transactions with filtering
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.view"]
+    
+  - path: /bank-transactions
+    method: POST
+    handler: accounting_module.api.bank:create_bank_transaction
+    description: Create new bank transaction
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.create"]
+    
+  # Reports
+  - path: /reports/balance-sheet
+    method: GET
+    handler: accounting_module.api.reports:get_balance_sheet
+    description: Get balance sheet report
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.reports"]
+    
+  - path: /reports/profit-loss
+    method: GET
+    handler: accounting_module.api.reports:get_profit_loss
+    description: Get profit and loss report
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.reports"]
+    
+  - path: /reports/trial-balance
+    method: GET
+    handler: accounting_module.api.reports:get_trial_balance
+    description: Get trial balance report
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.reports"]
+    
+  - path: /reports/cash-flow
+    method: GET
+    handler: accounting_module.api.reports:get_cash_flow
+    description: Get cash flow report
+    requires_auth: true
+    company_scoped: true
+    permissions: ["accounting.reports"]
+
+# Event handlers for integration with other modules
+event_handlers:
+  - event_type: partner.created
+    handler: accounting_module.events:on_partner_created
+    description: Handle new partner creation for customer/vendor setup
+  - event_type: partner.updated
+    handler: accounting_module.events:on_partner_updated
+    description: Update customer/vendor information when partner is modified
+  - event_type: currency.rate_updated
+    handler: accounting_module.events:on_currency_rate_updated
+    description: Recalculate account balances on currency updates
+
+# Events published by this module
+event_publishers:
+  - event_type: account.created
+    description: Published when new account is created
+  - event_type: account.updated
+    description: Published when account is updated
+  - event_type: journal_entry.created
+    description: Published when new journal entry is created
+  - event_type: journal_entry.posted
+    description: Published when journal entry is posted
+  - event_type: bank_transaction.created
+    description: Published when new bank transaction is created
+
+# Module configuration schema
+config_schema:
+  type: object
+  properties:
+    accounting_settings:
+      type: object
+      description: Accounting settings
+      properties:
+        default_currency:
+          type: string
+          description: Default currency for accounting
+          default: "USD"
+        fiscal_year_start:
+          type: string
+          description: Fiscal year start date (MM-DD format)
+          default: "01-01"
+        enable_multi_currency:
+          type: boolean
+          description: Enable multi-currency accounting
+          default: true
+        enable_budgeting:
+          type: boolean
+          description: Enable budgeting features
+          default: true
+      required: ["default_currency", "fiscal_year_start"]
+      
+    reporting_settings:
+      type: object
+      description: Reporting settings
+      properties:
+        enable_dashboard:
+          type: boolean
+          description: Enable accounting dashboard
+          default: true
+        default_report_period:
+          type: string
+          description: Default reporting period
+          enum: ["monthly", "quarterly", "yearly"]
+          default: "monthly"
+      required: ["enable_dashboard"]
+      
+  required: ["accounting_settings", "reporting_settings"]
+
+# Database migrations
+migrations:
+  - version: "1.0.0"
+    description: "Initial accounting module tables"
+    script: "migrations/001_initial_accounting_tables.sql"
+
+# UI components provided by this module
+ui_components:
+  - name: ChartOfAccounts
+    component: accounting_module.ui.components:ChartOfAccounts
+    description: Chart of accounts management interface
+  - name: JournalEntries
+    component: accounting_module.ui.components:JournalEntries
+    description: Journal entry management interface
+  - name: BankTransactions
+    component: accounting_module.ui.components:BankTransactions
+    description: Bank transaction management interface
+  - name: FinancialReports
+    component: accounting_module.ui.components:FinancialReports
+    description: Financial reporting dashboard
+
+# Module metadata
+metadata:
+  category: accounting
+  tags: ["accounting", "finance", "ledger", "reports", "banking"]
+  documentation_url: "https://docs.m-erp.com/modules/accounting"
+  support_url: "https://support.m-erp.com/accounting-module"
+  minimum_m_erp_version: "2.0.0"
+  
+# Security and compliance
+security:
+  data_retention_days: 2555  # 7 years for financial records
+  encryption_required: true
+  audit_all_operations: true
+  gdpr_compliant: true
+  
+# Performance and scaling
+performance:
+  max_concurrent_entries: 100
+  max_entries_per_request: 50
+  cache_account_balances: true
+  cache_ttl_seconds: 300
