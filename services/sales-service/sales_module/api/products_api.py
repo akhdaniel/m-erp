@@ -16,7 +16,7 @@ from decimal import Decimal
 logger = logging.getLogger(__name__)
 
 # Create API router
-router = APIRouter(prefix="/api/v1/products", tags=["products"])
+router = APIRouter(prefix="/products", tags=["products"])
 
 
 # Response models

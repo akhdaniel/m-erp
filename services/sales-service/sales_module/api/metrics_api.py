@@ -14,7 +14,7 @@ from sales_module.services.dashboard_service import DashboardService
 logger = logging.getLogger(__name__)
 
 # Create API router
-router = APIRouter(prefix="/api/v1/dashboard/metrics", tags=["metrics"])
+router = APIRouter(prefix="/metrics", tags=["metrics"])
 
 
 # Dependencies
