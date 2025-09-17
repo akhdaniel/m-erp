@@ -316,6 +316,7 @@ def get_order_service(
 
 # Order CRUD endpoints
 @router.post("/", response_model=OrderResponse, status_code=201)
+@router.post("", response_model=OrderResponse, status_code=201)
 async def create_order(
     order_data: OrderCreate,
     user_id: int = Depends(get_current_user_id),
@@ -375,6 +376,7 @@ async def create_order_from_quote(
 
 
 @router.get("/", response_model=List[OrderResponse])
+@router.get("", response_model=List[OrderResponse])
 async def list_orders(
     status: Optional[OrderStatus] = Query(None, description="Filter by order status"),
     customer_id: Optional[int] = Query(None, description="Filter by customer ID"),
