@@ -147,18 +147,6 @@ SALES_MENUS = [
         required_permission="manage_orders"
     ),
     MenuItem(
-        code="sales_pricing",
-        title="Pricing Rules",
-        description="Pricing Management",
-        parent_code="sales_management",
-        order_index=3,  # Fourth item
-        level=1,
-        url="/sales/pricing",
-        icon="dollar-sign",
-        item_type="link",
-        required_permission="view_pricing"
-    ),
-    MenuItem(
         code="sales_customers",
         title="Customers",
         description="Customer Management",
@@ -182,13 +170,37 @@ SALES_MENUS = [
         item_type="link",
         required_permission="sales_analytics"
     ),
+    MenuItem(
+        code="sales_settings",
+        title="Settings",
+        description="Sales Settings and Configurations",
+        parent_code="sales_management",
+        order_index=100,  # Sixth item
+        level=1,
+        url="/sales/settings",
+        icon="cogs",
+        item_type="dropdown",
+        required_permission="access_sales"
+    ),
+    MenuItem(
+        code="sales_pricing",
+        title="Pricing Rules",
+        description="Pricing Management",
+        parent_code="sales_settings",
+        order_index=3,  # Fourth item
+        level=1,
+        url="/sales/pricing",
+        icon="dollar-sign",
+        item_type="link",
+        required_permission="view_pricing"
+    ),    
 ]
 
 
 async def initialize_sales_menus():
     """Initialize sales menus on service startup"""
     try:
-        menu_service_url = os.getenv("MENU_SERVICE_URL", "http://menu-access-service:8000")
+        menu_service_url = os.getenv("MENU_SERVICE_URL", "http://menu-access-service:8003")
         
         logger.info("Initializing sales menus...")
         
