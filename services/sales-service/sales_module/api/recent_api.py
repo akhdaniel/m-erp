@@ -15,7 +15,7 @@ from sales_module.services.dashboard_service import DashboardService
 logger = logging.getLogger(__name__)
 
 # Create API router
-router = APIRouter(prefix="/api/v1/dashboard/recent", tags=["recent"])
+router = APIRouter(tags=["recent"])
 
 
 # Dependencies
