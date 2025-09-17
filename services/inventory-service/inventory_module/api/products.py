@@ -435,6 +435,7 @@ async def autocomplete_products(
             search_term=q,
             limit=limit
         )
+        logger.info('filtered_products===', filtered_products)
         if not filtered_products:
             return []
         
