@@ -357,7 +357,7 @@ const searchProducts = async () => {
 
   searchTimeout.value = setTimeout(async () => {
     try {
-      const response = await fetch(`${props.productApiUrl}/autocomplete/?q=${encodeURIComponent(productSearch.value)}`)
+      const response = await fetch(`${props.productApiUrl}/autocomplete?q=${encodeURIComponent(productSearch.value)}`)
       if (response.ok) {
         searchResults.value = await response.json()
       }
