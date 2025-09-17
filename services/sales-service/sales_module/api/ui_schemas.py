@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends
 from typing import Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
-router = APIRouter(tags=["UI Schemas"])
+router = APIRouter(prefix='/sales',tags=["UI Schemas"])
 
 
 # Dashboard Schema
