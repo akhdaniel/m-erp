@@ -8,7 +8,7 @@ from typing import Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(tags=["UI Schemas"])
-
+INVENTORY_SERVICE = "http://localhost:8005"
 
 # Dashboard Schema
 @router.get("/dashboard/ui-schemas")
@@ -748,7 +748,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
     """Get orders form UI schema"""
     return {
         "title": "Order Details",
-        "endpoint": "/orders",
+        "endpoint": "/sales/orders",
         "method": "POST",
         "successRoute": "/sales/orders",
         "cancelRoute": "/sales/orders",
@@ -772,7 +772,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                         "type": "select",
                         "required": True,
                         "colSpan": 1,
-                        "optionsEndpoint": "/partners/?is_customer=true",
+                        "optionsEndpoint": "/sales/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Select a customer"
@@ -817,7 +817,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                             "title": "Order Items",
                             "entityType": "order",
                             "taxRate": 0,
-                            "productApiUrl": "http://localhost:8006/products"
+                            "productApiUrl": INVENTORY_SERVICE + "/products"
                         }
                     }
                 ]
