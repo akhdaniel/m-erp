@@ -404,6 +404,9 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    volumes:
+      - ./services/sales-service:/app
+      - ./services/shared:/app/shared
     networks:
       - chat_default
 
