@@ -189,7 +189,7 @@ async def autocomplete_products(
     try:
         # Fetch products from inventory service
         # For now, get all products and filter locally
-        products_data = await fetch_from_inventory("/api/v1/products/", {})
+        products_data = await fetch_from_inventory("/api/v1/products", {})
         
         if not products_data:
             return []
