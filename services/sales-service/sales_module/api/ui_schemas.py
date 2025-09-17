@@ -270,7 +270,7 @@ async def get_quotations_form_schema() -> Dict[str, Any]:
     """Get quotations form UI schema"""
     return {
         "title": "Quotation Details",
-        "endpoint": "/quotations",
+        "endpoint": "/sales/quotations",
         "method": "POST",
         "successRoute": "/sales/quotations",
         "cancelRoute": "/sales/quotations",
