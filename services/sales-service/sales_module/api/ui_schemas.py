@@ -771,7 +771,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                         "type": "select",
                         "required": True,
                         "colSpan": 1,
-                        "optionsEndpoint": "/sales/partners?is_customer=true",
+                        "optionsEndpoint": "/api/v1/sales/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Select a customer"
@@ -816,7 +816,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                             "title": "Order Items",
                             "entityType": "order",
                             "taxRate": 0,
-                            "productApiUrl": "/products"
+                            "productApiUrl": "/api/v1/inventory/products"
                         }
                     }
                 ]
