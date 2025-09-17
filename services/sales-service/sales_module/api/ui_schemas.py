@@ -403,7 +403,7 @@ async def get_orders_list_schema() -> Dict[str, Any]:
         "title": "Sales Orders",
         "description": "Manage customer orders",
         "viewType": "table",
-        "endpoint": "/orders",
+        "endpoint": "/sales/orders",
         "searchable": True,
         "searchPlaceholder": "Search orders...",
         "paginated": True,
@@ -544,7 +544,7 @@ async def get_pricing_rules_list_schema() -> Dict[str, Any]:
         "title": "Pricing Rules",
         "description": "Manage pricing and discount rules",
         "viewType": "table",
-        "endpoint": "/pricing/rules/",
+        "endpoint": "/sales/pricing/rules/",
         "searchable": True,
         "paginated": True,
         "columns": [
@@ -669,7 +669,7 @@ async def get_customers_list_schema() -> Dict[str, Any]:
         "title": "Customers",
         "description": "Manage customer accounts",
         "viewType": "table",
-        "endpoint": "/partners?is_customer=true",
+        "endpoint": "/sales/partners?is_customer=true",
         "dataPath": "partners",  # Tell the UI where to find the data in the response
         "searchable": True,
         "paginated": True,
