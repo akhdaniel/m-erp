@@ -73,7 +73,7 @@ async def root():
         "version": "1.0.0",
         "status": "running",
         "endpoints": {
-            "quotes": "/api/v1/quotes",
+            "quotes": "/quotes",
             "orders": "/orders",
             "pricing": "/pricing",
             "docs": "/api/docs",
