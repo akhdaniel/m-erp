@@ -18,7 +18,7 @@ from inventory_module.database import get_db
 from inventory_module.api.stock import get_stock_service
 
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('uvicorn')
 
 router = APIRouter(prefix="/products", tags=["products"])
 
