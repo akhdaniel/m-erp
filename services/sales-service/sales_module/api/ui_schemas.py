@@ -28,7 +28,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "revenue_metric",
                 "type": "metric",
                 "title": "Monthly Revenue",
-                "endpoint": "/api/v1/dashboard/metrics/revenue",
+                "endpoint": "/dashboard/metrics/revenue",
                 "format": "currency",
                 "icon": "dollar-sign",
                 "color": "green",
@@ -38,7 +38,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "quotations_metric",
                 "type": "metric",
                 "title": "Active Quotations",
-                "endpoint": "/api/v1/dashboard/metrics/quotations",
+                "endpoint": "/dashboard/metrics/quotations",
                 "format": "number",
                 "icon": "file-text",
                 "color": "blue",
@@ -48,7 +48,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "orders_metric",
                 "type": "metric",
                 "title": "Pending Orders",
-                "endpoint": "/api/v1/dashboard/metrics/orders",
+                "endpoint": "/dashboard/metrics/orders",
                 "format": "number",
                 "icon": "shopping-bag",
                 "color": "orange",
@@ -58,7 +58,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "revenue_chart",
                 "type": "chart",
                 "title": "Revenue Trend",
-                "endpoint": "/api/v1/dashboard/charts/revenue-trend",
+                "endpoint": "/dashboard/charts/revenue-trend",
                 "chartType": "line",
                 "span": 2,
                 "height": 300
@@ -67,7 +67,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "pipeline_chart",
                 "type": "chart",
                 "title": "Sales Pipeline",
-                "endpoint": "/api/v1/dashboard/charts/sales-pipeline",
+                "endpoint": "/dashboard/charts/sales-pipeline",
                 "chartType": "bar",
                 "span": 1,
                 "height": 300
@@ -76,7 +76,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "recent_quotations",
                 "type": "list",
                 "title": "Recent Quotations",
-                "endpoint": "/api/v1/dashboard/recent/quotations",
+                "endpoint": "/dashboard/recent/quotations",
                 "limit": 5,
                 "span": 1,
                 "columns": [
@@ -89,7 +89,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "recent_orders",
                 "type": "list",
                 "title": "Recent Orders",
-                "endpoint": "/api/v1/dashboard/recent/orders",
+                "endpoint": "/dashboard/recent/orders",
                 "limit": 5,
                 "span": 1,
                 "columns": [
@@ -102,7 +102,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                 "id": "top_customers",
                 "type": "table",
                 "title": "Top Customers",
-                "endpoint": "/api/v1/dashboard/analytics/top-customers",
+                "endpoint": "/dashboard/analytics/top-customers",
                 "limit": 5,
                 "span": 1,
                 "columns": [
@@ -123,7 +123,7 @@ async def get_quotations_list_schema() -> Dict[str, Any]:
         "title": "Sales Quotations",
         "description": "Manage customer quotations",
         "viewType": "table",
-        "endpoint": "/api/v1/quotations/",
+        "endpoint": "/quotations/",
         "dataPath": "quotations",  # Tell the UI where to find the data in the response
         "searchable": True,
         "searchPlaceholder": "Search quotations...",
@@ -216,7 +216,7 @@ async def get_quotations_list_schema() -> Dict[str, Any]:
                 "field": "customer_id",
                 "label": "Customer",
                 "type": "select",
-                "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
+                "optionsEndpoint": "/partners/?is_customer=true",
                 "optionLabelField": "name",
                 "optionValueField": "id"
             },
@@ -270,7 +270,7 @@ async def get_quotations_form_schema() -> Dict[str, Any]:
     """Get quotations form UI schema"""
     return {
         "title": "Quotation Details",
-        "endpoint": "/api/v1/quotations",
+        "endpoint": "/quotations",
         "method": "POST",
         "successRoute": "/sales/quotations",
         "cancelRoute": "/sales/quotations",
@@ -291,7 +291,7 @@ async def get_quotations_form_schema() -> Dict[str, Any]:
                         "label": "Customer",
                         "type": "select",
                         "required": True,
-                        "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
+                        "optionsEndpoint": "/partners/?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Select a customer"
@@ -346,7 +346,7 @@ async def get_quotations_form_schema() -> Dict[str, Any]:
                             # "title": "Quotation Items",
                             "entityType": "quotation",
                             "taxRate": 0,
-                            "productApiUrl": "http://localhost:8006/api/v1/products"
+                            "productApiUrl": "http://localhost:8006/products"
                         }
                     }
                 ]
@@ -669,7 +669,7 @@ async def get_customers_list_schema() -> Dict[str, Any]:
         "title": "Customers",
         "description": "Manage customer accounts",
         "viewType": "table",
-        "endpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
+        "endpoint": "/partners?is_customer=true",
         "dataPath": "partners",  # Tell the UI where to find the data in the response
         "searchable": True,
         "paginated": True,
@@ -772,7 +772,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                         "type": "select",
                         "required": True,
                         "colSpan": 1,
-                        "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
+                        "optionsEndpoint": "/partners/?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Select a customer"
@@ -817,7 +817,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                             "title": "Order Items",
                             "entityType": "order",
                             "taxRate": 0,
-                            "productApiUrl": "http://localhost:8006/api/v1/products"
+                            "productApiUrl": "http://localhost:8006/products"
                         }
                     }
                 ]
@@ -984,7 +984,7 @@ async def get_pricing_rules_form_schema() -> Dict[str, Any]:
                         "label": "Specific Customers",
                         "type": "select",
                         "multiple": True,
-                        "optionsEndpoint": "http://localhost:8002/api/v1/partners/?is_customer=true",
+                        "optionsEndpoint": "/partners/?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "help": "Leave empty to apply to all customers",
@@ -998,7 +998,7 @@ async def get_pricing_rules_form_schema() -> Dict[str, Any]:
                         "label": "Product Categories",
                         "type": "select",
                         "multiple": True,
-                        "optionsEndpoint": "http://localhost:8005/api/v1/categories",
+                        "optionsEndpoint": "http://localhost:8005/categories",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "help": "Select applicable product categories",
@@ -1040,7 +1040,7 @@ async def get_analytics_dashboard_schema() -> Dict[str, Any]:
                 "id": "revenue_by_month",
                 "type": "chart",
                 "title": "Revenue by Month",
-                "endpoint": "/api/v1/analytics/revenue-by-month",
+                "endpoint": "/analytics/revenue-by-month",
                 "chartType": "bar",
                 "span": 2,
                 "height": 350
@@ -1049,7 +1049,7 @@ async def get_analytics_dashboard_schema() -> Dict[str, Any]:
                 "id": "sales_by_product",
                 "type": "chart",
                 "title": "Sales by Product",
-                "endpoint": "/api/v1/analytics/sales-by-product",
+                "endpoint": "/analytics/sales-by-product",
                 "chartType": "pie",
                 "span": 1,
                 "height": 300
@@ -1058,7 +1058,7 @@ async def get_analytics_dashboard_schema() -> Dict[str, Any]:
                 "id": "sales_by_customer",
                 "type": "chart",
                 "title": "Top 10 Customers",
-                "endpoint": "/api/v1/analytics/top-customers",
+                "endpoint": "/analytics/top-customers",
                 "chartType": "bar",
                 "span": 1,
                 "height": 300
@@ -1067,7 +1067,7 @@ async def get_analytics_dashboard_schema() -> Dict[str, Any]:
                 "id": "conversion_metrics",
                 "type": "metrics",
                 "title": "Conversion Metrics",
-                "endpoint": "/api/v1/analytics/conversion-metrics",
+                "endpoint": "/analytics/conversion-metrics",
                 "span": 2,
                 "metrics": [
                     {"label": "Quotation to Order", "field": "quotation_conversion", "format": "percentage"},
