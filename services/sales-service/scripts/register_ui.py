@@ -128,7 +128,7 @@ SALES_UI_PACKAGE = {
             ],
             "filters": [
                 {"field": "status", "type": "select", "label": "Status", "options": ["draft", "sent", "accepted", "rejected"]},
-                {"field": "customer_id", "type": "select", "label": "Customer", "data_source": "/api/v1/partners?is_customer=true"}
+                {"field": "customer_id", "type": "autocomplete", "label": "Customer", "data_source": "/api/v1/partners?is_customer=true"}
             ]
         },
         {
@@ -197,7 +197,7 @@ SALES_UI_PACKAGE = {
             "data_endpoint": "/api/v1/quotations/{id}",
             "fields": [
                 {"name": "title", "label": "Quotation Title", "type": "text", "required": True},
-                {"name": "customer_id", "label": "Customer", "type": "select", "data_source": "/api/v1/partners?is_customer=true", "required": True},
+                {"name": "customer_id", "label": "Customer", "type": "autocomplete", "data_source": "/api/v1/partners?is_customer=true", "required": True},
                 {"name": "quotation_date", "label": "Quotation Date", "type": "date", "required": True},
                 {"name": "valid_until", "label": "Valid Until", "type": "datetime-local"},
                 {"name": "description", "label": "Description", "type": "textarea"},
@@ -220,7 +220,7 @@ SALES_UI_PACKAGE = {
             "data_endpoint": "/api/v1/orders/{id}",
             "fields": [
                 {"name": "title", "label": "Order Title", "type": "text", "required": True},
-                {"name": "customer_id", "label": "Customer", "type": "select", "data_source": "/api/v1/partners?is_customer=true", "required": True},
+                {"name": "customer_id", "label": "Customer", "type": "autocomplete", "data_source": "/api/v1/partners?is_customer=true", "required": True},
                 {"name": "order_date", "label": "Order Date", "type": "date", "required": True},
                 {"name": "delivery_date", "label": "Delivery Date", "type": "date", "required": True},
                 {"name": "description", "label": "Description", "type": "textarea"},

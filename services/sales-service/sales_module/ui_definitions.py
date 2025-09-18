@@ -143,7 +143,7 @@ SALES_UI_PACKAGE = {
             "filters": [
                 {"field": "status", "type": "select", "label": "Status", 
                  "options": ["draft", "sent", "viewed", "accepted", "rejected", "expired"]},
-                {"field": "customer_id", "type": "select", "label": "Customer", "data_source": "/api/v1/partners"},
+                {"field": "customer_id", "type": "autocomplete", "label": "Customer", "data_source": "/api/v1/partners"},
                 {"field": "date_range", "type": "daterange", "label": "Date Range"}
             ],
             "pagination": True,
@@ -175,7 +175,7 @@ SALES_UI_PACKAGE = {
                  "options": ["pending", "confirmed", "processing", "shipped", "delivered", "completed", "cancelled"]},
                 {"field": "payment_status", "type": "select", "label": "Payment Status",
                  "options": ["unpaid", "partial", "paid", "refunded"]},
-                {"field": "customer_id", "type": "select", "label": "Customer", "data_source": "/api/v1/partners"},
+                {"field": "customer_id", "type": "autocomplete", "label": "Customer", "data_source": "/api/v1/partners"},
                 {"field": "date_range", "type": "daterange", "label": "Order Date"}
             ],
             "pagination": True,
@@ -220,7 +220,7 @@ SALES_UI_PACKAGE = {
             "data_endpoint": "/api/v1/quotes/{id}",
             "fields": [
                 {"name": "title", "label": "Quotation Title", "type": "text", "required": True},
-                {"name": "customer_id", "label": "Customer", "type": "select", 
+                {"name": "customer_id", "label": "Customer", "type": "autocomplete", 
                  "data_source": "/api/v1/partners?type=customer", "required": True},
                 {"name": "valid_until", "label": "Valid Until", "type": "date", "required": True},
                 {"name": "payment_terms_days", "label": "Payment Terms (days)", "type": "number", 
@@ -252,7 +252,7 @@ SALES_UI_PACKAGE = {
             "data_endpoint": "/api/v1/orders/{id}",
             "fields": [
                 {"name": "title", "label": "Order Title", "type": "text", "required": True},
-                {"name": "customer_id", "label": "Customer", "type": "select",
+                {"name": "customer_id", "label": "Customer", "type": "autocomplete",
                  "data_source": "/api/v1/partners?type=customer", "required": True},
                 {"name": "quote_id", "label": "From Quotation", "type": "select",
                  "data_source": "/api/v1/quotes?status=accepted"},

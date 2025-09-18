@@ -171,6 +171,17 @@
                 <p v-if="field.help" class="mt-1 text-sm text-gray-500">{{ field.help }}</p>
               </div>
 
+              <!-- Autocomplete -->
+              <div v-else-if="field.type === 'autocomplete'">
+                <Autocomplete
+                  v-model="formData[field.name]"
+                  :field="field"
+                  :required="field.required"
+                  :disabled="field.disabled"
+                />
+                <p v-if="field.help" class="mt-1 text-sm text-gray-500">{{ field.help }}</p>
+              </div>
+
               <!-- Select -->
               <div v-else-if="field.type === 'select'">
                 <label :for="field.name" class="block text-sm font-medium text-gray-700">
@@ -347,6 +358,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import LineItemsManager from '@/components/LineItemsManager.vue'
+import Autocomplete from '@/components/generic/Autocomplete.vue'
 
 // Props
 const props = defineProps<{

@@ -288,12 +288,12 @@ async def get_quotations_form_schema() -> Dict[str, Any]:
                     {
                         "name": "customer_id",
                         "label": "Customer",
-                        "type": "select",
+                        "type": "autocomplete",
                         "required": True,
                         "optionsEndpoint": "/partners/?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
-                        "placeholder": "Select a customer"
+                        "placeholder": "Start typing to search customers..."
                     },
                     {
                         "name": "quotation_date",
@@ -768,13 +768,13 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                     {
                         "name": "customer_id",
                         "label": "Customer",
-                        "type": "select",
+                        "type": "autocomplete",
                         "required": True,
                         "colSpan": 1,
                         "optionsEndpoint": "/api/v1/sales/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
-                        "placeholder": "Select a customer"
+                        "placeholder": "Start typing to search customers..."
                     },
                     {
                         "name": "order_date",
