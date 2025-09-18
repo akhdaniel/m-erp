@@ -61,16 +61,16 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
           }
         })
         
-        // Add edit route if this is a list view
-        if (menu.url.includes('/products') || 
-            menu.url.includes('/orders') || 
-            menu.url.includes('/suppliers') ||
+        // Add "edit" route if this is a list view
+        if (menu.url.includes('/products')   || 
+            menu.url.includes('/orders')     || 
+            menu.url.includes('/suppliers')  ||
             menu.url.includes('/quotations') ||
-            menu.url.includes('/pricing') ||
+            menu.url.includes('/pricing')    ||
             menu.url.includes('/warehouses') ||
             menu.url.includes('/categories') ||
-            menu.url.includes('/customers') ||
-            menu.url.includes('/receiving') ||
+            menu.url.includes('/customers')  ||
+            menu.url.includes('/receiving')  ||
             menu.url.includes('/stock')) {
           dynamicRoutes.push({
             path: `${menu.url}/:id/edit`,
@@ -83,7 +83,7 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
             }
           })
           
-          // Add create route if this is a list view
+          // Add "create" route if this is a list view
           dynamicRoutes.push({
             path: `${menu.url}/new`,
             name: `${menu.code || `dynamic-${menu.id}`}-create`,
