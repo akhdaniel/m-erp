@@ -178,6 +178,7 @@
                   :field="field"
                   :required="field.required"
                   :disabled="field.disabled"
+                  :service-url="serviceUrl"
                 />
                 <p v-if="field.help" class="mt-1 text-sm text-gray-500">{{ field.help }}</p>
               </div>

@@ -215,7 +215,7 @@ async def get_quotations_list_schema() -> Dict[str, Any]:
                 "field": "customer_id",
                 "label": "Customer",
                 "type": "select",
-                "optionsEndpoint": "/partners/?is_customer=true",
+                "optionsEndpoint": "/partners?is_customer=true",
                 "optionLabelField": "name",
                 "optionValueField": "id"
             },
@@ -290,7 +290,7 @@ async def get_quotations_form_schema() -> Dict[str, Any]:
                         "label": "Customer",
                         "type": "autocomplete",
                         "required": True,
-                        "optionsEndpoint": "/partners/?is_customer=true",
+                        "optionsEndpoint": "/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Start typing to search customers..."
@@ -771,7 +771,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                         "type": "autocomplete",
                         "required": True,
                         "colSpan": 1,
-                        "optionsEndpoint": "/api/v1/sales/partners?is_customer=true",
+                        "optionsEndpoint": "/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Start typing to search customers..."
@@ -983,7 +983,7 @@ async def get_pricing_rules_form_schema() -> Dict[str, Any]:
                         "label": "Specific Customers",
                         "type": "select",
                         "multiple": True,
-                        "optionsEndpoint": "/partners/?is_customer=true",
+                        "optionsEndpoint": "/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "help": "Leave empty to apply to all customers",

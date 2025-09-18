@@ -98,6 +98,7 @@ const props = defineProps<{
   field: any
   disabled?: boolean
   required?: boolean
+  serviceUrl?: string
 }>()
 
 const emit = defineEmits<{
@@ -146,7 +147,17 @@ async function loadOptions() {
       headers['Authorization'] = `Bearer ${token}`
     }
     
-    const response = await fetch(props.field.optionsEndpoint, { headers })
+    // Construct the full URL using serviceUrl if provided
+    let url = props.field.optionsEndpoint
+    if (props.serviceUrl && !url.startsWith('http')) {
+      // Remove trailing slash from serviceUrl if present
+      const baseUrl = props.serviceUrl.endsWith('/') ? props.serviceUrl.slice(0, -1) : props.serviceUrl
+      // Add leading slash to optionsEndpoint if not present
+      const endpoint = url.startsWith('/') ? url : `/${url}`
+      url = `${baseUrl}${endpoint}`
+    }
+    
+    const response = await fetch(url, { headers })
     if (!response.ok) throw new Error('Failed to load options')
     
     const data = await response.json()
@@ -307,4 +318,3 @@ onMounted(() => {
   position: relative;
 }
 </style>
-</file>
