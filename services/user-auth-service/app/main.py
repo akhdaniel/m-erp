@@ -16,7 +16,7 @@ from app.middleware.security_headers import security_headers_middleware, request
 
 # Configure logging
 logging.basicConfig(
-  level=logging.INFO if not settings.debug else logging.DEBUG,
+  level=logging.INFO,
   format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
