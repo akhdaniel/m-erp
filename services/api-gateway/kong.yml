@@ -5,7 +5,7 @@ _transform: true
 services:
   # User Authentication Service
   - name: user-auth-service
-    url: http://user-auth-service:8000
+    url: http://user-auth-service:8001
     tags:
       - xerpium
       - auth
@@ -26,7 +26,7 @@ services:
 
   # Company Partner Service  
   - name: company-partner-service
-    url: http://company-partner-service:8000
+    url: http://company-partner-service:8002
     tags:
       - xerpium
       - business
