@@ -76,7 +76,7 @@ const SERVICE_MAPPING: Record<string, string> = {
   'purchasing': import.meta.env.VITE_PURCHASING_API || import.meta.env.VITE_API_URL || 'http://localhost:8000',
   'partners': import.meta.env.VITE_PARTNERS_API || import.meta.env.VITE_API_URL || 'http://localhost:8000',
   'users': import.meta.env.VITE_USERS_API || import.meta.env.VITE_API_URL || 'http://localhost:8000',
-  'menu': import.meta.env.VITE_MENU_API || import.meta.env.VITE_API_URL || 'http://localhost:8000'
+  'menu': import.meta.env.VITE_MENU_API || import.meta.env.VITE_API_URL || 'http://localhost:8000',
   'base': import.meta.env.VITE_BASE_API || import.meta.env.VITE_API_URL || 'http://localhost:8002'
 }
 
