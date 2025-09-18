@@ -80,21 +80,21 @@ def create_application() -> FastAPI:
     from app.routers import companies_framework, partners_framework
     
     # Original routers (non-Partner services)
-    application.include_router(companies.router, prefix="/api/v1")
-    application.include_router(currencies.router)
-    application.include_router(extensions.router, prefix="/api/v1")
+    application.include_router(companies.router, prefix="/base")
+    application.include_router(currencies.router, prefix="/base")
+    application.include_router(extensions.router, prefix="/base")
     
     # New framework-based routers (on /framework prefix for testing)
-    application.include_router(companies_framework.router, prefix="/api/framework")
-    application.include_router(partners_framework.router, prefix="/api/framework")
+    application.include_router(companies_framework.router, prefix="/base")
+    application.include_router(partners_framework.router, prefix="/base")
     
     # Enhanced partner management routers
     try:
         from app.routers.partner_categories import router as categories_router
         from app.routers.partner_communications import router as communications_router
         
-        application.include_router(categories_router, prefix="/api/v1")
-        application.include_router(communications_router, prefix="/api/v1")
+        application.include_router(categories_router, prefix="/base")
+        application.include_router(communications_router, prefix="/base")
         logger.info("✅ Enhanced partner management routers included")
         
     except Exception as e:
@@ -106,8 +106,8 @@ def create_application() -> FastAPI:
         from app.framework_migration.partner_router import framework_partner_router as generated_partner_router
         
         # Include both framework router options
-        application.include_router(framework_partner_router, prefix="/api/v1")
-        application.include_router(generated_partner_router.router, prefix="/api/v1")
+        application.include_router(framework_partner_router, prefix="/base")
+        application.include_router(generated_partner_router.router, prefix="/base")
         
         logger.info("✅ Framework-based Partner routers included")
         
@@ -116,7 +116,7 @@ def create_application() -> FastAPI:
         # Fallback to original Partner router
         try:
             from app.routers.partners import router as partners_router
-            application.include_router(partners_router, prefix="/api/v1")
+            application.include_router(partners_router, prefix="/base")
             logger.info("⚠️ Using original Partner router as fallback")
         except Exception as fallback_error:
             logger.error(f"❌ Failed to include fallback Partner router: {fallback_error}")
@@ -124,17 +124,17 @@ def create_application() -> FastAPI:
     # Original Partner router for compatibility (at different path)
     try:
         from app.routers.partners import router as original_partner_router
-        application.include_router(original_partner_router, prefix="/api/v1/partners-original", tags=["partners-original"])
-        logger.info("✅ Original partner router included at /api/v1/partners-original/")
+        application.include_router(original_partner_router, prefix="/base/partners-original", tags=["partners-original"])
+        logger.info("✅ Original partner router included at /base/partners-original/")
     except Exception as e:
         logger.warning(f"Could not include original partner router for compatibility: {e}")
     
     logger.info("📋 Available Partner endpoints:")
-    logger.info("  • /api/v1/partners-framework/ - Custom framework router")
-    logger.info("  • /api/v1/partners/ - Auto-generated framework router") 
-    logger.info("  • /api/v1/partners-original/ - Original router (compatibility)")
-    logger.info("  • /api/v1/partners/{id}/extensions - Custom fields")
-    logger.info("  • /api/v1/partners/{id}/audit - Audit trail")
+    logger.info("  • /base/partners-framework/ - Custom framework router")
+    logger.info("  • /base/partners/ - Auto-generated framework router") 
+    logger.info("  • /base/partners-original/ - Original router (compatibility)")
+    logger.info("  • /base/partners/{id}/extensions - Custom fields")
+    logger.info("  • /base/partners/{id}/audit - Audit trail")
     
     return application
 
@@ -227,13 +227,13 @@ async def migration_status():
                 "migration_date": datetime.utcnow().isoformat()
             },
             "available_endpoints": {
-                "framework_partners": "/api/v1/partners-framework/",
-                "generated_partners": "/api/v1/partners/",
-                "original_partners": "/api/v1/partners-original/",
-                "extensions": "/api/v1/partners/{id}/extensions",
-                "audit": "/api/v1/partners/{id}/audit",
-                "bulk_create": "/api/v1/partners/bulk-create",
-                "statistics": "/api/v1/partners/company/{id}/statistics"
+                "framework_partners": "/base/partners-framework/",
+                "generated_partners": "/base/partners/",
+                "original_partners": "/base/partners-original/",
+                "extensions": "/base/partners/{id}/extensions",
+                "audit": "/base/partners/{id}/audit",
+                "bulk_create": "/base/partners/bulk-create",
+                "statistics": "/base/partners/company/{id}/statistics"
             },
             "framework_features": [
                 "Custom field support with 7 field types",
