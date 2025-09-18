@@ -86,10 +86,10 @@ const serviceName = computed(() => {
   const firstSegment = pathParts[1] || ''
   
   // Handle special cases
-  if (firstSegment === 'inventory') return 'inventory'
-  if (firstSegment === 'sales') return 'sales'
-  if (firstSegment === 'purchasing') return 'purchasing'
-  if (firstSegment === 'settings') return 'menu' // Settings routes go to menu service
+  // if (firstSegment === 'inventory') return 'inventory'
+  // if (firstSegment === 'sales') return 'sales'
+  // if (firstSegment === 'purchasing') return 'purchasing'
+  // if (firstSegment === 'settings') return 'menu' // Settings routes go to menu service
   
   return firstSegment
 })
