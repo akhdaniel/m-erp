@@ -668,7 +668,7 @@ async def get_customers_list_schema() -> Dict[str, Any]:
         "title": "Customers",
         "description": "Manage customer accounts",
         "viewType": "table",
-        "endpoint": "/sales/partners?is_customer=true",
+        "endpoint": "/base/partners?is_customer=true",
         "dataPath": "partners",  # Tell the UI where to find the data in the response
         "searchable": True,
         "paginated": True,
@@ -716,8 +716,8 @@ async def get_customers_list_schema() -> Dict[str, Any]:
                 "cellClass": "font-semibold text-yellow-600"
             }
         ],
-        "createRoute": "/partners/create?type=customer",
-        "editRoute": "/partners/{id}/edit",
+        "createRoute": "/base/partners/create?type=customer",
+        "editRoute": "/base/partners/{id}/edit",
         "rowActions": [
             {
                 "id": "view",
