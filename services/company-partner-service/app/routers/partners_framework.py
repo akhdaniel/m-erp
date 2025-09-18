@@ -23,6 +23,7 @@ router = APIRouter(prefix="/partners", tags=["partners"])
 
 
 @router.post("/", response_model=PartnerResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=PartnerResponse, status_code=status.HTTP_201_CREATED)
 async def create_partner(
     partner_data: PartnerCreate,
     db: AsyncSession = Depends(get_db)
@@ -55,6 +56,7 @@ async def create_partner(
 
 
 @router.get("/", response_model=PartnerListResponse)
+@router.get("", response_model=PartnerListResponse)
 async def list_partners(
     company_id: Optional[int] = Query(None, description="Filter by company ID"),
     skip: int = Query(0, ge=0, description="Number of records to skip"),
