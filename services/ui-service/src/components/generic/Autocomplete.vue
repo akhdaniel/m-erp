@@ -128,6 +128,7 @@ const filteredOptions = computed(() => {
 
 // Methods
 async function loadOptions() {
+  console.log('autocomplete loadOptions', props.field.optionsEndpoint)
   if (!props.field.optionsEndpoint) return
   
   isLoading.value = true
