@@ -80,21 +80,21 @@ def create_application() -> FastAPI:
     from app.routers import companies_framework, partners_framework
     
     # Original routers (non-Partner services)
-    application.include_router(companies.router, prefix="/base")
-    application.include_router(currencies.router, prefix="/base")
-    application.include_router(extensions.router, prefix="/base")
+    application.include_router(companies.router)
+    application.include_router(currencies.router)
+    application.include_router(extensions.router)
     
     # New framework-based routers (on /framework prefix for testing)
-    application.include_router(companies_framework.router, prefix="/base")
-    application.include_router(partners_framework.router, prefix="/base")
+    application.include_router(companies_framework.router)
+    application.include_router(partners_framework.router)
     
     # Enhanced partner management routers
     try:
         from app.routers.partner_categories import router as categories_router
         from app.routers.partner_communications import router as communications_router
         
-        application.include_router(categories_router, prefix="/base")
-        application.include_router(communications_router, prefix="/base")
+        application.include_router(categories_router)
+        application.include_router(communications_router)
         logger.info("✅ Enhanced partner management routers included")
         
     except Exception as e:
@@ -106,8 +106,8 @@ def create_application() -> FastAPI:
         from app.framework_migration.partner_router import framework_partner_router as generated_partner_router
         
         # Include both framework router options
-        application.include_router(framework_partner_router, prefix="/base")
-        application.include_router(generated_partner_router.router, prefix="/base")
+        application.include_router(framework_partner_router)
+        application.include_router(generated_partner_router.router)
         
         logger.info("✅ Framework-based Partner routers included")
         
@@ -116,7 +116,7 @@ def create_application() -> FastAPI:
         # Fallback to original Partner router
         try:
             from app.routers.partners import router as partners_router
-            application.include_router(partners_router, prefix="/base")
+            application.include_router(partners_router)
             logger.info("⚠️ Using original Partner router as fallback")
         except Exception as fallback_error:
             logger.error(f"❌ Failed to include fallback Partner router: {fallback_error}")
