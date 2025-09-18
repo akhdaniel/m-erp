@@ -25,7 +25,7 @@ from shared.menu_registration_client import (
     register_service_menus
 )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('uvicorn')
 
 # Define sales permissions
 SALES_PERMISSIONS = [

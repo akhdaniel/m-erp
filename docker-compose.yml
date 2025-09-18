@@ -52,7 +52,7 @@ services:
       dockerfile: ./services/user-auth-service/Dockerfile
     container_name: m-erp-user-auth
     ports:
-      - "8001:8000"
+      - "8001:8001"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/user_auth_db
       SECRET_KEY: development-secret-key-change-in-production
@@ -84,7 +84,7 @@ services:
       dockerfile: ./services/company-partner-service/Dockerfile
     container_name: m-erp-company-partner
     ports:
-      - "8002:8000"
+      - "8002:8002"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/company_partner_db
       AUTH_SERVICE_URL: http://user-auth-service:8000

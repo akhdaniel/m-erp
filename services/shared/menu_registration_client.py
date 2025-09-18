@@ -53,7 +53,7 @@ class MenuRegistrationClient:
         self.service_name = service_name or os.getenv("SERVICE_NAME")
         self.service_key = os.getenv("SERVICE_KEY")
         self.service_secret = os.getenv("SERVICE_SECRET")
-        self.auth_service_url = os.getenv("AUTH_SERVICE_URL", "http://user-auth-service:8000")
+        self.auth_service_url = os.getenv("AUTH_SERVICE_URL", "http://user-auth-service:8001")
         self.service_token = service_token
         self.client = httpx.AsyncClient(timeout=30.0)
     
