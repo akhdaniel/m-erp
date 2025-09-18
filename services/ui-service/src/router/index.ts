@@ -47,6 +47,7 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
     if (menu.url && menu.item_type === 'link') {
       // For inventory, sales, purchasing, and other dynamic modules, use DynamicView
       if (menu.url.startsWith('/inventory') || 
+          menu.url.startsWith('/base') || 
           menu.url.startsWith('/sales') || 
           menu.url.startsWith('/purchasing') ||
           menu.url.startsWith('/settings')) {
@@ -63,6 +64,7 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
         
         // Add "edit" route if this is a list view
         if (menu.url.includes('/products')   || 
+            menu.url.includes('/base')     || 
             menu.url.includes('/orders')     || 
             menu.url.includes('/suppliers')  ||
             menu.url.includes('/quotations') ||
