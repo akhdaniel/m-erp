@@ -116,6 +116,8 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
     if (menu.children && menu.children.length > 0) {
       menu.children.forEach(processMenu)
     }
+
+    console.log('dynamicRoutes=====', dynamicRoutes)
   }
   
 
