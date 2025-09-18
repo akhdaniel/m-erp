@@ -428,6 +428,7 @@ const isFormValid = computed(() => {
 
 // Initialize form
 async function initializeForm() {
+  let selectionFieldExist = false
   // Set default values from schema
   props.schema.sections?.forEach((section: any) => {
     section.fields?.forEach((field: any) => {
@@ -437,6 +438,9 @@ async function initializeForm() {
         formData.value[field.name] = false
       } else if (field.type === 'number') {
         formData.value[field.name] = null
+      }
+      else if (field.type === 'selection') {
+        selectionFieldExist=true
       } else {
         formData.value[field.name] = ''
       }
@@ -444,7 +448,8 @@ async function initializeForm() {
   })
 
   // Load options for select fields
-  await loadFieldOptions()
+  if (selectionFieldExist)
+    await loadFieldOptions()
 
   // Load existing data if editing
   if (isEditMode.value) {
