@@ -87,7 +87,7 @@ services:
       - "8002:8002"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/company_partner_db
-      AUTH_SERVICE_URL: http://user-auth-service:8000
+      AUTH_SERVICE_URL: http://user-auth-service:8001
       SERVICE_KEY: company-partner-service-key-1234567890123456
       ENVIRONMENT: development
       DEBUG: "true"
@@ -120,7 +120,7 @@ services:
       - "8003:8003"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/menu_access_db
-      AUTH_SERVICE_URL: http://user-auth-service:8000
+      AUTH_SERVICE_URL: http://user-auth-service:8001
       SERVICE_KEY: menu-access-service-key
       SERVICE_SECRET: menu-access-service-secret-key-that-is-long-enough
       SECRET_KEY: development-secret-key-change-in-production
@@ -154,7 +154,7 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       KONG_ADMIN_URL: http://kong:8001
-      AUTH_SERVICE_URL: http://user-auth-service:8000
+      AUTH_SERVICE_URL: http://user-auth-service:8001
       DEBUG: "true"
     depends_on:
       redis:
@@ -334,7 +334,7 @@ services:
       SERVICE_NAME: inventory-service
       SERVICE_KEY: inventory-service-key
       SERVICE_SECRET: inventory-service-secret-key-that-is-long-enough
-      AUTH_SERVICE_URL: http://user-auth-service:8000
+      AUTH_SERVICE_URL: http://user-auth-service:8001
       ENVIRONMENT: development
       DEBUG: "true"
       MENU_SERVICE_URL: http://menu-access-service:8003
