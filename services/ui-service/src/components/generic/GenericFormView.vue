@@ -551,6 +551,8 @@ async function loadFieldOptions() {
 
 async function loadOptions(field: any) {
   try {
+
+    console.log('loadOptions=====', field.optionsEndpoint)
     // Check if the optionsEndpoint is already a full URL
     let url = field.optionsEndpoint
     if (!field.optionsEndpoint.startsWith('http://') && !field.optionsEndpoint.startsWith('https://')) {
