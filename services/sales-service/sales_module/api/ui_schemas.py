@@ -771,7 +771,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                         "type": "autocomplete",
                         "required": True,
                         "colSpan": 1,
-                        "optionsEndpoint": "/partners?is_customer=true",
+                        "optionsEndpoint": "/api/v1/base/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Start typing to search customers..."
