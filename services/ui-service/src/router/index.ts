@@ -119,7 +119,7 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
       menu.children.forEach(processMenu)
     }
 
-    console.log('dynamicRoutes=====', dynamicRoutes)
+    // console.log('dynamicRoutes=====', dynamicRoutes)
   }
   
 
