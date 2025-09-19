@@ -384,6 +384,10 @@ services:
       AUDIT_SERVICE_URL: http://audit-service:8006
       MENU_SERVICE_URL: http://menu-access-service:8003
       UI_REGISTRY_URL: http://ui-registry-service:8010
+      SERVICE_KEY: sales-service-key
+      SERVICE_SECRET: sales-service-secret-key-that-is-long-enough
+      AUTH_SERVICE_URL: http://user-auth-service:8001
+
     depends_on:
       postgres:
         condition: service_healthy
