@@ -141,17 +141,28 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
         })
 
         if(!menu.url.includes('?')){
+          // Add "view" route if this is a list view
           dynamicRoutes.push({
-              path: `${menu.url}/:id/edit`,
-              name: `${menu.code || `dynamic-${menu.id}`}-edit`,
-              component: () => import('@/views/DynamicView.vue'),
-              meta: { 
-                requiresAuth: true, 
-                title: `Edit ${menu.title}`,
-                requiredPermission: menu.required_permission
-              }
-            })
-          
+            path: `${menu.url}/:id`,
+            name: `${menu.code || `dynamic-${menu.id}`}-view`,
+            component: () => import('@/views/DynamicView.vue'),
+            meta: { 
+              requiresAuth: true, 
+              title: `View ${menu.title}`,
+              requiredPermission: menu.required_permission
+            }
+          })
+          // Add "edit" route if this is a list view
+          dynamicRoutes.push({
+            path: `${menu.url}/:id/edit`,
+            name: `${menu.code || `dynamic-${menu.id}`}-edit`,
+            component: () => import('@/views/DynamicView.vue'),
+            meta: { 
+              requiresAuth: true, 
+              title: `Edit ${menu.title}`,
+              requiredPermission: menu.required_permission
+            }
+          })
           // Add "create" route if this is a list view
           dynamicRoutes.push({
             path: `${menu.url}/new`,
