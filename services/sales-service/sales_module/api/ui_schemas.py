@@ -1146,3 +1146,440 @@ async def get_analytics_dashboard_schema() -> Dict[str, Any]:
             }
         ]
     }
+
+
+# Transactions List Schema
+@router.get("/transactions/ui-schemas/list")
+async def get_transactions_list_schema() -> Dict[str, Any]:
+    """Get transactions list UI schema"""
+    return {
+        "title": "Sales Transactions",
+        "description": "Manage quotations and orders",
+        "viewType": "table",
+        "endpoint": "/sales/transactions",
+        "searchable": True,
+        "searchPlaceholder": "Search transactions...",
+        "paginated": True,
+        "pageSize": 20,
+        "columns": [
+            {
+                "field": "transaction_number",
+                "label": "Transaction #",
+                "isTitle": True,
+                "sortable": True
+            },
+            {
+                "field": "title",
+                "label": "Title",
+                "sortable": True
+            },
+            {
+                "field": "customer_name",
+                "label": "Customer",
+                "sortable": True
+            },
+            {
+                "field": "created_at",
+                "label": "Created",
+                "formatter": "date",
+                "sortable": True
+            },
+            {
+                "field": "total_amount",
+                "label": "Total",
+                "formatter": "currency",
+                "sortable": True
+            },
+            {
+                "field": "state",
+                "label": "State",
+                "formatter": """
+                    function(value) {
+                        const stateMap = {
+                            'draft': 'Draft',
+                            'quote_pending_approval': 'Quote Pending Approval',
+                            'quote_approved': 'Quote Approved',
+                            'quote_sent': 'Quote Sent',
+                            'quote_accepted': 'Quote Accepted',
+                            'quote_rejected': 'Quote Rejected',
+                            'quote_expired': 'Quote Expired',
+                            'order_pending': 'Order Pending',
+                            'order_confirmed': 'Order Confirmed',
+                            'order_in_production': 'In Production',
+                            'order_ready_to_ship': 'Ready to Ship',
+                            'order_partially_shipped': 'Partially Shipped',
+                            'order_shipped': 'Shipped',
+                            'order_delivered': 'Delivered',
+                            'order_completed': 'Completed',
+                            'order_cancelled': 'Cancelled',
+                            'order_on_hold': 'On Hold'
+                        };
+                        return stateMap[value] || value;
+                    }
+                """,
+                "cellClassFunction": """
+                    function(value) {
+                        const stateColors = {
+                            'draft': 'text-gray-600',
+                            'quote_pending_approval': 'text-yellow-600',
+                            'quote_approved': 'text-blue-600',
+                            'quote_sent': 'text-indigo-600',
+                            'quote_accepted': 'text-green-600',
+                            'quote_rejected': 'text-red-600',
+                            'quote_expired': 'text-gray-400',
+                            'order_pending': 'text-yellow-600',
+                            'order_confirmed': 'text-blue-600',
+                            'order_in_production': 'text-purple-600',
+                            'order_ready_to_ship': 'text-indigo-600',
+                            'order_partially_shipped': 'text-orange-600',
+                            'order_shipped': 'text-blue-600',
+                            'order_delivered': 'text-green-600',
+                            'order_completed': 'text-green-700',
+                            'order_cancelled': 'text-red-600',
+                            'order_on_hold': 'text-gray-500'
+                        };
+                        return stateColors[value] || '';
+                    }
+                """
+            }
+        ],
+        "filters": [
+            {
+                "field": "state",
+                "label": "State",
+                "type": "select",
+                "multiple": True,
+                "options": [
+                    {"value": "", "label": "All"},
+                    {"value": "draft", "label": "Draft"},
+                    {"value": "quote_pending_approval", "label": "Quote Pending Approval"},
+                    {"value": "quote_approved", "label": "Quote Approved"},
+                    {"value": "quote_sent", "label": "Quote Sent"},
+                    {"value": "quote_accepted", "label": "Quote Accepted"},
+                    {"value": "quote_rejected", "label": "Quote Rejected"},
+                    {"value": "quote_expired", "label": "Quote Expired"},
+                    {"value": "order_pending", "label": "Order Pending"},
+                    {"value": "order_confirmed", "label": "Order Confirmed"},
+                    {"value": "order_in_production", "label": "In Production"},
+                    {"value": "order_ready_to_ship", "label": "Ready to Ship"},
+                    {"value": "order_partially_shipped", "label": "Partially Shipped"},
+                    {"value": "order_shipped", "label": "Shipped"},
+                    {"value": "order_delivered", "label": "Delivered"},
+                    {"value": "order_completed", "label": "Completed"},
+                    {"value": "order_cancelled", "label": "Cancelled"},
+                    {"value": "order_on_hold", "label": "On Hold"}
+                ]
+            },
+            {
+                "field": "customer_id",
+                "label": "Customer",
+                "type": "select",
+                "optionsEndpoint": "/partners?is_customer=true",
+                "optionLabelField": "name",
+                "optionValueField": "id"
+            },
+            {
+                "field": "date_range",
+                "label": "Date Range",
+                "type": "date",
+                "subType": "range"
+            }
+        ],
+        "createable": True,
+        "createLabel": "New Transaction",
+        "createRoute": "/sales/transactions/new",
+        "editRoute": "/sales/transactions/{id}/edit",
+        "clickable": True,
+        "rowActions": [
+            {
+                "id": "view",
+                "label": "View",
+                "icon": "eye",
+                "route": "/sales/transactions/{id}"
+            },
+            {
+                "id": "edit",
+                "label": "Edit",
+                "icon": "pencil",
+                "route": "/sales/transactions/{id}/edit",
+                "condition": {"field": "state", "value": "draft"}
+            },
+            {
+                "id": "convert_to_order",
+                "label": "Convert to Order",
+                "icon": "arrow-right",
+                "action": "convert_to_order",
+                "condition": {"field": "state", "value": "quote_accepted"}
+            },
+            {
+                "id": "send",
+                "label": "Send",
+                "icon": "send",
+                "action": "send_transaction",
+                "condition": {"field": "state", "value": "draft"}
+            }
+        ]
+    }
+
+
+# Transactions Form Schema
+@router.get("/transactions/ui-schemas/form")
+async def get_transactions_form_schema() -> Dict[str, Any]:
+    """Get transactions form UI schema"""
+    return {
+        "title": "Transaction Details",
+        "endpoint": "/sales/transactions",
+        "method": "POST",
+        "successRoute": "/sales/transactions",
+        "cancelRoute": "/sales/transactions",
+        "sections": [
+            {
+                "id": "basic",
+                "title": "Transaction Information",
+                "gridClass": "grid-cols-2",
+                "fields": [
+                    {
+                        "name": "title",
+                        "label": "Transaction Title",
+                        "type": "text",
+                        "required": True,
+                        "colSpan": 2,
+                        "placeholder": "Enter a descriptive title for this transaction"
+                    },
+                    {
+                        "name": "customer_id",
+                        "label": "Customer",
+                        "type": "autocomplete",
+                        "required": True,
+                        "colSpan": 1,
+                        "optionsEndpoint": "/partners?is_customer=true",
+                        "optionLabelField": "name",
+                        "optionValueField": "id",
+                        "placeholder": "Start typing to search customers..."
+                    },
+                    {
+                        "name": "transaction_date",
+                        "label": "Transaction Date",
+                        "type": "date",
+                        "required": True,
+                        "colSpan": 1,
+                        "defaultValue": "today"
+                    },
+                    {
+                        "name": "description",
+                        "label": "Description",
+                        "type": "textarea",
+                        "rows": 2,
+                        "colSpan": 2,
+                        "placeholder": "Additional transaction details or notes"
+                    }
+                ]
+            },
+            {
+                "id": "items",
+                "title": "Transaction Items",
+                "gridClass": "grid-cols-2",
+                "fields": [
+                    {
+                        "name": "line_items",
+                        "type": "component",
+                        "component": "LineItemsManager",
+                        "label": "Transaction Items",
+                        "required": True,
+                        "colSpan": 2,
+                        "props": {
+                            "title": "Transaction Items",
+                            "entityType": "transaction",
+                            "taxRate": 0,
+                            "productApiUrl": "/api/v1/inventory/products"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "terms",
+                "title": "Terms & Conditions",
+                "gridClass": "grid-cols-2",
+                "fields": [
+                    {
+                        "name": "payment_terms_days",
+                        "label": "Payment Terms (Days)",
+                        "type": "select",
+                        "options": [
+                            {"value": 30, "label": "Net 30"},
+                            {"value": 60, "label": "Net 60"},
+                            {"value": 0, "label": "Due on Receipt"},
+                            {"value": 10, "label": "Net 10"}
+                        ],
+                        "defaultValue": 30
+                    },
+                    {
+                        "name": "delivery_terms",
+                        "label": "Delivery Terms",
+                        "type": "text",
+                        "placeholder": "e.g., FOB, Ex Works, etc."
+                    },
+                    {
+                        "name": "internal_notes",
+                        "label": "Internal Notes",
+                        "type": "textarea",
+                        "rows": 2,
+                        "colSpan": 2,
+                        "placeholder": "Internal notes (not visible to customer)"
+                    },
+                    {
+                        "name": "terms_and_conditions",
+                        "label": "Terms and Conditions",
+                        "type": "textarea",
+                        "rows": 3,
+                        "colSpan": 2,
+                        "placeholder": "Terms and conditions for the transaction"
+                    }
+                ]
+            }
+        ],
+        "submitLabel": "Save Transaction",
+        "cancelLabel": "Cancel"
+    }
+
+
+# Transaction Details View Schema
+@router.get("/transactions/ui-schemas/detail")
+async def get_transaction_detail_schema() -> Dict[str, Any]:
+    """Get transaction detail view UI schema"""
+    return {
+        "title": "Transaction Details",
+        "viewType": "detail",
+        "endpoint": "/sales/transactions/{id}",
+        "header": {
+            "titleField": "transaction_number",
+            "subtitleField": "title",
+            "statusField": "state",
+            "statusFormatter": """
+                function(value) {
+                    const stateMap = {
+                        'draft': 'Draft',
+                        'quote_pending_approval': 'Quote Pending Approval',
+                        'quote_approved': 'Quote Approved',
+                        'quote_sent': 'Quote Sent',
+                        'quote_accepted': 'Quote Accepted',
+                        'quote_rejected': 'Quote Rejected',
+                        'quote_expired': 'Quote Expired',
+                        'order_pending': 'Order Pending',
+                        'order_confirmed': 'Order Confirmed',
+                        'order_in_production': 'In Production',
+                        'order_ready_to_ship': 'Ready to Ship',
+                        'order_partially_shipped': 'Partially Shipped',
+                        'order_shipped': 'Shipped',
+                        'order_delivered': 'Delivered',
+                        'order_completed': 'Completed',
+                        'order_cancelled': 'Cancelled',
+                        'order_on_hold': 'On Hold'
+                    };
+                    return stateMap[value] || value;
+                }
+            """,
+            "statusClassFunction": """
+                function(value) {
+                    const stateColors = {
+                        'draft': 'bg-gray-100 text-gray-800',
+                        'quote_pending_approval': 'bg-yellow-100 text-yellow-800',
+                        'quote_approved': 'bg-blue-100 text-blue-800',
+                        'quote_sent': 'bg-indigo-100 text-indigo-800',
+                        'quote_accepted': 'bg-green-100 text-green-800',
+                        'quote_rejected': 'bg-red-100 text-red-800',
+                        'quote_expired': 'bg-gray-100 text-gray-800',
+                        'order_pending': 'bg-yellow-100 text-yellow-800',
+                        'order_confirmed': 'bg-blue-100 text-blue-800',
+                        'order_in_production': 'bg-purple-100 text-purple-800',
+                        'order_ready_to_ship': 'bg-indigo-100 text-indigo-800',
+                        'order_partially_shipped': 'bg-orange-100 text-orange-800',
+                        'order_shipped': 'bg-blue-100 text-blue-800',
+                        'order_delivered': 'bg-green-100 text-green-800',
+                        'order_completed': 'bg-green-200 text-green-900',
+                        'order_cancelled': 'bg-red-100 text-red-800',
+                        'order_on_hold': 'bg-gray-200 text-gray-800'
+                    };
+                    return stateColors[value] || 'bg-gray-100 text-gray-800';
+                }
+            """,
+            "actions": [
+                {
+                    "id": "edit",
+                    "label": "Edit",
+                    "icon": "pencil",
+                    "route": "/sales/transactions/{id}/edit",
+                    "condition": {"field": "state", "value": "draft"}
+                },
+                {
+                    "id": "convert_to_order",
+                    "label": "Convert to Order",
+                    "icon": "arrow-right",
+                    "action": "convert_to_order",
+                    "condition": {"field": "state", "value": "quote_accepted"}
+                },
+                {
+                    "id": "send",
+                    "label": "Send",
+                    "icon": "send",
+                    "action": "send_transaction",
+                    "condition": {"field": "state", "value": "draft"}
+                },
+                {
+                    "id": "print",
+                    "label": "Print",
+                    "icon": "printer",
+                    "action": "print_transaction"
+                }
+            ]
+        },
+        "sections": [
+            {
+                "id": "basic_info",
+                "title": "Basic Information",
+                "type": "keyValue",
+                "fields": [
+                    {"label": "Transaction Number", "field": "transaction_number"},
+                    {"label": "Title", "field": "title"},
+                    {"label": "Customer", "field": "customer_name"},
+                    {"label": "Created Date", "field": "created_at", "formatter": "date"},
+                    {"label": "Last Updated", "field": "updated_at", "formatter": "date"}
+                ]
+            },
+            {
+                "id": "financial_info",
+                "title": "Financial Information",
+                "type": "keyValue",
+                "fields": [
+                    {"label": "Subtotal", "field": "subtotal", "formatter": "currency"},
+                    {"label": "Tax Amount", "field": "tax_amount", "formatter": "currency"},
+                    {"label": "Discount", "field": "discount_amount", "formatter": "currency"},
+                    {"label": "Total Amount", "field": "total_amount", "formatter": "currency"},
+                    {"label": "Currency", "field": "currency_code"}
+                ]
+            },
+            {
+                "id": "items",
+                "title": "Line Items",
+                "type": "table",
+                "endpoint": "/sales/transactions/{id}/line-items",
+                "columns": [
+                    {"field": "line_number", "label": "#", "width": "50px"},
+                    {"field": "item_name", "label": "Item"},
+                    {"field": "quantity_ordered", "label": "Quantity"},
+                    {"field": "unit_price", "label": "Unit Price", "formatter": "currency"},
+                    {"field": "line_total", "label": "Total", "formatter": "currency"}
+                ]
+            },
+            {
+                "id": "terms",
+                "title": "Terms & Conditions",
+                "type": "keyValue",
+                "fields": [
+                    {"label": "Payment Terms", "field": "payment_terms_days", "formatter": "days"},
+                    {"label": "Delivery Terms", "field": "delivery_terms"},
+                    {"label": "Valid Until", "field": "valid_until", "formatter": "date"}
+                ]
+            }
+        ]
+    }

@@ -24,6 +24,7 @@ from sales_module.api.metrics_api import router as metrics_router
 from sales_module.api.recent_api import router as recent_router
 from sales_module.api.ui_schemas import router as ui_schemas_router
 from sales_module.api.products_api import router as products_router
+from sales_module.api.transaction_api import router as transaction_router
 
 # Import UI definitions
 from sales_module.ui_definitions import SALES_UI_PACKAGE
@@ -62,6 +63,7 @@ app.include_router(dashboard_router)
 app.include_router(metrics_router)
 app.include_router(recent_router)
 app.include_router(ui_schemas_router)
+app.include_router(transaction_router)
 app.include_router(products_router)
 
 # Root endpoint
@@ -75,6 +77,7 @@ async def root():
         "endpoints": {
             "quotes": "/quotes",
             "orders": "/orders",
+"transactions": "/transactions",
             "pricing": "/pricing",
             "docs": "/api/docs",
             "health": "/health"

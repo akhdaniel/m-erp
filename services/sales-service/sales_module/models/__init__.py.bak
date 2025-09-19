@@ -43,16 +43,8 @@ __all__ = [
     "InvoiceStatus",
     
     # Pricing models
-    
-    # Consolidated sales transaction models
-    "SalesTransaction",
-    "SalesTransactionLineItem",
-    "SalesTransactionState",
     # "PriceList",
     # "PriceRule",
     # "Discount",
     # "Promotion"
 ]
-# Consolidated sales transaction model
-from .sales_transaction import SalesTransaction, SalesTransactionLineItem, SalesTransactionState
-

@@ -38,16 +38,30 @@ SALES_PERMISSIONS = [
         action="access"
     ),
     MenuPermission(
+        code="view_transactions",
+        name="View Transactions",
+        description="Permission to view sales transactions",
+        category="sales",
+        action="view"
+    ),
+    MenuPermission(
+        code="manage_transactions",
+        name="Manage Transactions",
+        description="Permission to create, edit, delete sales transactions",
+        category="sales",
+        action="manage"
+    ),
+    MenuPermission(
         code="view_quotes",
         name="View Quotations",
-        description="Permission to view sales quotes",
+        description="Permission to view sales quotations",
         category="sales",
         action="view"
     ),
     MenuPermission(
         code="manage_quotes",
         name="Manage Quotations",
-        description="Permission to create, edit, delete quotes",
+        description="Permission to create, edit, delete quotations",
         category="sales",
         action="manage"
     ),
@@ -61,7 +75,7 @@ SALES_PERMISSIONS = [
     MenuPermission(
         code="manage_orders",
         name="Manage Orders",
-        description="Permission to create, edit, delete orders",
+        description="Permission to create, edit, delete sales orders",
         category="sales",
         action="manage"
     ),
@@ -124,13 +138,25 @@ SALES_MENUS = [
         required_permission="access_sales"
     ),
     MenuItem(
+        code="sales_transactions",
+        title="Transactions",
+        description="All Sales Transactions",
+        parent_code="sales_management",
+        order_index=1,  # Second item after Dashboard
+        level=1,
+        url="/sales/transactions",
+        icon="file-text",
+        item_type="link",
+        required_permission="access_sales"
+    ),
+    MenuItem(
         code="sales_quotes",
         title="Quotations",
         description="Quotation Management",
         parent_code="sales_management",
-        order_index=1,  # Second item after Dashboard
+        order_index=2,  # Third item
         level=1,
-        url="/sales/quotes",
+        url="/sales/transactions?state=draft,quote_pending_approval,quote_approved,quote_sent,quote_accepted,quote_rejected,quote_expired",
         icon="file-text",
         item_type="link",
         required_permission="manage_quotes"
@@ -140,9 +166,9 @@ SALES_MENUS = [
         title="Orders",
         description="Sales Order Management",
         parent_code="sales_management",
-        order_index=2,  # Third item
+        order_index=3,  # Fourth item
         level=1,
-        url="/sales/orders",
+        url="/sales/transactions?state=order_pending,order_confirmed,order_in_production,order_ready_to_ship,order_partially_shipped,order_shipped,order_delivered,order_completed,order_cancelled,order_on_hold",
         icon="shopping-bag",
         item_type="link",
         required_permission="manage_orders"
@@ -176,7 +202,7 @@ SALES_MENUS = [
         title="Settings",
         description="Sales Settings and Configurations",
         parent_code="sales_management",
-        order_index=100,  # Sixth item
+        order_index=100,  # Last item
         level=1,
         url="/sales/settings",
         icon="cogs",
