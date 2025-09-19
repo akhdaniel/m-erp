@@ -139,28 +139,31 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
             requiredPermission: menu.required_permission
           }
         })
-        dynamicRoutes.push({
-            path: `${menu.url}/:id/edit`,
-            name: `${menu.code || `dynamic-${menu.id}`}-edit`,
+
+        if(!menu.url.includes('?')){
+          dynamicRoutes.push({
+              path: `${menu.url}/:id/edit`,
+              name: `${menu.code || `dynamic-${menu.id}`}-edit`,
+              component: () => import('@/views/DynamicView.vue'),
+              meta: { 
+                requiresAuth: true, 
+                title: `Edit ${menu.title}`,
+                requiredPermission: menu.required_permission
+              }
+            })
+          
+          // Add "create" route if this is a list view
+          dynamicRoutes.push({
+            path: `${menu.url}/new`,
+            name: `${menu.code || `dynamic-${menu.id}`}-create`,
             component: () => import('@/views/DynamicView.vue'),
             meta: { 
               requiresAuth: true, 
-              title: `Edit ${menu.title}`,
+              title: `New ${menu.title.replace(' List', '').replace('s', '')}`,
               requiredPermission: menu.required_permission
             }
           })
-        
-        // Add "create" route if this is a list view
-        dynamicRoutes.push({
-          path: `${menu.url}/new`,
-          name: `${menu.code || `dynamic-${menu.id}`}-create`,
-          component: () => import('@/views/DynamicView.vue'),
-          meta: { 
-            requiresAuth: true, 
-            title: `New ${menu.title.replace(' List', '').replace('s', '')}`,
-            requiredPermission: menu.required_permission
-          }
-        })
+        }
       }
     }
     
