@@ -197,39 +197,11 @@ SALES_MENUS = [
     ),    
 ]
 
-
-async def initialize_sales_menus_ori():
+async def initialize_sales_menus():
     """Initialize sales menus on service startup"""
     try:
-        menu_service_url = os.getenv("MENU_SERVICE_URL", "http://menu-access-service:8003")
         
-        logger.info("Initializing sales menus...")
-        
-        success = await register_service_menus(
-            service_name="sales-service",
-            permissions=SALES_PERMISSIONS,
-            menus=SALES_MENUS,
-            menu_service_url=menu_service_url
-        )
-        
-        if success:
-            logger.info("✅ Sales menus initialized successfully")
-        else:
-            logger.error("❌ Failed to initialize sales menus")
-            
-        return success
-        
-    except Exception as e:
-        logger.error(f"Error initializing sales menus: {e}")
-        return False
-
-
-
-async def initialize_sales_menus():
-    """Initialize inventory menus on service startup"""
-    try:
-        
-        logger.info(f"Initializing inventory menus..")
+        logger.info(f"Initializing sales menus..")
         
         success = await register_service_menus(
             service_name="sales-service",

@@ -196,7 +196,6 @@ class MenuRegistrationClient:
                             headers=self._get_headers()
                         )
 
-                        logger.info(f'parent_response====={parent_response}')
                         
                         if parent_response.status_code == 200:
                             parent_data = parent_response.json()
