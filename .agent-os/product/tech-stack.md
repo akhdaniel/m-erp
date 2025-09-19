@@ -40,6 +40,8 @@
 
 ## Standard Services
 
+### Accessing Services 
+
 To get availabel APIs on the service use: /api/openapi.json
 To access the services directly, do not use /api/v1 endpoint prefix.
 To access the service from kong, prefix with /api/v1/<servicename>.
@@ -49,51 +51,51 @@ curl http://localhost:8006/api/openapi.json
 curl https://demo.xerpium.com/api/v1/sales/customers
 curl http://localhost:8006/customers
 
-- **UI Servce**: 
+### **UI Servce**: 
 	- port: 9000
 	- use external network chat_odoo_network so that reachable from external nginx proxy  contianer
     - API end points: 
         - localhost:9000
-- **Kong Servce**: 
+###  **Kong Servce**: 
 	- port: 8000
     - end point mappings:
         - /api/v1/base => company-partner-service
         - /api/v1/inventory => inventory-service
         - /api/v1/sales => sales-service
         - /api/v1/purchasing => purchasing-service
-- **Redit Service**: 
+###  **Redit Service**: 
 	- port: 6379
-- **PostgreSQL**: 
+###  **PostgreSQL**: 
 	- port: 5432
-- **user-auth-service**: 
+###  **user-auth-service**: 
 	- port: 8001
-- **company-partner-service**: 
+###  **company-partner-service**: 
 	- port: 8002
     - API end points: 
         - localhost:8002/dashboard    
         - localhost:8002/partners    
         - localhost:8002/companies    
-- **menu-access-service**: 
+###  **menu-access-service**: 
 	- port 8003
-- **service-registry**: 
+###  **service-registry**: 
 	- port: 8004
-- **inventory-service**: 
+###  **inventory-service**: 
 	- port: 8005
     - API end points: 
         - localhost:8005/dashboard 
         - localhost:8005/products        
         - localhost:8005/stock_moves        
-- **sales-service**: 
+###  **sales-service**: 
 	- port: 8006
     - API end points: 
         - localhost:8006/dashboard
         - localhost:8006/orders
         - localhost:8006/transactions
-- **purchasing-service**: 
+###  **purchasing-service**: 
 	- port: 8007
-- **notification-registry**: 
+###  **notification-registry**: 
 	- port: 8009
-- **ui-registry**: 
+###  **ui-registry**: 
 	- port: 8010
  
 ## Frontend Stack
