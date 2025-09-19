@@ -716,8 +716,8 @@ async def get_customers_list_schema() -> Dict[str, Any]:
                 "cellClass": "font-semibold text-yellow-600"
             }
         ],
-        "createRoute": "/base/partners/new?type=customer",
-        "editRoute": "/base/partners/{id}/edit",
+        "createRoute": "/customers/new?type=customer",
+        "editRoute": "/customers/{id}/edit",
         "rowActions": [
             {
                 "id": "view",
