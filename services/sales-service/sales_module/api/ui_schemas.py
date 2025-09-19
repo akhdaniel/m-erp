@@ -1450,7 +1450,7 @@ async def get_transaction_detail_schema() -> Dict[str, Any]:
     return {
         "title": "Transaction Details",
         "viewType": "detail",
-        "endpoint": "/sales/transactions/{id}",
+        "endpoint": "/sales/transactions",
         "header": {
             "titleField": "transaction_number",
             "subtitleField": "title",
