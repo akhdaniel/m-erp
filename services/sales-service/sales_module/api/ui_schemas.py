@@ -767,6 +767,15 @@ async def get_customers_form_schema() -> Dict[str, Any]:
                         "colSpan": 1,
                         "placeholder": "Enter a descriptive name for this order"
                     },
+                    {
+                        "name": "company_id",
+                        "label": "Specific Company",
+                        "type": "select",
+                        "required": True,
+                        "optionsEndpoint": "/companies",
+                        "optionLabelField": "name",
+                        "optionValueField": "id"
+                    },
                 ]
             }
         ],
