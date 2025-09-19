@@ -22,6 +22,7 @@ router = APIRouter(prefix="/companies", tags=["companies"])
 
 
 @router.post("/", response_model=CompanyResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=CompanyResponse, status_code=status.HTTP_201_CREATED)
 async def create_company(
     company_data: CompanyCreate,
     db: AsyncSession = Depends(get_db),
@@ -61,6 +62,7 @@ async def create_company(
 
 
 @router.get("/", response_model=CompanyListResponse)
+@router.get("", response_model=CompanyListResponse)
 async def list_companies(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100, ge=1, le=1000, description="Number of records to return"), 
