@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     KONG_GATEWAY_URL: str = "http://kong:8000"
     
     # Authentication Service
-    AUTH_SERVICE_URL: str = "http://user-auth-service:8000"
+    AUTH_SERVICE_URL: str = "http://user-auth-service:8001"
     
     # CORS
     CORS_ORIGINS: List[str] = [

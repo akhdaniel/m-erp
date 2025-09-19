@@ -43,7 +43,7 @@ services:
       - ENVIRONMENT=development
       - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000
       - REDIS_URL=redis://redis:6379/1
-      - AUTH_SERVICE_URL=http://host.docker.internal:8000  # Connect to auth service on host
+      - AUTH_SERVICE_URL=http://host.docker.internal:8001  # Connect to auth service on host
       - RATE_LIMITING_ENABLED=false
       - ALLOW_MULTI_COMPANY=true
       - DEFAULT_COMPANY_NAME=Demo Company
