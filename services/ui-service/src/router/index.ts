@@ -68,6 +68,7 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
             menu.url.includes('/orders')     || 
             menu.url.includes('/suppliers')  ||
             menu.url.includes('/quotations') ||
+            menu.url.includes('/transactions') ||
             menu.url.includes('/pricing')    ||
             menu.url.includes('/warehouses') ||
             menu.url.includes('/categories') ||
