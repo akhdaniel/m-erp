@@ -439,7 +439,7 @@ async function initializeForm() {
       } else if (field.type === 'number') {
         formData.value[field.name] = null
       }
-      else if (field.type === 'selection') {
+      else if (field.type === 'select') {
         selectionFieldExist=true
       } else {
         formData.value[field.name] = ''
