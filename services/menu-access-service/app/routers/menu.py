@@ -14,7 +14,7 @@ from app.schemas.menu import (
 )
 from app.core.exceptions import NotFoundException, BadRequestException
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('uvicorn')
 
 
 router = APIRouter(tags=["menus"])
