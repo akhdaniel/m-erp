@@ -176,6 +176,7 @@
                 <Autocomplete
                   v-model="formData[field.name]"
                   :field="field"
+                  :modelValue="formData[field.name]"
                   :required="field.required"
                   :disabled="field.disabled"
                   :service-url="serviceUrl"
