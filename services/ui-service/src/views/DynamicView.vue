@@ -205,6 +205,11 @@ function getSchemaEndpoint(): string {
     const segments = path.split("/").filter(segment => segment !== "");
     return '/api/v1/'+segments[0]+'/'+segments[1]+'/ui-schemas/form'
   }
+  else if(/\d+$/.test(path)) {
+    // /inventory/products/14 => /inventory/products/ui-schemas/form
+    const segments = path.split("/").filter(segment => segment !== "");
+    return '/api/v1/'+segments[0]+'/'+segments[1]+'/ui-schemas/form'
+  }
   else
     return '/api/v1'+path+'/ui-schemas/'+viewType.value
 
