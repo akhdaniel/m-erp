@@ -7,6 +7,7 @@ import asyncio
 import logging
 import os
 import sys
+MENU_SERVICE_URL = os.getenv("MENU_SERVICE_URL")
 
 # Add parent directory to path to import shared modules
 # When running from /app/sales_module/menu_init.py, we need to add /app to the path
@@ -197,7 +198,7 @@ SALES_MENUS = [
 ]
 
 
-async def initialize_sales_menus():
+async def initialize_sales_menus_ori():
     """Initialize sales menus on service startup"""
     try:
         menu_service_url = os.getenv("MENU_SERVICE_URL", "http://menu-access-service:8003")
@@ -221,6 +222,33 @@ async def initialize_sales_menus():
     except Exception as e:
         logger.error(f"Error initializing sales menus: {e}")
         return False
+
+
+
+async def initialize_sales_menus():
+    """Initialize inventory menus on service startup"""
+    try:
+        
+        logger.info(f"Initializing inventory menus..")
+        
+        success = await register_service_menus(
+            service_name="sales-service",
+            permissions=SALES_PERMISSIONS,
+            menus=SALES_MENUS,
+            menu_service_url=MENU_SERVICE_URL
+        )
+        
+        if success:
+            logger.info("✅ Sales menus initialized successfully")
+        else:
+            logger.error("❌ Failed to initialize Sales menus")
+            
+        return success
+        
+    except Exception as e:
+        logger.error(f"Error initializing Sales menus: {e}")
+        return False
+
 
 
 def init_menus_on_startup():
