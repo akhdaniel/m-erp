@@ -773,6 +773,7 @@ async def get_customers_form_schema() -> Dict[str, Any]:
                         "type": "select",
                         "required": True,
                         "optionsEndpoint": "/api/v1/base/companies",
+                        "optionsDataPath":"companies",
                         "optionLabelField": "name",
                         "optionValueField": "id"
                     },
