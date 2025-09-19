@@ -122,7 +122,7 @@ async def get_partner(
     try:
         # For now, default to company_id = 2 (Default Company) if not specified
         if company_id is None:
-            company_id = 2
+            company_id = 1
             
         partner = await partner_framework_service.get_by_id(
             db=db,
