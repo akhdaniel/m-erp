@@ -42,8 +42,15 @@
 - **UI Servce**: 
 	- port: 9000
 	- use external network chat_odoo_network so that reachable from external nginx proxy  contianer
+    - API end points: 
+        - localhost:9000
 - **Kong Servce**: 
 	- port: 8000
+    - end point mappings:
+        - /api/v1/base => company-partner-service
+        - /api/v1/inventory => inventory-service
+        - /api/v1/sales => sales-service
+        - /api/v1/purchasing => purchasing-service
 - **Redit Service**: 
 	- port: 6379
 - **PostgreSQL**: 
@@ -52,14 +59,26 @@
 	- port: 8001
 - **company-partner-service**: 
 	- port: 8002
+    - API end points: 
+        - localhost:8002/dashboard    
+        - localhost:8002/partners    
+        - localhost:8002/companies    
 - **menu-access-service**: 
 	- port 8003
 - **service-registry**: 
 	- port: 8004
 - **inventory-service**: 
 	- port: 8005
+    - API end points: 
+        - localhost:8005/dashboard 
+        - localhost:8005/products        
+        - localhost:8005/stock_moves        
 - **sales-service**: 
 	- port: 8006
+    - API end points: 
+        - localhost:8006/dashboard
+        - localhost:8006/orders
+        - localhost:8006/transactions
 - **purchasing-service**: 
 	- port: 8007
 - **notification-registry**: 
