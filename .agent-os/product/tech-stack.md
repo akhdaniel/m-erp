@@ -39,6 +39,16 @@
 - services has modulename-service/register_ui.py for requesting dashboard items to display
 
 ## Standard Services
+
+To get availabel APIs on the service use: /api/openapi.json
+To access the services directly, do not use /api/v1 endpoint prefix.
+To access the service from kong, prefix with /api/v1/<servicename>.
+
+Example;
+curl http://localhost:8006/api/openapi.json
+curl https://demo.xerpium.com/api/v1/sales/customers
+curl http://localhost:8006/customers
+
 - **UI Servce**: 
 	- port: 9000
 	- use external network chat_odoo_network so that reachable from external nginx proxy  contianer
