@@ -768,6 +768,32 @@ async def get_customers_form_schema() -> Dict[str, Any]:
                         "placeholder": "Enter a descriptive name for this order"
                     },
                     {
+                        "name": "email",
+                        "label": "Customer Email",
+                        "type": "text",
+                        "required": True,
+                        "colSpan": 1,
+                        "placeholder": "Enter email for this customer"
+                    },
+                    {
+                        "name": "partner_type",
+                        "label": "Customer Type",
+                        "type": "text",
+                        "required": True,
+                        "colSpan": 1,
+                        "defaultValue":"customer",
+                        "placeholder": "Enter a descriptive name for this order"
+                    },
+                    {
+                        "name": "is_customer",
+                        "label": "Is Customer",
+                        "type": "checkbox",
+                        "required": True,
+                        "colSpan": 1,
+                        "defaultValue":True,
+                        "placeholder": "Enter a descriptive name for this order"
+                    },
+                    {
                         "name": "company_id",
                         "label": "Specific Company",
                         "type": "select",
