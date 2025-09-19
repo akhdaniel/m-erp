@@ -93,7 +93,7 @@ async def list_sales_transactions(
         paginated_transactions = filtered_transactions[skip:skip+limit]
         
         return {
-            "items": paginated_transactions,
+            "data": paginated_transactions,
             "total": total,
             "skip": skip,
             "limit": limit
