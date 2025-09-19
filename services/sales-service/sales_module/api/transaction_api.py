@@ -9,7 +9,7 @@ from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, Depends, Query, Path, status, Body
 from fastapi.responses import JSONResponse
 from decimal import Decimal
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import logging
 import sys
 
@@ -122,11 +122,12 @@ async def create_sales_transaction(
         next_transaction_id += 1
         
         # Create transaction response
+        created_at = datetime.utcnow().isoformat()
         transaction_response = {
             "id": transaction_id,
             "company_id": company_id,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": created_at,
+            "updated_at": created_at,
             "created_by_user_id": user_id,
             "updated_by_user_id": user_id,
             "transaction_number": f'TXN-2025-{transaction_id:03d}',
@@ -134,8 +135,15 @@ async def create_sales_transaction(
             "description": transaction_data.get('description'),
             "state": "draft",
             "customer_id": transaction_data.get('customer_id'),
+            "customer_name": f"Customer {transaction_data.get('customer_id', 'N/A')}",
             "total_amount": transaction_data.get('total_amount', 0.0),
-            "currency_code": transaction_data.get('currency_code', 'USD')
+            "subtotal": transaction_data.get('total_amount', 0.0),
+            "tax_amount": 0.0,
+            "discount_amount": 0.0,
+            "currency_code": transaction_data.get('currency_code', 'USD'),
+            "payment_terms_days": transaction_data.get('payment_terms_days', 30),
+            "delivery_terms": transaction_data.get('delivery_terms', "Standard delivery terms"),
+            "valid_until": transaction_data.get('valid_until', (datetime.utcnow().replace(microsecond=0) + timedelta(days=30)).isoformat())
         }
         
         # Add to mock database
@@ -170,7 +178,41 @@ async def get_sales_transaction(
         if transaction.get('company_id') != company_id:
             raise HTTPException(status_code=403, detail="Access denied")
             
-        return transaction
+        # Enhance transaction data with additional fields needed for detail view
+        enhanced_transaction = transaction.copy()
+        
+        # Add customer name (mock data for demo)
+        if not enhanced_transaction.get('customer_name'):
+            enhanced_transaction['customer_name'] = f"Customer {enhanced_transaction.get('customer_id', 'N/A')}"
+        
+        # Add financial fields if not present
+        if not enhanced_transaction.get('subtotal'):
+            enhanced_transaction['subtotal'] = enhanced_transaction.get('total_amount', 0.0)
+        if not enhanced_transaction.get('tax_amount'):
+            enhanced_transaction['tax_amount'] = 0.0
+        if not enhanced_transaction.get('discount_amount'):
+            enhanced_transaction['discount_amount'] = 0.0
+            
+        # Add terms fields if not present
+        if not enhanced_transaction.get('payment_terms_days'):
+            enhanced_transaction['payment_terms_days'] = 30
+        if not enhanced_transaction.get('delivery_terms'):
+            enhanced_transaction['delivery_terms'] = "Standard delivery terms"
+        if not enhanced_transaction.get('valid_until'):
+            # Set valid until to 30 days from created date
+            created_at_str = enhanced_transaction.get('created_at', '')
+            if created_at_str:
+                try:
+                    from datetime import datetime, timedelta
+                    created_at = datetime.fromisoformat(created_at_str.replace('Z', '+00:00'))
+                    valid_until = created_at + timedelta(days=30)
+                    enhanced_transaction['valid_until'] = valid_until.isoformat()
+                except:
+                    enhanced_transaction['valid_until'] = created_at_str
+            else:
+                enhanced_transaction['valid_until'] = enhanced_transaction.get('created_at', '')
+        
+        return enhanced_transaction
         
     except HTTPException:
         raise
@@ -206,6 +248,32 @@ async def update_sales_transaction(
         for key, value in transaction_data.items():
             if key not in ['id', 'company_id', 'created_at', 'created_by_user_id']:
                 transaction[key] = value
+                
+        # Ensure required fields are present
+        if 'customer_name' not in transaction:
+            transaction['customer_name'] = f"Customer {transaction.get('customer_id', 'N/A')}"
+        if 'subtotal' not in transaction:
+            transaction['subtotal'] = transaction.get('total_amount', 0.0)
+        if 'tax_amount' not in transaction:
+            transaction['tax_amount'] = 0.0
+        if 'discount_amount' not in transaction:
+            transaction['discount_amount'] = 0.0
+        if 'payment_terms_days' not in transaction:
+            transaction['payment_terms_days'] = 30
+        if 'delivery_terms' not in transaction:
+            transaction['delivery_terms'] = "Standard delivery terms"
+        if 'valid_until' not in transaction:
+            # Set valid until to 30 days from created date if not present
+            created_at_str = transaction.get('created_at', '')
+            if created_at_str:
+                try:
+                    created_at = datetime.fromisoformat(created_at_str.replace('Z', '+00:00'))
+                    valid_until = created_at + timedelta(days=30)
+                    transaction['valid_until'] = valid_until.isoformat()
+                except:
+                    transaction['valid_until'] = created_at_str
+            else:
+                transaction['valid_until'] = transaction.get('created_at', '')
                 
         # Update timestamps
         transaction['updated_at'] = datetime.utcnow().isoformat()
