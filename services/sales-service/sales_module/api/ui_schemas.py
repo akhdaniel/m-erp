@@ -772,7 +772,7 @@ async def get_customers_form_schema() -> Dict[str, Any]:
                         "label": "Specific Company",
                         "type": "select",
                         "required": True,
-                        "optionsEndpoint": "/companies",
+                        "optionsEndpoint": "/api/v1/base/companies",
                         "optionLabelField": "name",
                         "optionValueField": "id"
                     },
