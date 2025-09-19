@@ -82,7 +82,7 @@ async def list_partners(
         # For now, default to company_id = 2 (Default Company) if not specified
         # In a real system, this would come from user authentication
         if company_id is None:
-            company_id = 2
+            company_id = 1
         
         partners, total = await partner_framework_service.search_partners(
             db=db,
