@@ -370,6 +370,7 @@ async function fetchData() {
       if (value) params.append(key, value.toString())
     })
     
+    console.log(`==== ${apiUrl.value}?${params}`)
     const response = await fetch(`${apiUrl.value}?${params}`)
     if (!response.ok) throw new Error('Failed to fetch data')
     
