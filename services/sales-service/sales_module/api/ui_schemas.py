@@ -740,6 +740,39 @@ async def get_customers_list_schema() -> Dict[str, Any]:
         ]
     }
 
+# Customer Form Schema (redirects to partners but with customer filter)
+@router.get("/customers/ui-schemas/form")
+async def get_customers_form_schema() -> Dict[str, Any]:
+    """Get customers form UI schema"""
+    return {
+        "title": "Customers",
+        "description": "Manage customer",
+        "viewType": "form",
+        "endpoint": "/base/partners",
+        "method": "POST",
+        "successRoute": "/sales/customers",
+        "cancelRoute": "/sales/customers",
+        "dataPath": "partners",  # Tell the UI where to find the data in the response
+        "sections": [
+            {
+                "id": "basic",
+                "title": "Customer Information",
+                "gridClass": "grid-cols-2",
+                "fields": [
+                    {
+                        "name": "name",
+                        "label": "Customer Name",
+                        "type": "text",
+                        "required": True,
+                        "colSpan": 1,
+                        "placeholder": "Enter a descriptive name for this order"
+                    },
+                ]
+            }
+        ],
+        
+    }
+
 
 # Orders Form Schema
 @router.get("/orders/ui-schemas/form")
