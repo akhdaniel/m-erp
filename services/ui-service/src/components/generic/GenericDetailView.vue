@@ -428,7 +428,7 @@ const isFormValid = computed(() => {
 })
 
 // Initialize form
-async function initializeForm() {
+async function initializeView() {
   let selectionFieldExist = false
   // Set default values from schema
   props.schema.sections?.forEach((section: any) => {
@@ -801,18 +801,18 @@ function getActionClasses(action: any): string {
 
 // Watch for schema changes
 watch(() => props.schema, () => {
-  initializeForm()
+  initializeView()
 }, { deep: true })
 
 // Initialize
 onMounted(() => {
-  initializeForm()
+  initializeView()
 })
 
 // Expose methods for parent components
 defineExpose({
   validate,
   submit: handleSubmit,
-  reset: initializeForm
+  reset: initializeView
 })
 </script>

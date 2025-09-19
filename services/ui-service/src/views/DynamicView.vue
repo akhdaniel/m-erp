@@ -136,6 +136,8 @@ const componentType = computed(() => {
     case 'form':
     case 'form-create':
     case 'form-edit':
+    case 'detail':
+    case 'view':      
       return GenericFormView
     case 'tree':
       // Would import GenericTreeView when implemented
@@ -144,9 +146,9 @@ const componentType = computed(() => {
       // Would import GenericDashboard
       return GenericDashboard
 
-    case 'detail':
-    case 'view':
-      return GenericDetailView      
+    // case 'detail':
+    // case 'view':
+    //   return GenericDetailView      
     default:
       return null
   }
