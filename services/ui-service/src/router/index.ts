@@ -127,6 +127,7 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
   //console.log('Process all top-level menus...', menus)
   menus.forEach(processMenu)
   
+  console.log('dynamicRoutes====', dynamicRoutes)
   return dynamicRoutes
 }
 
