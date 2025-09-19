@@ -47,6 +47,7 @@ def filter_transactions_by_state(transactions: List[Dict], states: List[str]) ->
 
 # Sales Transaction CRUD endpoints
 @router.get("/", response_model=Dict)
+@router.get("", response_model=Dict)
 async def list_sales_transactions(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
@@ -103,6 +104,7 @@ async def list_sales_transactions(
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.post("/", response_model=Dict, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=Dict, status_code=status.HTTP_201_CREATED)
 async def create_sales_transaction(
     transaction_data: Dict[str, Any] = Body(...),
     db: Session = Depends(get_db_session),
