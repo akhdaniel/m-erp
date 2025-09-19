@@ -375,8 +375,8 @@ async function fetchData() {
     if (!response.ok) throw new Error('Failed to fetch data')
     
     const data = await response.json()
-    console.log('props.schema.dataPath==',props.schema.dataPath)
-    console.log('data.data==',data.data)
+    // console.log('props.schema.dataPath==',props.schema.dataPath)
+    // console.log('data.data==',data.data)
     // Handle standardized response format
     if (props.schema.dataPath) {
       // Custom data path if specified
@@ -394,6 +394,9 @@ async function fetchData() {
       items.value = []
       console.warn('Unexpected API response format. Expected "data" key:', data)
     }
+
+    console.log('items.value ==',items.value )
+
   } catch (err: any) {
     error.value = err.message || 'Failed to load data'
     console.error('Error fetching data:', err)
