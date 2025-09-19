@@ -46,6 +46,7 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
     // Generate route for this menu if it has a URL
     if (menu.url && menu.item_type === 'link') {
       // For inventory, sales, purchasing, and other dynamic modules, use DynamicView
+      /*
       if (menu.url.startsWith('/inventory') || 
           menu.url.startsWith('/base') || 
           menu.url.startsWith('/sales') || 
@@ -99,7 +100,9 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
           })
         }
       }
+        */
       // For dashboard views, use DynamicDashboard
+      /*
       else if (menu.url.includes('/dashboard')) {
         dynamicRoutes.push({
           path: menu.url,
@@ -108,6 +111,53 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
           meta: { 
             requiresAuth: true, 
             title: menu.title,
+            requiredPermission: menu.required_permission
+          }
+        })
+      }
+      */
+     if (menu.url.includes('/dashboard')) {
+        dynamicRoutes.push({
+          path: menu.url,
+          name: menu.code || `dynamic-dashboard-${menu.id}`,
+          component: () => import('@/views/DynamicDashboard.vue'),
+          meta: { 
+            requiresAuth: true, 
+            title: menu.title,
+            requiredPermission: menu.required_permission
+          }
+        })
+      }
+      else{
+         dynamicRoutes.push({
+          path: menu.url,
+          name: menu.code || `dynamic-${menu.id}`,
+          component: () => import('@/views/DynamicView.vue'),
+          meta: { 
+            requiresAuth: true, 
+            title: menu.title,
+            requiredPermission: menu.required_permission
+          }
+        })
+        dynamicRoutes.push({
+            path: `${menu.url}/:id/edit`,
+            name: `${menu.code || `dynamic-${menu.id}`}-edit`,
+            component: () => import('@/views/DynamicView.vue'),
+            meta: { 
+              requiresAuth: true, 
+              title: `Edit ${menu.title}`,
+              requiredPermission: menu.required_permission
+            }
+          })
+        
+        // Add "create" route if this is a list view
+        dynamicRoutes.push({
+          path: `${menu.url}/new`,
+          name: `${menu.code || `dynamic-${menu.id}`}-create`,
+          component: () => import('@/views/DynamicView.vue'),
+          meta: { 
+            requiresAuth: true, 
+            title: `New ${menu.title.replace(' List', '').replace('s', '')}`,
             requiredPermission: menu.required_permission
           }
         })
@@ -123,8 +173,6 @@ function generateDynamicRoutes(menus: MenuItem[]): RouteRecordRaw[] {
     // console.log('dynamicRoutes=====', dynamicRoutes)
   }
   
-
-
   //console.log('Process all top-level menus...', menus)
   menus.forEach(processMenu)
   
