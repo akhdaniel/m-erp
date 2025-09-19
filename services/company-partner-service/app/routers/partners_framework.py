@@ -79,7 +79,7 @@ async def list_partners(
     - Consistent response format
     """
     try:
-        # For now, default to company_id = 2 (Default Company) if not specified
+        # For now, default to company_id = 1 (Default Company) if not specified
         # In a real system, this would come from user authentication
         if company_id is None:
             company_id = 1
@@ -120,7 +120,7 @@ async def get_partner(
     Get a partner by ID using the Business Object Framework with multi-company isolation.
     """
     try:
-        # For now, default to company_id = 2 (Default Company) if not specified
+        # For now, default to company_id = 1 (Default Company) if not specified
         if company_id is None:
             company_id = 1
             
@@ -196,9 +196,9 @@ async def update_partner(
     - Framework version tracking
     """
     try:
-        # For now, default to company_id = 2 (Default Company) if not specified
+        # For now, default to company_id = 1 (Default Company) if not specified
         if company_id is None:
-            company_id = 2
+            company_id = 1
             
         partner = await partner_framework_service.update(
             db=db,
@@ -240,9 +240,9 @@ async def delete_partner(
     - Cascade deletion of related data
     """
     try:
-        # For now, default to company_id = 2 (Default Company) if not specified
+        # For now, default to company_id = 1 (Default Company) if not specified
         if company_id is None:
-            company_id = 2
+            company_id = 1
             
         deleted = await partner_framework_service.delete(
             db=db,
@@ -277,9 +277,9 @@ async def activate_partner(
     Activate a partner (set is_active to True) using the Business Object Framework.
     """
     try:
-        # For now, default to company_id = 2 (Default Company) if not specified
+        # For now, default to company_id = 1 (Default Company) if not specified
         if company_id is None:
-            company_id = 2
+            company_id = 1
             
         partner = await partner_framework_service.activate_partner(
             db=db,
@@ -314,9 +314,9 @@ async def deactivate_partner(
     Deactivate a partner (set is_active to False) using the Business Object Framework.
     """
     try:
-        # For now, default to company_id = 2 (Default Company) if not specified
+        # For now, default to company_id = 1 (Default Company) if not specified
         if company_id is None:
-            company_id = 2
+            company_id = 1
             
         partner = await partner_framework_service.deactivate_partner(
             db=db,
