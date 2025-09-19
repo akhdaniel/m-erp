@@ -58,6 +58,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/components/AppLayout.vue'
 import GenericListView from '@/components/generic/GenericListView.vue'
 import GenericFormView from '@/components/generic/GenericFormView.vue'
+import GenericDetailView from '@/components/generic/GenericDetailView.vue'
 import GenericDashboard from '@/components/generic/GenericDashboard.vue'
 
 const route = useRoute()
@@ -142,6 +143,10 @@ const componentType = computed(() => {
     case 'dashboard':
       // Would import GenericDashboard
       return GenericDashboard
+
+    case 'detail':
+    case 'view':
+      return GenericDetailView      
     default:
       return null
   }
