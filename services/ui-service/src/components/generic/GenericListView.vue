@@ -370,12 +370,13 @@ async function fetchData() {
       if (value) params.append(key, value.toString())
     })
     
-    console.log(`==== ${apiUrl.value}?${params}`)
+    // console.log(`==== ${apiUrl.value}?${params}`)
     const response = await fetch(`${apiUrl.value}?${params}`)
     if (!response.ok) throw new Error('Failed to fetch data')
     
     const data = await response.json()
-    
+    console.log('props.schema.dataPath==',props.schema.dataPath)
+    console.log('data.data==',data.data)
     // Handle standardized response format
     if (props.schema.dataPath) {
       // Custom data path if specified
