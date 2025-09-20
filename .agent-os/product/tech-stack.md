@@ -30,7 +30,7 @@
 - password: admin123
 
 ## Containerization
-- **Docker compose**: use docker compose command, not docker-compose
+- **Docker compose**: to execute docker commands, use docker compose command, not docker-compose
 - **Server**: on VM cloud with domain demo.xerpium.com, IP address 8.215.67.59
 
 ## Service driven US
@@ -51,11 +51,14 @@ curl http://localhost:8006/api/openapi.json
 curl https://demo.xerpium.com/api/v1/sales/customers
 curl http://localhost:8006/customers
 
+### Database 
+
+PostgreSQL Database is suppose to be accessed from withint the service container with postgresql host name.
+When trying to test database connection, test it from inside the container, not the host.
+
 ### **UI Servce**: 
 	- port: 9000
 	- use external network chat_odoo_network so that reachable from external nginx proxy  contianer
-    - API end points: 
-        - localhost:9000
 ###  **Kong Servce**: 
 	- port: 8000
     - end point mappings:
