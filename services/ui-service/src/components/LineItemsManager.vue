@@ -310,6 +310,15 @@ const currentItem = ref({
   discount_percentage: 0
 })
 
+// Initialize items with modelValue if provided
+console.log('LineItemsManager mounted with modelValue:', props.modelValue)
+if (props.modelValue && Array.isArray(props.modelValue) && props.modelValue.length > 0) {
+  items.value = [...props.modelValue]
+  console.log('Initialized items with modelValue:', items.value)
+} else if (props.modelValue) {
+  console.log('modelValue is not an array or is empty:', props.modelValue)
+}
+
 // Product search
 const productSearch = ref('')
 const searchResults = ref([])
@@ -318,8 +327,15 @@ const searchTimeout = ref(null)
 
 // Watch for external changes
 watch(() => props.modelValue, (newValue) => {
-  items.value = newValue || []
-})
+  console.log('LineItemsManager modelValue changed:', newValue)
+  if (newValue && Array.isArray(newValue)) {
+    items.value = [...newValue]
+    console.log('Updated items with new value:', items.value)
+  } else {
+    items.value = []
+    console.log('Set items to empty array')
+  }
+}, { deep: true })
 
 // Computed values
 const subtotal = computed(() => {

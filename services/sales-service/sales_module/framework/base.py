@@ -34,6 +34,8 @@ class BaseModel(Base, TimestampMixin):
     __abstract__ = True
     
     id = Column(Integer, primary_key=True, index=True)
+    created_by_user_id = Column(Integer, nullable=True)
+    updated_by_user_id = Column(Integer, nullable=True)
     
     def to_dict(self) -> dict:
         """Convert model to dictionary."""
@@ -42,6 +44,8 @@ class BaseModel(Base, TimestampMixin):
             value = getattr(self, column.name)
             if isinstance(value, datetime):
                 value = value.isoformat()
+            elif hasattr(value, 'value'):  # Handle enums
+                value = value.value
             result[column.name] = value
         return result
     

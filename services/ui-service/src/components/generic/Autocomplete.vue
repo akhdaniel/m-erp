@@ -302,6 +302,16 @@ watch(() => props.modelValue, (newValue) => {
       selectedLabel.value = selectedOption.label
       searchTerm.value = selectedOption.label
     }
+  } else if (newValue) {
+    // Check if we have a display name stored in the parent form data
+    // This is a special case where the parent form stores the display name
+    // in a field with the pattern _{field_name}_display
+    const displayNameField = `_${props.field.name}_display`
+    const parentFormData = (props.field as any).parentFormData
+    if (parentFormData && parentFormData[displayNameField]) {
+      selectedLabel.value = parentFormData[displayNameField]
+      searchTerm.value = parentFormData[displayNameField]
+    }
   } else if (!newValue) {
     selectedLabel.value = ''
     searchTerm.value = ''

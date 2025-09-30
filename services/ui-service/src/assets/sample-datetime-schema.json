@@ -1,0 +1,80 @@
+{
+  "title": "Sample Form with DateTime Fields",
+  "description": "Example showing how to use date and datetime fields with the DateTimePicker component",
+  "endpoint": "/api/v1/sample",
+  "successRoute": "/sample/list",
+  "cancelRoute": "/sample/list",
+  "submitLabel": "Save Sample",
+  "cancelLabel": "Cancel",
+  
+  "breadcrumbs": [
+    {"label": "Samples", "route": "/sample/list"},
+    {"label": "Sample Details"}
+  ],
+  
+  "sections": [
+    {
+      "id": "basic",
+      "title": "Basic Information",
+      "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+      "fields": [
+        {
+          "name": "name",
+          "label": "Sample Name",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter sample name"
+        },
+        {
+          "name": "created_date",
+          "label": "Created Date",
+          "type": "date",
+          "required": true,
+          "placeholder": "Select a date",
+          "help": "The date when this sample was created"
+        },
+        {
+          "name": "due_datetime",
+          "label": "Due Date & Time",
+          "type": "datetime-local",
+          "required": false,
+          "placeholder": "Select date and time",
+          "help": "The deadline for this sample"
+        },
+        {
+          "name": "completed_date",
+          "label": "Completed Date",
+          "type": "date",
+          "required": false,
+          "placeholder": "Select completion date",
+          "min": "2020-01-01",
+          "max": "2030-12-31",
+          "help": "The date when this sample was completed"
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "title": "Advanced Settings",
+      "gridClass": "grid grid-cols-1 gap-6 sm:grid-cols-2",
+      "fields": [
+        {
+          "name": "start_datetime",
+          "label": "Start Date & Time",
+          "type": "datetime-local",
+          "required": true,
+          "placeholder": "Select start date and time",
+          "help": "When this process should start"
+        },
+        {
+          "name": "end_datetime",
+          "label": "End Date & Time",
+          "type": "datetime-local",
+          "required": false,
+          "placeholder": "Select end date and time",
+          "help": "When this process should end"
+        }
+      ]
+    }
+  ]
+}

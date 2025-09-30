@@ -1,4 +1,5 @@
 .DS_Store
+.vite/
 *.pyc
 dist
 dist/assets/

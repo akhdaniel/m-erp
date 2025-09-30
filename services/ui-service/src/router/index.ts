@@ -28,6 +28,12 @@ const staticRoutes: RouteRecordRaw[] = [
     meta: { requiresAuth: true, title: 'My Profile' }
   },
   {
+    path: '/test/datetime',
+    name: 'TestDateTimePicker',
+    component: () => import('@/views/TestDateTimePicker.vue'),
+    meta: { requiresAuth: true, title: 'Test DateTime Picker' }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@/views/NotFoundView.vue'),

@@ -85,7 +85,7 @@ class SalesTransaction(CompanyBusinessObject):
     )
     
     # Transaction state and workflow
-    state = Column(Enum(SalesTransactionState), nullable=False, default=SalesTransactionState.DRAFT, index=True)
+    state = Column(Enum(SalesTransactionState, native_enum=False, values_callable=lambda x: [e.value for e in x]), nullable=False, default=SalesTransactionState.DRAFT.value, index=True)
     version = Column(Integer, nullable=False, default=1)
     
     # Financial information
@@ -134,7 +134,7 @@ class SalesTransaction(CompanyBusinessObject):
     due_date = Column(DateTime, nullable=True, index=True)
     paid_amount = Column(Numeric(15, 2), nullable=False, default=0.0)
     outstanding_amount = Column(Numeric(15, 2), nullable=False, default=0.0)
-    payment_status = Column(Enum(PaymentStatus), nullable=False, default=PaymentStatus.PENDING, index=True)
+    payment_status = Column(Enum(PaymentStatus, values_callable=lambda x: [e.value for e in x]), nullable=False, default=PaymentStatus.PENDING.value, index=True)
     
     # Order source and tracking
     source_channel = Column(String(50), nullable=True)  # web, phone, email, etc.
@@ -191,6 +191,24 @@ class SalesTransaction(CompanyBusinessObject):
         """String representation of sales transaction."""
         return f"Transaction {self.transaction_number} v{self.version}"
     
+    def to_dict(self) -> dict:
+        """Convert model to dictionary including line items."""
+        result = super().to_dict()
+        # Always include line_items key, even if empty
+        result['line_items'] = []
+        # Try to include line items if they exist and are loaded
+        try:
+            if hasattr(self, 'line_items'):
+                # Check if line_items is loaded (not a query object)
+                if self.line_items is not None and not callable(self.line_items):
+                    # Ensure we're working with a list-like object
+                    if hasattr(self.line_items, '__iter__') and not isinstance(self.line_items, str):
+                        result['line_items'] = [item.to_dict() for item in self.line_items]
+        except Exception as e:
+            # If there's an error accessing line_items, keep the empty array
+            pass
+        return result
+    
     def __repr__(self):
         """Detailed representation of sales transaction."""
         return (
@@ -222,13 +240,13 @@ class SalesTransaction(CompanyBusinessObject):
     def is_quote_state(self) -> bool:
         """Check if transaction is in a quotation state."""
         quote_states = [
-            SalesTransactionState.DRAFT,
-            SalesTransactionState.QUOTE_PENDING_APPROVAL,
-            SalesTransactionState.QUOTE_APPROVED,
-            SalesTransactionState.QUOTE_SENT,
-            SalesTransactionState.QUOTE_ACCEPTED,
-            SalesTransactionState.QUOTE_REJECTED,
-            SalesTransactionState.QUOTE_EXPIRED
+            SalesTransactionState.DRAFT.value,
+            SalesTransactionState.QUOTE_PENDING_APPROVAL.value,
+            SalesTransactionState.QUOTE_APPROVED.value,
+            SalesTransactionState.QUOTE_SENT.value,
+            SalesTransactionState.QUOTE_ACCEPTED.value,
+            SalesTransactionState.QUOTE_REJECTED.value,
+            SalesTransactionState.QUOTE_EXPIRED.value
         ]
         return self.state in quote_states
     
@@ -236,16 +254,16 @@ class SalesTransaction(CompanyBusinessObject):
     def is_order_state(self) -> bool:
         """Check if transaction is in an order state."""
         order_states = [
-            SalesTransactionState.ORDER_PENDING,
-            SalesTransactionState.ORDER_CONFIRMED,
-            SalesTransactionState.ORDER_IN_PRODUCTION,
-            SalesTransactionState.ORDER_READY_TO_SHIP,
-            SalesTransactionState.ORDER_PARTIALLY_SHIPPED,
-            SalesTransactionState.ORDER_SHIPPED,
-            SalesTransactionState.ORDER_DELIVERED,
-            SalesTransactionState.ORDER_COMPLETED,
-            SalesTransactionState.ORDER_CANCELLED,
-            SalesTransactionState.ORDER_ON_HOLD
+            SalesTransactionState.ORDER_PENDING.value,
+            SalesTransactionState.ORDER_CONFIRMED.value,
+            SalesTransactionState.ORDER_IN_PRODUCTION.value,
+            SalesTransactionState.ORDER_READY_TO_SHIP.value,
+            SalesTransactionState.ORDER_PARTIALLY_SHIPPED.value,
+            SalesTransactionState.ORDER_SHIPPED.value,
+            SalesTransactionState.ORDER_DELIVERED.value,
+            SalesTransactionState.ORDER_COMPLETED.value,
+            SalesTransactionState.ORDER_CANCELLED.value,
+            SalesTransactionState.ORDER_ON_HOLD.value
         ]
         return self.state in order_states
     
@@ -253,7 +271,7 @@ class SalesTransaction(CompanyBusinessObject):
     def is_overdue(self) -> bool:
         """Check if transaction is overdue."""
         if self.required_date and self.is_order_state:
-            if self.state in [SalesTransactionState.ORDER_COMPLETED, SalesTransactionState.ORDER_CANCELLED]:
+            if self.state in [SalesTransactionState.ORDER_COMPLETED.value, SalesTransactionState.ORDER_CANCELLED.value]:
                 return False
             return datetime.utcnow() > self.required_date
         return False
@@ -267,16 +285,16 @@ class SalesTransaction(CompanyBusinessObject):
     def is_shipped(self) -> bool:
         """Check if transaction is fully shipped."""
         shipped_states = [
-            SalesTransactionState.ORDER_SHIPPED,
-            SalesTransactionState.ORDER_DELIVERED,
-            SalesTransactionState.ORDER_COMPLETED
+            SalesTransactionState.ORDER_SHIPPED.value,
+            SalesTransactionState.ORDER_DELIVERED.value,
+            SalesTransactionState.ORDER_COMPLETED.value
         ]
         return self.state in shipped_states
     
     @property
     def is_completed(self) -> bool:
         """Check if transaction is completed."""
-        return self.state == SalesTransactionState.ORDER_COMPLETED
+        return self.state == SalesTransactionState.ORDER_COMPLETED.value
     
     def generate_transaction_number(self, prefix: str = "TXN") -> str:
         """Generate transaction number if not provided."""
@@ -307,7 +325,7 @@ class SalesTransactionLineItem(CompanyBusinessObject):
     line_number = Column(Integer, nullable=False)
     
     # Product/service information
-    line_type = Column(Enum(LineItemType), nullable=False, default=LineItemType.PRODUCT, index=True)
+    line_type = Column(Enum(LineItemType, values_callable=lambda x: [e.value for e in x]), nullable=False, default=LineItemType.PRODUCT.value, index=True)
     product_id = Column(Integer, nullable=True, index=True)  # Reference to inventory product
     product_variant_id = Column(Integer, nullable=True, index=True)
     
@@ -366,6 +384,18 @@ class SalesTransactionLineItem(CompanyBusinessObject):
     
     # Relationships
     transaction = relationship("SalesTransaction", back_populates="line_items")
+    
+    def to_dict(self) -> dict:
+        """Convert model to dictionary."""
+        result = super().to_dict()
+        # Handle any relationship issues gracefully
+        try:
+            # Remove any circular references or unloaded relationships
+            if 'transaction' in result:
+                del result['transaction']
+        except:
+            pass
+        return result
     
     def __str__(self):
         """String representation of transaction line item."""

@@ -84,19 +84,8 @@
             {{ section.description }}
           </p>
           
-          <!-- Special handling for LineItemsManager component -->
-          <LineItemsManager
-            v-if="section.type === 'line_items' && section.component === 'LineItemsManager'"
-            v-model="formData[section.key || 'items']"
-            :title="section.config?.title"
-            :entityType="section.config?.entityType"
-            :taxRate="section.config?.taxRate"
-            :productApiUrl="section.config?.productApiUrl"
-            @totalsChanged="handleTotalsChanged"
-          />
-          
           <!-- Regular fields grid -->
-          <div v-else :class="section.gridClass || 'grid grid-cols-1 gap-6 sm:grid-cols-2'">
+          <div :class="section.gridClass || 'grid grid-cols-1 gap-6 sm:grid-cols-2'">
             <div
               v-for="field in section.fields"
               :key="field.name"
@@ -175,7 +164,7 @@
               <div v-else-if="field.type === 'autocomplete'">
                 <Autocomplete
                   v-model="formData[field.name]"
-                  :field="field"
+                  :field="fieldWithFormData(field)"
                   :modelValue="formData[field.name]"
                   :required="field.required"
                   :disabled="field.disabled"
@@ -273,24 +262,29 @@
               </div>
 
               <!-- Date/DateTime -->
-              <div v-else-if="field.type === 'date' || field.type === 'datetime-local'">
-                <label :for="field.name" class="block text-sm font-medium text-gray-700">
-                  {{ field.label }}
-                  <span v-if="field.required" class="text-red-500">*</span>
-                </label>
-                <input
-                  :id="field.name"
-                  v-model="formData[field.name]"
-                  :type="field.type"
-                  :required="field.required"
-                  :disabled="field.disabled"
-                  :min="field.min"
-                  :max="field.max"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                  :class="{ 'bg-gray-100': field.disabled }"
-                >
-                <p v-if="field.help" class="mt-1 text-sm text-gray-500">{{ field.help }}</p>
-              </div>
+              <DateTimePicker
+                v-else-if="field.type === 'date' || field.type === 'datetime-local'"
+                v-model="formData[field.name]"
+                :type="field.type"
+                :label="field.label"
+                :required="field.required"
+                :disabled="field.disabled"
+                :placeholder="field.placeholder"
+                :min="field.min"
+                :max="field.max"
+                :help="field.help"
+              />
+
+              <!-- LineItemsManager Component -->
+              <LineItemsManager
+                v-else-if="field.type === 'component' && field.component === 'LineItemsManager'"
+                v-model="formData[field.name]"
+                :title="field.props?.title"
+                :entityType="field.props?.entityType"
+                :taxRate="field.props?.taxRate"
+                :productApiUrl="field.props?.productApiUrl"
+                @totalsChanged="handleTotalsChanged"
+              />
 
               <!-- Custom Component -->
               <component
@@ -361,6 +355,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import LineItemsManager from '@/components/LineItemsManager.vue'
 import Autocomplete from '@/components/generic/Autocomplete.vue'
+import DateTimePicker from '@/components/generic/DateTimePicker.vue'
 
 // Props
 const props = defineProps<{
@@ -427,6 +422,14 @@ const isFormValid = computed(() => {
   return validationErrors.value.length === 0
 })
 
+function fieldWithFormData(field: any) {
+  // Return a new field object with parentFormData attached
+  return {
+    ...field,
+    parentFormData: formData.value
+  }
+}
+
 // Initialize form
 async function initializeForm() {
   let selectionFieldExist = false
@@ -488,6 +491,7 @@ async function loadRecord() {
     if (!response.ok) throw new Error('Failed to load record')
     
     const data = await response.json()
+    console.log('Loaded record data:', data)
     
     // Map data to form
     Object.keys(data).forEach(key => {
@@ -509,7 +513,8 @@ async function loadRecord() {
             formData.value[key] = data[key].substring(0, 16) // YYYY-MM-DDTHH:mm
           } else if (fieldDef.type === 'component' && fieldDef.component === 'LineItemsManager') {
             // Handle line items - check both 'line_items' and 'items' fields
-            formData.value[key] = data.line_items || data.items || []
+            // This will be handled in the special line items section below
+            console.log('Skipping line items field mapping here, will handle separately:', key)
           } else {
             formData.value[key] = data[key]
           }
@@ -518,6 +523,62 @@ async function loadRecord() {
         }
       }
     })
+    
+    // Special handling for line items - check if we have a LineItemsManager component
+    // and ensure line items data is properly mapped
+    props.schema.sections?.forEach((section: any) => {
+      const lineItemsField = section.fields?.find((f: any) => 
+        f.type === 'component' && f.component === 'LineItemsManager')
+      if (lineItemsField) {
+        const fieldName = lineItemsField.name
+        console.log('Found LineItemsManager field:', fieldName)
+        console.log('Current formData[fieldName]:', formData.value[fieldName])
+        console.log('Data line_items:', data.line_items)
+        console.log('Data items:', data.items)
+        // Map line items data to the form field
+        // Check for line_items or items in the response data
+        if (data.line_items && data.line_items.length > 0) {
+          formData.value[fieldName] = data.line_items
+          console.log('Mapped line_items to', fieldName)
+        } else if (data.items && data.items.length > 0) {
+          formData.value[fieldName] = data.items
+          console.log('Mapped items to', fieldName)
+        } else {
+          // Ensure we have an empty array if no line items data
+          formData.value[fieldName] = formData.value[fieldName] || []
+        }
+      }
+    })
+    
+    // Handle special field mappings for sales transactions
+    // Map customer_id to the form field and ensure customer data is available
+    if (data.customer_id && formData.value.hasOwnProperty('customer_id')) {
+      formData.value.customer_id = data.customer_id
+    }
+    
+    // For autocomplete fields, ensure we have the proper data structure
+    // Check if we have customer_name and the form has a customer_id field
+    if (data.customer_name && data.customer_id && formData.value.hasOwnProperty('customer_id')) {
+      // For autocomplete fields, we might need to store additional metadata
+      // The Autocomplete component should be able to handle this with just the ID
+      // and fetch the display name as needed
+      formData.value.customer_id = data.customer_id
+    }
+    
+    // Map transaction_date from valid_from if it exists
+    if (data.valid_from && formData.value.hasOwnProperty('transaction_date')) {
+      formData.value.transaction_date = data.valid_from.split('T')[0]
+    }
+    
+    // Map order_date from order_date if it exists
+    if (data.order_date && formData.value.hasOwnProperty('order_date')) {
+      formData.value.order_date = data.order_date.split('T')[0]
+    }
+    
+    // Map quotation_date from valid_from if it exists
+    if (data.valid_from && formData.value.hasOwnProperty('quotation_date')) {
+      formData.value.quotation_date = data.valid_from.split('T')[0]
+    }
     
     // Also check for line_items if the form has that field but API returns items
     if (formData.value.hasOwnProperty('line_items') && !data.line_items && data.items) {
@@ -528,6 +589,27 @@ async function loadRecord() {
     if (formData.value.hasOwnProperty('quote_date') && data.valid_from) {
       formData.value.quote_date = data.valid_from.split('T')[0]
     }
+    
+    // Handle autocomplete fields that might need pre-population
+    // Find all autocomplete fields in the schema
+    props.schema.sections?.forEach((section: any) => {
+      section.fields?.forEach((field: any) => {
+        if (field.type === 'autocomplete' && field.name) {
+          // For autocomplete fields, set the value and try to set the display name
+          if (data[field.name]) {
+            formData.value[field.name] = data[field.name]
+          }
+          
+          // If we have a customer_name and this is the customer_id field, 
+          // we need to handle this special case
+          if (field.name === 'customer_id' && data.customer_name) {
+            // We'll store the customer name in a special way so the Autocomplete component can use it
+            // The Autocomplete component will need to be updated to handle this case
+            formData.value[`_${field.name}_display`] = data.customer_name
+          }
+        }
+      })
+    })
     
     originalData.value = { ...formData.value }
   } catch (err: any) {
@@ -663,7 +745,25 @@ async function handleSubmit() {
       }
     })
     
-    // If we have line_items, we may need to rename it to items for the API
+    // Handle line items for the API
+    // Check if we have any LineItemsManager components in the schema
+    props.schema.sections?.forEach((section: any) => {
+      const lineItemsField = section.fields?.find((f: any) => 
+        f.type === 'component' && f.component === 'LineItemsManager')
+      if (lineItemsField) {
+        const fieldName = lineItemsField.name
+        // If we have line items data in the field, we may need to rename it to items for the API
+        if (submitData[fieldName] && !submitData.items) {
+          submitData.items = submitData[fieldName]
+          // Only delete the field if it's named 'line_items'
+          if (fieldName === 'line_items') {
+            delete submitData[fieldName]
+          }
+        }
+      }
+    })
+    
+    // Also handle the case where we have line_items directly
     if (submitData.line_items && !submitData.items) {
       submitData.items = submitData.line_items
       delete submitData.line_items

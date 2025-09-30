@@ -188,7 +188,6 @@ def upgrade() -> None:
         sa.Index('ix_sales_transactions_sent_date', 'sent_date'),
         sa.Index('ix_sales_transactions_sent_by_user_id', 'sent_by_user_id'),
         sa.Index('ix_sales_transactions_sales_rep_user_id', 'sales_rep_user_id'),
-        sa.Index('ix_sales_transactions_warehouse_id', 'warehouse_id'),
         sa.Index('ix_sales_transactions_is_active', 'is_active')
     )
     

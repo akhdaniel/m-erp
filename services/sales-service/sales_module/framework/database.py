@@ -13,7 +13,7 @@ import os
 # Database configuration
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://merp_user:merp_password@postgres:5432/merp_sales"
+    "postgresql://postgres:password@localhost:5432/sales_db"
 )
 
 # Create database engine

@@ -12,20 +12,17 @@ from decimal import Decimal
 from datetime import datetime, date, timedelta
 import logging
 import sys
+import httpx
 
 from sales_module.models import SalesTransaction, SalesTransactionLineItem, SalesTransactionState
 from sales_module.framework.database import get_db_session
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_, or_
 
 logger = logging.getLogger(__name__)
 
 # Create API router
 router = APIRouter(prefix="/transactions", tags=["transactions"])
-
-# In-memory storage for demo purposes
-mock_transactions_db = []
-next_transaction_id = 1
 
 # Dependencies
 def get_current_user_id() -> int:
@@ -37,13 +34,6 @@ def get_current_company_id() -> int:
     """Get current company ID from authentication."""
     # In production, would extract from JWT token or user context
     return 1
-
-# Helper function to filter transactions by state
-def filter_transactions_by_state(transactions: List[Dict], states: List[str]) -> List[Dict]:
-    """Filter transactions by state."""
-    if not states:
-        return transactions
-    return [t for t in transactions if t.get('state') in states]
 
 # Sales Transaction CRUD endpoints
 @router.get("/", response_model=Dict)
@@ -66,34 +56,59 @@ async def list_sales_transactions(
     Returns a list of sales transactions with pagination and filtering options.
     """
     try:
-        # Parse state filter
-        states = state.split(',') if state else []
+        # Build query
+        query = db.query(SalesTransaction).filter(SalesTransaction.company_id == company_id)
         
-        # For demo purposes, return mock data
-        filtered_transactions = filter_transactions_by_state(mock_transactions_db, states)
+        # Apply state filter
+        if state:
+            states = state.split(',')
+            state_enums = []
+            for s in states:
+                try:
+                    # Try to get enum by value (lowercase string)
+                    state_enums.append(SalesTransactionState(s))
+                except ValueError:
+                    # If that fails, try to find enum by iterating through values
+                    for state_enum in SalesTransactionState:
+                        if state_enum.value == s.lower():
+                            state_enums.append(state_enum)
+                            break
+            if state_enums:
+                query = query.filter(SalesTransaction.state.in_(state_enums))
         
         # Apply customer filter
         if customer_id:
-            filtered_transactions = [t for t in filtered_transactions if t.get('customer_id') == customer_id]
+            query = query.filter(SalesTransaction.customer_id == customer_id)
         
         # Apply search filter
         if search:
-            filtered_transactions = [
-                t for t in filtered_transactions 
-                if search.lower() in (t.get('title', '') + t.get('transaction_number', '')).lower()
-            ]
+            search_filter = or_(
+                SalesTransaction.title.ilike(f"%{search}%"),
+                SalesTransaction.transaction_number.ilike(f"%{search}%")
+            )
+            query = query.filter(search_filter)
         
         # Apply sorting
-        reverse = sort_order.lower() == 'desc'
-        if sort_by in ['created_at', 'updated_at', 'total_amount']:
-            filtered_transactions.sort(key=lambda x: x.get(sort_by, ''), reverse=reverse)
+        if sort_by == "created_at":
+            query = query.order_by(SalesTransaction.created_at.desc() if sort_order.lower() == 'desc' else SalesTransaction.created_at.asc())
+        elif sort_by == "updated_at":
+            query = query.order_by(SalesTransaction.updated_at.desc() if sort_order.lower() == 'desc' else SalesTransaction.updated_at.asc())
+        elif sort_by == "total_amount":
+            query = query.order_by(SalesTransaction.total_amount.desc() if sort_order.lower() == 'desc' else SalesTransaction.total_amount.asc())
+        else:
+            query = query.order_by(SalesTransaction.created_at.desc())
+        
+        # Get total count
+        total = query.count()
         
         # Apply pagination
-        total = len(filtered_transactions)
-        paginated_transactions = filtered_transactions[skip:skip+limit]
+        transactions = query.offset(skip).limit(limit).all()
+        
+        # Convert to dictionary format
+        transaction_data = [transaction.to_dict() for transaction in transactions]
         
         return {
-            "data": paginated_transactions,
+            "data": transaction_data,
             "total": total,
             "skip": skip,
             "limit": limit
@@ -117,42 +132,87 @@ async def create_sales_transaction(
     Creates a new sales transaction with the provided information.
     """
     try:
-        global next_transaction_id
-        transaction_id = next_transaction_id
-        next_transaction_id += 1
+        # Set default values
+        if 'transaction_number' not in transaction_data or not transaction_data['transaction_number']:
+            # Generate transaction number
+            import time
+            timestamp = int(time.time())
+            transaction_data['transaction_number'] = f"TXN{timestamp:08d}"
         
-        # Create transaction response
-        created_at = datetime.utcnow().isoformat()
-        transaction_response = {
-            "id": transaction_id,
-            "company_id": company_id,
-            "created_at": created_at,
-            "updated_at": created_at,
-            "created_by_user_id": user_id,
-            "updated_by_user_id": user_id,
-            "transaction_number": f'TXN-2025-{transaction_id:03d}',
-            "title": transaction_data.get('title'),
-            "description": transaction_data.get('description'),
-            "state": "draft",
-            "customer_id": transaction_data.get('customer_id'),
-            "customer_name": f"Customer {transaction_data.get('customer_id', 'N/A')}",
-            "total_amount": transaction_data.get('total_amount', 0.0),
-            "subtotal": transaction_data.get('total_amount', 0.0),
-            "tax_amount": 0.0,
-            "discount_amount": 0.0,
-            "currency_code": transaction_data.get('currency_code', 'USD'),
-            "payment_terms_days": transaction_data.get('payment_terms_days', 30),
-            "delivery_terms": transaction_data.get('delivery_terms', "Standard delivery terms"),
-            "valid_until": transaction_data.get('valid_until', (datetime.utcnow().replace(microsecond=0) + timedelta(days=30)).isoformat())
-        }
+        if 'state' not in transaction_data:
+            transaction_data['state'] = SalesTransactionState.DRAFT.value
         
-        # Add to mock database
-        mock_transactions_db.append(transaction_response)
+        if 'valid_from' not in transaction_data:
+            transaction_data['valid_from'] = datetime.utcnow()
         
-        return transaction_response
+        if 'valid_until' not in transaction_data:
+            transaction_data['valid_until'] = datetime.utcnow() + timedelta(days=30)
+        
+        if 'payment_terms_days' not in transaction_data:
+            transaction_data['payment_terms_days'] = 30
+        
+        if 'currency_code' not in transaction_data:
+            transaction_data['currency_code'] = 'USD'
+        
+        if 'subtotal' not in transaction_data:
+            transaction_data['subtotal'] = transaction_data.get('total_amount', 0.0)
+        
+        if 'tax_amount' not in transaction_data:
+            transaction_data['tax_amount'] = 0.0
+            
+        if 'discount_amount' not in transaction_data:
+            transaction_data['discount_amount'] = 0.0
+            
+        if 'prepared_by_user_id' not in transaction_data:
+            transaction_data['prepared_by_user_id'] = user_id
+        
+        # Set company info
+        transaction_data['company_id'] = company_id
+        
+        # Debug logging
+        logger.info(f"Transaction data: {transaction_data}")
+        if 'state' in transaction_data:
+            logger.info(f"State value: {transaction_data['state']}, type: {type(transaction_data['state'])}")
+            # Convert state string to enum if needed
+            if isinstance(transaction_data['state'], str):
+                logger.info(f"Converting state string: {transaction_data['state']}")
+                try:
+                    # Try to get enum by value (lowercase string)
+                    state_enum = SalesTransactionState(transaction_data['state'])
+                    logger.info(f"Got enum by value: {state_enum}, value: {state_enum.value}")
+                    # Use the enum value (lowercase) instead of the enum itself
+                    transaction_data['state'] = state_enum.value
+                    logger.info(f"Set state to enum value: {transaction_data['state']}")
+                except ValueError:
+                    # If that fails, try to find enum by iterating through values
+                    logger.info("ValueError, trying iteration")
+                    for state_enum in SalesTransactionState:
+                        if state_enum.value == transaction_data['state'].lower():
+                            logger.info(f"Found enum by iteration: {state_enum}, value: {state_enum.value}")
+                            # Use the enum value (lowercase) instead of the enum itself
+                            transaction_data['state'] = state_enum.value
+                            logger.info(f"Set state to enum value: {transaction_data['state']}")
+                            break
+                    else:
+                        # If still not found, use default
+                        logger.info("Using default state")
+                        transaction_data['state'] = SalesTransactionState.DRAFT.value
+                        logger.info(f"Set state to default value: {transaction_data['state']}")
+        
+        # Create transaction
+        transaction = SalesTransaction(**transaction_data)
+        logger.info(f"Transaction state after creation: {transaction.state}, type: {type(transaction.state)}")
+        logger.info(f"Transaction state value: {transaction.state.value if hasattr(transaction.state, 'value') else 'no value attr'}")
+        logger.info(f"Final transaction_data state: {transaction_data['state']}")
+        db.add(transaction)
+        db.commit()
+        db.refresh(transaction)
+        
+        return transaction.to_dict()
         
     except Exception as e:
-        logger.error(f"Error creating sales transaction: {e}")
+        db.rollback()
+        logger.error(f"Error creating sales transaction: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.get("/{transaction_id}", response_model=Dict)
@@ -168,51 +228,52 @@ async def get_sales_transaction(
     Returns detailed information about a specific sales transaction.
     """
     try:
-        # Find transaction in mock database
-        transaction = next((t for t in mock_transactions_db if t.get('id') == transaction_id), None)
+        # Fetch transaction from database with line items using eager loading
+        transaction = db.query(SalesTransaction).options(joinedload(SalesTransaction.line_items)).filter(
+            SalesTransaction.id == transaction_id,
+            SalesTransaction.company_id == company_id
+        ).first()
         
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
-            
-        # Check company access
-        if transaction.get('company_id') != company_id:
-            raise HTTPException(status_code=403, detail="Access denied")
-            
-        # Enhance transaction data with additional fields needed for detail view
-        enhanced_transaction = transaction.copy()
         
-        # Add customer name (mock data for demo)
-        if not enhanced_transaction.get('customer_name'):
-            enhanced_transaction['customer_name'] = f"Customer {enhanced_transaction.get('customer_id', 'N/A')}"
+        # Convert transaction to dictionary
+        transaction_data = transaction.to_dict()
         
-        # Add financial fields if not present
-        if not enhanced_transaction.get('subtotal'):
-            enhanced_transaction['subtotal'] = enhanced_transaction.get('total_amount', 0.0)
-        if not enhanced_transaction.get('tax_amount'):
-            enhanced_transaction['tax_amount'] = 0.0
-        if not enhanced_transaction.get('discount_amount'):
-            enhanced_transaction['discount_amount'] = 0.0
+        # Explicitly fetch and include line items to ensure they're included
+        try:
+            line_items = db.query(SalesTransactionLineItem).filter(
+                SalesTransactionLineItem.transaction_id == transaction_id,
+                SalesTransactionLineItem.company_id == company_id
+            ).all()
             
-        # Add terms fields if not present
-        if not enhanced_transaction.get('payment_terms_days'):
-            enhanced_transaction['payment_terms_days'] = 30
-        if not enhanced_transaction.get('delivery_terms'):
-            enhanced_transaction['delivery_terms'] = "Standard delivery terms"
-        if not enhanced_transaction.get('valid_until'):
-            # Set valid until to 30 days from created date
-            created_at_str = enhanced_transaction.get('created_at', '')
-            if created_at_str:
-                try:
-                    from datetime import datetime, timedelta
-                    created_at = datetime.fromisoformat(created_at_str.replace('Z', '+00:00'))
-                    valid_until = created_at + timedelta(days=30)
-                    enhanced_transaction['valid_until'] = valid_until.isoformat()
-                except:
-                    enhanced_transaction['valid_until'] = created_at_str
-            else:
-                enhanced_transaction['valid_until'] = enhanced_transaction.get('created_at', '')
+            transaction_data['line_items'] = [item.to_dict() for item in line_items]
+        except Exception as e:
+            logger.error(f"Error fetching line items explicitly: {e}")
+            transaction_data['line_items'] = []
         
-        return enhanced_transaction
+        # Fetch customer information from partner service
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                # Use the Kong API gateway endpoint for the partner service
+                partner_url = f"http://kong:8000/api/v1/base/partners/{transaction.customer_id}"
+                logger.info(f"Fetching customer data from: {partner_url}")
+                response = await client.get(partner_url)
+                logger.info(f"Customer API response status: {response.status_code}")
+                if response.status_code == 200:
+                    partner_data = response.json()
+                    logger.info(f"Customer data fetched: {partner_data.get('name', 'Unknown')}")
+                    # Add customer name to transaction data for Autocomplete component
+                    transaction_data["customer_name"] = partner_data.get("name", "")
+                else:
+                    logger.warning(f"Failed to fetch customer data, status code: {response.status_code}")
+                    transaction_data["customer_name"] = ""
+        except Exception as customer_error:
+            logger.warning(f"Failed to fetch customer data for transaction {transaction_id}: {customer_error}")
+            # Even if we can't fetch customer data, we still return the transaction
+            transaction_data["customer_name"] = ""
+        
+        return transaction_data
         
     except HTTPException:
         raise
@@ -234,56 +295,33 @@ async def update_sales_transaction(
     Updates an existing sales transaction with the provided information.
     """
     try:
-        # Find transaction in mock database
-        transaction = next((t for t in mock_transactions_db if t.get('id') == transaction_id), None)
+        # Fetch transaction from database
+        transaction = db.query(SalesTransaction).filter(
+            SalesTransaction.id == transaction_id,
+            SalesTransaction.company_id == company_id
+        ).first()
         
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
-            
-        # Check company access
-        if transaction.get('company_id') != company_id:
-            raise HTTPException(status_code=403, detail="Access denied")
-            
+        
         # Update transaction fields
         for key, value in transaction_data.items():
-            if key not in ['id', 'company_id', 'created_at', 'created_by_user_id']:
-                transaction[key] = value
-                
-        # Ensure required fields are present
-        if 'customer_name' not in transaction:
-            transaction['customer_name'] = f"Customer {transaction.get('customer_id', 'N/A')}"
-        if 'subtotal' not in transaction:
-            transaction['subtotal'] = transaction.get('total_amount', 0.0)
-        if 'tax_amount' not in transaction:
-            transaction['tax_amount'] = 0.0
-        if 'discount_amount' not in transaction:
-            transaction['discount_amount'] = 0.0
-        if 'payment_terms_days' not in transaction:
-            transaction['payment_terms_days'] = 30
-        if 'delivery_terms' not in transaction:
-            transaction['delivery_terms'] = "Standard delivery terms"
-        if 'valid_until' not in transaction:
-            # Set valid until to 30 days from created date if not present
-            created_at_str = transaction.get('created_at', '')
-            if created_at_str:
-                try:
-                    created_at = datetime.fromisoformat(created_at_str.replace('Z', '+00:00'))
-                    valid_until = created_at + timedelta(days=30)
-                    transaction['valid_until'] = valid_until.isoformat()
-                except:
-                    transaction['valid_until'] = created_at_str
-            else:
-                transaction['valid_until'] = transaction.get('created_at', '')
-                
-        # Update timestamps
-        transaction['updated_at'] = datetime.utcnow().isoformat()
-        transaction['updated_by_user_id'] = user_id
+            if hasattr(transaction, key) and key not in ['id', 'company_id', 'created_at', 'created_by_user_id']:
+                setattr(transaction, key, value)
         
-        return transaction
+        # Update timestamps and user info
+        transaction.updated_at = datetime.utcnow()
+        transaction.updated_by_user_id = user_id
+        
+        db.commit()
+        db.refresh(transaction)
+        
+        return transaction.to_dict()
         
     except HTTPException:
         raise
     except Exception as e:
+        db.rollback()
         logger.error(f"Error updating sales transaction: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -300,26 +338,25 @@ async def delete_sales_transaction(
     Deletes an existing sales transaction.
     """
     try:
-        # Find transaction in mock database
-        transaction_index = next((i for i, t in enumerate(mock_transactions_db) if t.get('id') == transaction_id), None)
+        # Fetch transaction from database
+        transaction = db.query(SalesTransaction).filter(
+            SalesTransaction.id == transaction_id,
+            SalesTransaction.company_id == company_id
+        ).first()
         
-        if transaction_index is None:
+        if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
-            
-        transaction = mock_transactions_db[transaction_index]
-            
-        # Check company access
-        if transaction.get('company_id') != company_id:
-            raise HTTPException(status_code=403, detail="Access denied")
-            
-        # Remove from mock database
-        deleted_transaction = mock_transactions_db.pop(transaction_index)
         
-        return {"message": "Transaction deleted successfully", "deleted_transaction": deleted_transaction}
+        # Delete transaction
+        db.delete(transaction)
+        db.commit()
+        
+        return {"message": "Transaction deleted successfully", "deleted_transaction": transaction.to_dict()}
         
     except HTTPException:
         raise
     except Exception as e:
+        db.rollback()
         logger.error(f"Error deleting sales transaction: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -340,45 +377,43 @@ async def change_transaction_state(
     """
     try:
         # Validate state
-        valid_states = [s.value for s in SalesTransactionState]
-        if new_state not in valid_states:
+        try:
+            state_enum = SalesTransactionState(new_state)
+        except ValueError:
             raise HTTPException(status_code=400, detail=f"Invalid state: {new_state}")
         
-        # Find transaction in mock database
-        transaction = next((t for t in mock_transactions_db if t.get('id') == transaction_id), None)
+        # Fetch transaction from database
+        transaction = db.query(SalesTransaction).filter(
+            SalesTransaction.id == transaction_id,
+            SalesTransaction.company_id == company_id
+        ).first()
         
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
-            
-        # Check company access
-        if transaction.get('company_id') != company_id:
-            raise HTTPException(status_code=403, detail="Access denied")
-            
-        # Update state
-        old_state = transaction.get('state')
-        transaction['state'] = new_state
-        transaction['updated_at'] = datetime.utcnow().isoformat()
-        transaction['updated_by_user_id'] = user_id
         
-        # Add state change log (in real implementation, this would be a separate table)
-        if 'state_changes' not in transaction:
-            transaction['state_changes'] = []
-        transaction['state_changes'].append({
-            'from_state': old_state,
-            'to_state': new_state,
-            'changed_at': datetime.utcnow().isoformat(),
-            'changed_by_user_id': user_id,
-            'notes': notes
-        })
+        # Store old state
+        old_state = transaction.state
+        
+        # Update state
+        transaction.state = state_enum
+        transaction.updated_at = datetime.utcnow()
+        transaction.updated_by_user_id = user_id
+        
+        # In a real implementation, we would log this to a separate state change table
+        # For now, we'll just update the transaction
+        
+        db.commit()
+        db.refresh(transaction)
         
         return {
             "message": "Transaction state updated successfully",
-            "transaction": transaction
+            "transaction": transaction.to_dict()
         }
         
     except HTTPException:
         raise
     except Exception as e:
+        db.rollback()
         logger.error(f"Error changing transaction state: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -398,20 +433,33 @@ async def list_transaction_line_items(
     Returns line items associated with a specific sales transaction.
     """
     try:
-        # Find transaction in mock database
-        transaction = next((t for t in mock_transactions_db if t.get('id') == transaction_id), None)
+        # Verify transaction exists and belongs to company
+        transaction = db.query(SalesTransaction).filter(
+            SalesTransaction.id == transaction_id,
+            SalesTransaction.company_id == company_id
+        ).first()
         
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
-            
-        # Check company access
-        if transaction.get('company_id') != company_id:
-            raise HTTPException(status_code=403, detail="Access denied")
-            
-        # For demo, return empty list
+        
+        # Fetch line items
+        query = db.query(SalesTransactionLineItem).filter(
+            SalesTransactionLineItem.transaction_id == transaction_id,
+            SalesTransactionLineItem.company_id == company_id
+        )
+        
+        # Get total count
+        total = query.count()
+        
+        # Apply pagination
+        line_items = query.offset(skip).limit(limit).all()
+        
+        # Convert to dictionary format
+        line_item_data = [item.to_dict() for item in line_items]
+        
         return {
-            "items": [],
-            "total": 0,
+            "items": line_item_data,
+            "total": total,
             "skip": skip,
             "limit": limit
         }
@@ -436,32 +484,70 @@ async def create_transaction_line_item(
     Adds a new line item to a sales transaction.
     """
     try:
-        # Find transaction in mock database
-        transaction = next((t for t in mock_transactions_db if t.get('id') == transaction_id), None)
+        # Verify transaction exists and belongs to company
+        transaction = db.query(SalesTransaction).filter(
+            SalesTransaction.id == transaction_id,
+            SalesTransaction.company_id == company_id
+        ).first()
         
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
-            
-        # Check company access
-        if transaction.get('company_id') != company_id:
-            raise HTTPException(status_code=403, detail="Access denied")
-            
-        # For demo, return mock line item
-        line_item_response = {
-            "id": len(mock_transactions_db) + 1,
-            "transaction_id": transaction_id,
-            "line_number": line_item_data.get('line_number', 1),
-            "item_name": line_item_data.get('item_name'),
-            "quantity_ordered": line_item_data.get('quantity_ordered', 1),
-            "unit_price": line_item_data.get('unit_price', 0.0),
-            "line_total": line_item_data.get('line_total', 0.0)
-        }
         
-        return line_item_response
+        # Set transaction and company info
+        line_item_data['transaction_id'] = transaction_id
+        line_item_data['company_id'] = company_id
+        
+        # Set default values for required fields if not provided
+        if 'discount_amount' not in line_item_data:
+            line_item_data['discount_amount'] = 0.0
+        if 'tax_percentage' not in line_item_data:
+            line_item_data['tax_percentage'] = 0.0
+        if 'unit_of_measure' not in line_item_data:
+            line_item_data['unit_of_measure'] = 'each'
+        if 'quantity_shipped' not in line_item_data:
+            line_item_data['quantity_shipped'] = 0.0
+        if 'quantity_cancelled' not in line_item_data:
+            line_item_data['quantity_cancelled'] = 0.0
+        if 'quantity_backordered' not in line_item_data:
+            line_item_data['quantity_backordered'] = 0.0
+        if 'reserved_quantity' not in line_item_data:
+            line_item_data['reserved_quantity'] = 0.0
+        if 'allocated_quantity' not in line_item_data:
+            line_item_data['allocated_quantity'] = 0.0
+        if 'is_backordered' not in line_item_data:
+            line_item_data['is_backordered'] = False
+        if 'is_dropship' not in line_item_data:
+            line_item_data['is_dropship'] = False
+        if 'requires_special_handling' not in line_item_data:
+            line_item_data['requires_special_handling'] = False
+        if 'is_active' not in line_item_data:
+            line_item_data['is_active'] = True
+        
+        # Set line number if not provided
+        if 'line_number' not in line_item_data:
+            # Get next line number
+            max_line_number = db.query(
+                SalesTransactionLineItem.line_number
+            ).filter(
+                SalesTransactionLineItem.transaction_id == transaction_id
+            ).order_by(SalesTransactionLineItem.line_number.desc()).first()
+            
+            line_item_data['line_number'] = (max_line_number[0] + 1) if max_line_number else 1
+        
+        # Create line item
+        line_item = SalesTransactionLineItem(**line_item_data)
+        # Calculate line total and other computed fields
+        line_item.calculate_line_total()
+        db.add(line_item)
+        db.commit()
+        db.refresh(line_item)
+        
+        return line_item.to_dict()
         
     except HTTPException:
         raise
     except Exception as e:
+        db.rollback()
         logger.error(f"Error creating transaction line item: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -478,28 +564,69 @@ async def get_transaction_statistics(
     Returns statistics about sales transactions including counts by state.
     """
     try:
-        # For demo, return mock statistics
+        # Get total transactions
+        total_transactions = db.query(SalesTransaction).filter(
+            SalesTransaction.company_id == company_id
+        ).count()
+        
+        # Count quotes (quotation states)
         quote_states = [
-            'draft', 'quote_pending_approval', 'quote_approved', 'quote_sent', 
-            'quote_accepted', 'quote_rejected', 'quote_expired'
+            SalesTransactionState.DRAFT.value,
+            SalesTransactionState.QUOTE_PENDING_APPROVAL.value,
+            SalesTransactionState.QUOTE_APPROVED.value,
+            SalesTransactionState.QUOTE_SENT.value,
+            SalesTransactionState.QUOTE_ACCEPTED.value,
+            SalesTransactionState.QUOTE_REJECTED.value,
+            SalesTransactionState.QUOTE_EXPIRED.value
         ]
         
+        total_quotes = db.query(SalesTransaction).filter(
+            SalesTransaction.company_id == company_id,
+            SalesTransaction.state.in_(quote_states)
+        ).count()
+        
+        # Count orders (order states)
         order_states = [
-            'order_pending', 'order_confirmed', 'order_in_production', 
-            'order_ready_to_ship', 'order_partially_shipped', 'order_shipped',
-            'order_delivered', 'order_completed', 'order_cancelled', 'order_on_hold'
+            SalesTransactionState.ORDER_PENDING.value,
+            SalesTransactionState.ORDER_CONFIRMED.value,
+            SalesTransactionState.ORDER_IN_PRODUCTION.value,
+            SalesTransactionState.ORDER_READY_TO_SHIP.value,
+            SalesTransactionState.ORDER_PARTIALLY_SHIPPED.value,
+            SalesTransactionState.ORDER_SHIPPED.value,
+            SalesTransactionState.ORDER_DELIVERED.value,
+            SalesTransactionState.ORDER_COMPLETED.value,
+            SalesTransactionState.ORDER_CANCELLED.value,
+            SalesTransactionState.ORDER_ON_HOLD.value
         ]
         
-        # Count transactions by type
-        quotes = [t for t in mock_transactions_db if t.get('state') in quote_states]
-        orders = [t for t in mock_transactions_db if t.get('state') in order_states]
+        total_orders = db.query(SalesTransaction).filter(
+            SalesTransaction.company_id == company_id,
+            SalesTransaction.state.in_(order_states)
+        ).count()
+        
+        # Get counts by state
+        quotes_by_state = {}
+        for state in quote_states:
+            count = db.query(SalesTransaction).filter(
+                SalesTransaction.company_id == company_id,
+                SalesTransaction.state == state
+            ).count()
+            quotes_by_state[state.value] = count
+        
+        orders_by_state = {}
+        for state in order_states:
+            count = db.query(SalesTransaction).filter(
+                SalesTransaction.company_id == company_id,
+                SalesTransaction.state == state
+            ).count()
+            orders_by_state[state.value] = count
         
         return {
-            "total_transactions": len(mock_transactions_db),
-            "total_quotes": len(quotes),
-            "total_orders": len(orders),
-            "quotes_by_state": {state: len([t for t in quotes if t.get('state') == state]) for state in quote_states},
-            "orders_by_state": {state: len([t for t in orders if t.get('state') == state]) for state in order_states}
+            "total_transactions": total_transactions,
+            "total_quotes": total_quotes,
+            "total_orders": total_orders,
+            "quotes_by_state": quotes_by_state,
+            "orders_by_state": orders_by_state
         }
         
     except Exception as e:
