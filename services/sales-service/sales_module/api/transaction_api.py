@@ -237,23 +237,13 @@ async def get_sales_transaction(
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
         
-        # Convert transaction to dictionary
+        # Convert transaction to dictionary - this should already include line items
         transaction_data = transaction.to_dict()
         
-        # Explicitly fetch and include line items to ensure they're included
-        try:
-            line_items = db.query(SalesTransactionLineItem).filter(
-                SalesTransactionLineItem.transaction_id == transaction_id,
-                SalesTransactionLineItem.company_id == company_id
-            ).all()
-
-            logger.info(f"line_items={line_items}")
-            
-            transaction_data['line_items'] = [item.to_dict() for item in line_items]
-            transaction_data['items'] = [item.to_dict() for item in line_items]
-        except Exception as e:
-            logger.error(f"Error fetching line items explicitly: {e}")
+        # Ensure line items keys exist in the response
+        if 'line_items' not in transaction_data:
             transaction_data['line_items'] = []
+        if 'items' not in transaction_data:
             transaction_data['items'] = []
         
         # Fetch customer information from partner service

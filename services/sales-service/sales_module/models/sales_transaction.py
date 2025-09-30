@@ -194,8 +194,6 @@ class SalesTransaction(CompanyBusinessObject):
     def to_dict(self) -> dict:
         """Convert model to dictionary including line items."""
         result = super().to_dict()
-        # Always include line_items key, even if empty
-        result['line_items'] = []
         # Try to include line items if they exist and are loaded
         try:
             if hasattr(self, 'line_items'):
@@ -204,9 +202,18 @@ class SalesTransaction(CompanyBusinessObject):
                     # Ensure we're working with a list-like object
                     if hasattr(self.line_items, '__iter__') and not isinstance(self.line_items, str):
                         result['line_items'] = [item.to_dict() for item in self.line_items]
+                    else:
+                        # If line_items is not a list-like object, ensure we have an empty array
+                        result['line_items'] = []
+                else:
+                    # If line_items is None, ensure we have an empty array
+                    result['line_items'] = []
+            else:
+                # If line_items attribute doesn't exist, ensure we have an empty array
+                result['line_items'] = []
         except Exception as e:
-            # If there's an error accessing line_items, keep the empty array
-            pass
+            # If there's an error accessing line_items, ensure we have an empty array
+            result['line_items'] = []
         return result
     
     def __repr__(self):
