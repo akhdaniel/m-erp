@@ -361,6 +361,7 @@ async function fetchData() {
     }
     
     // Search
+    console.log('searchQuery',searchQuery)
     if (searchQuery.value && props.schema.searchable) {
       params.append(props.schema.searchParam || 'search', searchQuery.value)
     }
