@@ -19,7 +19,7 @@ from sales_module.framework.database import get_db_session
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_, or_
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('uvicorn')
 
 # Create API router
 router = APIRouter(prefix="/transactions", tags=["transactions"])
@@ -295,6 +295,8 @@ async def update_sales_transaction(
     Updates an existing sales transaction with the provided information.
     """
     try:
+
+        logger.info(f"transaction_data={transaction_data}")
         # Fetch transaction from database
         transaction = db.query(SalesTransaction).filter(
             SalesTransaction.id == transaction_id,
