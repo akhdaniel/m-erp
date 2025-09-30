@@ -248,9 +248,11 @@ async def get_sales_transaction(
             ).all()
             
             transaction_data['line_items'] = [item.to_dict() for item in line_items]
+            transaction_data['items'] = [item.to_dict() for item in line_items]
         except Exception as e:
             logger.error(f"Error fetching line items explicitly: {e}")
             transaction_data['line_items'] = []
+            transaction_data['items'] = []
         
         # Fetch customer information from partner service
         try:
@@ -296,7 +298,7 @@ async def update_sales_transaction(
     """
     try:
 
-        logger.info(f"transaction_data={transaction_data}")
+        # logger.info(f"transaction_data={transaction_data}")
         # Fetch transaction from database
         transaction = db.query(SalesTransaction).filter(
             SalesTransaction.id == transaction_id,
