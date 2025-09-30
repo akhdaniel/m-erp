@@ -132,6 +132,7 @@ async def create_sales_transaction(
     Creates a new sales transaction with the provided information.
     """
     try:
+        logger.info(f"transaction_data={transaction_data}")
         # Set default values
         if 'transaction_number' not in transaction_data or not transaction_data['transaction_number']:
             # Generate transaction number
