@@ -246,6 +246,8 @@ async def get_sales_transaction(
                 SalesTransactionLineItem.transaction_id == transaction_id,
                 SalesTransactionLineItem.company_id == company_id
             ).all()
+
+            logger.info(f"line_items={line_items}")
             
             transaction_data['line_items'] = [item.to_dict() for item in line_items]
             transaction_data['items'] = [item.to_dict() for item in line_items]
