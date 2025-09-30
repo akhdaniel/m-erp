@@ -312,7 +312,7 @@ function handleRowClick(item: any) {
   }
 }
 
-function handleAction(action: any, item?: any) {
+async function handleAction(action: any, item?: any) {
   console.log('Action:', action, item)
   
   if (action.id === 'create') {
@@ -324,7 +324,104 @@ function handleAction(action: any, item?: any) {
       ? action.route.replace('{id}', item.id)
       : action.route
     router.push(route)
+  } else if (action.action === 'confirm_transaction' || action.action === 'back_transaction') {
+    // Handle state transition actions
+    await handleStateTransition(action.action, item)
   }
+}
+
+// Handle state transition actions
+async function handleStateTransition(actionType: string, item?: any) {
+  if (!item?.id) {
+    console.error('No transaction ID provided for state transition')
+    return
+  }
+  
+  try {
+    // Get auth token from cookies
+    const token = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('auth_token='))
+      ?.split('=')[1]
+    
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    }
+    
+    // Add authorization header if token exists
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+    
+    // Determine the next state based on current state and action type
+    const nextState = getNextState(item.state, actionType)
+    
+    if (!nextState) {
+      console.error('No valid next state found for current state:', item.state)
+      return
+    }
+    
+    // Make API call to change transaction state
+    const serviceUrl = SERVICE_MAPPING['sales'] || ''
+    const url = `${serviceUrl}/api/v1/sales/transactions/${item.id}/state/${nextState}`
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to change transaction state: ${response.status}`)
+    }
+    
+    // Reload the page to show updated state
+    window.location.reload()
+  } catch (error) {
+    console.error('Error changing transaction state:', error)
+    // In a real implementation, you would show an error message to the user
+  }
+}
+
+// Determine next state based on current state and action type
+function getNextState(currentState: string, actionType: string): string | null {
+  // Define state transition mappings
+  const forwardTransitions: Record<string, string> = {
+    'draft': 'quote_pending_approval',
+    'quote_pending_approval': 'quote_approved',
+    'quote_approved': 'quote_sent',
+    'quote_sent': 'quote_accepted',  // Simplified - in reality might also go to rejected
+    'quote_accepted': 'order_pending',
+    'order_pending': 'order_confirmed',
+    'order_confirmed': 'order_in_production',
+    'order_in_production': 'order_ready_to_ship',
+    'order_ready_to_ship': 'order_shipped',  // Simplified - might also go to partially shipped
+    'order_partially_shipped': 'order_shipped',
+    'order_shipped': 'order_delivered',
+    'order_delivered': 'order_completed'
+  }
+  
+  const backwardTransitions: Record<string, string> = {
+    'quote_pending_approval': 'draft',
+    'quote_approved': 'quote_pending_approval',
+    'quote_sent': 'quote_approved',
+    'quote_accepted': 'quote_sent',
+    'order_pending': 'quote_accepted',
+    'order_confirmed': 'order_pending',
+    'order_in_production': 'order_confirmed',
+    'order_ready_to_ship': 'order_in_production',
+    'order_partially_shipped': 'order_ready_to_ship',
+    'order_shipped': 'order_ready_to_ship',  // Simplified
+    'order_delivered': 'order_shipped',
+    'order_completed': 'order_delivered'
+  }
+  
+  if (actionType === 'confirm_transaction') {
+    return forwardTransitions[currentState] || null
+  } else if (actionType === 'back_transaction') {
+    return backwardTransitions[currentState] || null
+  }
+  
+  return null
 }
 
 function handleSubmit(data: any) {

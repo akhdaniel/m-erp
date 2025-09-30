@@ -17,7 +17,7 @@ import httpx
 from sales_module.models import SalesTransaction, SalesTransactionLineItem, SalesTransactionState
 from sales_module.framework.database import get_db_session
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, text
 
 logger = logging.getLogger('uvicorn')
 
@@ -62,19 +62,34 @@ async def list_sales_transactions(
         # Apply state filter
         if state:
             states = state.split(',')
-            state_enums = []
+            state_values = []
             for s in states:
-                try:
-                    # Try to get enum by value (lowercase string)
-                    state_enums.append(SalesTransactionState(s))
-                except ValueError:
-                    # If that fails, try to find enum by iterating through values
-                    for state_enum in SalesTransactionState:
-                        if state_enum.value == s.lower():
-                            state_enums.append(state_enum)
-                            break
-            if state_enums:
-                query = query.filter(SalesTransaction.state.in_(state_enums))
+                # Find the enum value that matches the string
+                for state_enum in SalesTransactionState:
+                    if state_enum.value == s.lower():
+                        state_values.append(state_enum.value)
+                        break
+                else:
+                    # If no match found, try direct matching (for backward compatibility)
+                    try:
+                        state_enum = SalesTransactionState(s)
+                        state_values.append(state_enum.value)
+                    except ValueError:
+                        pass
+            # Log the state values for debugging
+            logger.info(f"State parameter: {state}")
+            logger.info(f"Extracted state values: {state_values}")
+            
+            # Only apply filter if we have valid state values
+            logger.info(f"Applying filter - state_values: {state_values}")
+            if state_values:
+                query = query.filter(SalesTransaction.state.in_(state_values))
+                logger.info("Applied IN filter for valid states")
+            else:
+                # No valid states provided, return empty result
+                # We do this by adding a condition that can never be true
+                query = query.filter(text("1=0"))
+                logger.info("Applied empty result filter (1=0)")
         
         # Apply customer filter
         if customer_id:

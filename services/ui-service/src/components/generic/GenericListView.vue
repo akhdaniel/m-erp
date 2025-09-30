@@ -63,9 +63,10 @@
           v-if="filter.type === 'select'"
           v-model="filters[filter.field]"
           @change="applyFilters"
-          class="block rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+          :multiple="filter.multiple"
+          :class="['block rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm', {'h-32': filter.multiple}]"
         >
-          <option value="">{{ filter.placeholder || `All ${filter.label}` }}</option>
+          <option v-if="!filter.multiple" value="">{{ filter.placeholder || `All ${filter.label}` }}</option>
           <option v-for="option in filter.options" :key="option.value" :value="option.value">
             {{ option.label }}
           </option>
@@ -317,6 +318,19 @@ const currentPage = ref(1)
 const pageSize = ref(props.schema.pageSize || 20)
 const totalItems = ref(0)
 
+// Initialize filters from schema
+// Initialize filters with default values from schema
+if (props.schema.filters) {
+  props.schema.filters.forEach((filter: any) => {
+    if (filter.defaultValue !== undefined) {
+      filters.value[filter.field] = filter.defaultValue
+    } else if (filter.multiple) {
+      // For multi-select filters, initialize with empty array
+      filters.value[filter.field] = []
+    }
+  })
+}
+
 // Computed
 const totalPages = computed(() => Math.ceil(totalItems.value / pageSize.value))
 
@@ -357,8 +371,8 @@ async function fetchData() {
     
     // Pagination
     if (props.schema.paginated !== false) {
-      params.append('page', currentPage.value.toString())
-      params.append('page_size', pageSize.value.toString())
+      params.append('skip', ((currentPage.value - 1) * pageSize.value).toString())
+      params.append('limit', pageSize.value.toString())
     }
     
     // Search
@@ -369,7 +383,53 @@ async function fetchData() {
     
     // Filters
     Object.entries(filters.value).forEach(([key, value]) => {
-      if (value) params.append(key, value.toString())
+      if (value !== null && value !== undefined && value !== '') {
+        // Handle multi-select filters (arrays)
+        if (Array.isArray(value)) {
+          if (value.length > 0) {
+            // Join array values with commas for multi-select filters
+            params.append(key, value.join(','))
+          }
+        } else {
+          params.append(key, value.toString())
+        }
+      }
+    })
+    
+    // Update URL with current filters and pagination
+    const currentQuery = { ...router.currentRoute.value.query }
+    // Remove pagination from query as we're setting it explicitly
+    delete currentQuery.page
+    delete currentQuery.page_size
+    
+    // Add current filters to query
+    Object.entries(filters.value).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        // Handle multi-select filters (arrays)
+        if (Array.isArray(value)) {
+          if (value.length > 0) {
+            // Join array values with commas for multi-select filters
+            currentQuery[key] = value.join(',')
+          } else {
+            delete currentQuery[key]
+          }
+        } else {
+          currentQuery[key] = value.toString()
+        }
+      } else {
+        delete currentQuery[key]
+      }
+    })
+    
+    // Add pagination to query
+    if (props.schema.paginated !== false) {
+      currentQuery.page = currentPage.value.toString()
+      currentQuery.page_size = pageSize.value.toString()
+    }
+    
+    // Update URL without reloading the page
+    router.replace({ query: currentQuery }).catch(err => {
+      console.warn('Failed to update URL:', err)
     })
     
     // console.log(`==== ${apiUrl.value}?${params}`)
@@ -581,6 +641,36 @@ watch(() => props.schema, () => {
 
 // Initialize
 onMounted(() => {
+  // Initialize filters with default values from schema
+  if (props.schema.filters) {
+    props.schema.filters.forEach((filter: any) => {
+      if (filter.defaultValue !== undefined) {
+        filters.value[filter.field] = filter.defaultValue
+      }
+    })
+  }
+  
+  // Initialize filters from URL query parameters
+  const query = router.currentRoute.value.query
+  Object.entries(query).forEach(([key, value]) => {
+    if (key !== 'page' && key !== 'page_size') {
+      // Handle multi-select filters - if value contains commas, split into array
+      if (typeof value === 'string' && value.includes(',')) {
+        filters.value[key] = value.split(',')
+      } else {
+        filters.value[key] = value
+      }
+    }
+  })
+  
+  // Set pagination from query parameters
+  if (query.page) {
+    currentPage.value = parseInt(query.page as string) || 1
+  }
+  if (query.page_size) {
+    pageSize.value = parseInt(query.page_size as string) || (props.schema.pageSize || 20)
+  }
+  
   if (props.schema.autoLoad !== false) {
     fetchData()
   }

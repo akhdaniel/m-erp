@@ -1526,6 +1526,19 @@ async def get_transaction_detail_schema() -> Dict[str, Any]:
                     "condition": {"field": "state", "value": "draft"}
                 },
                 {
+                    "id": "confirm",
+                    "label": "Confirm",
+                    "icon": "check",
+                    "action": "confirm_transaction",
+                    "variant": "primary"
+                },
+                {
+                    "id": "back",
+                    "label": "Back",
+                    "icon": "arrow-left",
+                    "action": "back_transaction"
+                },
+                {
                     "id": "print",
                     "label": "Print",
                     "icon": "printer",
