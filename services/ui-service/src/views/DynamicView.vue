@@ -136,9 +136,10 @@ const componentType = computed(() => {
     case 'form':
     case 'form-create':
     case 'form-edit':
+      return GenericFormView
     case 'detail':
     case 'view':      
-      return GenericFormView
+      return GenericDetailView
     case 'tree':
       // Would import GenericTreeView when implemented
       return null
@@ -146,9 +147,6 @@ const componentType = computed(() => {
       // Would import GenericDashboard
       return GenericDashboard
 
-    // case 'detail':
-    // case 'view':
-    //   return GenericDetailView      
     default:
       return null
   }
@@ -356,8 +354,12 @@ async function handleStateTransition(actionType: string, item?: any) {
     // Determine the next state based on current state and action type
     const nextState = getNextState(item.state, actionType)
     
+    console.log('State transition:', { currentState: item.state, actionType, nextState })
+    
     if (!nextState) {
-      console.error('No valid next state found for current state:', item.state)
+      console.error('No valid next state found for current state:', item.state, 'action:', actionType)
+      // Show error message to user
+      alert(`Cannot perform ${actionType === 'confirm_transaction' ? 'Confirm' : 'Back'} action from current state: ${item.state}`)
       return
     }
     
@@ -365,20 +367,24 @@ async function handleStateTransition(actionType: string, item?: any) {
     const serviceUrl = SERVICE_MAPPING['sales'] || ''
     const url = `${serviceUrl}/api/v1/sales/transactions/${item.id}/state/${nextState}`
     
+    console.log('Making API call to:', url)
+    
     const response = await fetch(url, {
       method: 'POST',
       headers,
     })
     
     if (!response.ok) {
-      throw new Error(`Failed to change transaction state: ${response.status}`)
+      const errorText = await response.text()
+      throw new Error(`Failed to change transaction state: ${response.status} - ${errorText}`)
     }
     
     // Reload the page to show updated state
     window.location.reload()
   } catch (error) {
     console.error('Error changing transaction state:', error)
-    // In a real implementation, you would show an error message to the user
+    // Show error message to user
+    alert(`Error changing transaction state: ${error.message}`)
   }
 }
 
@@ -389,12 +395,12 @@ function getNextState(currentState: string, actionType: string): string | null {
     'draft': 'quote_pending_approval',
     'quote_pending_approval': 'quote_approved',
     'quote_approved': 'quote_sent',
-    'quote_sent': 'quote_accepted',  // Simplified - in reality might also go to rejected
+    'quote_sent': 'quote_accepted',
     'quote_accepted': 'order_pending',
     'order_pending': 'order_confirmed',
     'order_confirmed': 'order_in_production',
     'order_in_production': 'order_ready_to_ship',
-    'order_ready_to_ship': 'order_shipped',  // Simplified - might also go to partially shipped
+    'order_ready_to_ship': 'order_shipped',
     'order_partially_shipped': 'order_shipped',
     'order_shipped': 'order_delivered',
     'order_delivered': 'order_completed'
@@ -410,18 +416,23 @@ function getNextState(currentState: string, actionType: string): string | null {
     'order_in_production': 'order_confirmed',
     'order_ready_to_ship': 'order_in_production',
     'order_partially_shipped': 'order_ready_to_ship',
-    'order_shipped': 'order_ready_to_ship',  // Simplified
+    'order_shipped': 'order_ready_to_ship',
     'order_delivered': 'order_shipped',
     'order_completed': 'order_delivered'
   }
   
+  console.log('getNextState called with:', { currentState, actionType })
+  
+  let nextState = null
   if (actionType === 'confirm_transaction') {
-    return forwardTransitions[currentState] || null
+    nextState = forwardTransitions[currentState] || null
+    console.log('Forward transition result:', nextState)
   } else if (actionType === 'back_transaction') {
-    return backwardTransitions[currentState] || null
+    nextState = backwardTransitions[currentState] || null
+    console.log('Backward transition result:', nextState)
   }
   
-  return null
+  return nextState
 }
 
 function handleSubmit(data: any) {

@@ -16,12 +16,37 @@
         </ol>
       </div>
       <div class="mt-4">
-        <h1 class="text-2xl font-semibold text-gray-900">
-          {{ schema.title }}
-        </h1>
-        <p v-if="schema.description" class="mt-1 text-sm text-gray-600">
-          {{ schema.description }}
-        </p>
+        <div class="flex justify-between items-start">
+          <div>
+            <h1 class="text-2xl font-semibold text-gray-900">
+              {{ schema.title }}
+            </h1>
+            <p v-if="schema.description" class="mt-1 text-sm text-gray-600">
+              {{ schema.description }}
+            </p>
+          </div>
+          <!-- Header Actions -->
+          <div v-if="schema.header?.actions" class="flex space-x-2">
+            <button
+              v-for="action in schema.header.actions"
+              :key="action.id"
+              type="button"
+              @click="executeHeaderAction(action)"
+              :class="getHeaderActionClasses(action)"
+              class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+            >
+              <svg v-if="action.icon" class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path v-if="action.icon === 'pencil'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                <path v-if="action.icon === 'arrow-right'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <path v-if="action.icon === 'send'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                <path v-if="action.icon === 'check'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                <path v-if="action.icon === 'arrow-left'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <path v-if="action.icon === 'printer'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H9v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              </svg>
+              {{ action.label }}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -426,6 +451,17 @@ const isFormValid = computed(() => {
   // Basic validation - can be extended
   return validationErrors.value.length === 0
 })
+
+function getHeaderActionClasses(action: any): string {
+  const baseClasses = action.variant === 'primary'
+    ? 'border-transparent text-white bg-primary-600 hover:bg-primary-700 focus:ring-primary-500'
+    : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-primary-500'
+  return `${baseClasses} ${action.class || ''}`
+}
+
+function executeHeaderAction(action: any) {
+  emit('action', action, formData.value)
+}
 
 // Initialize form
 async function initializeView() {
