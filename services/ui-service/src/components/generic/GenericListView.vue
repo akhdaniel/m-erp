@@ -353,6 +353,7 @@ async function fetchData() {
   
   try {
     const params = new URLSearchParams()
+    console.log('params', params)
     
     // Pagination
     if (props.schema.paginated !== false) {
