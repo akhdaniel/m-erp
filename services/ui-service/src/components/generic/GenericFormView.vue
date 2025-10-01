@@ -858,6 +858,7 @@ function validate(): boolean {
 
 // Actions
 function handleCancel() {
+  console.log('handleCancel====')
   if (props.schema.cancelRoute) {
     router.push(props.schema.cancelRoute)
   } else {
