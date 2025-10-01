@@ -1440,18 +1440,6 @@ async def get_transactions_form_schema() -> Dict[str, Any]:
         ],
         "actions": [
             {
-                "id": "save",
-                "label": "Save Transaction",
-                "type": "submit",
-                "variant": "primary"
-            },
-            {
-                "id": "cancel",
-                "label": "Cancel",
-                "type": "cancel",
-                "variant": "secondary"
-            },
-            {
                 "id": "save_and_new",
                 "label": "Save and New",
                 "type": "submit",
