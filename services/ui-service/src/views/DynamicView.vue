@@ -385,7 +385,8 @@ async function handleStateTransition(actionType: string, item?: any) {
     }
     
     // Reload the page to show updated state
-    window.location.reload()
+    // Use router refresh instead of full page reload
+    router.go(0)
   } catch (error) {
     console.error('Error changing transaction state:', error)
     // Show error message to user
