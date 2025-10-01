@@ -13,7 +13,7 @@
         <button
           v-for="action in schema.headerActions"
           :key="action.id"
-          @click="executeAction(action)"
+          @click="() => executeAction(action)"
           :class="getActionClasses(action)"
           class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
         >
@@ -161,7 +161,7 @@
                 <button
                   v-for="action in getRowActions(item)"
                   :key="action.id"
-                  @click.stop="executeRowAction(action, item)"
+                  @click.stop="() => executeRowAction(action, item)"
                   :class="getActionClasses(action)"
                   class="text-sm"
                 >
@@ -199,7 +199,7 @@
             <button
               v-for="action in getRowActions(item)"
               :key="action.id"
-              @click.stop="executeRowAction(action, item)"
+              @click.stop="() => executeRowAction(action, item)"
               :class="getActionClasses(action)"
               class="text-sm"
             >
@@ -491,12 +491,147 @@ function handleRowClick(item: any) {
   }
 }
 
-function executeAction(action: any) {
-  emit('action', action)
+async function executeAction(action: any) {
+  // First try to execute backend service function if action has endpoint
+  if (action.endpoint) {
+    try {
+      // Get auth token from cookies
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('auth_token='))
+        ?.split('=')[1]
+      
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      }
+      
+      // Add authorization header if token exists
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      
+      // Determine HTTP method (default to POST)
+      const method = action.method || 'POST'
+      
+      // Prepare request body
+      const body = JSON.stringify({
+        action: action.id
+      })
+      
+      const response = await fetch(action.endpoint, {
+        method,
+        headers,
+        body
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      // If there's a success handler, call it
+      if (action.onSuccess) {
+        action.onSuccess(result)
+      }
+      
+      // Refresh the list after successful action
+      if (action.refreshAfter !== false) {
+        await fetchData()
+      }
+      
+      // If action specifies a route to navigate to after success
+      if (action.successRoute) {
+        router.push(action.successRoute)
+      }
+      
+      return result
+    } catch (error) {
+      console.error('Error executing backend action:', error)
+      
+      // If there's an error handler, call it
+      if (action.onError) {
+        action.onError(error)
+      }
+      
+      throw error
+    }
+  }
+  // Fallback to existing behavior
+  else {
+    emit('action', action)
+  }
 }
 
-function executeRowAction(action: any, item: any) {
-  if (action.route) {
+async function executeRowAction(action: any, item: any) {
+  // First try to execute backend service function if action has endpoint
+  if (action.endpoint) {
+    try {
+      // Get auth token from cookies
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('auth_token='))
+        ?.split('=')[1]
+      
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      }
+      
+      // Add authorization header if token exists
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      
+      // Determine HTTP method (default to POST)
+      const method = action.method || 'POST'
+      
+      // Prepare request body
+      const body = JSON.stringify({
+        action: action.id,
+        item: item
+      })
+      
+      const response = await fetch(action.endpoint, {
+        method,
+        headers,
+        body
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      // If there's a success handler, call it
+      if (action.onSuccess) {
+        action.onSuccess(result)
+      }
+      
+      // Refresh the list after successful action
+      if (action.refreshAfter !== false) {
+        await fetchData()
+      }
+      
+      // If action specifies a route to navigate to after success
+      if (action.successRoute) {
+        router.push(action.successRoute)
+      }
+      
+      return result
+    } catch (error) {
+      console.error('Error executing backend action:', error)
+      
+      // If there's an error handler, call it
+      if (action.onError) {
+        action.onError(error)
+      }
+      
+      throw error
+    }
+  }
+  // Fallback to existing behavior
+  else if (action.route) {
     const route = action.route.replace('{id}', getItemKey(item))
     router.push(route)
   } else {

@@ -89,7 +89,7 @@
           v-for="action in schema.actions"
           :key="action.id"
           type="button"
-          @click="executeAction(action)"
+          @click="() => executeAction(action)"
           :disabled="action.disabled || saving"
           :class="getActionClasses(action)"
           class="inline-flex justify-center py-2 px-4 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
@@ -874,8 +874,72 @@ function handleTotalsChanged(totals: any) {
   formData.value.total = totals.total
 }
 
-function executeAction(action: any) {
-  emit('action', action, formData.value)
+async function executeAction(action: any) {
+  // First try to execute backend service function if action has endpoint
+  if (action.endpoint) {
+    try {
+      // Get auth token from cookies
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('auth_token='))
+        ?.split('=')[1]
+      
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      }
+      
+      // Add authorization header if token exists
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      
+      // Determine HTTP method (default to POST)
+      const method = action.method || 'POST'
+      
+      // Prepare request body
+      const body = JSON.stringify({
+        action: action.id,
+        data: formData.value
+      })
+      
+      const response = await fetch(action.endpoint, {
+        method,
+        headers,
+        body
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      // If there's a success handler, call it
+      if (action.onSuccess) {
+        action.onSuccess(result)
+      }
+      
+      // If action specifies a route to navigate to after success
+      if (action.successRoute) {
+        router.push(action.successRoute)
+      }
+      
+      return result
+    } catch (error) {
+      console.error('Error executing backend action:', error)
+      
+      // If there's an error handler, call it
+      if (action.onError) {
+        action.onError(error)
+      }
+      
+      throw error
+    }
+  }
+  // Fallback to existing behavior
+  else {
+    emit('action', action, formData.value)
+  }
 }
 
 // Utility functions

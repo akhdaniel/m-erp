@@ -160,7 +160,7 @@
                class="px-6 py-3 border-t border-gray-200/20 flex justify-end space-x-2">
             <button v-for="action in widget.actions" 
                     :key="action.id"
-                    @click="executeAction(action, widget)"
+                    @click="() => executeAction(action, widget)"
                     class="text-sm font-medium hover:underline"
                     :class="action.class || 'text-primary-600'">
               {{ action.label }}
@@ -403,8 +403,72 @@ function getIcon(iconName: string): any {
 }
 
 // Execute widget action
-function executeAction(action: any, widget: any) {
-  if (action.route) {
+async function executeAction(action: any, widget: any) {
+  // First try to execute backend service function if action has endpoint
+  if (action.endpoint) {
+    try {
+      // Get auth token from cookies
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('auth_token='))
+        ?.split('=')[1]
+      
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      }
+      
+      // Add authorization header if token exists
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      
+      // Determine HTTP method (default to POST)
+      const method = action.method || 'POST'
+      
+      // Prepare request body if needed
+      let body = undefined
+      if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
+        body = JSON.stringify({
+          action: action.id,
+          widget: widget.id,
+          data: widgetData.value[widget.id]
+        })
+      }
+      
+      const response = await fetch(action.endpoint, {
+        method,
+        headers,
+        body
+      })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      // If there's a success handler, call it
+      if (action.onSuccess) {
+        action.onSuccess(result)
+      }
+      
+      // Refresh widget data after successful action
+      await fetchWidgetData()
+      
+      return result
+    } catch (error) {
+      console.error('Error executing backend action:', error)
+      
+      // If there's an error handler, call it
+      if (action.onError) {
+        action.onError(error)
+      }
+      
+      throw error
+    }
+  } 
+  // Fallback to existing behavior
+  else if (action.route) {
     router.push(action.route)
   } else if (action.handler) {
     // Custom action handler
