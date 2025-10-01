@@ -773,3 +773,6 @@ a:hover {
 .text-primary-500 {
   color: var(--theme-text-secondary) !important;
 }
+.header{
+  padding: 10px;
+}

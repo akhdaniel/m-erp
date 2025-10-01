@@ -1447,8 +1447,15 @@ async def get_transactions_form_schema() -> Dict[str, Any]:
                 "variant": "outline"
             },
             {
+                "id": "send_email",
+                "label": "Send Email",
+                "type": "submit",
+                "action": "send_email",
+                "variant": "outline"
+            },
+            {
                 "id": "confirm",
-                "label": "Conform",
+                "label": "Confirm",
                 "type": "submit",
                 "action": "confirm",
                 "variant": "outline"
