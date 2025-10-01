@@ -322,8 +322,13 @@ async function handleAction(action: any, item?: any) {
       ? action.route.replace('{id}', item.id)
       : action.route
     router.push(route)
-  } else if (action.action === 'confirm_transaction' || action.action === 'back_transaction') {
+  } else if (action.id === 'confirm' || action.id === 'back') {
     // Handle state transition actions
+    // Map action.id to the actual action type expected by handleStateTransition
+    const actionType = action.id === 'confirm' ? 'confirm_transaction' : 'back_transaction';
+    await handleStateTransition(actionType, item)
+  } else if (action.action === 'confirm_transaction' || action.action === 'back_transaction') {
+    // Handle state transition actions (backward compatibility)
     await handleStateTransition(action.action, item)
   }
 }
