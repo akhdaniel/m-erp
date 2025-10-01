@@ -384,10 +384,8 @@ async function handleStateTransition(actionType: string, item?: any) {
       throw new Error(`Failed to change transaction state: ${response.status} - ${errorText}`)
     }
     
-    // Navigate back to the model's list view
-    // Extract the base path for the list view
-    const basePath = route.path.split('/').slice(0, 3).join('/')
-    router.push(basePath)
+    // Instead of navigating away, just reload the current schema and data
+    await loadSchema()
   } catch (error) {
     console.error('Error changing transaction state:', error)
     // Show error message to user
