@@ -940,6 +940,7 @@ async function executeAction(action: any) {
   }
   // Fallback to existing behavior
   else {
+    console.log('formData.value',formData.value)
     emit('action', action, formData.value)
   }
 }
