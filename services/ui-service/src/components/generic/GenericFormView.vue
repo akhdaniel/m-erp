@@ -877,6 +877,7 @@ function handleTotalsChanged(totals: any) {
 
 async function executeAction(action: any) {
   // First try to execute backend service function if action has endpoint
+  console.log('action.endpoint', action.endpoint)
   if (action.endpoint) {
     try {
       // Get auth token from cookies
