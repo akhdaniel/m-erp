@@ -3,23 +3,10 @@
     <div class="max-w-4xl mx-auto">
       <!-- Header -->
       <div class="mb-6">
-        <div class="flex" aria-label="Breadcrumb">
-          <ol class="flex items-center space-x-4">
-            <li>
-              <router-link to="/inventory/products" class="text-gray-400 hover:text-gray-500">
-                Products
-              </router-link>
-            </li>
-            <li class="flex items-center">
-              <svg class="flex-shrink-0 h-5 w-5 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
-              </svg>
-              <span class="ml-4 text-sm font-medium text-gray-500">
-                {{ isEditMode ? 'Edit Product' : 'New Product' }}
-              </span>
-            </li>
-          </ol>
-        </div>
+        <Breadcrumb :breadcrumbs="[
+          { label: 'Products', route: '/inventory/products' },
+          { label: isEditMode ? 'Edit Product' : 'New Product' }
+        ]" />
         <div class="mt-4">
           <h1 class="text-2xl font-semibold text-gray-900">
             {{ isEditMode ? 'Edit Product' : 'Create New Product' }}
@@ -317,6 +304,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/components/AppLayout.vue'
+import Breadcrumb from '@/components/generic/Breadcrumb.vue'
 
 const route = useRoute()
 const router = useRouter()

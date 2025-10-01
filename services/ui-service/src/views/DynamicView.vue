@@ -60,6 +60,7 @@ import GenericListView from '@/components/generic/GenericListView.vue'
 import GenericFormView from '@/components/generic/GenericFormView.vue'
 import GenericDetailView from '@/components/generic/GenericDetailView.vue'
 import GenericDashboard from '@/components/generic/GenericDashboard.vue'
+import Breadcrumb from '@/components/generic/Breadcrumb.vue'
 
 const route = useRoute()
 const router = useRouter()
