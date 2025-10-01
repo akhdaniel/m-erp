@@ -436,6 +436,7 @@ function fieldWithFormData(field: any) {
 async function initializeForm() {
   let selectionFieldExist = false
   // Set default values from schema
+  formData.value["id"] = recordId.value
   props.schema.sections?.forEach((section: any) => {
     section.fields?.forEach((field: any) => {
       if (field.defaultValue !== undefined) {
