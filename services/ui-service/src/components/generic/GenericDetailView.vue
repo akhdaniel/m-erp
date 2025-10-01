@@ -12,6 +12,12 @@
             <p v-if="schema.description" class="mt-1 text-sm text-gray-600">
               {{ schema.description }}
             </p>
+            <!-- Display document state using StatusBar component -->
+            <StatusBar 
+              v-if="formData.state"
+              :current-state="formData.state"
+              @state-change="handleStateChange"
+            />
           </div>
           <!-- Header Actions -->
           <div v-if="schema.header?.actions" class="flex space-x-2">
@@ -375,6 +381,7 @@ import { useRoute, useRouter } from 'vue-router'
 import LineItemsManager from '@/components/LineItemsManager.vue'
 import Autocomplete from '@/components/generic/Autocomplete.vue'
 import Breadcrumb from '@/components/generic/Breadcrumb.vue'
+import StatusBar from '@/components/generic/StatusBar.vue'
 
 // Props
 const props = defineProps<{
@@ -849,6 +856,57 @@ function handleCancel() {
     router.push(props.schema.cancelRoute)
   } else {
     emit('cancel')
+  }
+}
+
+// Handle state change from StatusBar component
+async function handleStateChange(newState: string) {
+  console.log('State change requested:', newState)
+  // Call the existing state transition logic from DynamicView
+  // This would typically make an API call to change the state
+  try {
+    // Get auth token from cookies
+    const token = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('auth_token='))
+      ?.split('=')[1]
+    
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    }
+    
+    // Add authorization header if token exists
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+    
+    // Make API call to change transaction state
+    // Note: This assumes we're working with sales transactions
+    // In a real implementation, this would be more dynamic
+    const serviceUrl = props.serviceUrl || ''
+    const url = `${serviceUrl}/sales/transactions/${formData.value.id}/state/${newState}`
+    
+    console.log('Making API call to:', url)
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Failed to change transaction state: ${response.status} - ${errorText}`)
+    }
+    
+    // Update the local state
+    formData.value.state = newState
+    
+    // Instead of navigating away, just reload the current record data
+    await loadRecord()
+  } catch (error) {
+    console.error('Error changing transaction state:', error)
+    // Show error message to user
+    alert(`Error changing transaction state: ${error.message}`)
   }
 }
 
