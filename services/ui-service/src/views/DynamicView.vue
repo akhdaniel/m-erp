@@ -370,7 +370,7 @@ async function handleStateTransition(actionType: string, item?: any) {
     
     // Make API call to change transaction state
     const serviceUrl = SERVICE_MAPPING['sales'] || ''
-    const url = `${serviceUrl}/api/v1/sales/transactions/${item.id}/state/${nextState}`
+    const url = `${serviceUrl}/sales/transactions/${item.id}/state/${nextState}`
     
     console.log('Making API call to:', url)
     
