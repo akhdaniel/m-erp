@@ -436,7 +436,6 @@ function fieldWithFormData(field: any) {
 async function initializeForm() {
   let selectionFieldExist = false
   // Set default values from schema
-  formData.value["id"] = recordId.value
   props.schema.sections?.forEach((section: any) => {
     section.fields?.forEach((field: any) => {
       if (field.defaultValue !== undefined) {
@@ -495,9 +494,14 @@ async function loadRecord() {
     
     const data = await response.json()
     console.log('Loaded record data:', data)
+
+    console.log('recordId==', recordId)
+    formData.value["id"] = data.id
+    formData.value["state"] = data.state
     
     // Map data to form
     Object.keys(data).forEach(key => {
+
       if (formData.value.hasOwnProperty(key)) {
         // Check if there's a field definition for this key
         let fieldDef = null
@@ -615,6 +619,9 @@ async function loadRecord() {
     })
     
     originalData.value = { ...formData.value }
+
+
+    console.log('final formData', formData)
   } catch (err: any) {
     error.value = err.message || 'Failed to load record'
     console.error('Error loading record:', err)
