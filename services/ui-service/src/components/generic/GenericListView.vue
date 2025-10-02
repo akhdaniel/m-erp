@@ -1,47 +1,50 @@
 <template>
   <div>
     <!-- Header -->
-    <div class="mb-6 flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold text-gray-900">{{ schema.title || 'List' }}</h1>
-        <p v-if="schema.description" class="mt-1 text-sm text-gray-600">
-          {{ schema.description }}
-        </p>
-      </div>
-      <div class="flex items-center space-x-3">
-        <!-- Custom Actions -->
-        <button
-          v-for="action in schema.headerActions"
-          :key="action.id"
-          @click="() => executeAction(action)"
-          :class="getActionClasses(action)"
-          class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
-        >
-          <component v-if="action.icon" :is="getIcon(action.icon)" class="-ml-1 mr-2 h-5 w-5" />
-          {{ action.label }}
-        </button>
-        
-        <!-- Default Actions -->
-        <button
-          v-if="schema.refreshable !== false"
-          @click="refresh"
-          class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-        >
-          <svg class="-ml-0.5 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-          </svg>
-          Refresh
-        </button>
-        <button
-          v-if="schema.createable !== false"
-          @click="createNew"
-          class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-        >
-          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-          </svg>
-          {{ schema.createLabel || 'New' }}
-        </button>
+    <div class="mb-6">
+      <Breadcrumb v-if="schema.breadcrumbs" :breadcrumbs="schema.breadcrumbs" />
+      <div class="flex items-center justify-between mt-4">
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-900">{{ schema.title || 'List' }}</h1>
+          <p v-if="schema.description" class="mt-1 text-sm text-gray-600">
+            {{ schema.description }}
+          </p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <!-- Custom Actions -->
+          <button
+            v-for="action in schema.headerActions"
+            :key="action.id"
+            @click="() => executeAction(action)"
+            :class="getActionClasses(action)"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+          >
+            <component v-if="action.icon" :is="getIcon(action.icon)" class="-ml-1 mr-2 h-5 w-5" />
+            {{ action.label }}
+          </button>
+          
+          <!-- Default Actions -->
+          <button
+            v-if="schema.refreshable !== false"
+            @click="refresh"
+            class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          >
+            <svg class="-ml-0.5 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+            </svg>
+            Refresh
+          </button>
+          <button
+            v-if="schema.createable !== false"
+            @click="createNew"
+            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          >
+            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+            </svg>
+            {{ schema.createLabel || 'New' }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -293,6 +296,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import Breadcrumb from './Breadcrumb.vue'
 
 // Props
 const props = defineProps<{
