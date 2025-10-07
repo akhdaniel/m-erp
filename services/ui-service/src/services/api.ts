@@ -18,6 +18,7 @@ class ApiService {
     this.api.interceptors.request.use(
       (config) => {
         const token = Cookies.get('auth_token')
+        console.log('token-----', token)
         if (token) {
           config.headers.Authorization = `Bearer ${token}`
         }
