@@ -16,6 +16,10 @@ async def get_dashboard_schema() -> Dict[str, Any]:
     return {
         "title": "Sales Dashboard",
         "description": "Sales performance overview and key metrics",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"}
+        ],
         "viewType": "dashboard",
         "refreshInterval": 30000,  # 30 seconds
         "layout": {
@@ -121,6 +125,11 @@ async def get_quotations_list_schema() -> Dict[str, Any]:
     return {
         "title": "Sales Quotations",
         "description": "Manage customer quotations",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Quotations", "route": "/sales/quotations"}
+        ],
         "viewType": "table",
         "endpoint": "/sales/quotations",
         # "dataPath": "/sales/quotations",  # Tell the UI where to find the data in the response
@@ -269,6 +278,12 @@ async def get_quotations_form_schema() -> Dict[str, Any]:
     """Get quotations form UI schema"""
     return {
         "title": "Quotation Details",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Quotations", "route": "/sales/quotations"},
+            {"label": "New Quotation", "route": "/sales/quotations/new"}
+        ],
         "endpoint": "/sales/quotations",
         "method": "POST",
         "successRoute": "/sales/quotations",
@@ -401,6 +416,11 @@ async def get_orders_list_schema() -> Dict[str, Any]:
     return {
         "title": "Sales Orders",
         "description": "Manage customer orders",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Orders", "route": "/sales/orders"}
+        ],
         "viewType": "table",
         "endpoint": "/sales/orders",
         "searchable": True,
@@ -542,6 +562,11 @@ async def get_pricing_rules_list_schema() -> Dict[str, Any]:
     return {
         "title": "Pricing Rules",
         "description": "Manage pricing and discount rules",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Pricing Rules", "route": "/sales/pricing"}
+        ],
         "viewType": "table",
         "endpoint": "/sales/pricing/rules/",
         "searchable": True,
@@ -667,6 +692,11 @@ async def get_customers_list_schema() -> Dict[str, Any]:
     return {
         "title": "Customers",
         "description": "Manage customer accounts",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Customers", "route": "/sales/customers"}
+        ],
         "viewType": "table",
         "endpoint": "/base/partners?is_customer=true",
         # "dataPath": "partners",  # Tell the UI where to find the data in the response
@@ -747,6 +777,12 @@ async def get_customers_form_schema() -> Dict[str, Any]:
     return {
         "title": "Customers",
         "description": "Manage customer",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Customers", "route": "/sales/customers"},
+            {"label": "New Customer", "route": "/sales/customers/new"}
+        ],
         "viewType": "form",
         "endpoint": "/base/partners",
         "method": "POST",
@@ -816,6 +852,12 @@ async def get_orders_form_schema() -> Dict[str, Any]:
     """Get orders form UI schema"""
     return {
         "title": "Order Details",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Orders", "route": "/sales/orders"},
+            {"label": "New Order", "route": "/sales/orders/new"}
+        ],
         "endpoint": "/sales/orders",
         "method": "POST",
         "successRoute": "/sales/orders",
@@ -940,6 +982,12 @@ async def get_pricing_rules_form_schema() -> Dict[str, Any]:
     """Get pricing rules form UI schema"""
     return {
         "title": "Pricing Rule",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Pricing Rules", "route": "/sales/pricing"},
+            {"label": "New Pricing Rule", "route": "/sales/pricing/new"}
+        ],
         "endpoint": "/pricing/rules",
         "method": "POST",
         "successRoute": "/sales/pricing",
@@ -1098,6 +1146,11 @@ async def get_analytics_dashboard_schema() -> Dict[str, Any]:
     return {
         "title": "Sales Analytics",
         "description": "Sales performance analytics and reports",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Analytics", "route": "/sales/analytics"}
+        ],
         "viewType": "dashboard",
         "layout": {
             "columns": 2,
@@ -1155,6 +1208,11 @@ async def get_transactions_list_schema() -> Dict[str, Any]:
     return {
         "title": "Sales Transactions",
         "description": "Manage quotations and orders",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Transactions", "route": "/sales/transactions"}
+        ],
         "viewType": "table",
         "endpoint": "/sales/transactions",
         "searchable": True,
@@ -1328,6 +1386,12 @@ async def get_transactions_form_schema() -> Dict[str, Any]:
     """Get transactions form UI schema"""
     return {
         "title": "Transaction Details",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Transactions", "route": "/sales/transactions"},
+            {"label": "New Transaction", "route": "/sales/transactions/new"}
+        ],
         "endpoint": "/sales/transactions",
         "method": "POST",
         "successRoute": "/sales/transactions",
@@ -1472,6 +1536,12 @@ async def get_transaction_detail_schema() -> Dict[str, Any]:
     """Get transaction detail view UI schema"""
     return {
         "title": "Transaction Details",
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Sales", "route": "/sales/dashboard"},
+            {"label": "Transactions", "route": "/sales/transactions"},
+            {"label": "Transaction Details", "route": "/sales/transactions/{id}"}
+        ],
         "viewType": "detail",
         "endpoint": "/sales/transactions",
         "header": {

@@ -29,7 +29,6 @@ def get_current_company_id() -> int:
     return 1
 
 
-@router.get("")
 @router.get("/")
 async def list_approvals(
     status: Optional[str] = Query(None, description="Filter by status"),
