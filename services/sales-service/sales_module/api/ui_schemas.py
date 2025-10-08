@@ -11,12 +11,133 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import logging
 
 logger = logging.getLogger('uvicorn')
+from sales_module.ui_definitions import SALES_UI_PACKAGE
 
 router = APIRouter(tags=["UI Schemas"])
 
 # Dashboard Schema
 @router.get("/ui-schemas/dashboard")
 async def get_dashboard_schema() -> Dict[str, Any]:
+
+    """Get dashboard configuration for sales module."""
+    # Use the dashboard definition from UI definitions
+    dashboard = SALES_UI_PACKAGE.get("dashboard", {})
+    widgets = SALES_UI_PACKAGE.get("widgets", [])
+    
+    # Convert widgets to dashboard schema format matching Sales convention
+    widget_configs = []
+    
+    # If we have a "metrics" widget, expand it into individual metric widgets
+    for widget in widgets:
+        if widget["type"] == "metric" and "metrics" in widget["id"]:
+            # Create individual metric widgets like Sales/Inventory do
+            metrics_endpoint = widget["data_endpoint"]
+            
+            # Total Orders metric
+            widget_configs.append({
+                "id": "total_orders_metric",
+                "type": "metric",
+                "title": "Total Orders",
+                "endpoint": metrics_endpoint,
+                "valueField": "total_orders",
+                "format": "number",
+                "icon": "file-text",
+                "color": "blue",
+                "span": 1
+            })
+            
+            # Pending Approval metric
+            widget_configs.append({
+                "id": "pending_approval_metric",
+                "type": "metric",
+                "title": "Pending Approval",
+                "endpoint": metrics_endpoint,
+                "valueField": "pending_approval",
+                "format": "number",
+                "icon": "clock",
+                "color": "orange",
+                "span": 1
+            })
+            
+            # Active Customers metric
+            widget_configs.append({
+                "id": "active_suppliers_metric",
+                "type": "metric",
+                "title": "Active Customers",
+                "endpoint": metrics_endpoint,
+                "valueField": "active_suppliers",
+                "format": "number",
+                "icon": "truck",
+                "color": "green",
+                "span": 1
+            })
+            
+            # Month Spend metric
+            widget_configs.append({
+                "id": "month_spend_metric",
+                "type": "metric",
+                "title": "Month Spend",
+                "endpoint": metrics_endpoint,
+                "valueField": "month_spend",
+                "format": "currency",
+                "icon": "dollar-sign",
+                "color": "green",
+                "span": 1
+            })
+        else:
+            # For other widgets, process normally
+            widget_config = {
+                "id": widget["id"],
+                "type": widget["type"],
+                "title": widget["title"],
+                "endpoint": widget["data_endpoint"],
+                "span": 1
+            }
+            
+            if widget["type"] == "list":
+                widget_config["limit"] = 5
+                if "recent-orders" in widget["id"]:
+                    widget_config["columns"] = [
+                        {"field": "po_number", "label": "PO #"},
+                        {"field": "supplier", "label": "Customer"},
+                        {"field": "amount", "label": "Amount", "formatter": "currency"}
+                    ]
+                elif "top-customers" in widget["id"]:
+                    widget_config["columns"] = [
+                        {"field": "name", "label": "Customer"},
+                        {"field": "spend", "label": "Spend", "formatter": "currency"},
+                        {"field": "rating", "label": "Rating"}
+                    ]
+            
+            elif widget["type"] == "chart":
+                widget_config["chartType"] = "line" if "trend" in widget["id"] else "bar"
+                widget_config["height"] = 300
+            
+            # Set span based on widget size (following Sales/Inventory pattern)
+            size = widget.get("size", "medium")
+            if size == "large":
+                widget_config["span"] = 2
+            elif size == "small":
+                widget_config["span"] = 1
+            else:  # medium
+                widget_config["span"] = 1
+            
+            widget_configs.append(widget_config)
+    
+    return {
+        "title": dashboard.get("title", "Sales Dashboard"),
+        "description": dashboard.get("description", "Overview of sales operations"),
+        "viewType": "dashboard",
+        "refreshInterval": 30000,  # 30 seconds
+        "layout": {
+            "columns": 3,
+            "rows": "auto"
+        },
+        "widgets": widget_configs
+    }
+
+
+async def get_dashboard_schema_old() -> Dict[str, Any]:
     """Get dashboard UI schema from UI Registry"""
     # Get UI registry URL from environment
     ui_registry_url = os.getenv("UI_REGISTRY_URL", "http://ui-registry-service:8010")
@@ -85,7 +206,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
             # If fetching from registry fails, return empty dashboard
             return {
                 "title": "Sales Dashboard",
-                "description": "Sales performance overview and key metrics",
+                "description": "Empty Sales performance overview and key metrics",
                 "breadcrumbs": [
                     {"label": "Home", "route": "/"},
                     {"label": "Sales", "route": "/sales/dashboard"}

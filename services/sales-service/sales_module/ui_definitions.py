@@ -6,6 +6,7 @@ registers with the UI Registry for display in the generic UI service.
 """
 
 SALES_UI_PACKAGE = {
+    "version": "1.0.0", 
     "widgets": [
         {
             "id": "total-quotes",
@@ -305,7 +306,7 @@ SALES_UI_PACKAGE = {
             "permissions": ["sales.pricing.manage"]
         }
     ],
-    "components": [
+    "dashboard": [
         {
             "id": "sales-dashboard",
             "type": "dashboard",
