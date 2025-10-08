@@ -3,6 +3,8 @@ UI Schema definitions for Sales Service
 Provides JSON schemas for dynamic UI rendering
 """
 
+import httpx
+import os
 from fastapi import APIRouter, Depends
 from typing import Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,110 +14,97 @@ router = APIRouter(tags=["UI Schemas"])
 # Dashboard Schema
 @router.get("/ui-schemas/dashboard")
 async def get_dashboard_schema() -> Dict[str, Any]:
-    """Get dashboard UI schema"""
-    return {
-        "title": "Sales Dashboard",
-        "description": "Sales performance overview and key metrics",
-        "breadcrumbs": [
-            {"label": "Home", "route": "/"},
-            {"label": "Sales", "route": "/sales/dashboard"}
-        ],
-        "viewType": "dashboard",
-        "refreshInterval": 30000,  # 30 seconds
-        "layout": {
-            "columns": 3,
-            "rows": "auto"
-        },
-        "widgets": [
-            {
-                "id": "revenue_metric",
-                "type": "metric",
-                "title": "Monthly Revenue",
-                "endpoint": "/dashboard/metrics/revenue",
-                "format": "currency",
-                "icon": "dollar-sign",
-                "color": "green",
-                "span": 1
-            },
-            {
-                "id": "quotations_metric",
-                "type": "metric",
-                "title": "Active Quotations",
-                "endpoint": "/dashboard/metrics/quotations",
-                "format": "number",
-                "icon": "file-text",
-                "color": "blue",
-                "span": 1
-            },
-            {
-                "id": "orders_metric",
-                "type": "metric",
-                "title": "Pending Orders",
-                "endpoint": "/dashboard/metrics/orders",
-                "format": "number",
-                "icon": "shopping-bag",
-                "color": "orange",
-                "span": 1
-            },
-            {
-                "id": "revenue_chart",
-                "type": "chart",
-                "title": "Revenue Trend",
-                "endpoint": "/dashboard/charts/revenue-trend",
-                "chartType": "line",
-                "span": 2,
-                "height": 300
-            },
-            {
-                "id": "pipeline_chart",
-                "type": "chart",
-                "title": "Sales Pipeline",
-                "endpoint": "/dashboard/charts/sales-pipeline",
-                "chartType": "bar",
-                "span": 1,
-                "height": 300
-            },
-            {
-                "id": "recent_quotations",
-                "type": "list",
-                "title": "Recent Quotations",
-                "endpoint": "/dashboard/recent/quotations",
-                "limit": 5,
-                "span": 1,
-                "columns": [
-                    {"field": "quotation_number", "label": "Quotation #"},
-                    {"field": "customer_name", "label": "Customer"},
-                    {"field": "total_amount", "label": "Amount", "formatter": "currency"}
-                ]
-            },
-            {
-                "id": "recent_orders",
-                "type": "list",
-                "title": "Recent Orders",
-                "endpoint": "/dashboard/recent/orders",
-                "limit": 5,
-                "span": 1,
-                "columns": [
-                    {"field": "order_number", "label": "Order #"},
-                    {"field": "customer_name", "label": "Customer"},
-                    {"field": "status", "label": "Status"}
-                ]
-            },
-            {
-                "id": "top_customers",
-                "type": "table",
-                "title": "Top Customers",
-                "endpoint": "/dashboard/analytics/top-customers",
-                "limit": 5,
-                "span": 1,
-                "columns": [
-                    {"field": "name", "label": "Customer"},
-                    {"field": "revenue", "label": "Revenue", "formatter": "currency"},
-                    {"field": "orders", "label": "Orders", "formatter": "number"}
-                ]
+    """Get dashboard UI schema from UI Registry"""
+    # Get UI registry URL from environment
+    ui_registry_url = os.getenv("UI_REGISTRY_URL", "http://ui-registry-service:8010")
+    
+    try:
+        # Try to fetch dashboard configuration from UI Registry
+        async with httpx.AsyncClient() as client:
+            registry_response = await client.get(
+                f"{ui_registry_url}/services/sales/ui-package"
+            )
+            
+            if registry_response.status_code == 200:
+                ui_package = registry_response.json()
+                
+                # Extract dashboard configuration from the UI package
+                if "components" in ui_package:
+                    # Look for the sales dashboard component
+                    for component in ui_package["components"]:
+                        if component.get("id") == "sales-dashboard" and component.get("type") == "dashboard":
+                            # Return the dashboard configuration with breadcrumbs added
+                            dashboard_config = component.get("config", {})
+                            dashboard_config["title"] = component.get("title", "Sales Dashboard")
+                            dashboard_config["breadcrumbs"] = [
+                                {"label": "Home", "route": "/"},
+                                {"label": "Sales", "route": "/sales/dashboard"}
+                            ]
+                            return dashboard_config
+                
+                # If no specific dashboard component found, build from widgets if available
+                widgets = ui_package.get("widgets", [])
+                if widgets:
+                    # Build dashboard config from registered widgets
+                    dashboard_config = {
+                        "title": "Sales Dashboard",
+                        "description": "Sales performance overview and key metrics",
+                        "breadcrumbs": [
+                            {"label": "Home", "route": "/"},
+                            {"label": "Sales", "route": "/sales/dashboard"}
+                        ],
+                        "viewType": "dashboard",
+                        "refreshInterval": 30000,  # 30 seconds
+                        "layout": {
+                            "columns": 4,  # Default layout
+                            "rows": "auto"
+                        },
+                        "widgets": []
+                    }
+                    
+                    # Map registered widgets to dashboard format
+                    for widget in widgets:
+                        dashboard_config["widgets"].append({
+                            "id": widget.get("id"),
+                            "type": widget.get("type", "metric"),
+                            "title": widget.get("title"),
+                            "size": widget.get("size", "medium"),
+                            "data_endpoint": widget.get("data_endpoint"),
+                            "refresh_interval": widget.get("refresh_interval", 60),
+                            "config": widget.get("config", {}),
+                            "span": 1,
+                            "height": 200
+                        })
+                    
+                    return dashboard_config
+            
+            # If fetching from registry fails, return empty dashboard
+            return {
+                "title": "Sales Dashboard",
+                "description": "Sales performance overview and key metrics",
+                "breadcrumbs": [
+                    {"label": "Home", "route": "/"},
+                    {"label": "Sales", "route": "/sales/dashboard"}
+                ],
+                "viewType": "dashboard",
+                "refreshInterval": 30000,
+                "layout": {"columns": 3, "rows": "auto"},
+                "widgets": []
             }
-        ]
-    }
+    except Exception as e:
+        # If there's any error fetching from registry, return empty dashboard
+        return {
+            "title": "Sales Dashboard",
+            "description": "Sales performance overview and key metrics",
+            "breadcrumbs": [
+                {"label": "Home", "route": "/"},
+                {"label": "Sales", "route": "/sales/dashboard"}
+            ],
+            "viewType": "dashboard",
+            "refreshInterval": 30000,
+            "layout": {"columns": 3, "rows": "auto"},
+            "widgets": []
+        }
 
 
 # Quotations List Schema
