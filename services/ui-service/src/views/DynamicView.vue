@@ -197,6 +197,8 @@ async function loadSchema() {
 
 function getSchemaEndpoint(): string {
   const path = route.path
+
+  console.log('getSchemaEndpoint path=',path)
   if (path.includes('dashboard'))
   {
     return '/api/v1'+path+'/ui-schemas'
