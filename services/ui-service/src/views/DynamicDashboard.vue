@@ -6,6 +6,7 @@
         <h1 class="text-2xl font-bold">{{ dashboardConfig.title }}</h1>
         <p v-if="dashboardConfig.description" class="mt-2 text-sm">
           {{ dashboardConfig.description }}
+          description
         </p>
       </div>
 
