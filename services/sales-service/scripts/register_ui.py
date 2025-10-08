@@ -19,7 +19,7 @@ SALES_UI_PACKAGE = {
             "title": "Monthly Revenue",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/dashboard/metrics/revenue",
+            "data_endpoint": "/api/v1/sales/dashboard/metrics/revenue",
             "refresh_interval": 300,
             "config": {
                 "field": "amount",
@@ -33,7 +33,7 @@ SALES_UI_PACKAGE = {
             "title": "Active Quotations",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/dashboard/metrics/quotations",
+            "data_endpoint": "/api/v1/sales/dashboard/metrics/quotations",
             "refresh_interval": 300,
             "config": {
                 "field": "count",
@@ -47,7 +47,7 @@ SALES_UI_PACKAGE = {
             "title": "Pending Orders",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/dashboard/metrics/orders",
+            "data_endpoint": "/api/v1/sales/dashboard/metrics/orders",
             "refresh_interval": 300,
             "config": {
                 "field": "count",
@@ -61,7 +61,7 @@ SALES_UI_PACKAGE = {
             "title": "Revenue Trend",
             "type": "chart",
             "size": "medium",
-            "data_endpoint": "/api/v1/dashboard/charts/revenue-trend",
+            "data_endpoint": "/api/v1/sales/dashboard/charts/revenue-trend",
             "refresh_interval": 600,
             "config": {
                 "chart_type": "line",
@@ -74,7 +74,7 @@ SALES_UI_PACKAGE = {
             "title": "Sales Pipeline",
             "type": "chart",
             "size": "medium",
-            "data_endpoint": "/api/v1/dashboard/charts/sales-pipeline",
+            "data_endpoint": "/api/v1/sales/dashboard/charts/sales-pipeline",
             "refresh_interval": 600,
             "config": {
                 "chart_type": "bar",
@@ -87,7 +87,7 @@ SALES_UI_PACKAGE = {
             "title": "Recent Quotations",
             "type": "list",
             "size": "large",
-            "data_endpoint": "/api/v1/dashboard/recent/quotations",
+            "data_endpoint": "/api/v1/sales/dashboard/recent/quotations",
             "refresh_interval": 60,
             "config": {
                 "limit": 5,
@@ -99,7 +99,7 @@ SALES_UI_PACKAGE = {
             "title": "Top Customers",
             "type": "table",
             "size": "large",
-            "data_endpoint": "/api/v1/dashboard/analytics/top-customers",
+            "data_endpoint": "/api/v1/sales/dashboard/analytics/top-customers",
             "refresh_interval": 600,
             "config": {
                 "limit": 5,
@@ -302,7 +302,7 @@ def register_ui_package():
             print("\n📊 Registered components:")
             
             # Check widgets
-            widgets_response = requests.get(f"{UI_REGISTRY_URL}/api/v1/dashboard/widgets")
+            widgets_response = requests.get(f"{UI_REGISTRY_URL}/api/v1/sales/dashboard/widgets")
             if widgets_response.status_code == 200:
                 widgets = widgets_response.json()
                 sales_widgets = [w for w in widgets if w.get('service') == 'sales-service']

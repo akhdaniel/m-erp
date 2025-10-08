@@ -241,12 +241,12 @@ async function fetchDashboardConfig() {
         : `${uiRegistryUrl}${registryEndpoint}`
 
 
-      console.log('uiRegistryUrl====', uiRegistryUrl)
-      console.log('registryFullUrl====', registryFullUrl)
+      // console.log('uiRegistryUrl====', uiRegistryUrl)
+      // console.log('registryFullUrl====', registryFullUrl)
 
       const registryResponse = await fetch(registryFullUrl)
 
-      console.log('registryResponse', registryResponse)
+      // console.log('registryResponse', registryResponse)
       
       if (registryResponse.ok) {
         dashboardConfig.value = await registryResponse.json()
