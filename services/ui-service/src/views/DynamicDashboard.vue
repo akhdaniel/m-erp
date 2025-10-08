@@ -299,7 +299,7 @@ async function fetchWidgetData() {
         //   : `${serviceUrl}${widget.endpoint}`
         const url = widget.endpoint
         
-        console.log('url==', url)
+        console.log('widget==', widget)
         const response = await fetch(url)
         if (response.ok) {
           const data = await response.json()
