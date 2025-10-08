@@ -264,7 +264,6 @@ async function fetchDashboardConfig() {
           if (response.ok) {
             dashboardConfig.value = await response.json()
 
-            console.log('dashboardConfig.value', dashboardConfig.value)
           } else {
             throw new Error(`Dashboard configuration not found: ${response.status}`)
           }
@@ -285,9 +284,9 @@ async function fetchWidgetData() {
   let serviceUrl = serviceUrls[currentService.value]
   
   // For inventory service, use the VITE_INVENTORY_API environment variable
-  if (currentService.value === 'inventory') {
-    serviceUrl = import.meta.env.VITE_INVENTORY_API || 'http://inventory-service:8005'
-  }
+  // if (currentService.value === 'inventory') {
+  //   serviceUrl = import.meta.env.VITE_INVENTORY_API || 'http://inventory-service:8005'
+  // }
   
   if (!serviceUrl) return
 
@@ -295,10 +294,12 @@ async function fetchWidgetData() {
   const promises = dashboardConfig.value.widgets.map(async (widget: any) => {
     if (widget.endpoint) {
       try {
-        const url = widget.endpoint.startsWith('http') 
-          ? widget.endpoint 
-          : `${serviceUrl}${widget.endpoint}`
-          
+        // const url = widget.endpoint.startsWith('http') 
+        //   ? widget.endpoint 
+        //   : `${serviceUrl}${widget.endpoint}`
+        const url = widget.endpoint
+        
+        console.log('url==', url)
         const response = await fetch(url)
         if (response.ok) {
           const data = await response.json()
