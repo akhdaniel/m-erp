@@ -245,6 +245,8 @@ async function fetchDashboardConfig() {
       console.log('registryFullUrl====', registryFullUrl)
 
       const registryResponse = await fetch(registryFullUrl)
+
+      console.log('registryResponse', registryResponse)
       
       if (registryResponse.ok) {
         dashboardConfig.value = await registryResponse.json()
