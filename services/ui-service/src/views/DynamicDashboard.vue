@@ -260,6 +260,8 @@ async function fetchDashboardConfig() {
             : `${serviceUrl}${dashboardEndpoint}`
           console.log('dashboardFullUrl==',dashboardFullUrl)
           const response = await fetch(dashboardFullUrl)
+
+          console.log('response-====', response)
           if (response.ok) {
             dashboardConfig.value = await response.json()
           } else {
