@@ -254,10 +254,11 @@ async function fetchDashboardConfig() {
         // Fallback to service's own endpoint
         const serviceUrl = serviceUrls[currentService.value]
         if (serviceUrl) {
-          const dashboardEndpoint = `/api/v1/ui-schemas/dashboard`
+          const dashboardEndpoint = `/api/v1/${currentService.value}/ui-schemas/dashboard`
           const dashboardFullUrl = serviceUrl && dashboardEndpoint.startsWith('/api/v1')
             ? `${serviceUrl.replace(/\/api\/v1$/, '')}${dashboardEndpoint}`
             : `${serviceUrl}${dashboardEndpoint}`
+          console.log('dashboardFullUrl==',dashboardFullUrl)
           const response = await fetch(dashboardFullUrl)
           if (response.ok) {
             dashboardConfig.value = await response.json()
