@@ -261,9 +261,10 @@ async function fetchDashboardConfig() {
           console.log('dashboardFullUrl==',dashboardFullUrl)
           const response = await fetch(dashboardFullUrl)
 
-          console.log('response-====', response)
           if (response.ok) {
             dashboardConfig.value = await response.json()
+
+            console.log('dashboardConfig.value', dashboardConfig.value)
           } else {
             throw new Error(`Dashboard configuration not found: ${response.status}`)
           }
