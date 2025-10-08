@@ -112,6 +112,7 @@ const loadWidgetData = async () => {
 
 const refreshWidget = async (widget: DashboardWidgetType) => {
   try {
+    console.log('refreshWidget:widget', widget)
     const data = await uiRegistry.fetchWidgetData(widget)
     widgetData.value[widget.id] = data
   } catch (err) {
