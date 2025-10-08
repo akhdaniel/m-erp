@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter(tags=["UI Schemas"])
 
 # Dashboard Schema
-@router.get("/dashboard/ui-schemas")
+@router.get("/ui-schemas/dashboard")
 async def get_dashboard_schema() -> Dict[str, Any]:
     """Get dashboard UI schema"""
     return {

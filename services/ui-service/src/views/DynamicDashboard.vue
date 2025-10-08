@@ -242,7 +242,8 @@ async function fetchDashboardConfig() {
 
 
       console.log('uiRegistryUrl====', uiRegistryUrl)
-      
+      console.log('registryFullUrl====', registryFullUrl)
+
       const registryResponse = await fetch(registryFullUrl)
       
       if (registryResponse.ok) {
