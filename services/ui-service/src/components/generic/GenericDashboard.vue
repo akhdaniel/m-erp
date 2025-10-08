@@ -1,5 +1,8 @@
 <template>
   <div class="generic-dashboard">
+    <!-- Breadcrumbs -->
+    <Breadcrumb v-if="dashboard?.breadcrumbs" :breadcrumbs="dashboard.breadcrumbs" />
+    
     <!-- Dashboard Header -->
     <div class="mb-8" v-if="dashboard">
       <h1 class="text-3xl font-bold text-gray-900">{{ dashboard.title }}</h1>
@@ -46,6 +49,7 @@ import { useRoute } from 'vue-router'
 import uiRegistry from '@/services/uiRegistry'
 import type { UIComponent, DashboardWidget as DashboardWidgetType } from '@/services/uiRegistry'
 import DashboardWidget from './DashboardWidget.vue'
+import Breadcrumb from './Breadcrumb.vue'
 
 const route = useRoute()
 

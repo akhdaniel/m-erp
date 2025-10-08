@@ -412,6 +412,10 @@ async def get_dashboard_schema():
     return {
         "title": dashboard.get("title", "Purchasing Dashboard"),
         "description": dashboard.get("description", "Overview of purchasing operations"),
+        "breadcrumbs": [
+            {"label": "Home", "route": "/"},
+            {"label": "Purchasing", "route": "/purchasing/dashboard"}
+        ],
         "viewType": "dashboard",
         "refreshInterval": 30000,  # 30 seconds
         "layout": {
