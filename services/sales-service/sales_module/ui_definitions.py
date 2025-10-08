@@ -306,31 +306,30 @@ SALES_UI_PACKAGE = {
             "permissions": ["sales.pricing.manage"]
         }
     ],
-    "dashboard": [
-        {
-            "id": "sales-dashboard",
-            "type": "dashboard",
-            "title": "Sales Dashboard",
-            "path": "/sales/dashboard",
-            "icon": "shopping-cart",
-            "config": {
-                "layout": [
-                    {"widget": "total-quotes", "row": 0, "col": 0},
-                    {"widget": "pending-orders", "row": 0, "col": 1},
-                    {"widget": "monthly-revenue", "row": 0, "col": 2},
-                    {"widget": "conversion-rate", "row": 0, "col": 3},
-                    {"widget": "recent-orders", "row": 1, "col": 0, "colspan": 2},
-                    {"widget": "revenue-chart", "row": 1, "col": 2, "colspan": 2},
-                    {"widget": "top-customers", "row": 2, "col": 0, "colspan": 2},
-                    {"widget": "sales-pipeline", "row": 2, "col": 2, "colspan": 2}
-                ]
-            },
-            "permissions": ["sales.dashboard.view"],
-            "order": 2,
-            "metadata": {
-                "refresh_interval": 60,
-                "mobile_layout": "stacked"
-            }
+    "dashboard": {
+        "id": "sales-dashboard",
+        "type": "dashboard",
+        "title": "Sales Dashboard",
+        "path": "/sales/dashboard",
+        "icon": "shopping-cart",
+        "config": {
+            "layout": [
+                {"widget": "total-quotes", "row": 0, "col": 0},
+                {"widget": "pending-orders", "row": 0, "col": 1},
+                {"widget": "monthly-revenue", "row": 0, "col": 2},
+                {"widget": "conversion-rate", "row": 0, "col": 3},
+                {"widget": "recent-orders", "row": 1, "col": 0, "colspan": 2},
+                {"widget": "revenue-chart", "row": 1, "col": 2, "colspan": 2},
+                {"widget": "top-customers", "row": 2, "col": 0, "colspan": 2},
+                {"widget": "sales-pipeline", "row": 2, "col": 2, "colspan": 2}
+            ]
+        },
+        "permissions": ["sales.dashboard.view"],
+        "order": 2,
+        "metadata": {
+            "refresh_interval": 60,
+            "mobile_layout": "stacked"
         }
-    ]
+    }
+    
 }
