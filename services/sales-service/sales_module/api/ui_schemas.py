@@ -25,7 +25,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
         # Try to fetch dashboard configuration from UI Registry
         async with httpx.AsyncClient() as client:
             registry_response = await client.get(
-                f"{ui_registry_url}/services/sales/ui-package"
+                f"{ui_registry_url}/services/sales/dashboard"
             )
             
             if registry_response.status_code == 200:
