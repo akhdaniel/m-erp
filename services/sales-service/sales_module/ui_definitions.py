@@ -13,7 +13,7 @@ SALES_UI_PACKAGE = {
             "title": "Active Quotations",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/quotes/stats",
+            "data_endpoint": "/api/v1/sales/quotes/stats",
             "refresh_interval": 300,
             "config": {
                 "field": "active_quotes",
@@ -28,7 +28,7 @@ SALES_UI_PACKAGE = {
             "title": "Pending Orders",
             "type": "metric", 
             "size": "small",
-            "data_endpoint": "/api/v1/orders/stats",
+            "data_endpoint": "/api/v1/sales/orders/stats",
             "refresh_interval": 60,
             "config": {
                 "field": "pending_orders",
@@ -43,7 +43,7 @@ SALES_UI_PACKAGE = {
             "title": "Monthly Revenue",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/orders/analytics/summary",
+            "data_endpoint": "/api/v1/sales/orders/analytics/summary",
             "refresh_interval": 3600,
             "config": {
                 "field": "current_month_revenue",
@@ -57,7 +57,7 @@ SALES_UI_PACKAGE = {
             "title": "Quotation Conversion Rate",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/quotes/analytics",
+            "data_endpoint": "/api/v1/sales/quotes/analytics",
             "refresh_interval": 3600,
             "config": {
                 "field": "conversion_rate",
@@ -71,7 +71,7 @@ SALES_UI_PACKAGE = {
             "title": "Recent Orders",
             "type": "list",
             "size": "large",
-            "data_endpoint": "/api/v1/orders?limit=10",
+            "data_endpoint": "/api/v1/sales/orders?limit=10",
             "refresh_interval": 60,
             "config": {
                 "limit": 10,
@@ -84,7 +84,7 @@ SALES_UI_PACKAGE = {
             "title": "Revenue Trend",
             "type": "chart",
             "size": "medium",
-            "data_endpoint": "/api/v1/orders/analytics/revenue-trend",
+            "data_endpoint": "/api/v1/sales/orders/analytics/revenue-trend",
             "refresh_interval": 3600,
             "config": {
                 "chart_type": "line",
@@ -98,7 +98,7 @@ SALES_UI_PACKAGE = {
             "title": "Top Customers",
             "type": "table",
             "size": "medium",
-            "data_endpoint": "/api/v1/orders/analytics/top-customers",
+            "data_endpoint": "/api/v1/sales/orders/analytics/top-customers",
             "refresh_interval": 3600,
             "config": {
                 "columns": ["customer_name", "order_count", "total_revenue", "average_order"],
@@ -111,7 +111,7 @@ SALES_UI_PACKAGE = {
             "title": "Sales Pipeline",
             "type": "chart",
             "size": "medium",
-            "data_endpoint": "/api/v1/quotes/pipeline",
+            "data_endpoint": "/api/v1/sales/quotes/pipeline",
             "refresh_interval": 600,
             "config": {
                 "chart_type": "funnel",
@@ -124,7 +124,7 @@ SALES_UI_PACKAGE = {
             "id": "quotes-list",
             "title": "Quotations",
             "entity": "quotes",
-            "data_endpoint": "/api/v1/quotes",
+            "data_endpoint": "/api/v1/sales/quotes",
             "columns": [
                 {"key": "quote_number", "label": "Quotation #", "sortable": True},
                 {"key": "title", "label": "Title", "sortable": True},
@@ -144,7 +144,7 @@ SALES_UI_PACKAGE = {
             "filters": [
                 {"field": "status", "type": "select", "label": "Status", 
                  "options": ["draft", "sent", "viewed", "accepted", "rejected", "expired"]},
-                {"field": "customer_id", "type": "autocomplete", "label": "Customer", "data_source": "/api/v1/partners"},
+                {"field": "customer_id", "type": "autocomplete", "label": "Customer", "data_source": "/api/v1/sales/partners"},
                 {"field": "date_range", "type": "daterange", "label": "Date Range"}
             ],
             "pagination": True,
@@ -154,7 +154,7 @@ SALES_UI_PACKAGE = {
             "id": "orders-list",
             "title": "Orders",
             "entity": "orders",
-            "data_endpoint": "/api/v1/orders",
+            "data_endpoint": "/api/v1/sales/orders",
             "columns": [
                 {"key": "order_number", "label": "Order #", "sortable": True},
                 {"key": "customer_name", "label": "Customer", "sortable": True},
@@ -176,7 +176,7 @@ SALES_UI_PACKAGE = {
                  "options": ["pending", "confirmed", "processing", "shipped", "delivered", "completed", "cancelled"]},
                 {"field": "payment_status", "type": "select", "label": "Payment Status",
                  "options": ["unpaid", "partial", "paid", "refunded"]},
-                {"field": "customer_id", "type": "autocomplete", "label": "Customer", "data_source": "/api/v1/partners"},
+                {"field": "customer_id", "type": "autocomplete", "label": "Customer", "data_source": "/api/v1/sales/partners"},
                 {"field": "date_range", "type": "daterange", "label": "Order Date"}
             ],
             "pagination": True,
@@ -186,7 +186,7 @@ SALES_UI_PACKAGE = {
             "id": "pricing-rules-list",
             "title": "Pricing Rules",
             "entity": "pricing_rules",
-            "data_endpoint": "/api/v1/pricing/rules",
+            "data_endpoint": "/api/v1/sales/pricing/rules",
             "columns": [
                 {"key": "rule_name", "label": "Rule Name", "sortable": True},
                 {"key": "rule_type", "label": "Type", "format": "badge"},
@@ -217,12 +217,12 @@ SALES_UI_PACKAGE = {
             "title": "Quotation Details",
             "entity": "quote",
             "mode": "create",
-            "submit_endpoint": "/api/v1/quotes",
-            "data_endpoint": "/api/v1/quotes/{id}",
+            "submit_endpoint": "/api/v1/sales/quotes",
+            "data_endpoint": "/api/v1/sales/quotes/{id}",
             "fields": [
                 {"name": "title", "label": "Quotation Title", "type": "text", "required": True},
                 {"name": "customer_id", "label": "Customer", "type": "autocomplete", 
-                 "data_source": "/api/v1/partners?type=customer", "required": True},
+                 "data_source": "/api/v1/sales/partners?type=customer", "required": True},
                 {"name": "valid_until", "label": "Valid Until", "type": "date", "required": True},
                 {"name": "payment_terms_days", "label": "Payment Terms (days)", "type": "number", 
                  "min": 0, "max": 365, "default": 30},
@@ -232,7 +232,7 @@ SALES_UI_PACKAGE = {
                 {"name": "terms_and_conditions", "label": "Terms & Conditions", "type": "textarea"},
                 {"name": "line_items", "label": "Line Items", "type": "array",
                  "fields": [
-                    {"name": "product_id", "label": "Product", "type": "select", "data_source": "/api/v1/products"},
+                    {"name": "product_id", "label": "Product", "type": "select", "data_source": "/api/v1/sales/products"},
                     {"name": "quantity", "label": "Quantity", "type": "number", "min": 1},
                     {"name": "unit_price", "label": "Unit Price", "type": "number", "min": 0},
                     {"name": "discount_percentage", "label": "Discount %", "type": "number", "min": 0, "max": 100}
@@ -249,14 +249,14 @@ SALES_UI_PACKAGE = {
             "title": "Order Details",
             "entity": "order",
             "mode": "create",
-            "submit_endpoint": "/api/v1/orders",
-            "data_endpoint": "/api/v1/orders/{id}",
+            "submit_endpoint": "/api/v1/sales/orders",
+            "data_endpoint": "/api/v1/sales/orders/{id}",
             "fields": [
                 {"name": "title", "label": "Order Title", "type": "text", "required": True},
                 {"name": "customer_id", "label": "Customer", "type": "autocomplete",
-                 "data_source": "/api/v1/partners?type=customer", "required": True},
+                 "data_source": "/api/v1/sales/partners?type=customer", "required": True},
                 {"name": "quote_id", "label": "From Quotation", "type": "select",
-                 "data_source": "/api/v1/quotes?status=accepted"},
+                 "data_source": "/api/v1/sales/quotes?status=accepted"},
                 {"name": "required_date", "label": "Required Date", "type": "date"},
                 {"name": "priority", "label": "Priority", "type": "select",
                  "options": ["low", "normal", "high", "urgent"], "default": "normal"},
@@ -268,7 +268,7 @@ SALES_UI_PACKAGE = {
                 {"name": "shipping_address", "label": "Shipping Address", "type": "address"},
                 {"name": "line_items", "label": "Line Items", "type": "array",
                  "fields": [
-                    {"name": "product_id", "label": "Product", "type": "select", "data_source": "/api/v1/products"},
+                    {"name": "product_id", "label": "Product", "type": "select", "data_source": "/api/v1/sales/products"},
                     {"name": "quantity", "label": "Quantity", "type": "number", "min": 1},
                     {"name": "unit_price", "label": "Unit Price", "type": "number", "min": 0}
                  ]}
@@ -281,8 +281,8 @@ SALES_UI_PACKAGE = {
             "title": "Pricing Rule",
             "entity": "pricing_rule",
             "mode": "create",
-            "submit_endpoint": "/api/v1/pricing/rules",
-            "data_endpoint": "/api/v1/pricing/rules/{id}",
+            "submit_endpoint": "/api/v1/sales/pricing/rules",
+            "data_endpoint": "/api/v1/sales/pricing/rules/{id}",
             "fields": [
                 {"name": "rule_name", "label": "Rule Name", "type": "text", "required": True},
                 {"name": "rule_type", "label": "Rule Type", "type": "select",
@@ -297,9 +297,9 @@ SALES_UI_PACKAGE = {
                 {"name": "valid_from", "label": "Valid From", "type": "datetime"},
                 {"name": "valid_to", "label": "Valid To", "type": "datetime"},
                 {"name": "customer_ids", "label": "Specific Customers", "type": "multiselect",
-                 "data_source": "/api/v1/partners?type=customer"},
+                 "data_source": "/api/v1/sales/partners?type=customer"},
                 {"name": "product_ids", "label": "Specific Products", "type": "multiselect",
-                 "data_source": "/api/v1/products"},
+                 "data_source": "/api/v1/sales/products"},
                 {"name": "is_active", "label": "Active", "type": "boolean", "default": True}
             ],
             "layout": "single",
