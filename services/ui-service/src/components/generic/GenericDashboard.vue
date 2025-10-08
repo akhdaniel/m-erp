@@ -72,6 +72,7 @@ const getWidgetClass = (widget: DashboardWidgetType) => {
 }
 
 const loadDashboard = async () => {
+  console.log('loadDashboard....')
   loading.value = true
   error.value = null
   
