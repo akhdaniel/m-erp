@@ -8,6 +8,9 @@ import os
 from fastapi import APIRouter, Depends
 from typing import Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
+import logging
+
+logger = logging.getLogger('uvicorn')
 
 router = APIRouter(tags=["UI Schemas"])
 
@@ -27,6 +30,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
             
             if registry_response.status_code == 200:
                 ui_package = registry_response.json()
+                logger.info(f'ui_package={ui_package}')
                 
                 # Extract dashboard configuration from the UI package
                 if "components" in ui_package:
@@ -69,7 +73,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
                             "type": widget.get("type", "metric"),
                             "title": widget.get("title"),
                             "size": widget.get("size", "medium"),
-                            "data_endpoint": widget.get("data_endpoint"),
+                            "endpoint": widget.get("data_endpoint"),  # Using endpoint as per UI schema format
                             "refresh_interval": widget.get("refresh_interval", 60),
                             "config": widget.get("config", {}),
                             "span": 1,
