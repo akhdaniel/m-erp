@@ -235,10 +235,14 @@ async function fetchDashboardConfig() {
     } else {
       // First try to get from UI Registry
       const uiRegistryUrl = import.meta.env.VITE_UI_REGISTRY_API || '/api'
-      const registryEndpoint = `/api/v1/services/${currentService.value}/dashboard`
+      const registryEndpoint = `/api/v1/${currentService.value}/dashboard`
       const registryFullUrl = uiRegistryUrl && registryEndpoint.startsWith('/api/v1')
         ? `${uiRegistryUrl.replace(/\/api\/v1$/, '')}${registryEndpoint}`
         : `${uiRegistryUrl}${registryEndpoint}`
+
+
+      console.log('uiRegistryUrl====', uiRegistryUrl)
+      
       const registryResponse = await fetch(registryFullUrl)
       
       if (registryResponse.ok) {
