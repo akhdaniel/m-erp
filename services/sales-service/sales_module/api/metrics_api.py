@@ -89,8 +89,66 @@ async def get_quotes_metric(
         )
 
 
+@router.get("/quotes/analytics", response_model=Dict[str, Any])
+async def get_quotes_analytics(
+    dashboard_service: DashboardService = Depends(get_dashboard_service),
+    company_id: int = Depends(get_current_company_id)
+):
+    """Get active quotes metric for dashboard widget."""
+    try:
+        sales_metrics = await dashboard_service.get_sales_metrics(company_id)
+        
+        return {
+            "value": sales_metrics.get("active_quotes", 0),
+            "label": "Active Quotations",
+            "format": "number",
+            "subtitle": f"{sales_metrics.get('quotes_sent', 0)} sent this month",
+            "trend": {
+                "value": sales_metrics.get("quote_to_order_rate", 0),
+                "label": f"{sales_metrics.get('quote_to_order_rate', 0):.1f}% conversion rate"
+            },
+            "last_updated": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting quotes metric: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve quotes metric"
+        )
+
+
 @router.get("/orders", response_model=Dict[str, Any])
 async def get_orders_metric(
+    dashboard_service: DashboardService = Depends(get_dashboard_service),
+    company_id: int = Depends(get_current_company_id)
+):
+    """Get pending orders metric for dashboard widget."""
+    try:
+        sales_metrics = await dashboard_service.get_sales_metrics(company_id)
+        
+        return {
+            "value": sales_metrics.get("pending_orders", 0),
+            "label": "Pending Orders",
+            "format": "number",
+            "subtitle": f"{sales_metrics.get('orders_count', 0)} total this month",
+            "trend": {
+                "value": sales_metrics.get("average_order_value", 0),
+                "label": f"${sales_metrics.get('average_order_value', 0):,.2f} avg value"
+            },
+            "last_updated": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting orders metric: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve orders metric"
+        )
+
+
+@router.get("/orders/analytics", response_model=Dict[str, Any])
+async def get_orders_analytics(
     dashboard_service: DashboardService = Depends(get_dashboard_service),
     company_id: int = Depends(get_current_company_id)
 ):
