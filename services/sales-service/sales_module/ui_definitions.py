@@ -45,6 +45,7 @@ SALES_UI_PACKAGE = {
             "size": "small",
             "endpoint": "/api/v1/sales/orders/analytics/summary",
             "refresh_interval": 3600,
+            "valueField":"total_revenue",
             "config": {
                 "field": "current_month_revenue",
                 "format": "currency",
