@@ -30,6 +30,7 @@ SALES_UI_PACKAGE = {
             "size": "small",
             "endpoint": "/api/v1/sales/metrics/orders",
             "refresh_interval": 60,
+            "valueField":"total_revenue",
             "config": {
                 "field": "pending_orders",
                 "format": "number",
@@ -43,7 +44,7 @@ SALES_UI_PACKAGE = {
             "title": "Monthly Revenue",
             "type": "metric",
             "size": "small",
-            "endpoint": "/api/v1/sales/orders/analytics/summary",
+            "endpoint": "/api/v1/sales/metrics/orders",
             "refresh_interval": 3600,
             "valueField":"total_revenue",
             "config": {
@@ -58,7 +59,7 @@ SALES_UI_PACKAGE = {
             "title": "Quotation Conversion Rate",
             "type": "metric",
             "size": "small",
-            "endpoint": "/api/v1/sales/quotations/analytics",
+            "endpoint": "/api/v1/sales/metrics/quotes/analytics",
             "refresh_interval": 3600,
             "config": {
                 "field": "conversion_rate",
