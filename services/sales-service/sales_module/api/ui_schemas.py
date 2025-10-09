@@ -22,7 +22,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
     """Get dashboard configuration for sales module."""
     # Use the dashboard definition from UI definitions
     dashboard = SALES_UI_PACKAGE.get("dashboard", {})
-    widgets = SALES_UI_PACKAGE.get("widgets", [])
+    widgets   = SALES_UI_PACKAGE.get("widgets", [])
     
     # Convert widgets to dashboard schema format matching Sales convention
     widget_configs = []
@@ -124,6 +124,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
             
             widget_configs.append(widget_config)
     
+
     return {
         "title": dashboard.get("title", "Sales Dashboard"),
         "description": dashboard.get("description", "Overview of sales operations"),
@@ -133,7 +134,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
             "columns": 3,
             "rows": "auto"
         },
-        "widgets": widget_configs
+        "widgets": widgets
     }
 
 
