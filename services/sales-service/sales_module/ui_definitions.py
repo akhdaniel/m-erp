@@ -13,7 +13,7 @@ SALES_UI_PACKAGE = {
             "title": "Active Quotations",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/sales/quotes",
+            "data_endpoint": "/api/v1/sales/metrics/quotes",
             "refresh_interval": 300,
             "config": {
                 "field": "active_quotes",
@@ -28,7 +28,7 @@ SALES_UI_PACKAGE = {
             "title": "Pending Orders",
             "type": "metric", 
             "size": "small",
-            "data_endpoint": "/api/v1/sales/orders",
+            "data_endpoint": "/api/v1/sales/metrics/orders",
             "refresh_interval": 60,
             "config": {
                 "field": "pending_orders",
