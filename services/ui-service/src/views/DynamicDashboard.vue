@@ -220,19 +220,7 @@ const serviceUrls: Record<string, string> = {
 // Fetch dashboard configuration from service
 async function fetchDashboardConfig() {
   try {
-    // For inventory service, use the direct service endpoint
-    if (currentService.value === 'inventory') {
-      const serviceUrl = import.meta.env.VITE_INVENTORY_API || 'http://inventory-service:8005'
-      const dashboardEndpoint = '/api/v1/ui-schemas/inventory/dashboard'
-      const dashboardFullUrl = `${serviceUrl}${dashboardEndpoint}`
-      
-      const response = await fetch(dashboardFullUrl)
-      if (response.ok) {
-        dashboardConfig.value = await response.json()
-      } else {
-        throw new Error(`Dashboard configuration not found: ${response.status}`)
-      }
-    } else {
+
       // First try to get from UI Registry
       const uiRegistryUrl = import.meta.env.VITE_UI_REGISTRY_API || '/api'
       const registryEndpoint = `/api/v1/${currentService.value}/dashboard`
@@ -269,7 +257,7 @@ async function fetchDashboardConfig() {
           }
         }
       }
-    }
+    
   } catch (err: any) {
     error.value = err.message || 'Failed to load dashboard configuration'
     console.error('Error loading dashboard config:', err)
