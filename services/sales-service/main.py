@@ -111,6 +111,7 @@ async def startup_event():
         # Continue startup even if menu registration fails
     
     # Register UI components with UI Registry
+    '''
     try:
         from shared.ui_registration_client import register_service_ui
         import httpx
@@ -123,6 +124,7 @@ async def startup_event():
     except Exception as e:
         logger.error(f"Failed to register UI components: {e}")
         # Continue startup even if UI registration fails
+    '''
     
     # Register dashboard in background after service is fully started
     async def register_dashboard_delayed():
