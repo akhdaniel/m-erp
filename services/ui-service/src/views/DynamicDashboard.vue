@@ -62,7 +62,6 @@
             <div v-if="widget.type === 'metric'">
               <div v-if="widgetData[widget.id]">
                 <div class="text-3xl font-bold">
-                  format={{widget.format}}
                   {{ formatValue(widgetData[widget.id].value, widget.format) }}
                 </div>
                 <div v-if="widgetData[widget.id].change" class="mt-2 flex items-center text-sm">
