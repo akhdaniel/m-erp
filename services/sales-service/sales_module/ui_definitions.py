@@ -57,7 +57,7 @@ SALES_UI_PACKAGE = {
             "title": "Quotation Conversion Rate",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/sales/quotes/analytics",
+            "data_endpoint": "/api/v1/sales/quotations/analytics",
             "refresh_interval": 3600,
             "config": {
                 "field": "conversion_rate",
@@ -111,7 +111,7 @@ SALES_UI_PACKAGE = {
             "title": "Sales Pipeline",
             "type": "chart",
             "size": "medium",
-            "data_endpoint": "/api/v1/sales/quotes/pipeline",
+            "data_endpoint": "/api/v1/sales/quotations/pipeline",
             "refresh_interval": 600,
             "config": {
                 "chart_type": "funnel",
