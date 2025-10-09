@@ -46,12 +46,13 @@
         <div v-for="widget in dashboardConfig.widgets" 
              :key="widget.id"
              :class="getWidgetClass(widget)"
+             :style="getWidgetStyle(widget)"
              class="glass-card">
           
           <!-- Widget Header -->
-          <div v-if="widget.title || widget.icon" class="px-6 py-4 border-b border-gray-200/20">
+          <div v-if="widget.title || widget.config.icon" class="px-6 py-4 border-b border-gray-200/20">
             <div class="flex items-center">
-              <component v-if="widget.icon" :is="getIcon(widget.icon)" class="h-5 w-5 mr-2" />
+              <component v-if="widget.config.icon" :is="getIcon(widget.config.icon)" class="h-5 w-5 mr-2" />
               <h3 class="text-lg font-medium">{{ widget.title }}</h3>
             </div>
           </div>
@@ -394,7 +395,14 @@ function getGridClass(layout?: any): string {
 function getWidgetClass(widget: any): string {
   const span = widget.span || 1
   const height = widget.height ? `h-${widget.height}` : ''
+  const color = widget.config.color
+  const icon = widget.config.icon
   return `col-span-1 lg:col-span-${span} ${height}`
+}
+// Get widget style based on span configuration
+function getWidgetStyle(widget: any): string {
+  const color = widget.config.color
+  return `background-color: ${color}`
 }
 
 // Get icon component (would need icon library integration)
