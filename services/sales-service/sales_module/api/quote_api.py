@@ -12,7 +12,7 @@ from datetime import datetime, date
 import logging
 import sys
 
-from sales_module.services.quote_service import QuotationService
+from sales_module.services.quotation_service import QuotationService
 from sales_module.framework.database import get_db_session
 from sqlalchemy.orm import Session
 from sales_module.schemas.quote_schemas import (
@@ -80,7 +80,7 @@ async def create_quotation(
         line_items_list = line_items if isinstance(line_items, list) else None
         
         # Create quote using service (mock for now)
-        # quote = quote_service.create_quote(
+        # quote = quotation_service.create_quote(
         #     quote_data=quote_dict_input,
         #     line_items=line_items_list,
         #     user_id=user_id,
@@ -264,7 +264,7 @@ async def get_analytics(
         if date_to:
             date_range['to'] = datetime.strptime(date_to, "%Y-%m-%d")
         
-        analytics = quote_service.get_quote_analytics(
+        analytics = quotation_service.get_quote_analytics(
             company_id=company_id,
             date_range=date_range if date_range else None
         )
@@ -288,7 +288,7 @@ async def get_quote_stats(
     """
     try:
         # Get comprehensive quote analytics
-        analytics = quote_service.get_quote_analytics(company_id=company_id)
+        analytics = quotation_service.get_quote_analytics(company_id=company_id)
         
         # Return focused stats for dashboard widgets
         stats = {
@@ -327,7 +327,7 @@ async def get_quote_pipeline(
     formatted for pipeline/funnel charts.
     """
     try:
-        analytics = quote_service.get_quote_analytics(company_id=company_id)
+        analytics = quotation_service.get_quote_analytics(company_id=company_id)
         
         # Create pipeline stages data
         pipeline_data = [
@@ -662,7 +662,7 @@ async def delete_quote(
     Marks quote as inactive while preserving data for audit trail.
     """
     try:
-        quote = quote_service.get_by_id(quote_id, company_id)
+        quote = quotation_service.get_by_id(quote_id, company_id)
         if not quote:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -676,7 +676,7 @@ async def delete_quote(
                 detail="Cannot delete quote that has been sent or accepted"
             )
         
-        success = quote_service.delete(quote_id, user_id, company_id)
+        success = quotation_service.delete(quote_id, user_id, company_id)
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -713,7 +713,7 @@ async def add_line_item(
         item_dict = line_item_data.model_dump()
         
         # Add line item using service
-        line_item = quote_service.add_line_item(
+        line_item = quotation_service.add_line_item(
             quote_id=quote_id,
             line_item_data=item_dict,
             user_id=user_id,
@@ -761,7 +761,7 @@ async def update_line_item(
         discount_percentage = line_item_data.discount_percentage if line_item_data.discount_percentage else None
         
         if new_unit_price:
-            line_item = quote_service.update_line_item_pricing(
+            line_item = quotation_service.update_line_item_pricing(
                 line_item_id=line_item_id,
                 new_unit_price=new_unit_price,
                 discount_percentage=discount_percentage,
@@ -842,7 +842,7 @@ async def apply_discount(
     Applies percentage discount to entire quote and recalculates totals.
     """
     try:
-        quote = quote_service.apply_overall_discount(
+        quote = quotation_service.apply_overall_discount(
             quote_id=quote_id,
             discount_percentage=discount_request.discount_percentage,
             user_id=user_id,
@@ -884,7 +884,7 @@ async def send_quote(
     Sends quote via email and updates status to sent.
     """
     try:
-        quote = quote_service.send_quote_to_customer(
+        quote = quotation_service.send_quote_to_customer(
             quote_id=quote_id,
             email_template=send_request.email_template if send_request else None,
             user_id=user_id,
@@ -926,7 +926,7 @@ async def create_version(
     Creates snapshot version for revision tracking.
     """
     try:
-        version = quote_service.create_quote_version(
+        version = quotation_service.create_quote_version(
             quote_id=quote_id,
             reason=version_request.reason if version_request else None,
             user_id=user_id,
@@ -963,7 +963,7 @@ async def convert_to_order(
     Converts accepted quote to sales order and updates status.
     """
     try:
-        result = quote_service.convert_quote_to_order(
+        result = quotation_service.convert_quote_to_order(
             quote_id=quote_id,
             order_data=conversion_request.order_data if conversion_request else None,
             user_id=user_id,
@@ -994,7 +994,7 @@ async def extend_validity(
     Extends quote validity by specified number of days.
     """
     try:
-        quote = quote_service.extend_quote_validity(
+        quote = quotation_service.extend_quote_validity(
             quote_id=quote_id,
             additional_days=extension_request.additional_days,
             user_id=user_id,
@@ -1032,7 +1032,7 @@ async def request_approval(
     Creates approval request for quote with specified level and urgency.
     """
     try:
-        approval = quote_service.request_quote_approval(
+        approval = quotation_service.request_quote_approval(
             quote_id=quote_id,
             approval_level=approval_request.approval_level if approval_request else 1,
             request_reason=approval_request.request_reason if approval_request else None,
@@ -1072,14 +1072,14 @@ async def approval_action(
     """
     try:
         if action_request.action == "approve":
-            approval = quote_service.approve_quote(
+            approval = quotation_service.approve_quote(
                 approval_id=approval_id,
                 approver_notes=action_request.notes,
                 user_id=user_id,
                 company_id=company_id
             )
         elif action_request.action == "reject":
-            approval = quote_service.reject_quote_approval(
+            approval = quotation_service.reject_quote_approval(
                 approval_id=approval_id,
                 rejection_reason=action_request.notes or "No reason provided",
                 user_id=user_id,
@@ -1091,7 +1091,7 @@ async def approval_action(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="escalate_to_user_id required for escalation"
                 )
-            approval = quote_service.escalate_approval(
+            approval = quotation_service.escalate_approval(
                 approval_id=approval_id,
                 escalation_reason=action_request.notes or "Escalated",
                 escalate_to_user_id=action_request.escalate_to_user_id,
@@ -1139,7 +1139,7 @@ async def get_pending_approvals(
     Returns list of approval requests awaiting action from current user.
     """
     try:
-        approvals = quote_service.get_pending_approvals(user_id, company_id)
+        approvals = quotation_service.get_pending_approvals(user_id, company_id)
         
         return PendingApprovalsResponse(
             approvals=approvals,
@@ -1167,7 +1167,7 @@ async def validate_inventory(
     Checks inventory availability for all quote line items.
     """
     try:
-        result = quote_service.validate_quote_inventory(quote_id, company_id)
+        result = quotation_service.validate_quote_inventory(quote_id, company_id)
         return InventoryValidationResponse(**result)
         
     except Exception as e:
@@ -1191,7 +1191,7 @@ async def reserve_inventory(
     Creates temporary inventory reservations for quote line items.
     """
     try:
-        result = quote_service.reserve_quote_inventory(
+        result = quotation_service.reserve_quote_inventory(
             quote_id=quote_id,
             company_id=company_id,
             expiry_hours=expiry_hours
