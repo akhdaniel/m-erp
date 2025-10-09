@@ -28,6 +28,7 @@ async def get_dashboard_schema() -> Dict[str, Any]:
     widget_configs = []
     
     # If we have a "metrics" widget, expand it into individual metric widgets
+    '''
     for widget in widgets:
         if widget["type"] == "metric" and "metrics" in widget["id"]:
             # Create individual metric widgets like Sales/Inventory do
@@ -124,7 +125,8 @@ async def get_dashboard_schema() -> Dict[str, Any]:
             
             widget_configs.append(widget_config)
     
-
+    '''
+    
     return {
         "title": dashboard.get("title", "Sales Dashboard"),
         "description": dashboard.get("description", "Overview of sales operations"),
