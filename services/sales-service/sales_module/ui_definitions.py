@@ -13,7 +13,7 @@ SALES_UI_PACKAGE = {
             "title": "Active Quotations",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/sales/metrics/quotes",
+            "endpoint": "/api/v1/sales/metrics/quotes",
             "refresh_interval": 300,
             "config": {
                 "field": "active_quotes",
@@ -28,7 +28,7 @@ SALES_UI_PACKAGE = {
             "title": "Pending Orders",
             "type": "metric", 
             "size": "small",
-            "data_endpoint": "/api/v1/sales/metrics/orders",
+            "endpoint": "/api/v1/sales/metrics/orders",
             "refresh_interval": 60,
             "config": {
                 "field": "pending_orders",
@@ -43,7 +43,7 @@ SALES_UI_PACKAGE = {
             "title": "Monthly Revenue",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/sales/orders/analytics/summary",
+            "endpoint": "/api/v1/sales/orders/analytics/summary",
             "refresh_interval": 3600,
             "config": {
                 "field": "current_month_revenue",
@@ -57,7 +57,7 @@ SALES_UI_PACKAGE = {
             "title": "Quotation Conversion Rate",
             "type": "metric",
             "size": "small",
-            "data_endpoint": "/api/v1/sales/quotations/analytics",
+            "endpoint": "/api/v1/sales/quotations/analytics",
             "refresh_interval": 3600,
             "config": {
                 "field": "conversion_rate",
@@ -71,7 +71,7 @@ SALES_UI_PACKAGE = {
             "title": "Recent Orders",
             "type": "list",
             "size": "large",
-            "data_endpoint": "/api/v1/sales/orders?limit=10",
+            "endpoint": "/api/v1/sales/orders?limit=10",
             "refresh_interval": 60,
             "config": {
                 "limit": 10,
@@ -84,7 +84,7 @@ SALES_UI_PACKAGE = {
             "title": "Revenue Trend",
             "type": "chart",
             "size": "medium",
-            "data_endpoint": "/api/v1/sales/orders/analytics/revenue-trend",
+            "endpoint": "/api/v1/sales/orders/analytics/revenue-trend",
             "refresh_interval": 3600,
             "config": {
                 "chart_type": "line",
@@ -98,7 +98,7 @@ SALES_UI_PACKAGE = {
             "title": "Top Customers",
             "type": "table",
             "size": "medium",
-            "data_endpoint": "/api/v1/sales/orders/analytics/top-customers",
+            "endpoint": "/api/v1/sales/orders/analytics/top-customers",
             "refresh_interval": 3600,
             "config": {
                 "columns": ["customer_name", "order_count", "total_revenue", "average_order"],
@@ -111,7 +111,7 @@ SALES_UI_PACKAGE = {
             "title": "Sales Pipeline",
             "type": "chart",
             "size": "medium",
-            "data_endpoint": "/api/v1/sales/quotations/pipeline",
+            "endpoint": "/api/v1/sales/quotations/pipeline",
             "refresh_interval": 600,
             "config": {
                 "chart_type": "funnel",
@@ -124,7 +124,7 @@ SALES_UI_PACKAGE = {
             "id": "quotes-list",
             "title": "Quotations",
             "entity": "quotes",
-            "data_endpoint": "/api/v1/sales/quotes",
+            "endpoint": "/api/v1/sales/quotes",
             "columns": [
                 {"key": "quote_number", "label": "Quotation #", "sortable": True},
                 {"key": "title", "label": "Title", "sortable": True},
@@ -154,7 +154,7 @@ SALES_UI_PACKAGE = {
             "id": "orders-list",
             "title": "Orders",
             "entity": "orders",
-            "data_endpoint": "/api/v1/sales/orders",
+            "endpoint": "/api/v1/sales/orders",
             "columns": [
                 {"key": "order_number", "label": "Order #", "sortable": True},
                 {"key": "customer_name", "label": "Customer", "sortable": True},
@@ -186,7 +186,7 @@ SALES_UI_PACKAGE = {
             "id": "pricing-rules-list",
             "title": "Pricing Rules",
             "entity": "pricing_rules",
-            "data_endpoint": "/api/v1/sales/pricing/rules",
+            "endpoint": "/api/v1/sales/pricing/rules",
             "columns": [
                 {"key": "rule_name", "label": "Rule Name", "sortable": True},
                 {"key": "rule_type", "label": "Type", "format": "badge"},
@@ -218,7 +218,7 @@ SALES_UI_PACKAGE = {
             "entity": "quote",
             "mode": "create",
             "submit_endpoint": "/api/v1/sales/quotes",
-            "data_endpoint": "/api/v1/sales/quotes/{id}",
+            "endpoint": "/api/v1/sales/quotes/{id}",
             "fields": [
                 {"name": "title", "label": "Quotation Title", "type": "text", "required": True},
                 {"name": "customer_id", "label": "Customer", "type": "autocomplete", 
@@ -250,7 +250,7 @@ SALES_UI_PACKAGE = {
             "entity": "order",
             "mode": "create",
             "submit_endpoint": "/api/v1/sales/orders",
-            "data_endpoint": "/api/v1/sales/orders/{id}",
+            "endpoint": "/api/v1/sales/orders/{id}",
             "fields": [
                 {"name": "title", "label": "Order Title", "type": "text", "required": True},
                 {"name": "customer_id", "label": "Customer", "type": "autocomplete",
@@ -282,7 +282,7 @@ SALES_UI_PACKAGE = {
             "entity": "pricing_rule",
             "mode": "create",
             "submit_endpoint": "/api/v1/sales/pricing/rules",
-            "data_endpoint": "/api/v1/sales/pricing/rules/{id}",
+            "endpoint": "/api/v1/sales/pricing/rules/{id}",
             "fields": [
                 {"name": "rule_name", "label": "Rule Name", "type": "text", "required": True},
                 {"name": "rule_type", "label": "Rule Type", "type": "select",
