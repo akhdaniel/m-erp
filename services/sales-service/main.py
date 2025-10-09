@@ -124,7 +124,7 @@ async def startup_event():
     except Exception as e:
         logger.error(f"Failed to register UI components: {e}")
         # Continue startup even if UI registration fails
-    '''
+    
     
     # Register dashboard in background after service is fully started
     async def register_dashboard_delayed():
@@ -156,7 +156,7 @@ async def startup_event():
     
     # Run dashboard registration in background
     asyncio.create_task(register_dashboard_delayed())
-    
+    '''
     logger.info("Sales service started successfully")
 
 # Global exception handler
