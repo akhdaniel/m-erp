@@ -52,7 +52,7 @@
           <!-- Widget Header -->
           <div v-if="widget.title || getWidgetIcon(widget)" class="px-6 py-4 border-b border-gray-200/20" :style="getWidgetHeaderStyle(widget)">
             <div class="flex items-center">
-              <svg v-if="getWidgetIcon(widget)" :class="['h-5 w-5 mr-2', getIconClass(getWidgetIcon(widget))]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg v-if="getWidgetIcon(widget)" :class="['h-6 w-6 mr-2', getFontColorClass(widget)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getIconPath(getWidgetIcon(widget))" />
               </svg>
               <h3 :class="['text-lg font-medium', getFontColorClass(widget)]">{{ widget.title }}</h3>
