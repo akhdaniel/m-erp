@@ -577,8 +577,12 @@ function getTextColorForBackground(bgColor: string): string {
     }
   } 
   // Handle rgb color
-  else if (colorToUse.startsWith('rgb(')) {
     const match = colorToUse.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
+    }  else if (colorToUse.startsWith('rgb(')) {
     if (match) {
       r = parseInt(match[1]);
       g = parseInt(match[2]);
@@ -587,7 +591,6 @@ function getTextColorForBackground(bgColor: string): string {
   }
   // Handle rgba color
   else if (colorToUse.startsWith('rgba(')) {
-    const match = colorToUse.match(/rgba\((\d+),\s*(\d+),\s*(\d+),?\s*[\d.]*\)/);
     if (match) {
       r = parseInt(match[1]);
       g = parseInt(match[2]);
@@ -637,8 +640,12 @@ function adjustColor(color: string, percent: number): string {
     }
   } 
   // Handle rgb color
-  else if (colorToUse.startsWith('rgb(')) {
     const match = colorToUse.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
+    }  else if (colorToUse.startsWith('rgb(')) {
     if (match) {
       r = parseInt(match[1]);
       g = parseInt(match[2]);
@@ -647,7 +654,6 @@ function adjustColor(color: string, percent: number): string {
   }
   // Handle rgba color
   else if (colorToUse.startsWith('rgba(')) {
-    const match = colorToUse.match(/rgba\((\d+),\s*(\d+),\s*(\d+),?\s*[\d.]*\)/);
     if (match) {
       r = parseInt(match[1]);
       g = parseInt(match[2]);
@@ -1045,6 +1051,109 @@ function getFunnelColor(index: number): string {
     '#EC4899'  // pink-500
   ];
   return colors[index % colors.length];
+}
+
+// Helper function to automatically generate table columns from widget data
+function generateTableColumnsFromData(data: any, widget: any): any[] {
+  // Check if widget already has predefined columns
+  if (widget.columns && widget.columns.length > 0) {
+    return widget.columns;
+  }
+  
+  // Extract data rows - handle different data formats
+  let rows = [];
+  if (Array.isArray(data)) {
+    // Direct array format
+    rows = data;
+  } else if (data && typeof data === 'object') {
+    // Object with data property
+    if (data.data) {
+      rows = Array.isArray(data.data) ? data.data : [];
+    } else if (data.rows) {
+      rows = Array.isArray(data.rows) ? data.rows : [];
+    } else if (data.items) {
+      rows = Array.isArray(data.items) ? data.items : [];
+    } else {
+      // Try to convert object to array
+      rows = [data];
+    }
+  }
+  
+  // If no data, return empty array
+  if (!rows || rows.length === 0) {
+    return [];
+  }
+  
+  // Get all unique keys from the data rows
+  const allKeys = new Set<string>();
+  rows.forEach((row: any) => {
+    if (row && typeof row === 'object') {
+      Object.keys(row).forEach(key => {
+        // Skip internal/metadata fields
+        if (!key.startsWith('_') && key !== 'id' && key !== 'created_at' && key !== 'updated_at') {
+          allKeys.add(key);
+        }
+      });
+    }
+  });
+  
+  // Convert keys to column definitions
+  const columns = Array.from(allKeys).map((key: string) => {
+    // Generate human-readable label from key
+    const label = key
+      .replace(/_/g, ' ')
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+    
+    // Determine column type based on data samples
+    let columnType = 'text';
+    let formatter = undefined;
+    
+    // Sample a few rows to determine type
+    const sampleValues = rows.slice(0, 5).map((row: any) => row[key]).filter((val: any) => val !== undefined && val !== null);
+    if (sampleValues.length > 0) {
+      const firstValue = sampleValues[0];
+      
+      if (typeof firstValue === 'number') {
+        // Check if it looks like currency or percentage
+        if (key.includes('amount') || key.includes('price') || key.includes('total') || key.includes('cost')) {
+          columnType = 'currency';
+          formatter = 'currency';
+        } else if (key.includes('percent') || key.includes('rate')) {
+          columnType = 'percentage';
+          formatter = 'percentage';
+        } else {
+          columnType = 'number';
+          formatter = 'number';
+        }
+      } else if (typeof firstValue === 'boolean') {
+        columnType = 'boolean';
+        formatter = 'boolean';
+      } else if (typeof firstValue === 'string') {
+        // Check if it looks like a date
+        if (key.includes('date') || key.includes('time')) {
+          const dateRegex = /^\d{4}-\d{2}-\d{2}/;
+          if (dateRegex.test(firstValue)) {
+            columnType = 'date';
+            formatter = 'date';
+          }
+        }
+      }
+    }
+    
+    return {
+      field: key,
+      label: label,
+      type: columnType,
+      formatter: formatter,
+      sortable: true,
+      visible: true
+    };
+  });
+  
+  // Limit to reasonable number of columns (max 10)
+  return columns.slice(0, 10);
 }
 </script>
 
