@@ -1056,8 +1056,8 @@ function getFunnelColor(index: number): string {
 // Helper function to automatically generate table columns from widget data
 function generateTableColumnsFromData(data: any, widget: any): any[] {
   // Check if widget already has predefined columns
-  if (widget.columns && widget.columns.length > 0) {
-    return widget.columns;
+  if (widget.config.columns && widget.config.columns.length > 0) {
+    return widget.config.columns;
   }
   
   // Extract data rows - handle different data formats
