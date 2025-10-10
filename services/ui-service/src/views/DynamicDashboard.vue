@@ -81,11 +81,132 @@
             <!-- Chart Widget -->
             <div v-else-if="widget.type === 'chart'">
               <div v-if="widgetData[widget.id]" class="h-64">
-                <!-- Chart would be rendered here using a charting library -->
-                <div :class="['flex items-center justify-center h-full', getFontColorClass(widget)]">
-                  <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+                <!-- Render chart based on chart type -->
+                <div v-if="widget.config?.chart_type === 'line'" class="h-full p-4">
+                  <!-- Line Chart -->
+                  Line Chart
+                  <div class="w-full h-full flex items-center justify-center">
+                    <svg class="w-full h-full" viewBox="0 0 400 300">
+                      <rect width="100%" height="100%" fill="transparent"/>
+                      <!-- Axes -->
+                      <line x1="40" y1="260" x2="360" y2="260" stroke="#ccc" stroke-width="1"/>
+                      <line x1="40" y1="40" x2="40" y2="260" stroke="#ccc" stroke-width="1"/>
+                      <!-- Line based on actual data -->
+                      <polyline 
+                        v-if="getChartData(widgetData[widget.id], widget).length > 0"
+                        fill="none" 
+                        :stroke="getChartColor(widget)" 
+                        stroke-width="2" 
+                        :points="generateLineChartPoints(getChartData(widgetData[widget.id], widget))"
+                      />
+                      <!-- Data points -->
+                      <circle 
+                        v-for="(item, index) in getChartData(widgetData[widget.id], widget)" 
+                        :key="index"
+                        :cx="getLineChartPointX(index, getChartData(widgetData[widget.id], widget))"
+                        :cy="getLineChartPointY(item.value, getChartData(widgetData[widget.id], widget))"
+                        r="4" 
+                        :fill="getChartColor(widget)"
+                      />
+                      <!-- No data message -->
+                      <text 
+                        v-if="getChartData(widgetData[widget.id], widget).length === 0"
+                        x="200" 
+                        y="150" 
+                        text-anchor="middle" 
+                        :fill="getFontColorClass(widget).includes('text-white') ? '#FFFFFF' : '#000000'">
+                        No data available
+                      </text>
+                    </svg>
+                  </div>
+                </div>
+                <div v-else-if="widget.config?.chart_type === 'bar'" class="h-full p-4">
+                  <!-- Bar Chart -->
+                  <div class="w-full h-full flex items-center justify-center">
+                    <svg class="w-full h-full" viewBox="0 0 400 300">
+                      <rect width="100%" height="100%" fill="transparent"/>
+                      <!-- Axes -->
+                      <line x1="40" y1="260" x2="360" y2="260" stroke="#ccc" stroke-width="1"/>
+                      <line x1="40" y1="40" x2="40" y2="260" stroke="#ccc" stroke-width="1"/>
+                      <!-- Bars based on actual data -->
+                      <g v-if="getChartData(widgetData[widget.id], widget).length > 0">
+                        <rect 
+                          v-for="(item, index) in getChartData(widgetData[widget.id], widget)" 
+                          :key="index"
+                          :x="getBarChartX(index, getChartData(widgetData[widget.id], widget))"
+                          :y="getBarChartY(item.value, getChartData(widgetData[widget.id], widget))"
+                          :width="getBarWidth(getChartData(widgetData[widget.id], widget))"
+                          :height="getBarHeight(item.value, getChartData(widgetData[widget.id], widget))"
+                          :fill="getChartColor(widget)"
+                        />
+                      </g>
+                      <!-- No data message -->
+                      <text 
+                        v-if="getChartData(widgetData[widget.id], widget).length === 0"
+                        x="200" 
+                        y="150" 
+                        text-anchor="middle" 
+                        :fill="getFontColorClass(widget).includes('text-white') ? '#FFFFFF' : '#000000'">
+                        No data available
+                      </text>
+                    </svg>
+                  </div>
+                </div>
+                <div v-else-if="widget.config?.chart_type === 'pie'" class="h-full p-4">
+                  <!-- Pie Chart -->
+                  <div class="w-full h-full flex items-center justify-center">
+                    <svg class="w-full h-full" viewBox="0 0 300 300">
+                      <circle cx="150" cy="150" r="100" fill="transparent" stroke="#eee" stroke-width="1"/>
+                      <!-- Pie slices based on actual data -->
+                      <g v-if="getChartData(widgetData[widget.id], widget).length > 0">
+                        <path 
+                          v-for="(slice, index) in getPieSlicePaths(getChartData(widgetData[widget.id], widget), 150, 150, 100)" 
+                          :key="index"
+                          :d="slice.path"
+                          :fill="slice.color"
+                        />
+                      </g>
+                      <!-- No data message -->
+                      <text 
+                        v-if="getChartData(widgetData[widget.id], widget).length === 0"
+                        x="150" 
+                        y="150" 
+                        text-anchor="middle" 
+                        :fill="getFontColorClass(widget).includes('text-white') ? '#FFFFFF' : '#000000'">
+                        No data available
+                      </text>
+                    </svg>
+                  </div>
+                </div>
+                <div v-else-if="widget.config?.chart_type === 'funnel'" class="h-full flex items-center justify-center">
+                  <!-- Funnel Chart -->
+                  <div class="w-full h-full flex flex-col items-center justify-center">
+                    <div 
+                      v-for="(stage, index) in getFunnelData(widgetData[widget.id], widget)" 
+                      :key="index"
+                      :class="['w-full my-1 rounded', getFontColorClass(widget)]"
+                      :style="{ 
+                        height: `${stage.percentage}%`, 
+                        backgroundColor: getFunnelColor(index),
+                        width: `${100 - (index * 10)}%`,
+                        margin: '0 auto'
+                      }"
+                    >
+                      <div class="flex justify-between px-2 py-1 text-xs items-center">
+                        <span>{{ stage.label }}</span>
+                        <span>{{ stage.value }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="h-full flex items-center justify-center">
+                  <!-- Default chart visualization -->
+                  <div :class="['text-center', getFontColorClass(widget)]">
+                    <svg class="h-12 w-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <p class="mt-2">Unsupported chart type</p>
+                  </div>
                 </div>
               </div>
               <div v-else class="animate-pulse h-64">
