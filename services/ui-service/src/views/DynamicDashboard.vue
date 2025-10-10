@@ -248,7 +248,7 @@
                     <tr>
                       <th v-for="column in widget.config.columns" :key="column.field" 
                           :class="['px-3 py-2 text-left text-xs font-medium uppercase tracking-wider', getFontColorClass(widget)]">
-                        {{ column }}
+                        {{ column.label }}
                       </th>
                     </tr>
                   </thead>
