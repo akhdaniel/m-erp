@@ -30,7 +30,7 @@
             </svg>
           </div>
           <div class="ml-3">
-            <h3 class="text-sm font-medium text-red-800">Error loading dashboard</h3>
+            <div class="text-h3 font-medium text-red-800">Error loading dashboard</div>
             <div class="mt-2 text-sm">
               <p class="text-red-700">{{ error }}</p>
             </div>
@@ -54,7 +54,7 @@
               <svg v-if="getWidgetIcon(widget)" :class="['h-6 w-6 mr-2', getFontColorClass(widget)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getIconPath(getWidgetIcon(widget))" />
               </svg>
-              <h3 :class="['text-lg font-medium', getFontColorClass(widget)]">{{ widget.title }}</h3>
+              <div :class="['text-h3 text-lg font-medium', getFontColorClass(widget)]">{{ widget.title }}</div>
             </div>
           </div>
           
