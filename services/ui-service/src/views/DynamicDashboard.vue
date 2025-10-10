@@ -6,6 +6,7 @@
         <h1 class="text-2xl font-bold">{{ dashboardConfig.title }}</h1>
         <p v-if="dashboardConfig.description" class="mt-2 text-sm">
           {{ dashboardConfig.description }}
+          description
         </p>
       </div>
 
@@ -29,7 +30,7 @@
             </svg>
           </div>
           <div class="ml-3">
-            <h3 class="text-sm font-medium text-red-800">Error loading dashboard</h3>
+            <div class="text-h3 font-medium text-red-800">Error loading dashboard</div>
             <div class="mt-2 text-sm">
               <p class="text-red-700">{{ error }}</p>
             </div>
@@ -48,22 +49,12 @@
              class="glass-card rounded-lg shadow">
           
           <!-- Widget Header -->
-          <div v-if="widget.title || getWidgetIcon(widget)" 
-               :style="getWidgetHeaderStyle(widget)"
-               class="px-6 py-4 border-b border-gray-200/20">
+          <div v-if="widget.title || getWidgetIcon(widget)" class="px-6 py-4 border-b border-gray-200/20" :style="getWidgetHeaderStyle(widget)">
             <div class="flex items-center">
-              <svg v-if="getWidgetIcon(widget)" 
-                   :class="['h-6 w-6 mr-2', getFontColorClass(widget)]" 
-                   fill="none" 
-                   stroke="currentColor" 
-                   viewBox="0 0 24 24" 
-                   aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      :d="getIconPath(getWidgetIcon(widget))" />
+              <svg v-if="getWidgetIcon(widget)" :class="['h-6 w-6 mr-2', getFontColorClass(widget)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getIconPath(getWidgetIcon(widget))" />
               </svg>
-              <h3 :class="['text-lg font-medium', getFontColorClass(widget)]">
-                {{ widget.title }}
-              </h3>
+              <div :class="['text-h3 text-lg font-medium', getFontColorClass(widget)]">{{ widget.title }}</div>
             </div>
           </div>
           
@@ -75,8 +66,7 @@
                 <div :class="['text-3xl font-bold', getFontColorClass(widget)]">
                   {{ formatValue(widgetData[widget.id].value, widget.format) }}
                 </div>
-                <div v-if="widgetData[widget.id].change" 
-                     :class="['mt-2 flex items-center text-sm', getFontColorClass(widget)]">
+                <div v-if="widgetData[widget.id].change" :class="['mt-2 flex items-center text-sm', getFontColorClass(widget)]">
                   <span :class="widgetData[widget.id].change > 0 ? 'text-green-600' : 'text-red-600'">
                     {{ widgetData[widget.id].change > 0 ? '+' : '' }}{{ widgetData[widget.id].change }}%
                   </span>
@@ -91,131 +81,11 @@
             <!-- Chart Widget -->
             <div v-else-if="widget.type === 'chart'">
               <div v-if="widgetData[widget.id]" class="h-64">
-                <!-- Render chart based on chart type -->
-                <div v-if="widget.config?.chart_type === 'line'" class="h-full p-4">
-                  <!-- Line Chart -->
-                  <div class="w-full h-full flex items-center justify-center">
-                    <svg class="w-full h-full" viewBox="0 0 400 300">
-                      <rect width="100%" height="100%" fill="transparent"/>
-                      <!-- Axes -->
-                      <line x1="40" y1="260" x2="360" y2="260" stroke="#ccc" stroke-width="1"/>
-                      <line x1="40" y1="40" x2="40" y2="260" stroke="#ccc" stroke-width="1"/>
-                      <!-- Line based on actual data -->
-                      <polyline 
-                        v-if="getChartData(widgetData[widget.id], widget).length > 0"
-                        fill="none" 
-                        :stroke="getChartColor(widget)" 
-                        stroke-width="2" 
-                        :points="generateLineChartPoints(getChartData(widgetData[widget.id], widget))"
-                      />
-                      <!-- Data points -->
-                      <circle 
-                        v-for="(item, index) in getChartData(widgetData[widget.id], widget)" 
-                        :key="index"
-                        :cx="getLineChartPointX(index, getChartData(widgetData[widget.id], widget))"
-                        :cy="getLineChartPointY(item.value, getChartData(widgetData[widget.id], widget))"
-                        r="4" 
-                        :fill="getChartColor(widget)"
-                      />
-                      <!-- No data message -->
-                      <text 
-                        v-if="getChartData(widgetData[widget.id], widget).length === 0"
-                        x="200" 
-                        y="150" 
-                        text-anchor="middle" 
-                        :fill="getFontColorClass(widget).includes('text-white') ? '#FFFFFF' : '#000000'">
-                        No data available
-                      </text>
-                    </svg>
-                  </div>
-                </div>
-                <div v-else-if="widget.config?.chart_type === 'bar'" class="h-full p-4">
-                  <!-- Bar Chart -->
-                  <div class="w-full h-full flex items-center justify-center">
-                    <svg class="w-full h-full" viewBox="0 0 400 300">
-                      <rect width="100%" height="100%" fill="transparent"/>
-                      <!-- Axes -->
-                      <line x1="40" y1="260" x2="360" y2="260" stroke="#ccc" stroke-width="1"/>
-                      <line x1="40" y1="40" x2="40" y2="260" stroke="#ccc" stroke-width="1"/>
-                      <!-- Bars based on actual data -->
-                      <g v-if="getChartData(widgetData[widget.id], widget).length > 0">
-                        <rect 
-                          v-for="(item, index) in getChartData(widgetData[widget.id], widget)" 
-                          :key="index"
-                          :x="getBarChartX(index, getChartData(widgetData[widget.id], widget))"
-                          :y="getBarChartY(item.value, getChartData(widgetData[widget.id], widget))"
-                          :width="getBarWidth(getChartData(widgetData[widget.id], widget))"
-                          :height="getBarHeight(item.value, getChartData(widgetData[widget.id], widget))"
-                          :fill="getChartColor(widget)"
-                        />
-                      </g>
-                      <!-- No data message -->
-                      <text 
-                        v-if="getChartData(widgetData[widget.id], widget).length === 0"
-                        x="200" 
-                        y="150" 
-                        text-anchor="middle" 
-                        :fill="getFontColorClass(widget).includes('text-white') ? '#FFFFFF' : '#000000'">
-                        No data available
-                      </text>
-                    </svg>
-                  </div>
-                </div>
-                <div v-else-if="widget.config?.chart_type === 'pie'" class="h-full p-4">
-                  <!-- Pie Chart -->
-                  <div class="w-full h-full flex items-center justify-center">
-                    <svg class="w-full h-full" viewBox="0 0 300 300">
-                      <circle cx="150" cy="150" r="100" fill="transparent" stroke="#eee" stroke-width="1"/>
-                      <!-- Pie slices based on actual data -->
-                      <g v-if="getChartData(widgetData[widget.id], widget).length > 0">
-                        <path 
-                          v-for="(slice, index) in getPieSlicePaths(getChartData(widgetData[widget.id], widget), 150, 150, 100)" 
-                          :key="index"
-                          :d="slice.path"
-                          :fill="slice.color"
-                        />
-                      </g>
-                      <!-- No data message -->
-                      <text 
-                        v-if="getChartData(widgetData[widget.id], widget).length === 0"
-                        x="150" 
-                        y="150" 
-                        text-anchor="middle" 
-                        :fill="getFontColorClass(widget).includes('text-white') ? '#FFFFFF' : '#000000'">
-                        No data available
-                      </text>
-                    </svg>
-                  </div>
-                </div>
-                <div v-else-if="widget.config?.chart_type === 'funnel'" class="h-full flex items-center justify-center">
-                  <!-- Funnel Chart -->
-                  <div class="w-full h-full flex flex-col items-center justify-center">
-                    <div 
-                      v-for="(stage, index) in getFunnelData(widgetData[widget.id], widget)" 
-                      :key="index"
-                      :class="['w-full my-1 rounded', getFontColorClass(widget)]"
-                      :style="{ 
-                        height: `${stage.percentage}%`, 
-                        backgroundColor: getFunnelColor(index),
-                        width: `${100 - (index * 10)}%`,
-                        margin: '0 auto'
-                      }"
-                    >
-                      <div class="flex justify-between px-2 py-1 text-xs items-center">
-                        <span>{{ stage.label }}</span>
-                        <span>{{ stage.value }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div v-else class="h-full flex items-center justify-center">
-                  <!-- Default chart visualization -->
-                  <div :class="['text-center', getFontColorClass(widget)]">
-                    <svg class="h-12 w-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                    <p class="mt-2">Unsupported chart type</p>
-                  </div>
+                <!-- Chart would be rendered here using a charting library -->
+                <div :class="['flex items-center justify-center h-full', getFontColorClass(widget)]">
+                  <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
                 </div>
               </div>
               <div v-else class="animate-pulse h-64">
@@ -353,6 +223,7 @@ const serviceUrls: Record<string, string> = {
 // Fetch dashboard configuration from service
 async function fetchDashboardConfig() {
   try {
+
       // First try to get from UI Registry
       const uiRegistryUrl = import.meta.env.VITE_UI_REGISTRY_API || '/api'
       const registryEndpoint = `/api/v1/${currentService.value}/dashboard`
@@ -360,7 +231,13 @@ async function fetchDashboardConfig() {
         ? `${uiRegistryUrl.replace(/\/api\/v1$/, '')}${registryEndpoint}`
         : `${uiRegistryUrl}${registryEndpoint}`
 
+
+      // console.log('uiRegistryUrl====', uiRegistryUrl)
+      // console.log('registryFullUrl====', registryFullUrl)
+
       const registryResponse = await fetch(registryFullUrl)
+
+      // console.log('registryResponse', registryResponse)
       
       if (registryResponse.ok) {
         dashboardConfig.value = await registryResponse.json()
@@ -372,10 +249,12 @@ async function fetchDashboardConfig() {
           const dashboardFullUrl = serviceUrl && dashboardEndpoint.startsWith('/api/v1')
             ? `${serviceUrl.replace(/\/api\/v1$/, '')}${dashboardEndpoint}`
             : `${serviceUrl}${dashboardEndpoint}`
+          console.log('dashboardFullUrl==',dashboardFullUrl)
           const response = await fetch(dashboardFullUrl)
 
           if (response.ok) {
             dashboardConfig.value = await response.json()
+
           } else {
             throw new Error(`Dashboard configuration not found: ${response.status}`)
           }
@@ -396,9 +275,9 @@ async function fetchWidgetData() {
   let serviceUrl = serviceUrls[currentService.value]
   
   // For inventory service, use the VITE_INVENTORY_API environment variable
-  if (currentService.value === 'inventory') {
-    serviceUrl = import.meta.env.VITE_INVENTORY_API || 'http://inventory-service:8005'
-  }
+  // if (currentService.value === 'inventory') {
+  //   serviceUrl = import.meta.env.VITE_INVENTORY_API || 'http://inventory-service:8005'
+  // }
   
   if (!serviceUrl) return
 
@@ -406,10 +285,12 @@ async function fetchWidgetData() {
   const promises = dashboardConfig.value.widgets.map(async (widget: any) => {
     if (widget.endpoint) {
       try {
-        const url = widget.endpoint.startsWith('http') 
-          ? widget.endpoint 
-          : `${serviceUrl}${widget.endpoint}`
-          
+        // const url = widget.endpoint.startsWith('http') 
+        //   ? widget.endpoint 
+        //   : `${serviceUrl}${widget.endpoint}`
+        const url = widget.endpoint
+        
+        console.log('widget==', widget)
         const response = await fetch(url)
         if (response.ok) {
           const data = await response.json()
@@ -516,24 +397,33 @@ function getGridClass(layout?: any): string {
 function getWidgetClass(widget: any): string {
   const span = widget.span || 1
   const height = widget.height ? `h-${widget.height}` : ''
-  return `col-span-1 lg:col-span-${span} ${height}`
+  const color = widget.config.color
+  return `col-span-1 lg:col-span-${span} ${height} metric-${color}`
 }
+// // Get widget style based on configuration
+// function getWidgetStyle(widget: any): string {
+//   const color = widget.config?.color
+//   if (color) {
+//     return `background-color: ${color}`;
+//   }
+//   return '';
+// }
 
 // Get widget header style based on configuration
 function getWidgetHeaderStyle(widget: any): string {
-  const color = widget.config?.color
+  const color = widget.config?.color;
   if (color) {
     // Calculate appropriate text color based on background luminance
-    const textColor = getTextColorForBackground(color)
-    return `background-color: ${color}; color: ${textColor}; border-color: ${adjustColor(color, -20)};`
+    const textColor = getTextColorForBackground(color);
+    return `background-color: ${color}; color: ${textColor}; border-color: ${adjustColor(color, -20)};`;
   }
-  return ''
+  return '';
 }
 
 // Get appropriate text color based on background color
 function getTextColorForBackground(bgColor: string): string {
   // Convert color to RGB if it's a named color or hex
-  let r = 0, g = 0, b = 0
+  let r = 0, g = 0, b = 0;
   
   // Handle named colors
   const namedColors: Record<string, string> = {
@@ -545,55 +435,55 @@ function getTextColorForBackground(bgColor: string): string {
     'lightblue': '#ADD8E6', 'lightgreen': '#90EE90', 'lightyellow': '#FFFFE0',
     'lightpink': '#FFB6C1', 'lightgray': '#D3D3D3', 'darkgray': '#A9A9A9',
     'darkblue': '#00008B', 'darkgreen': '#006400', 'darkred': '#8B0000'
-  }
+  };
   
-  let colorToUse = bgColor.toLowerCase()
+  let colorToUse = bgColor.toLowerCase();
   if (namedColors[colorToUse]) {
-    colorToUse = namedColors[colorToUse]
+    colorToUse = namedColors[colorToUse];
   }
   
   // Handle hex color
   if (colorToUse.startsWith('#')) {
-    const hex = colorToUse.slice(1)
+    const hex = colorToUse.slice(1);
     if (hex.length === 3) {
-      r = parseInt(hex[0] + hex[0], 16)
-      g = parseInt(hex[1] + hex[1], 16)
-      b = parseInt(hex[2] + hex[2], 16)
+      r = parseInt(hex[0] + hex[0], 16);
+      g = parseInt(hex[1] + hex[1], 16);
+      b = parseInt(hex[2] + hex[2], 16);
     } else if (hex.length === 6) {
-      r = parseInt(hex.substring(0, 2), 16)
-      g = parseInt(hex.substring(2, 4), 16)
-      b = parseInt(hex.substring(4, 6), 16)
+      r = parseInt(hex.substring(0, 2), 16);
+      g = parseInt(hex.substring(2, 4), 16);
+      b = parseInt(hex.substring(4, 6), 16);
     }
   } 
   // Handle rgb color
   else if (colorToUse.startsWith('rgb(')) {
-    const match = colorToUse.match(/rgb$$\d+$$,\s*$$\d+$$,\s*$$\d+$$$$/)
+    const match = colorToUse.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
     if (match) {
-      r = parseInt(match[1])
-      g = parseInt(match[2])
-      b = parseInt(match[3])
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
     }
   }
   // Handle rgba color
   else if (colorToUse.startsWith('rgba(')) {
-    const match = colorToUse.match(/rgba$$\d+$$,\s*$$\d+$$,\s*$$\d+$$,\s*[\d.]*\)$/)
+    const match = colorToUse.match(/rgba\((\d+),\s*(\d+),\s*(\d+),?\s*[\d.]*\)/);
     if (match) {
-      r = parseInt(match[1])
-      g = parseInt(match[2])
-      b = parseInt(match[3])
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
     }
   }
   
   // Calculate luminance (perceived brightness)
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   
   // Return white for dark backgrounds, black for light backgrounds
-  return luminance < 0.6 ? '#FFFFFF' : '#000000'
+  return luminance < 0.6 ? '#FFFFFF' : '#000000';
 }
 
 // Adjust color brightness (positive for lighter, negative for darker)
 function adjustColor(color: string, percent: number): string {
-  let r = 0, g = 0, b = 0
+  let r = 0, g = 0, b = 0;
   
   // Handle named colors
   const namedColors: Record<string, string> = {
@@ -605,75 +495,75 @@ function adjustColor(color: string, percent: number): string {
     'lightblue': '#ADD8E6', 'lightgreen': '#90EE90', 'lightyellow': '#FFFFE0',
     'lightpink': '#FFB6C1', 'lightgray': '#D3D3D3', 'darkgray': '#A9A9A9',
     'darkblue': '#00008B', 'darkgreen': '#006400', 'darkred': '#8B0000'
-  }
+  };
   
-  let colorToUse = color.toLowerCase()
+  let colorToUse = color.toLowerCase();
   if (namedColors[colorToUse]) {
-    colorToUse = namedColors[colorToUse]
+    colorToUse = namedColors[colorToUse];
   }
   
   // Handle hex color
   if (colorToUse.startsWith('#')) {
-    const hex = colorToUse.slice(1)
+    const hex = colorToUse.slice(1);
     if (hex.length === 3) {
-      r = parseInt(hex[0] + hex[0], 16)
-      g = parseInt(hex[1] + hex[1], 16)
-      b = parseInt(hex[2] + hex[2], 16)
+      r = parseInt(hex[0] + hex[0], 16);
+      g = parseInt(hex[1] + hex[1], 16);
+      b = parseInt(hex[2] + hex[2], 16);
     } else if (hex.length === 6) {
-      r = parseInt(hex.substring(0, 2), 16)
-      g = parseInt(hex.substring(2, 4), 16)
-      b = parseInt(hex.substring(4, 6), 16)
+      r = parseInt(hex.substring(0, 2), 16);
+      g = parseInt(hex.substring(2, 4), 16);
+      b = parseInt(hex.substring(4, 6), 16);
     }
   } 
   // Handle rgb color
   else if (colorToUse.startsWith('rgb(')) {
-    const match = colorToUse.match(/rgb$$\d+$$,\s*$$\d+$$,\s*$$\d+$$$$/)
+    const match = colorToUse.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
     if (match) {
-      r = parseInt(match[1])
-      g = parseInt(match[2])
-      b = parseInt(match[3])
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
     }
   }
   // Handle rgba color
   else if (colorToUse.startsWith('rgba(')) {
-    const match = colorToUse.match(/rgba$$\d+$$,\s*$$\d+$$,\s*$$\d+$$,\s*[\d.]*\)$/)
+    const match = colorToUse.match(/rgba\((\d+),\s*(\d+),\s*(\d+),?\s*[\d.]*\)/);
     if (match) {
-      r = parseInt(match[1])
-      g = parseInt(match[2])
-      b = parseInt(match[3])
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
     }
   }
   
   // Adjust brightness
-  r = Math.min(255, Math.max(0, r + Math.floor(r * percent / 100)))
-  g = Math.min(255, Math.max(0, g + Math.floor(g * percent / 100)))
-  b = Math.min(255, Math.max(0, b + Math.floor(b * percent / 100)))
+  r = Math.min(255, Math.max(0, r + Math.floor(r * percent / 100)));
+  g = Math.min(255, Math.max(0, g + Math.floor(g * percent / 100)));
+  b = Math.min(255, Math.max(0, b + Math.floor(b * percent / 100)));
   
-  return `rgb(${r}, ${g}, ${b})`
+  return `rgb(${r}, ${g}, ${b})`;
 }
 
 // Get font color class based on widget background
 function getFontColorClass(widget: any): string {
-  const color = widget.config?.color
+  const color = widget.config?.color;
   if (color) {
-    const textColor = getTextColorForBackground(color)
+    const textColor = getTextColorForBackground(color);
     // Return a class or inline style based on the calculated text color
-    return textColor === '#FFFFFF' ? 'text-white' : 'text-gray-900'
+    return textColor === '#FFFFFF' ? 'text-white' : 'text-gray-900';
   }
-  return 'text-gray-900' // Default to dark text
+  return 'text-gray-900'; // Default to dark text
 }
 
 // Get widget icon - supporting both widget.icon and widget.config.icon
 function getWidgetIcon(widget: any): string | null {
   // First check if icon is in config (from UI registry)
   if (widget.config && widget.config.icon) {
-    return widget.config.icon
+    return widget.config.icon;
   }
   // Then check if icon is a direct property of the widget
   if (widget.icon) {
-    return widget.icon
+    return widget.icon;
   }
-  return null
+  return null;
 }
 
 // Helper to get SVG path data for icon name
@@ -702,9 +592,15 @@ function getIconPath(iconName: string): string {
     'bell': 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
     // Default icon for unknown icon names
     'default': 'M13 10V3L4 14h7v7l9-11h-7z'
-  }
+  };
 
-  return iconPaths[iconName] || iconPaths['default']
+  return iconPaths[iconName] || iconPaths['default'];
+}
+
+// Helper to get icon class for styling
+function getIconClass(iconName: string): string {
+  // Return appropriate class based on the icon name
+  return 'text-gray-500';
 }
 
 // Execute widget action
@@ -796,239 +692,6 @@ onUnmounted(() => {
     clearInterval(refreshInterval.value)
   }
 })
-
-// CHART HELPER FUNCTIONS
-
-// Helper function to extract chart data from widget data
-function getChartData(data: any, widget: any) {
-  // Handle different data formats
-  if (Array.isArray(data)) {
-    // Array format - assume each item has label and value
-    return data.map((item: any, index: number) => ({
-      label: item.label || item.name || `Item ${index + 1}`,
-      value: item.value || item.amount || item.count || 0
-    }))
-  } else if (data && typeof data === 'object') {
-    // Check if it's a data object with specific structure
-    if (data.data) {
-      // Has data property - recurse
-      return getChartData(data.data, widget)
-    } else if (data.items) {
-      // Has items property - recurse
-      return getChartData(data.items, widget)
-    } else if (data.values) {
-      // Has values property - recurse
-      return getChartData(data.values, widget)
-    } else if (data.rows) {
-      // Has rows property - recurse
-      return getChartData(data.rows, widget)
-    } else {
-      // Object with key-value pairs, convert to array
-      const result = []
-      for (const [key, value] of Object.entries(data)) {
-        // Skip non-numeric values and metadata
-        if (typeof value === 'number' || (typeof value === 'string' && !isNaN(Number(value)))) {
-          result.push({
-            label: key,
-            value: Number(value)
-          })
-        }
-      }
-      return result
-    }
-  }
-  return []
-}
-
-// Helper function to get chart color from widget config or default
-function getChartColor(widget: any): string {
-  if (widget.config?.color) {
-    return widget.config.color
-  }
-  // Default color based on widget type or primary color
-  return '#3B82F6' // blue-500
-}
-
-// Helper function to generate line chart points
-function generateLineChartPoints(data: any[]): string {
-  if (!data || data.length === 0) return ''
-  
-  const padding = 40
-  const chartWidth = 320 // 400 - 2*40
-  const chartHeight = 220 // 260 - 40
-  
-  // Find min/max values for scaling
-  const values = data.map(item => item.value || 0)
-  const minValue = Math.min(...values)
-  const maxValue = Math.max(...values)
-  const valueRange = maxValue - minValue || 1 // Avoid division by zero
-  
-  // Generate path points
-  const points = data.map((item, index) => {
-    const x = padding + (index / (data.length - 1 || 1)) * chartWidth
-    const y = padding + chartHeight - ((item.value - minValue) / valueRange) * chartHeight
-    return `${x},${y}`
-  })
-  
-  return points.join(' ')
-}
-
-// Helper function to get line chart point X coordinate
-function getLineChartPointX(index: number, data: any[]): number {
-  if (!data || data.length === 0) return 0
-  
-  const padding = 40
-  const chartWidth = 320
-  return padding + (index / (data.length - 1 || 1)) * chartWidth
-}
-
-// Helper function to get line chart point Y coordinate
-function getLineChartPointY(value: number, data: any[]): number {
-  if (!data || data.length === 0) return 0
-  
-  const padding = 40
-  const chartHeight = 220
-  
-  // Find min/max values for scaling
-  const values = data.map(item => item.value || 0)
-  const minValue = Math.min(...values)
-  const maxValue = Math.max(...values)
-  const valueRange = maxValue - minValue || 1 // Avoid division by zero
-  
-  return padding + chartHeight - ((value - minValue) / valueRange) * chartHeight
-}
-
-// Helper function to get bar chart X coordinate
-function getBarChartX(index: number, data: any[]): number {
-  if (!data || data.length === 0) return 0
-  
-  const padding = 40
-  const chartWidth = 320
-  const barWidth = chartWidth / data.length
-  return padding + index * barWidth + 5
-}
-
-// Helper function to get bar chart Y coordinate
-function getBarChartY(value: number, data: any[]): number {
-  if (!data || data.length === 0 || value === 0) return 260
-  
-  const padding = 40
-  const chartHeight = 220
-  
-  // Find max value for scaling
-  const maxValue = Math.max(...data.map(item => item.value || 0)) || 1 // Avoid division by zero
-  const barHeight = (value / maxValue) * chartHeight
-  
-  return padding + chartHeight - barHeight
-}
-
-// Helper function to get bar width
-function getBarWidth(data: any[]): number {
-  if (!data || data.length === 0) return 0
-  
-  const chartWidth = 320
-  const barWidth = chartWidth / data.length
-  return Math.max(10, barWidth - 10)
-}
-
-// Helper function to get bar height
-function getBarHeight(value: number, data: any[]): number {
-  if (!data || data.length === 0 || value === 0) return 0
-  
-  const chartHeight = 220
-  
-  // Find max value for scaling
-  const maxValue = Math.max(...data.map(item => item.value || 0)) || 1 // Avoid division by zero
-  return (value / maxValue) * chartHeight
-}
-
-// Helper function to generate SVG pie chart paths
-function getPieSlicePaths(data: any[], centerX: number, centerY: number, radius: number): any[] {
-  if (!data || data.length === 0) return []
-  
-  // Calculate total
-  const total = data.reduce((sum, item) => sum + (item.value || 0), 0)
-  if (total === 0) return []
-  
-  let currentAngle = -Math.PI / 2 // Start from top
-  const paths = []
-  
-  // Generate pie slices
-  for (let i = 0; i < data.length; i++) {
-    const item = data[i]
-    const slicePercentage = (item.value || 0) / total
-    if (slicePercentage <= 0) continue
-    
-    const sliceAngle = slicePercentage * 2 * Math.PI
-    
-    // Calculate start and end points
-    const startX = centerX + radius * Math.cos(currentAngle)
-    const startY = centerY + radius * Math.sin(currentAngle)
-    const endX = centerX + radius * Math.cos(currentAngle + sliceAngle)
-    const endY = centerY + radius * Math.sin(currentAngle + sliceAngle)
-    
-    // SVG arc path
-    const largeArcFlag = sliceAngle > Math.PI ? 1 : 0
-    const pathData = `M ${centerX} ${centerY} L ${startX} ${startY} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY} Z`
-    
-    // Colors
-    const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899']
-    const sliceColor = colors[i % colors.length]
-    
-    paths.push({
-      path: pathData,
-      color: sliceColor
-    })
-    
-    currentAngle += sliceAngle
-  }
-  
-  return paths
-}
-
-// Helper function for funnel chart data processing
-function getFunnelData(data: any, widget: any) {
-  // Handle different data formats
-  if (Array.isArray(data)) {
-    // Array format - assume each item has label and value
-    return data.map((item: any, index: number) => ({
-      label: item.label || `Stage ${index + 1}`,
-      value: item.value || item.count || 0,
-      percentage: 100 // Placeholder - would calculate actual percentages
-    }))
-  } else if (data && typeof data === 'object') {
-    if (data.stages) {
-      // Object with stages property
-      return data.stages.map((stage: any, index: number) => ({
-        label: stage.label || stage.name || `Stage ${index + 1}`,
-        value: stage.value || stage.count || 0,
-        percentage: 100 // Placeholder - would calculate actual percentages
-      }))
-    } else {
-      // Object with raw data, need to extract based on config
-      const stages = widget.config?.stages || Object.keys(data)
-      return stages.map((stage: any, index: number) => ({
-        label: stage,
-        value: data[stage] || 0,
-        percentage: 100 // Placeholder - would calculate actual percentages
-      }))
-    }
-  }
-  return []
-}
-
-// Helper function to get funnel color based on index
-function getFunnelColor(index: number): string {
-  const colors = [
-    '#3B82F6', // blue-500
-    '#10B981', // green-500
-    '#F59E0B', // amber-500
-    '#EF4444', // red-500
-    '#8B5CF6', // violet-500
-    '#EC4899'  // pink-500
-  ]
-  return colors[index % colors.length]
-}
 </script>
 
 <style scoped>
