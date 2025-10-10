@@ -254,7 +254,7 @@
                   </thead>
                   <tbody :class="['divide-y divide-gray-200/20', getFontColorClass(widget)]">
                     <tr v-for="(row, index) in widgetData[widget.id].rows?.slice(0, widget.limit || 5)" :key="index">
-                      <td v-for="column in widget.columns" :key="column.field" 
+                      <td v-for="column in widget.config.columns" :key="column.field" 
                           class="px-3 py-2 text-sm">
                         {{ formatValue(row[column.field], column.formatter) }}
                       </td>
