@@ -400,14 +400,14 @@ function getWidgetClass(widget: any): string {
   const color = widget.config.color
   return `col-span-1 lg:col-span-${span} ${height} metric-${color}`
 }
-// Get widget style based on configuration
-function getWidgetStyle(widget: any): string {
-  const color = widget.config?.color
-  if (color) {
-    return `background-color: ${color}`;
-  }
-  return '';
-}
+// // Get widget style based on configuration
+// function getWidgetStyle(widget: any): string {
+//   const color = widget.config?.color
+//   if (color) {
+//     return `background-color: ${color}`;
+//   }
+//   return '';
+// }
 
 // Get widget header style based on configuration
 function getWidgetHeaderStyle(widget: any): string {
