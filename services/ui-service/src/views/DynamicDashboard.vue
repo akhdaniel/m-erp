@@ -46,7 +46,6 @@
         <div v-for="widget in dashboardConfig.widgets" 
              :key="widget.id"
              :class="getWidgetClass(widget)"
-             :style="getWidgetStyle(widget)"
              class="glass-card rounded-lg shadow">
           
           <!-- Widget Header -->
@@ -399,7 +398,7 @@ function getWidgetClass(widget: any): string {
   const span = widget.span || 1
   const height = widget.height ? `h-${widget.height}` : ''
   const color = widget.config.color
-  return `col-span-1 lg:col-span-${span} ${height}`
+  return `col-span-1 lg:col-span-${span} ${height} metric-${color}`
 }
 // Get widget style based on configuration
 function getWidgetStyle(widget: any): string {
@@ -696,5 +695,19 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-
+.metric-blue{
+  background: blue;
+}
+.metric-red{
+  background: red;
+}
+.metric-orange{
+  background: orange;
+}
+.metric-green{
+  background:green;
+}
+.metric-purple{
+  background:purple;
+}
 </style>
