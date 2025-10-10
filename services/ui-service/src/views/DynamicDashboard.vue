@@ -47,15 +47,15 @@
              :key="widget.id"
              :class="getWidgetClass(widget)"
              :style="getWidgetStyle(widget)"
-             class="glass-card">
+             class="glass-card rounded-lg shadow">
           
           <!-- Widget Header -->
-          <div v-if="widget.title || getWidgetIcon(widget)" class="px-6 py-4 border-b border-gray-200/20">
+          <div v-if="widget.title || getWidgetIcon(widget)" class="px-6 py-4 border-b border-gray-200/20" :style="getWidgetHeaderStyle(widget)">
             <div class="flex items-center">
               <svg v-if="getWidgetIcon(widget)" :class="['h-5 w-5 mr-2', getIconClass(getWidgetIcon(widget))]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getIconPath(getWidgetIcon(widget))" />
               </svg>
-              <h3 class="text-lg font-medium">{{ widget.title }}</h3>
+              <h3 :class="['text-lg font-medium', getFontColorClass(widget)]">{{ widget.title }}</h3>
             </div>
           </div>
           
@@ -64,10 +64,10 @@
             <!-- Metric Widget -->
             <div v-if="widget.type === 'metric'">
               <div v-if="widgetData[widget.id]">
-                <div class="text-3xl font-bold">
+                <div :class="['text-3xl font-bold', getFontColorClass(widget)]">
                   {{ formatValue(widgetData[widget.id].value, widget.format) }}
                 </div>
-                <div v-if="widgetData[widget.id].change" class="mt-2 flex items-center text-sm">
+                <div v-if="widgetData[widget.id].change" :class="['mt-2 flex items-center text-sm', getFontColorClass(widget)]">
                   <span :class="widgetData[widget.id].change > 0 ? 'text-green-600' : 'text-red-600'">
                     {{ widgetData[widget.id].change > 0 ? '+' : '' }}{{ widgetData[widget.id].change }}%
                   </span>
@@ -83,7 +83,7 @@
             <div v-else-if="widget.type === 'chart'">
               <div v-if="widgetData[widget.id]" class="h-64">
                 <!-- Chart would be rendered here using a charting library -->
-                <div class="flex items-center justify-center h-full text-gray-400">
+                <div :class="['flex items-center justify-center h-full', getFontColorClass(widget)]">
                   <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
@@ -97,7 +97,7 @@
             <!-- List Widget -->
             <div v-else-if="widget.type === 'list'">
               <div v-if="widgetData[widget.id]">
-                <ul class="divide-y divide-gray-200/20">
+                <ul :class="['divide-y divide-gray-200/20', getFontColorClass(widget)]">
                   <li v-for="(item, index) in widgetData[widget.id].items?.slice(0, widget.limit || 5)" 
                       :key="index" 
                       class="py-3">
@@ -127,12 +127,12 @@
                   <thead>
                     <tr>
                       <th v-for="column in widget.columns" :key="column.field" 
-                          class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider">
+                          :class="['px-3 py-2 text-left text-xs font-medium uppercase tracking-wider', getFontColorClass(widget)]">
                         {{ column.label }}
                       </th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-gray-200/20">
+                  <tbody :class="['divide-y divide-gray-200/20', getFontColorClass(widget)]">
                     <tr v-for="(row, index) in widgetData[widget.id].rows?.slice(0, widget.limit || 5)" :key="index">
                       <td v-for="column in widget.columns" :key="column.field" 
                           class="px-3 py-2 text-sm">
@@ -161,7 +161,8 @@
 
           <!-- Widget Footer with Actions -->
           <div v-if="widget.actions && widget.actions.length > 0" 
-               class="px-6 py-3 border-t border-gray-200/20 flex justify-end space-x-2">
+               :class="['px-6 py-3 border-t border-gray-200/20 flex justify-end space-x-2', getFontColorClass(widget)]"
+               :style="widget.config?.color ? `border-color: ${adjustColor(widget.config.color, -20)}` : ''">
             <button v-for="action in widget.actions" 
                     :key="action.id"
                     @click="() => executeAction(action, widget)"
@@ -400,10 +401,157 @@ function getWidgetClass(widget: any): string {
   const color = widget.config.color
   return `col-span-1 lg:col-span-${span} ${height}`
 }
-// Get widget style based on span configuration
+// Get widget style based on configuration
 function getWidgetStyle(widget: any): string {
-  const color = widget.config.color
-  return `background-color: ${color}`
+  const color = widget.config?.color
+  if (color) {
+    return `background-color: ${color}`;
+  }
+  return '';
+}
+
+// Get widget header style based on configuration
+function getWidgetHeaderStyle(widget: any): string {
+  const color = widget.config?.color;
+  if (color) {
+    // Calculate appropriate text color based on background luminance
+    const textColor = getTextColorForBackground(color);
+    return `background-color: ${color}; color: ${textColor}; border-color: ${adjustColor(color, -20)};`;
+  }
+  return '';
+}
+
+// Get appropriate text color based on background color
+function getTextColorForBackground(bgColor: string): string {
+  // Convert color to RGB if it's a named color or hex
+  let r = 0, g = 0, b = 0;
+  
+  // Handle named colors
+  const namedColors: Record<string, string> = {
+    'red': '#FF0000', 'blue': '#0000FF', 'green': '#008000', 'yellow': '#FFFF00',
+    'orange': '#FFA500', 'purple': '#800080', 'pink': '#FFC0CB', 'brown': '#A52A2A',
+    'black': '#000000', 'white': '#FFFFFF', 'gray': '#808080', 'grey': '#808080',
+    'cyan': '#00FFFF', 'magenta': '#FF00FF', 'lime': '#00FF00', 'navy': '#000080',
+    'maroon': '#800000', 'olive': '#808000', 'teal': '#008080', 'silver': '#C0C0C0',
+    'lightblue': '#ADD8E6', 'lightgreen': '#90EE90', 'lightyellow': '#FFFFE0',
+    'lightpink': '#FFB6C1', 'lightgray': '#D3D3D3', 'darkgray': '#A9A9A9',
+    'darkblue': '#00008B', 'darkgreen': '#006400', 'darkred': '#8B0000'
+  };
+  
+  let colorToUse = bgColor.toLowerCase();
+  if (namedColors[colorToUse]) {
+    colorToUse = namedColors[colorToUse];
+  }
+  
+  // Handle hex color
+  if (colorToUse.startsWith('#')) {
+    const hex = colorToUse.slice(1);
+    if (hex.length === 3) {
+      r = parseInt(hex[0] + hex[0], 16);
+      g = parseInt(hex[1] + hex[1], 16);
+      b = parseInt(hex[2] + hex[2], 16);
+    } else if (hex.length === 6) {
+      r = parseInt(hex.substring(0, 2), 16);
+      g = parseInt(hex.substring(2, 4), 16);
+      b = parseInt(hex.substring(4, 6), 16);
+    }
+  } 
+  // Handle rgb color
+  else if (colorToUse.startsWith('rgb(')) {
+    const match = colorToUse.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
+    }
+  }
+  // Handle rgba color
+  else if (colorToUse.startsWith('rgba(')) {
+    const match = colorToUse.match(/rgba\((\d+),\s*(\d+),\s*(\d+),?\s*[\d.]*\)/);
+    if (match) {
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
+    }
+  }
+  
+  // Calculate luminance (perceived brightness)
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  
+  // Return white for dark backgrounds, black for light backgrounds
+  return luminance < 0.6 ? '#FFFFFF' : '#000000';
+}
+
+// Adjust color brightness (positive for lighter, negative for darker)
+function adjustColor(color: string, percent: number): string {
+  let r = 0, g = 0, b = 0;
+  
+  // Handle named colors
+  const namedColors: Record<string, string> = {
+    'red': '#FF0000', 'blue': '#0000FF', 'green': '#008000', 'yellow': '#FFFF00',
+    'orange': '#FFA500', 'purple': '#800080', 'pink': '#FFC0CB', 'brown': '#A52A2A',
+    'black': '#000000', 'white': '#FFFFFF', 'gray': '#808080', 'grey': '#808080',
+    'cyan': '#00FFFF', 'magenta': '#FF00FF', 'lime': '#00FF00', 'navy': '#000080',
+    'maroon': '#800000', 'olive': '#808000', 'teal': '#008080', 'silver': '#C0C0C0',
+    'lightblue': '#ADD8E6', 'lightgreen': '#90EE90', 'lightyellow': '#FFFFE0',
+    'lightpink': '#FFB6C1', 'lightgray': '#D3D3D3', 'darkgray': '#A9A9A9',
+    'darkblue': '#00008B', 'darkgreen': '#006400', 'darkred': '#8B0000'
+  };
+  
+  let colorToUse = color.toLowerCase();
+  if (namedColors[colorToUse]) {
+    colorToUse = namedColors[colorToUse];
+  }
+  
+  // Handle hex color
+  if (colorToUse.startsWith('#')) {
+    const hex = colorToUse.slice(1);
+    if (hex.length === 3) {
+      r = parseInt(hex[0] + hex[0], 16);
+      g = parseInt(hex[1] + hex[1], 16);
+      b = parseInt(hex[2] + hex[2], 16);
+    } else if (hex.length === 6) {
+      r = parseInt(hex.substring(0, 2), 16);
+      g = parseInt(hex.substring(2, 4), 16);
+      b = parseInt(hex.substring(4, 6), 16);
+    }
+  } 
+  // Handle rgb color
+  else if (colorToUse.startsWith('rgb(')) {
+    const match = colorToUse.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (match) {
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
+    }
+  }
+  // Handle rgba color
+  else if (colorToUse.startsWith('rgba(')) {
+    const match = colorToUse.match(/rgba\((\d+),\s*(\d+),\s*(\d+),?\s*[\d.]*\)/);
+    if (match) {
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
+    }
+  }
+  
+  // Adjust brightness
+  r = Math.min(255, Math.max(0, r + Math.floor(r * percent / 100)));
+  g = Math.min(255, Math.max(0, g + Math.floor(g * percent / 100)));
+  b = Math.min(255, Math.max(0, b + Math.floor(b * percent / 100)));
+  
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+// Get font color class based on widget background
+function getFontColorClass(widget: any): string {
+  const color = widget.config?.color;
+  if (color) {
+    const textColor = getTextColorForBackground(color);
+    // Return a class or inline style based on the calculated text color
+    return textColor === '#FFFFFF' ? 'text-white' : 'text-gray-900';
+  }
+  return 'text-gray-900'; // Default to dark text
 }
 
 // Get widget icon - supporting both widget.icon and widget.config.icon
