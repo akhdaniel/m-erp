@@ -94,6 +94,7 @@
                 <!-- Render chart based on chart type -->
                 <div v-if="widget.config?.chart_type === 'line'" class="h-full p-4">
                   <!-- Line Chart -->
+                  Line Chart
                   <div class="w-full h-full flex items-center justify-center">
                     <svg class="w-full h-full" viewBox="0 0 400 300">
                       <rect width="100%" height="100%" fill="transparent"/>
