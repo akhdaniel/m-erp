@@ -103,7 +103,10 @@ SALES_UI_PACKAGE = {
             "endpoint": "/api/v1/sales/orders/analytics/top-customers",
             "refresh_interval": 3600,
             "config": {
-                "columns": ["customer_name", "order_count", "total_revenue", "average_order"],
+                "columns": [{"field":"customer_name","label":"Customer"}, 
+                            {"field":"order_count","label":"Order Count"}, 
+                            {"field":"total_revenue","label":"Total Revenue"}, 
+                            {"field":"average_order_value","label":"Average Order"}],
                 "limit": 5,
                 "sortable": True
             }

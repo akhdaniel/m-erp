@@ -246,9 +246,9 @@
                 <table class="min-w-full">
                   <thead>
                     <tr>
-                      <th v-for="column in widget.columns" :key="column.field" 
+                      <th v-for="column in widget.config.columns" :key="column.field" 
                           :class="['px-3 py-2 text-left text-xs font-medium uppercase tracking-wider', getFontColorClass(widget)]">
-                        {{ column.label }}
+                        {{ column }}
                       </th>
                     </tr>
                   </thead>
