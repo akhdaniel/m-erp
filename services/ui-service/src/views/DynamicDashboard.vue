@@ -813,6 +813,239 @@ onUnmounted(() => {
     clearInterval(refreshInterval.value)
   }
 })
+
+// CHART HELPER FUNCTIONS
+
+// Helper function to extract chart data from widget data
+function getChartData(data: any, widget: any) {
+  // Handle different data formats
+  if (Array.isArray(data)) {
+    // Array format - assume each item has label and value
+    return data.map((item: any, index: number) => ({
+      label: item.label || item.name || `Item ${index + 1}`,
+      value: item.value || item.amount || item.count || 0
+    }));
+  } else if (data && typeof data === 'object') {
+    // Check if it's a data object with specific structure
+    if (data.data) {
+      // Has data property - recurse
+      return getChartData(data.data, widget);
+    } else if (data.items) {
+      // Has items property - recurse
+      return getChartData(data.items, widget);
+    } else if (data.values) {
+      // Has values property - recurse
+      return getChartData(data.values, widget);
+    } else if (data.rows) {
+      // Has rows property - recurse
+      return getChartData(data.rows, widget);
+    } else {
+      // Object with key-value pairs, convert to array
+      const result = [];
+      for (const [key, value] of Object.entries(data)) {
+        // Skip non-numeric values and metadata
+        if (typeof value === 'number' || (typeof value === 'string' && !isNaN(Number(value)))) {
+          result.push({
+            label: key,
+            value: Number(value)
+          });
+        }
+      }
+      return result;
+    }
+  }
+  return [];
+}
+
+// Helper function to get chart color from widget config or default
+function getChartColor(widget: any): string {
+  if (widget.config?.color) {
+    return widget.config.color;
+  }
+  // Default color based on widget type or primary color
+  return '#3B82F6'; // blue-500
+}
+
+// Helper function to generate line chart points
+function generateLineChartPoints(data: any[]): string {
+  if (!data || data.length === 0) return '';
+  
+  const padding = 40;
+  const chartWidth = 320; // 400 - 2*40
+  const chartHeight = 220; // 260 - 40
+  
+  // Find min/max values for scaling
+  const values = data.map(item => item.value || 0);
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const valueRange = maxValue - minValue || 1; // Avoid division by zero
+  
+  // Generate path points
+  const points = data.map((item, index) => {
+    const x = padding + (index / (data.length - 1 || 1)) * chartWidth;
+    const y = padding + chartHeight - ((item.value - minValue) / valueRange) * chartHeight;
+    return `${x},${y}`;
+  });
+  
+  return points.join(' ');
+}
+
+// Helper function to get line chart point X coordinate
+function getLineChartPointX(index: number, data: any[]): number {
+  if (!data || data.length === 0) return 0;
+  
+  const padding = 40;
+  const chartWidth = 320;
+  return padding + (index / (data.length - 1 || 1)) * chartWidth;
+}
+
+// Helper function to get line chart point Y coordinate
+function getLineChartPointY(value: number, data: any[]): number {
+  if (!data || data.length === 0) return 0;
+  
+  const padding = 40;
+  const chartHeight = 220;
+  
+  // Find min/max values for scaling
+  const values = data.map(item => item.value || 0);
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const valueRange = maxValue - minValue || 1; // Avoid division by zero
+  
+  return padding + chartHeight - ((value - minValue) / valueRange) * chartHeight;
+}
+
+// Helper function to get bar chart X coordinate
+function getBarChartX(index: number, data: any[]): number {
+  if (!data || data.length === 0) return 0;
+  
+  const padding = 40;
+  const chartWidth = 320;
+  const barWidth = chartWidth / data.length;
+  return padding + index * barWidth + 5;
+}
+
+// Helper function to get bar chart Y coordinate
+function getBarChartY(value: number, data: any[]): number {
+  if (!data || data.length === 0 || value === 0) return 260;
+  
+  const padding = 40;
+  const chartHeight = 220;
+  
+  // Find max value for scaling
+  const maxValue = Math.max(...data.map(item => item.value || 0)) || 1; // Avoid division by zero
+  const barHeight = (value / maxValue) * chartHeight;
+  
+  return padding + chartHeight - barHeight;
+}
+
+// Helper function to get bar width
+function getBarWidth(data: any[]): number {
+  if (!data || data.length === 0) return 0;
+  
+  const chartWidth = 320;
+  const barWidth = chartWidth / data.length;
+  return Math.max(10, barWidth - 10);
+}
+
+// Helper function to get bar height
+function getBarHeight(value: number, data: any[]): number {
+  if (!data || data.length === 0 || value === 0) return 0;
+  
+  const chartHeight = 220;
+  
+  // Find max value for scaling
+  const maxValue = Math.max(...data.map(item => item.value || 0)) || 1; // Avoid division by zero
+  return (value / maxValue) * chartHeight;
+}
+
+// Helper function to generate SVG pie chart paths
+function getPieSlicePaths(data: any[], centerX: number, centerY: number, radius: number): any[] {
+  if (!data || data.length === 0) return [];
+  
+  // Calculate total
+  const total = data.reduce((sum, item) => sum + (item.value || 0), 0);
+  if (total === 0) return [];
+  
+  let currentAngle = -Math.PI / 2; // Start from top
+  const paths = [];
+  
+  // Generate pie slices
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    const slicePercentage = (item.value || 0) / total;
+    if (slicePercentage <= 0) continue;
+    
+    const sliceAngle = slicePercentage * 2 * Math.PI;
+    
+    // Calculate start and end points
+    const startX = centerX + radius * Math.cos(currentAngle);
+    const startY = centerY + radius * Math.sin(currentAngle);
+    const endX = centerX + radius * Math.cos(currentAngle + sliceAngle);
+    const endY = centerY + radius * Math.sin(currentAngle + sliceAngle);
+    
+    // SVG arc path
+    const largeArcFlag = sliceAngle > Math.PI ? 1 : 0;
+    const pathData = `M ${centerX} ${centerY} L ${startX} ${startY} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY} Z`;
+    
+    // Colors
+    const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+    const sliceColor = colors[i % colors.length];
+    
+    paths.push({
+      path: pathData,
+      color: sliceColor
+    });
+    
+    currentAngle += sliceAngle;
+  }
+  
+  return paths;
+}
+
+// Helper function for funnel chart data processing
+function getFunnelData(data: any, widget: any) {
+  // Handle different data formats
+  if (Array.isArray(data)) {
+    // Array format - assume each item has label and value
+    return data.map((item: any, index: number) => ({
+      label: item.label || `Stage ${index + 1}`,
+      value: item.value || item.count || 0,
+      percentage: 100 // Placeholder - would calculate actual percentages
+    }));
+  } else if (data && typeof data === 'object') {
+    if (data.stages) {
+      // Object with stages property
+      return data.stages.map((stage: any, index: number) => ({
+        label: stage.label || stage.name || `Stage ${index + 1}`,
+        value: stage.value || stage.count || 0,
+        percentage: 100 // Placeholder - would calculate actual percentages
+      }));
+    } else {
+      // Object with raw data, need to extract based on config
+      const stages = widget.config?.stages || Object.keys(data);
+      return stages.map((stage: any, index: number) => ({
+        label: stage,
+        value: data[stage] || 0,
+        percentage: 100 // Placeholder - would calculate actual percentages
+      }));
+    }
+  }
+  return [];
+}
+
+// Helper function to get funnel color based on index
+function getFunnelColor(index: number): string {
+  const colors = [
+    '#3B82F6', // blue-500
+    '#10B981', // green-500
+    '#F59E0B', // amber-500
+    '#EF4444', // red-500
+    '#8B5CF6', // violet-500
+    '#EC4899'  // pink-500
+  ];
+  return colors[index % colors.length];
+}
 </script>
 
 <style scoped>
