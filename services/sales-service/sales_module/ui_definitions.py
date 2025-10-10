@@ -73,7 +73,7 @@ SALES_UI_PACKAGE = {
             "title": "Recent Orders",
             "type": "list",
             "size": "large",
-            "endpoint": "/api/v1/transactions?limit=10",
+            "endpoint": "/api/v1/sales/transactions?limit=10",
             "refresh_interval": 60,
             "config": {
                 "limit": 10,
