@@ -6,7 +6,7 @@ integrating with the inventory service to retrieve product information.
 """
 
 from typing import List, Optional, Dict, Any
-from fastapi import APIRouter, HTTPException, Query, Depends, status
+from fastapi import APIRouter, HTTPException, Query, status
 from fastapi.responses import JSONResponse
 import httpx
 import logging
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # Create API router
 router = APIRouter(prefix="/products", tags=["products"])
+
 
 
 # Response models
@@ -300,4 +301,108 @@ async def get_product_details(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to get product details"
+        )
+
+
+# Product list routes - root endpoints for product listings
+@router.get("/", response_model=ProductSearchResponse)
+@router.get("", response_model=ProductSearchResponse)  # Alternative root endpoint
+async def get_products_list(
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    q: Optional[str] = Query(None, description="Search query for product name or SKU"),
+    category_id: Optional[int] = Query(None, description="Filter by category ID"),
+    active_only: bool = Query(True, description="Only return active products"),
+    with_stock: bool = Query(False, description="Include stock information")
+):
+    """
+    Get all products list - root endpoints for product listings.
+    
+    Returns paginated list of products from the inventory service with optional filtering.
+    """
+    try:
+        # Build parameters for inventory service
+        params = {
+            "page": page,
+            "page_size": page_size
+        }
+        
+        # Add optional filters
+        if q:
+            params["search"] = q
+        if category_id:
+            params["category_id"] = category_id
+        if not active_only:
+            params["active"] = "false"  # Default is true in inventory service
+            
+        # Fetch products from inventory service
+        products_data = await fetch_from_inventory("/api/v1/products/", params)
+        
+        if not products_data:
+            # Return empty result if inventory service is unavailable
+            return ProductSearchResponse(
+                items=[],
+                total=0,
+                page=page,
+                page_size=page_size
+            )
+        
+        # Process products and fetch stock levels if needed
+        items = []
+        # Handle both array and object response formats
+        products_list = products_data if isinstance(products_data, list) else products_data.get("items", [])
+        
+        # Apply manual pagination for array responses
+        if isinstance(products_data, list):
+            start_idx = (page - 1) * page_size
+            end_idx = start_idx + page_size
+            products_list = products_list[start_idx:end_idx]
+        
+        for product in products_list:
+            # Fetch stock summary for each product if requested
+            stock_info = {"on_hand": 0, "available": 0}
+            if with_stock:
+                stock_data = await fetch_from_inventory(f"/api/v1/stock/summary/product/{product['id']}")
+                if stock_data:
+                    stock_info = {
+                        "on_hand": stock_data.get("total_on_hand", 0),
+                        "available": stock_data.get("total_available", 0)
+                    }
+                    
+                    # Skip if no stock available and with_stock filter is on
+                    if stock_info["available"] <= 0:
+                        continue
+            
+            items.append(ProductSearchItem(
+                id=product["id"],
+                sku=product.get("sku", ""),
+                name=product["name"],
+                description=product.get("description"),
+                category=product.get("category_name"),
+                list_price=Decimal(str(product.get("list_price", 0))),
+                cost_price=Decimal(str(product.get("cost_price", 0))) if product.get("cost_price") else None,
+                unit_of_measure=product.get("unit_of_measure", "unit"),
+                is_active=product.get("is_active", True),
+                stock_on_hand=stock_info["on_hand"],
+                stock_available=stock_info["available"]
+            ))
+        
+        # Determine total count  
+        if isinstance(products_data, list):
+            total = len(products_data)  # Total before pagination
+        else:
+            total = products_data.get("total", len(items))
+        
+        return ProductSearchResponse(
+            items=items,
+            total=total,
+            page=page,
+            page_size=page_size
+        )
+        
+    except Exception as e:
+        logger.error(f"Error fetching product list: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch product list"
         )
