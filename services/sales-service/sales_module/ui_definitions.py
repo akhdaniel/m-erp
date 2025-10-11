@@ -104,7 +104,7 @@ SALES_UI_PACKAGE = {
             "refresh_interval": 3600,
             "config": {
                 "columns": [{"field":"customer_name","label":"Customer"}, 
-                            {"field":"order_count","label":"Order Count","formatter":"currency"}, 
+                            {"field":"order_count","label":"Order Count","formatter":"number"}, 
                             {"field":"total_revenue","label":"Total Revenue","formatter":"currency"}, 
                             {"field":"average_order_value","label":"Average Order","formatter":"currency"}],
                 "limit": 5,
