@@ -124,6 +124,7 @@ class SalesTransaction(CompanyBusinessObject):
     approval_notes = Column(Text)
     
     # Order-specific information
+    transaction_date = Column(DateTime, nullable=True, default=None, index=True)
     order_date = Column(DateTime, nullable=True, default=None, index=True)
     required_date = Column(DateTime, nullable=True, index=True)
     promised_date = Column(DateTime, nullable=True, index=True)
