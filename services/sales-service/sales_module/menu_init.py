@@ -186,6 +186,17 @@ SALES_MENUS = [
         required_permission="access_sales"
     ),
     MenuItem(
+        code="sales_products",
+        title="Products",
+        description="Product catalog and inventory for sales",
+        url="/sales/products",
+        icon="fas fa-tags",
+        parent_code="sales_management",
+        order_index=5,
+        level=1,
+        required_permission="access_sales"
+    ),    
+    MenuItem(
         code="sales_analytics",
         title="Analytics",
         description="Sales Analytics & Reports",
