@@ -91,9 +91,9 @@ class SalesTransaction(CompanyBusinessObject):
     # Financial information
     subtotal = Column(Numeric(15, 2), nullable=False, default=0.0)
     discount_amount = Column(Numeric(15, 2), nullable=False, default=0.0)
-    tax_amount = Column(Numeric(15, 2), nullable=False, default=0.0)
-    shipping_amount = Column(Numeric(15, 2), nullable=False, default=0.0)
-    total_amount = Column(Numeric(15, 2), nullable=False, default=0.0)
+    tax = Column(Numeric(15, 2), nullable=False, default=0.0)
+    shipping = Column(Numeric(15, 2), nullable=False, default=0.0)
+    total = Column(Numeric(15, 2), nullable=False, default=0.0)
     currency_code = Column(String(3), nullable=False, default="USD")
     
     # Pricing and discounts
