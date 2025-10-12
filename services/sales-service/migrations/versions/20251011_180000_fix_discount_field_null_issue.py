@@ -23,7 +23,7 @@ def upgrade() -> None:
     # But make it nullable initially to avoid NOT NULL constraint issues
     try:
         # Check if column exists by trying to add it with a default and make it nullable
-        op.add_column('sales_transactions', sa.Column('discount', sa.Numeric(15, 2), nullable=True, default=0.0))
+        op.add_column('sales_transactions', sa.Column('discount', sa.Numeric(15, 2), nullable=False, default=0.0))
     except:
         # If column already exists, continue
         pass
