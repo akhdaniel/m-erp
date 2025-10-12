@@ -98,6 +98,7 @@ class SalesTransaction(CompanyBusinessObject):
     
     # Pricing and discounts
     overall_discount_percentage = Column(Numeric(5, 2), nullable=False, default=0.0)
+    discount = Column(Numeric(15, 2), nullable=False, default=0.0)  # General discount field (amount or percentage)
     discount_code = Column(String(50), nullable=True, index=True)  # Promotional discount code
     discount_reason = Column(String(255), nullable=True)  # Reason for discount
     margin_percentage = Column(Numeric(5, 2), nullable=True)
