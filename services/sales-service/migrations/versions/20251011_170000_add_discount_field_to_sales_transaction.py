@@ -19,7 +19,7 @@ depends_on = None
 def upgrade() -> None:
     """Add discount column to sales_transactions table."""
     # Add discount column
-    op.add_column('sales_transactions', sa.Column('discount', sa.Numeric(15, 2), nullable=False, default=0.0))
+    op.add_column('sales_transactions', sa.Column('discount', sa.Numeric(15, 2), nullable=True, default=0.0))
 
 
 def downgrade() -> None:
