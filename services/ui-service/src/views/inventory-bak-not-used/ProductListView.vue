@@ -38,14 +38,14 @@
             v-model="searchQuery"
             type="text"
             placeholder="Search products by name, SKU, or category..."
-            class="block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+            class="input"
             @input="debouncedSearch"
           >
         </div>
         <select
           v-model="selectedCategory"
           @change="filterProducts"
-          class="block rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+          class="block rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
         >
           <option value="">All Categories</option>
           <option v-for="category in categories" :key="category.id" :value="category.id">
@@ -55,7 +55,7 @@
         <select
           v-model="selectedStatus"
           @change="filterProducts"
-          class="block rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+          class="block rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
         >
           <option value="">All Status</option>
           <option value="active">Active</option>
