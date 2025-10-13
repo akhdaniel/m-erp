@@ -485,6 +485,7 @@ function createNew() {
 }
 
 function handleRowClick(item: any) {
+  console.log('row click item shchema', item, props.schema)
   if (props.schema.clickable === false) return
   
   if (props.schema.editRoute) {
