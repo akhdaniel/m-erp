@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: m_erp_db
     ports:
-      - "5432:5432"
+      - "6432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
@@ -23,7 +23,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
   # Redis for messaging and caching
   redis:
     image: redis:7-alpine
@@ -44,7 +45,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
   # User Authentication Service
   user-auth-service:
     build:
@@ -75,8 +77,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
-
+    #   - chat_default
+      - adh_shared_network
   # Company Partner Service
   company-partner-service:
     build:
@@ -110,7 +112,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
   # Menu Access Service
   menu-access-service:
@@ -142,7 +145,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
   # Service Registry
   service-registry:
@@ -173,7 +177,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
   # API Gateway (Kong)
   kong:
@@ -209,7 +214,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
   # UI Service (Vue.js Frontend)
   ui-service:
@@ -249,7 +255,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
 
   # Notification Service
@@ -281,7 +288,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
   # Audit Service
   audit-service:
@@ -317,7 +325,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
   # Inventory Service
   inventory-service:
@@ -360,7 +369,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
   # Sales Service
   sales-service:
@@ -412,7 +422,8 @@ services:
       - ./services/sales-service:/app
       - ./services/shared:/app/shared
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
   # UI Registry Service
   ui-registry-service:
@@ -442,7 +453,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
   purchasing-service:
     build:
@@ -484,12 +496,18 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - chat_default
+    #   - chat_default
+      - adh_shared_network
 
 volumes:
   postgres_data:
   redis_data:
 
+# networks:
+#   chat_default:
+#     external: true
+#    networks:
 networks:
-  chat_default:
+  adh_shared_network:
     external: true
+    name: adh_shared_network
