@@ -13,7 +13,7 @@
         :disabled="disabled"
         :required="required"
         type="text"
-        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+        class="block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
         :class="{ 'bg-gray-100': disabled }"
         @focus="handleFocus"
         @blur="handleBlur"

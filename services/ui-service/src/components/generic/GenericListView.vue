@@ -55,7 +55,7 @@
           v-model="searchQuery"
           type="text"
           :placeholder="schema.searchPlaceholder || 'Search...'"
-          class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+          class="block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
           @input="debouncedSearch"
         >
       </div>
@@ -67,7 +67,7 @@
           v-model="filters[filter.field]"
           @change="applyFilters"
           :multiple="filter.multiple"
-          :class="['block rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm', {'h-32': filter.multiple}]"
+          :class="['block rounded-md xerp_input focus:ring-primary-500 sm:text-sm', {'h-32': filter.multiple}]"
         >
           <option v-if="!filter.multiple" value="">{{ filter.placeholder || `All ${filter.label}` }}</option>
           <option v-for="option in filter.options" :key="option.value" :value="option.value">
@@ -80,7 +80,7 @@
           v-model="filters[filter.field]"
           type="date"
           @change="applyFilters"
-          class="block rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+          class="block rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
         >
       </template>
     </div>

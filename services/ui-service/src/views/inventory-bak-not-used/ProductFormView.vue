@@ -59,7 +59,7 @@
                   v-model="formData.name"
                   type="text"
                   required
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                   placeholder="Enter product name"
                 >
               </div>
@@ -73,7 +73,7 @@
                   v-model="formData.sku"
                   type="text"
                   required
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                   placeholder="e.g., PROD-001"
                 >
               </div>
@@ -86,7 +86,7 @@
                   id="barcode"
                   v-model="formData.barcode"
                   type="text"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                   placeholder="Optional barcode"
                 >
               </div>
@@ -98,7 +98,7 @@
                 <select
                   id="category"
                   v-model="formData.category_id"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                 >
                   <option value="">Select a category</option>
                   <option v-for="category in categories" :key="category.id" :value="category.id">
@@ -114,7 +114,7 @@
                 <select
                   id="product_type"
                   v-model="formData.product_type"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                 >
                   <option value="physical">Physical Product</option>
                   <option value="service">Service</option>
@@ -130,7 +130,7 @@
                   id="description"
                   v-model="formData.description"
                   rows="3"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                   placeholder="Enter product description"
                 ></textarea>
               </div>
@@ -158,7 +158,7 @@
                     type="number"
                     step="0.01"
                     min="0"
-                    class="mt-1 block w-full pl-7 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                    class="mt-1 block w-full pl-7 rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                     placeholder="0.00"
                   >
                 </div>
@@ -178,7 +178,7 @@
                     type="number"
                     step="0.01"
                     min="0"
-                    class="mt-1 block w-full pl-7 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                    class="mt-1 block w-full pl-7 rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                     placeholder="0.00"
                   >
                 </div>
@@ -211,7 +211,7 @@
                   v-model.number="formData.reorder_point"
                   type="number"
                   min="0"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                   placeholder="0"
                 >
               </div>
@@ -225,7 +225,7 @@
                   v-model.number="formData.reorder_quantity"
                   type="number"
                   min="0"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                   placeholder="0"
                 >
               </div>
@@ -238,7 +238,7 @@
                   id="unit_of_measure"
                   v-model="formData.unit_of_measure"
                   type="text"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                   placeholder="e.g., pcs, kg, m"
                 >
               </div>

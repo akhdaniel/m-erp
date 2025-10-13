@@ -33,7 +33,7 @@
                 v-model="purchaseOrder.supplier_id"
                 required
                 :disabled="isEditMode"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
               >
                 <option value="">Select a supplier</option>
                 <option
@@ -58,7 +58,7 @@
                 v-model="purchaseOrder.order_date"
                 type="date"
                 required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
               />
             </div>
 
@@ -70,7 +70,7 @@
               <input
                 v-model="purchaseOrder.expected_delivery"
                 type="date"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
               />
             </div>
 
@@ -81,7 +81,7 @@
               </label>
               <select
                 v-model="purchaseOrder.currency_code"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
               >
                 <option value="USD">USD - US Dollar</option>
                 <option value="EUR">EUR - Euro</option>
@@ -96,7 +96,7 @@
               </label>
               <select
                 v-model="purchaseOrder.payment_terms"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
               >
                 <option value="Net 30">Net 30</option>
                 <option value="Net 60">Net 60</option>
@@ -145,7 +145,7 @@
               <textarea
                 v-model="purchaseOrder.shipping_address"
                 rows="3"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                 placeholder="Enter shipping address"
               ></textarea>
             </div>
@@ -158,7 +158,7 @@
               <textarea
                 v-model="purchaseOrder.billing_address"
                 rows="3"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
                 placeholder="Enter billing address"
               ></textarea>
             </div>
@@ -175,7 +175,7 @@
             <textarea
               v-model="purchaseOrder.notes"
               rows="4"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
               placeholder="Enter any additional notes or instructions for this purchase order"
             ></textarea>
           </div>

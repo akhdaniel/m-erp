@@ -16,7 +16,7 @@
         :placeholder="placeholder"
         :min="min"
         :max="max"
-        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+        class="block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
         :class="{ 'bg-gray-100': disabled }"
         @focus="handleFocus"
         @blur="handleBlur"
@@ -95,7 +95,7 @@
             v-model="selectedHour"
             min="0"
             max="23"
-            class="w-16 rounded border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+            class="w-16 rounded xerp_input focus:ring-primary-500 text-sm"
             @change="updateDateTime"
           >
           <span>:</span>
@@ -104,7 +104,7 @@
             v-model="selectedMinute"
             min="0"
             max="59"
-            class="w-16 rounded border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+            class="w-16 rounded xerp_input focus:ring-primary-500 text-sm"
             @change="updateDateTime"
           >
         </div>

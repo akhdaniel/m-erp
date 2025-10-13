@@ -14,7 +14,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
           <select
             v-model="filters.status"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
           >
             <option value="">All Statuses</option>
             <option value="pending">Pending</option>
@@ -29,7 +29,7 @@
           <input
             v-model="filters.amount_min"
             type="number"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
             placeholder="0"
           />
         </div>
@@ -39,7 +39,7 @@
           <input
             v-model="filters.amount_max"
             type="number"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
             placeholder="10000"
           />
         </div>
@@ -49,7 +49,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
           <select
             v-model="filters.date_range"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
           >
             <option value="">All Dates</option>
             <option value="today">Today</option>
