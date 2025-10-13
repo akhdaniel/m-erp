@@ -488,9 +488,9 @@ async function loadRecord() {
     if (!response.ok) throw new Error('Failed to load record')
     
     const data = await response.json()
-    console.log('Loaded record data:', data)
+    // console.log('Loaded record data:', data)
 
-    console.log('recordId==', recordId)
+    //console.log('recordId==', recordId)
     formData.value["id"] = data.id
     formData.value["state"] = data.state
     
@@ -533,18 +533,18 @@ async function loadRecord() {
         f.type === 'component' && f.component === 'LineItemsManager')
       if (lineItemsField) {
         const fieldName = lineItemsField.name
-        console.log('Found LineItemsManager field:', fieldName)
-        console.log('Current formData[fieldName]:', formData.value[fieldName])
-        console.log('Data line_items:', data.line_items)
-        console.log('Data items:', data.items)
+        // console.log('Found LineItemsManager field:', fieldName)
+        // console.log('Current formData[fieldName]:', formData.value[fieldName])
+        // console.log('Data line_items:', data.line_items)
+        // console.log('Data items:', data.items)
         // Map line items data to the form field
         // Check for line_items or items in the response data
         if (data.line_items && data.line_items.length > 0) {
           formData.value[fieldName] = data.line_items
-          console.log('Mapped line_items to', fieldName)
+          // console.log('Mapped line_items to', fieldName)
         } else if (data.items && data.items.length > 0) {
           formData.value[fieldName] = data.items
-          console.log('Mapped items to', fieldName)
+          // console.log('Mapped items to', fieldName)
         } else {
           // Ensure we have an empty array if no line items data
           formData.value[fieldName] = formData.value[fieldName] || []
@@ -616,7 +616,7 @@ async function loadRecord() {
     originalData.value = { ...formData.value }
 
 
-    console.log('final formData', formData)
+    // console.log('final formData', formData)
   } catch (err: any) {
     error.value = err.message || 'Failed to load record'
     console.error('Error loading record:', err)
@@ -700,7 +700,7 @@ async function loadOptions(field: any) {
   }
 }
 
-// Form submission
+// Form submission (save)
 async function handleSubmit() {
   if (!validate()) return
   
@@ -929,6 +929,7 @@ function handleTotalsChanged(totals: any) {
   formData.value.total = totals.total
 }
 
+// actions defined in Ui scheme
 async function executeAction(action: any) {
   // First try to execute backend service function if action has endpoint
   console.log('action.endpoint', action.endpoint)
