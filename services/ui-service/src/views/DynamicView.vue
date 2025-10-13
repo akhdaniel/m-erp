@@ -469,9 +469,9 @@ watch(() => route.name, () => {
   loadSchema()
 })
 
-// watch(() => route.params, () => {
-//   loadSchema()
-// }, { deep: true })
+watch(() => route.params, () => {
+  loadSchema()
+}, { deep: true })
 
 // Initialize
 onMounted(() => {
