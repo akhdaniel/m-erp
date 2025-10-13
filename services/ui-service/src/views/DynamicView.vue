@@ -460,9 +460,9 @@ function handleCancel() {
 }
 
 // Watch route changes
-// watch(() => route.path, () => {
-//   loadSchema()
-// })
+watch(() => route.path, () => {
+  loadSchema()
+})
 
 // Also watch route name and params for more comprehensive updates
 // watch(() => route.name, () => {
@@ -475,6 +475,6 @@ function handleCancel() {
 
 // Initialize
 onMounted(() => {
-  loadSchema()
+  // loadSchema()
 })
 </script>
