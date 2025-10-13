@@ -23,8 +23,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
   # Redis for messaging and caching
   redis:
     image: redis:7-alpine
@@ -45,8 +44,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
   # User Authentication Service
   user-auth-service:
     build:
@@ -77,8 +75,8 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
+
   # Company Partner Service
   company-partner-service:
     build:
@@ -112,8 +110,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
   # Menu Access Service
   menu-access-service:
@@ -145,8 +142,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
   # Service Registry
   service-registry:
@@ -177,8 +173,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
   # API Gateway (Kong)
   kong:
@@ -214,8 +209,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
   # UI Service (Vue.js Frontend)
   ui-service:
@@ -255,8 +249,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
 
   # Notification Service
@@ -288,8 +281,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
   # Audit Service
   audit-service:
@@ -325,8 +317,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
   # Inventory Service
   inventory-service:
@@ -369,8 +360,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
   # Sales Service
   sales-service:
@@ -422,8 +412,7 @@ services:
       - ./services/sales-service:/app
       - ./services/shared:/app/shared
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
   # UI Registry Service
   ui-registry-service:
@@ -453,8 +442,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
   purchasing-service:
     build:
@@ -496,18 +484,12 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-    #   - chat_default
-      - adh_shared_network
+      - chat_default
 
 volumes:
   postgres_data:
   redis_data:
 
-# networks:
-#   chat_default:
-#     external: true
-#    networks:
 networks:
-  adh_shared_network:
+  chat_default:
     external: true
-    name: adh_shared_network
