@@ -465,9 +465,9 @@ watch(() => route.path, () => {
 })
 
 // Also watch route name and params for more comprehensive updates
-// watch(() => route.name, () => {
-//   loadSchema()
-// })
+watch(() => route.name, () => {
+  loadSchema()
+})
 
 // watch(() => route.params, () => {
 //   loadSchema()
