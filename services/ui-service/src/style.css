@@ -26,7 +26,7 @@
   }
   
   .input {
-    @apply block w-full rounded-md focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+    @apply mt-1 relative rounded-md shadow-sm block w-full rounded-md focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
     /* border-gray-300 shadow-sm  */
   }
   

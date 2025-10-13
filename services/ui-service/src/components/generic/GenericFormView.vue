@@ -136,7 +136,7 @@
                   :placeholder="field.placeholder"
                   :pattern="field.pattern"
                   :maxlength="field.maxLength"
-                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   :class="{ 'bg-gray-100': field.disabled || (isEditMode && field.readOnlyOnEdit) }"
                 >
                 <p v-if="field.help" class="mt-1 text-sm text-gray-500">{{ field.help }}</p>
@@ -148,7 +148,7 @@
                   {{ field.label }}
                   <span v-if="field.required" class="text-red-500">*</span>
                 </label>
-                <div v-if="field.prefix || field.suffix" class="mt-1 relative rounded-md shadow-sm">
+                <div v-if="field.prefix || field.suffix" class="input">
                   <div v-if="field.prefix" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span class="text-gray-500 sm:text-sm">{{ field.prefix }}</span>
                   </div>
@@ -162,7 +162,7 @@
                     :max="field.max"
                     :step="field.step"
                     :placeholder="field.placeholder"
-                    class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                     :class="{ 
                       'pl-7': field.prefix,
                       'pr-12': field.suffix,
@@ -184,7 +184,7 @@
                   :max="field.max"
                   :step="field.step"
                   :placeholder="field.placeholder"
-                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   :class="{ 'bg-gray-100': field.disabled }"
                 >
                 <p v-if="field.help" class="mt-1 text-sm text-gray-500">{{ field.help }}</p>
@@ -214,7 +214,7 @@
                   v-model="formData[field.name]"
                   :required="field.required"
                   :disabled="field.disabled"
-                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   :class="{ 'bg-gray-100': field.disabled }"
                 >
                   <option v-if="!field.required" value="">{{ field.placeholder || 'Select...' }}</option>
@@ -243,7 +243,7 @@
                   :rows="field.rows || 3"
                   :placeholder="field.placeholder"
                   :maxlength="field.maxLength"
-                  class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm placeholder-gray-300"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm placeholder-gray-300"
                   :class="{ 'bg-gray-100': field.disabled }"
                 ></textarea>
                 <p v-if="field.help" class="mt-1 text-sm text-gray-500">{{ field.help }}</p>
