@@ -167,7 +167,7 @@
                             @input="searchProducts"
                             @focus="showProductDropdown = true"
                             type="text"
-                            class="block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                             placeholder="Search for a product..."
                           />
                           <!-- Product Dropdown -->
@@ -200,7 +200,7 @@
                           type="number"
                           min="1"
                           step="1"
-                          class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                          class="input"
                         />
                       </div>
 
@@ -212,7 +212,7 @@
                           type="number"
                           min="0"
                           step="0.01"
-                          class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                          class="input"
                         />
                       </div>
 
@@ -225,7 +225,7 @@
                           min="0"
                           max="100"
                           step="0.01"
-                          class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                          class="input"
                         />
                       </div>
 

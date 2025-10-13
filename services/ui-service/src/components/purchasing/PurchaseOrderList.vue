@@ -25,7 +25,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
           <select
             v-model="filters.status"
-            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+            class="input"
           >
             <option value="">All Statuses</option>
             <option value="draft">Draft</option>
@@ -41,7 +41,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
           <select
             v-model="filters.supplier_id"
-            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+            class="input"
           >
             <option value="">All Suppliers</option>
             <option
@@ -60,7 +60,7 @@
           <input
             v-model="filters.from_date"
             type="date"
-            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+            class="input"
           />
         </div>
 
@@ -69,7 +69,7 @@
           <input
             v-model="filters.to_date"
             type="date"
-            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+            class="input"
           />
         </div>
       </div>

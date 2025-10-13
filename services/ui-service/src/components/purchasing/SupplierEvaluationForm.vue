@@ -112,7 +112,7 @@
             <textarea
               v-model="evaluation.comments"
               rows="4"
-              class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+              class="input"
               placeholder="Enter any additional comments about this supplier's performance..."
             ></textarea>
           </div>

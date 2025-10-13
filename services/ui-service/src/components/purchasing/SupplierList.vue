@@ -25,7 +25,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
           <select
             v-model="filters.status"
-            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+            class="input"
           >
             <option value="">All Statuses</option>
             <option value="active">Active</option>
@@ -39,7 +39,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
           <select
             v-model="filters.category"
-            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+            class="input"
           >
             <option value="">All Categories</option>
             <option value="general">General</option>
@@ -53,7 +53,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Min Rating</label>
           <select
             v-model="filters.min_rating"
-            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+            class="input"
           >
             <option value="">Any Rating</option>
             <option value="1">1 Star</option>
@@ -71,7 +71,7 @@
             v-model="filters.search"
             type="text"
             placeholder="Supplier name"
-            class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+            class="input"
           />
         </div>
       </div>

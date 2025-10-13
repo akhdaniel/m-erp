@@ -31,7 +31,7 @@
                 type="text"
                 required
                 :disabled="isEditMode"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="e.g., SUP001"
               />
             </div>
@@ -45,7 +45,7 @@
                 v-model="supplier.name"
                 type="text"
                 required
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="Enter supplier company name"
               />
             </div>
@@ -57,7 +57,7 @@
               </label>
               <select
                 v-model="supplier.category"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
               >
                 <option value="general">General</option>
                 <option value="preferred">Preferred</option>
@@ -72,7 +72,7 @@
               </label>
               <select
                 v-model="supplier.is_active"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
               >
                 <option :value="true">Active</option>
                 <option :value="false">Inactive</option>
@@ -93,7 +93,7 @@
               <input
                 v-model="supplier.contact_person"
                 type="text"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="Primary contact name"
               />
             </div>
@@ -106,7 +106,7 @@
               <input
                 v-model="supplier.email"
                 type="email"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="supplier@example.com"
               />
             </div>
@@ -119,7 +119,7 @@
               <input
                 v-model="supplier.phone"
                 type="tel"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="+1-555-0100"
               />
             </div>
@@ -132,7 +132,7 @@
               <input
                 v-model="supplier.website"
                 type="url"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="https://www.supplier.com"
               />
             </div>
@@ -151,7 +151,7 @@
               <input
                 v-model="supplier.address"
                 type="text"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="123 Main Street"
               />
             </div>
@@ -164,7 +164,7 @@
               <input
                 v-model="supplier.city"
                 type="text"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="New York"
               />
             </div>
@@ -177,7 +177,7 @@
               <input
                 v-model="supplier.state"
                 type="text"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="NY"
               />
             </div>
@@ -190,7 +190,7 @@
               <input
                 v-model="supplier.postal_code"
                 type="text"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="10001"
               />
             </div>
@@ -203,7 +203,7 @@
               <input
                 v-model="supplier.country"
                 type="text"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="USA"
                 value="USA"
               />
@@ -225,7 +225,7 @@
                 type="number"
                 min="0"
                 max="365"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="30"
               />
             </div>
@@ -237,7 +237,7 @@
               </label>
               <select
                 v-model="supplier.currency_code"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
               >
                 <option value="USD">USD - US Dollar</option>
                 <option value="EUR">EUR - Euro</option>
@@ -253,7 +253,7 @@
               <input
                 v-model="supplier.tax_id"
                 type="text"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="Tax identification number"
               />
             </div>
@@ -269,7 +269,7 @@
                 min="1"
                 max="5"
                 step="0.5"
-                class="mt-1 block w-full rounded-md xerp_input focus:ring-primary-500 sm:text-sm"
+                class="input"
                 placeholder="3.0"
               />
             </div>
