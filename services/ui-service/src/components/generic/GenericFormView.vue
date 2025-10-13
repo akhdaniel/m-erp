@@ -516,7 +516,7 @@ async function loadRecord() {
           } else if (fieldDef.type === 'component' && fieldDef.component === 'LineItemsManager') {
             // Handle line items - check both 'line_items' and 'items' fields
             // This will be handled in the special line items section below
-            console.log('Skipping line items field mapping here, will handle separately:', key)
+            // console.log('Skipping line items field mapping here, will handle separately:', key)
           } else {
             formData.value[key] = data[key]
           }
