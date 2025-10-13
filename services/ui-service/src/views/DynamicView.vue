@@ -459,19 +459,23 @@ function handleCancel() {
   }
 }
 
-// // Watch route changes
-// watch(() => route.path, () => {
-//   loadSchema()
-// })
+// Watch route changes
+watch(() => route.path, () => {
+  console.log('route changs')
+  // loadSchema()
+})
 
-// // Also watch route name and params for more comprehensive updates
-// watch(() => route.name, () => {
-//   loadSchema()
-// })
+// Also watch route name and params for more comprehensive updates
+watch(() => route.name, () => {
+  console.log('route name changs')
+  // loadSchema()
+})
 
-// watch(() => route.params, () => {
-//   loadSchema()
-// }, { deep: true })
+watch(() => route.params, () => {
+  console.log('route param changs')
+
+  // loadSchema()
+}, { deep: true })
 
 // Initialize
 onMounted(() => {
