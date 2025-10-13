@@ -475,6 +475,7 @@ watch(() => route.params, () => {
 
 // Initialize
 onMounted(() => {
-  // loadSchema()
+  console.log('mounted..')
+  loadSchema()
 })
 </script>
