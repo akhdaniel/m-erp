@@ -218,7 +218,7 @@ async def create_sales_transaction(
         # Create transaction - exclude relationship fields from transaction_data
         transaction_fields = {k: v for k, v in transaction_data.items() 
                              if k not in ['line_items', 'items', 'transaction', 'customer']}  # Exclude potential relationship fields
-        transaction = SalesTransaction(**transaction_fields)
+        transaction = SalesTransaction(**transaction_data)
         logger.info(f"Transaction state after creation: {transaction.state}, type: {type(transaction.state)}")
         logger.info(f"Transaction state value: {transaction.state.value if hasattr(transaction.state, 'value') else 'no value attr'}")
         logger.info(f"Final transaction_data state: {transaction_data['state']}")
