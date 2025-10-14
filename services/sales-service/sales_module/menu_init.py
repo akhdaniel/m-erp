@@ -139,12 +139,13 @@ SALES_MENUS = [
     ),
     MenuItem(
         code="sales_transactions",
-        title="Transactions",
+        title="All Sales Transactions",
         description="All Sales Transactions",
         parent_code="sales_management",
         order_index=1,  # Second item after Dashboard
         level=1,
-        url="/sales/transactions",
+        url="/sales/orders",
+        # url="/sales/transactions",
         icon="file-text",
         item_type="link",
         required_permission="access_sales"
@@ -156,7 +157,8 @@ SALES_MENUS = [
         parent_code="sales_management",
         order_index=2,  # Third item
         level=1,
-        url="/sales/transactions?state=draft,quote_pending_approval,quote_approved,quote_sent,quote_accepted,quote_rejected,quote_expired",
+        url="/sales/orders?state=draft,quote_pending_approval,quote_approved,quote_sent,quote_accepted,quote_rejected,quote_expired",
+        # url="/sales/transactions?state=draft,quote_pending_approval,quote_approved,quote_sent,quote_accepted,quote_rejected,quote_expired",
         icon="file-text",
         item_type="link",
         required_permission="manage_quotes"
@@ -168,7 +170,8 @@ SALES_MENUS = [
         parent_code="sales_management",
         order_index=3,  # Fourth item
         level=1,
-        url="/sales/transactions?state=order_pending,order_confirmed,order_in_production,order_ready_to_ship,order_partially_shipped,order_shipped,order_delivered,order_completed,order_cancelled,order_on_hold",
+        url="/sales/orders?state=order_pending,order_confirmed,order_in_production,order_ready_to_ship,order_partially_shipped,order_shipped,order_delivered,order_completed,order_cancelled,order_on_hold",
+        # url="/sales/transactions?state=order_pending,order_confirmed,order_in_production,order_ready_to_ship,order_partially_shipped,order_shipped,order_delivered,order_completed,order_cancelled,order_on_hold",
         icon="shopping-bag",
         item_type="link",
         required_permission="manage_orders"
