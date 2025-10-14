@@ -108,8 +108,8 @@ async def list_sales_transactions(
             query = query.order_by(SalesTransaction.created_at.desc() if sort_order.lower() == 'desc' else SalesTransaction.created_at.asc())
         elif sort_by == "updated_at":
             query = query.order_by(SalesTransaction.updated_at.desc() if sort_order.lower() == 'desc' else SalesTransaction.updated_at.asc())
-        elif sort_by == "total_amount":
-            query = query.order_by(SalesTransaction.total_amount.desc() if sort_order.lower() == 'desc' else SalesTransaction.total_amount.asc())
+        elif sort_by == "total":
+            query = query.order_by(SalesTransaction.total.desc() if sort_order.lower() == 'desc' else SalesTransaction.total.asc())
         else:
             query = query.order_by(SalesTransaction.created_at.desc())
         
@@ -171,10 +171,10 @@ async def create_sales_transaction(
             transaction_data['currency_code'] = 'USD'
         
         if 'subtotal' not in transaction_data:
-            transaction_data['subtotal'] = transaction_data.get('total_amount', 0.0)
+            transaction_data['subtotal'] = transaction_data.get('total', 0.0)
         
-        if 'tax_amount' not in transaction_data:
-            transaction_data['tax_amount'] = 0.0
+        if 'tax' not in transaction_data:
+            transaction_data['tax'] = 0.0
             
         if 'discount_amount' not in transaction_data:
             transaction_data['discount_amount'] = 0.0
@@ -318,9 +318,9 @@ async def update_sales_transaction(
         if not transaction:
             raise HTTPException(status_code=404, detail="Transaction not found")
         
-        # Update transaction fields
+        # Update transaction fields - exclude relationship fields
         for key, value in transaction_data.items():
-            if hasattr(transaction, key) and key not in ['id', 'company_id', 'created_at', 'created_by_user_id']:
+            if hasattr(transaction, key) and key not in ['id', 'company_id', 'created_at', 'created_by_user_id', 'line_items', 'items', 'transaction']:
                 setattr(transaction, key, value)
         
         # Update timestamps and user info
