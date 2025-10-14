@@ -322,9 +322,9 @@ function handleRowClick(item: any) {
     const route = schema.value.editRoute.replace('{id}', item.id)
     console.log('new route=',route.path)
     console.log('route.path', route.path)
-
+    schema.value = 'form'
     router.push(route)
-    loadSchema()
+    // loadSchema()
   }
 }
 
