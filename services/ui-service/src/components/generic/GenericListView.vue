@@ -488,12 +488,13 @@ function handleRowClick(item: any) {
   console.log('row click item shchema', item, props.schema)
   if (props.schema.clickable === false) return
   
-  if (props.schema.editRoute) {
-    const route = props.schema.editRoute.replace('{id}', getItemKey(item))
-    router.push(route)
-  } else {
+  // if (props.schema.editRoute) {
+  //   const route = props.schema.editRoute.replace('{id}', getItemKey(item))
+  //   router.push(route)
+  // } else {
+    console.log('emit row-click')
     emit('row-click', item)
-  }
+  // }
 }
 
 async function executeAction(action: any) {
