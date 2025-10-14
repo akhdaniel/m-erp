@@ -222,8 +222,11 @@ function getSchemaEndpoint(): string {
     console.log('segement test', segments)
     return '/api/v1/'+segments[0]+'/'+segments[1]+'/ui-schemas/detail'
   }
-  else
-    return '/api/v1'+path+'/ui-schemas/'+viewType.value
+  else{
+    const res = '/api/v1'+path+'/ui-schemas/'+viewType.value
+    console.log('segement res', res)
+    return res 
+  }
 
 }
 
