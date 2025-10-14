@@ -128,6 +128,7 @@ const recordId = computed(() => {
 const componentType = computed(() => {
   if (!schema.value) return null
   
+  console.log('schema.value.viewType==', schema.value.viewType , viewType.value)
   // Map view types to components
   switch (schema.value.viewType || viewType.value) {
     case 'list':
@@ -472,7 +473,7 @@ function handleCancel() {
 // Watch route changes
 watch(() => route.path, () => {
   console.log('route changs')
-  // loadSchema()
+  loadSchema()
 })
 
 // Also watch route name and params for more comprehensive updates
