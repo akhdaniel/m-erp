@@ -312,6 +312,9 @@ function handleRowClick(item: any) {
     const route = schema.value.editRoute.replace('{id}', item.id)
     router.push(route)
   }
+  else{
+    router.push(route)
+  }
 }
 
 async function handleAction(action: any, item?: any) {
