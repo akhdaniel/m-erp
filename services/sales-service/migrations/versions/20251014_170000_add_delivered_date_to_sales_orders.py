@@ -23,6 +23,7 @@ def upgrade() -> None:
     op.add_column('sales_orders', sa.Column('carrier_name', sa.Text(), nullable=True, index=True))
     op.add_column('sales_orders', sa.Column('tracking_number', sa.Text(), nullable=True, index=True))
     op.add_column('sales_orders', sa.Column('custom_attributes', sa.JSON(), nullable=True))
+    op.add_column('sales_orders', sa.Column('is_priority', sa.JSON(), nullable=False, default=False))
 
 
 def downgrade() -> None:
@@ -31,3 +32,4 @@ def downgrade() -> None:
     op.drop_column('sales_orders', 'carrier_name')
     op.drop_column('sales_orders', 'tracking_number')
     op.drop_column('sales_orders', 'custom_attributes')
+    op.drop_column('sales_orders', 'is_priority')
