@@ -201,11 +201,13 @@ function getSchemaEndpoint(): string {
   console.log('getSchemaEndpoint path=',path)
   if (path.includes('dashboard'))
   {
+    console.log('dashboard includes', path)
     return '/api/v1'+path+'/ui-schemas'
   }
   else if(path.includes('/new')){
     // /sales/order/new => /sales/order/ui-schemas/form
     const segments = path.split("/").filter(segment => segment !== "");
+    console.log('segement includes', segments)
     return '/api/v1/'+segments[0]+'/'+segments[1]+'/ui-schemas/form'
   }
   else if(path.includes('/edit')){
@@ -217,6 +219,7 @@ function getSchemaEndpoint(): string {
   else if(/\d+$/.test(path)) {
     // /inventory/products/14 => /inventory/products/ui-schemas/form
     const segments = path.split("/").filter(segment => segment !== "");
+    console.log('segement test', segments)
     return '/api/v1/'+segments[0]+'/'+segments[1]+'/ui-schemas/detail'
   }
   else
