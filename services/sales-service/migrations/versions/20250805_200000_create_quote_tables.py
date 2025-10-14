@@ -38,7 +38,7 @@ def upgrade() -> None:
     
     # Create line item type enum
     line_item_type_enum = postgresql.ENUM(
-        'product', 'service', 'discount', 'shipping', 'tax', 'misc',
+        'PRODUCT', 'SERVICE', 'DISCOUNT', 'SHIPPING', 'TAX', 'MISC',
         name='lineitemtype',
         create_type=False
     )
@@ -165,7 +165,7 @@ def upgrade() -> None:
         sa.Column('line_number', sa.Integer(), nullable=False),
         
         # Product/service information
-        sa.Column('line_type', line_item_type_enum, nullable=False, server_default='product'),
+        sa.Column('line_type', line_item_type_enum, nullable=False, server_default='PRODUCT'),
         sa.Column('product_id', sa.Integer(), nullable=True),
         sa.Column('product_variant_id', sa.Integer(), nullable=True),
         
