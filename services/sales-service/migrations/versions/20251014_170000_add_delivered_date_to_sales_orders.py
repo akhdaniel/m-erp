@@ -23,8 +23,11 @@ def upgrade() -> None:
     op.add_column('sales_orders', sa.Column('carrier_name', sa.Text(), nullable=True, index=True))
     op.add_column('sales_orders', sa.Column('tracking_number', sa.Text(), nullable=True, index=True))
     op.add_column('sales_orders', sa.Column('custom_attributes', sa.JSON(), nullable=True))
-    op.add_column('sales_orders', sa.Column('is_priority', sa.JSON(), nullable=False, default=False))
-
+    op.add_column('sales_orders', sa.Column('is_priority', sa.Boolean(), nullable=False, default=False))
+    op.add_column('sales_orders', sa.Column('requires_approval', sa.Boolean(), nullable=False, default=False))
+    op.add_column('sales_orders', sa.Column('is_dropship', sa.Boolean(), nullable=False, default=False))
+    op.add_column('sales_orders', sa.Column('special_instructions', sa.Text(), nullable=False, default=False))
+    op.add_column('sales_orders', sa.Column('framework_version', sa.String(length=50), nullable=True))
 
 def downgrade() -> None:
     """Remove source_channel column from sales_orders table."""
@@ -33,3 +36,6 @@ def downgrade() -> None:
     op.drop_column('sales_orders', 'tracking_number')
     op.drop_column('sales_orders', 'custom_attributes')
     op.drop_column('sales_orders', 'is_priority')
+    op.drop_column('sales_orders', 'requires_approval')
+    op.drop_column('sales_orders', 'is_dropship')
+    op.drop_column('sales_orders', 'special_instructions')
