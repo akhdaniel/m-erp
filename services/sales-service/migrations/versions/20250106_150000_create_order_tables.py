@@ -278,14 +278,14 @@ def upgrade():
     op.create_index('ix_order_line_items_order_line', 'sales_order_line_items', ['order_id', 'line_number'])
     op.create_index('ix_order_shipments_company_status', 'order_shipments', ['company_id', 'status'])
     op.create_index('ix_order_invoices_company_status', 'order_invoices', ['company_id', 'status'])
-    op.create_index('ix_order_invoices_due_date', 'order_invoices', ['due_date'])
+    # op.create_index('ix_order_invoices_due_date', 'order_invoices', ['due_date'])
 
 
 def downgrade():
     """Drop order-related tables"""
     
     # Drop indexes first
-    op.drop_index('ix_order_invoices_due_date', table_name='order_invoices')
+    # op.drop_index('ix_order_invoices_due_date', table_name='order_invoices')
     op.drop_index('ix_order_invoices_company_status', table_name='order_invoices')
     op.drop_index('ix_order_shipments_company_status', table_name='order_shipments')
     op.drop_index('ix_order_line_items_order_line', table_name='sales_order_line_items')
