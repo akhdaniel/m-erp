@@ -769,10 +769,10 @@ async function handleSubmit() {
     })
     
     // Also handle the case where we have line_items directly
-    if (submitData.line_items && !submitData.items) {
-      submitData.items = submitData.line_items
-      delete submitData.line_items
-    }
+    // if (submitData.line_items && !submitData.items) {
+    //   submitData.items = submitData.line_items
+    //   delete submitData.line_items
+    // }
     
     console.log('handleSubmit-----', apiUrl.value)
     // Get auth token from cookies
