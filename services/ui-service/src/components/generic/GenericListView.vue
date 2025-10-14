@@ -371,7 +371,7 @@ async function fetchData() {
   
   try {
     const params = new URLSearchParams()
-    console.log('params', params)
+    // console.log('params', params)
     
     // Pagination
     if (props.schema.paginated !== false) {
@@ -380,7 +380,7 @@ async function fetchData() {
     }
     
     // Search
-    console.log('searchQuery',searchQuery)
+    // console.log('searchQuery',searchQuery)
     if (searchQuery.value && props.schema.searchable) {
       params.append(props.schema.searchParam || 'search', searchQuery.value)
     }
@@ -461,7 +461,7 @@ async function fetchData() {
       console.warn('Unexpected API response format. Expected "data" key:', data)
     }
 
-    console.log('items.value ==',items.value )
+    // console.log('items.value ==',items.value )
 
   } catch (err: any) {
     error.value = err.message || 'Failed to load data'
