@@ -22,7 +22,7 @@ def upgrade() -> None:
     op.add_column('sales_orders', sa.Column('source_channel', sa.DateTime(), nullable=True, index=True))
     op.add_column('sales_orders', sa.Column('carrier_name', sa.Text(), nullable=True, index=True))
     op.add_column('sales_orders', sa.Column('tracking_number', sa.Text(), nullable=True, index=True))
-    op.add_column('sales_orders', sa.Column('custom_attributes', sa.JSON(), nullable=True, index=True))
+    op.add_column('sales_orders', sa.Column('custom_attributes', sa.JSON(), nullable=True))
 
 
 def downgrade() -> None:
