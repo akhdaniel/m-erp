@@ -1454,7 +1454,7 @@ async def get_transactions_form_schema() -> Dict[str, Any]:
                 ]
             },
             {
-                "id": "items",
+                "id": "line_items",
                 "title": "Transaction Items",
                 "gridClass": "grid-cols-2",
                 "fields": [
