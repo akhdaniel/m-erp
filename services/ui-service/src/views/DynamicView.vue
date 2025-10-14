@@ -307,14 +307,12 @@ function processSchema(schema: any) {
 
 // Event handlers
 function handleRowClick(item: any) {
-  console.log('row clci', item, schema)
+  console.log('row clci', item, schema.value)
   if (schema.value?.editRoute) {
     const route = schema.value.editRoute.replace('{id}', item.id)
     router.push(route)
   }
-  else{
-    router.push(route)
-  }
+  
 }
 
 async function handleAction(action: any, item?: any) {
