@@ -315,12 +315,14 @@ function processSchema(schema: any) {
 
 // Event handlers
 function handleRowClick(item: any) {
-  console.log('row clci', item, schema.value)
+  console.log('row clci:item', item)
+  console.log('row clci:schema.value', schema.value)
 
   if (schema.value?.editRoute) {
+    const route = schema.value.editRoute.replace('{id}', item.id)
+    console.log('new route=',route.path)
     console.log('route.path', route.path)
-    // const route = schema.value.editRoute.replace('{id}', item.id)
-    console.log('route=',route.path)
+
     router.push(route)
     loadSchema()
   }
