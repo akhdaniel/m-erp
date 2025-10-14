@@ -752,21 +752,21 @@ async function handleSubmit() {
     
     // Handle line items for the API
     // Check if we have any LineItemsManager components in the schema
-    props.schema.sections?.forEach((section: any) => {
-      const lineItemsField = section.fields?.find((f: any) => 
-        f.type === 'component' && f.component === 'LineItemsManager')
-      if (lineItemsField) {
-        const fieldName = lineItemsField.name
-        // If we have line items data in the field, we may need to rename it to items for the API
-        if (submitData[fieldName] && !submitData.items) {
-          submitData.items = submitData[fieldName]
-          // Only delete the field if it's named 'line_items'
-          if (fieldName === 'line_items') {
-            delete submitData[fieldName]
-          }
-        }
-      }
-    })
+    // props.schema.sections?.forEach((section: any) => {
+    //   const lineItemsField = section.fields?.find((f: any) => 
+    //     f.type === 'component' && f.component === 'LineItemsManager')
+    //   if (lineItemsField) {
+    //     const fieldName = lineItemsField.name
+    //     // If we have line items data in the field, we may need to rename it to items for the API
+    //     if (submitData[fieldName] && !submitData.items) {
+    //       submitData.items = submitData[fieldName]
+    //       // // Only delete the field if it's named 'line_items'
+    //       // if (fieldName === 'line_items') {
+    //       //   delete submitData[fieldName]
+    //       // }
+    //     }
+    //   }
+    // })
     
     // Also handle the case where we have line_items directly
     // if (submitData.line_items && !submitData.items) {
