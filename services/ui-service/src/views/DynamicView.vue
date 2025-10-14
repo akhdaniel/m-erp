@@ -310,6 +310,7 @@ function handleRowClick(item: any) {
   console.log('row clci', item, schema.value)
   if (schema.value?.editRoute) {
     const route = schema.value.editRoute.replace('{id}', item.id)
+    console.log('route=',route)
     router.push(route)
   }
   
