@@ -224,7 +224,7 @@ class SalesTransaction(CompanyBusinessObject):
         """Detailed representation of sales transaction."""
         return (
             f"SalesTransaction(id={self.id}, number=\"{self.transaction_number}\", "
-            f"version={self.version}, state=\"{self.state.value}\", total={self.total_amount})"
+            f"version={self.version}, state=\"{self.state}\", total={self.total})"
         )
     
     @property

@@ -147,7 +147,7 @@ async def create_sales_transaction(
     Creates a new sales transaction with the provided information.
     """
     try:
-        logger.info(f"transaction_data={transaction_data}")
+        # logger.info(f"transaction_data={transaction_data}")
         # Set default values
         if 'transaction_number' not in transaction_data or not transaction_data['transaction_number']:
             # Generate transaction number
@@ -215,8 +215,10 @@ async def create_sales_transaction(
                         transaction_data['state'] = SalesTransactionState.DRAFT.value
                         logger.info(f"Set state to default value: {transaction_data['state']}")
         
-        # Create transaction
-        transaction = SalesTransaction(**transaction_data)
+        # Create transaction - exclude relationship fields from transaction_data
+        transaction_fields = {k: v for k, v in transaction_data.items() 
+                             if k not in ['line_items', 'items', 'transaction', 'customer']}  # Exclude potential relationship fields
+        transaction = SalesTransaction(**transaction_fields)
         logger.info(f"Transaction state after creation: {transaction.state}, type: {type(transaction.state)}")
         logger.info(f"Transaction state value: {transaction.state.value if hasattr(transaction.state, 'value') else 'no value attr'}")
         logger.info(f"Final transaction_data state: {transaction_data['state']}")
@@ -407,7 +409,7 @@ async def change_transaction_state(
         old_state = transaction.state
         
         # Update state
-        transaction.state = state_enum
+        transaction.state = state_enum.value
         transaction.updated_at = datetime.utcnow()
         transaction.updated_by_user_id = user_id
         
