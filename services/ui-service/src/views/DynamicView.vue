@@ -211,6 +211,7 @@ function getSchemaEndpoint(): string {
   else if(path.includes('/edit')){
     // /inventory/products/14/edit => /inventory/products/ui-schemas/form
     const segments = path.split("/").filter(segment => segment !== "");
+    console.log('segement', segments)
     return '/api/v1/'+segments[0]+'/'+segments[1]+'/ui-schemas/form'
   }
   else if(/\d+$/.test(path)) {
