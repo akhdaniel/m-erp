@@ -1,4 +1,4 @@
-"""Add delivered_date field to sales_orders table
+"""Add source_channel field to sales_orders table
 
 Revision ID: 20251014_170000
 Revises: 20251014_160000
@@ -17,11 +17,17 @@ depends_on = None
 
 
 def upgrade() -> None:
-    """Add delivered_date column to sales_orders table."""
+    """Add source_channel column to sales_orders table."""
     # Add due_date column to sales_orders table
-    op.add_column('sales_orders', sa.Column('delivered_date', sa.DateTime(), nullable=True, index=True))
+    op.add_column('sales_orders', sa.Column('source_channel', sa.DateTime(), nullable=True, index=True))
+    op.add_column('sales_orders', sa.Column('carrier_name', sa.Text(), nullable=True, index=True))
+    op.add_column('sales_orders', sa.Column('tracking_number', sa.Text(), nullable=True, index=True))
+    op.add_column('sales_orders', sa.Column('custom_attributes', sa.JSON(), nullable=True, index=True))
 
 
 def downgrade() -> None:
-    """Remove delivered_date column from sales_orders table."""
-    op.drop_column('sales_orders', 'delivered_date')
+    """Remove source_channel column from sales_orders table."""
+    op.drop_column('sales_orders', 'source_channel')
+    op.drop_column('sales_orders', 'carrier_name')
+    op.drop_column('sales_orders', 'tracking_number')
+    op.drop_column('sales_orders', 'custom_attributes')
