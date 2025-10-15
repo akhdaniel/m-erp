@@ -795,6 +795,8 @@ async function handleSubmit() {
       headers,
       body: JSON.stringify(submitData)
     })
+
+    console.log('response', response)
     
     if (!response.ok) {
       const errorData = await response.json()
