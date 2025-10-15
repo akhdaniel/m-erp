@@ -134,13 +134,43 @@ class CompanyBusinessObject(BaseModel):
         # Update timestamp
         self.updated_at = datetime.utcnow()
         
+        # Set created_by_user_id if this is a new record
+        if not hasattr(self, 'id') or self.id is None or self.id is None:
+            self.created_at = datetime.utcnow()
+            self.created_by_user_id = user_id
+        
+        # Update updated_by_user_id
+        self.updated_by_user_id = user_id
+        
         # Log audit trail
-        action = "created" if not hasattr(self, 'id') or self.id is None else "updated"
+        action = "created" if not hasattr(self, 'id') or self.id is None or self.id is None else "updated"
         self.log_audit_trail(action, user_id)
         
         # Publish event
         event_type = f"{self.__class__.__name__.lower()}.{action}"
-        self.publish_event(event_type, {"model_id": self.id, "company_id": self.company_id})
+        event_data = {"model_id": getattr(self, 'id', None), "company_id": getattr(self, 'company_id', None)}
+        self.publish_event(event_type, event_data)
         
-        # In production, would call db_session.add(self) and db_session.commit()
-        print(f"Sales Model {self.__class__.__name__}({self.id}) saved successfully")
+        # Actually save to the database if a session is provided
+        if db_session:
+            try:
+                # Add or merge the object to the session
+                if action == "created" or not hasattr(self, 'id') or self.id is None:
+                    db_session.add(self)
+                else:
+                    db_session.merge(self)
+                
+                # Commit the transaction
+                db_session.commit()
+                
+                # Refresh the object to get the assigned ID if it's new
+                db_session.refresh(self)
+                
+                print(f"Sales Model {self.__class__.__name__}({self.id}) saved successfully to database")
+            except Exception as e:
+                # Rollback the transaction on error
+                db_session.rollback()
+                print(f"Error saving {self.__class__.__name__}: {str(e)}")
+                raise
+        else:
+            print(f"Sales Model {self.__class__.__name__}({self.id}) saved successfully (no session provided, in-memory only)")

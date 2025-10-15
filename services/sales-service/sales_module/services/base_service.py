@@ -75,7 +75,7 @@ class BaseService:
         self.after_create(entity, user_id)
 
 
-        logger.info(f"base_service; entity={entity}")
+        logger.info(f"base_service; entity={entity.id}")
         
         return entity
     

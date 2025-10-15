@@ -348,7 +348,7 @@ async def create_order(
         )
         
         order_service.commit()
-        logger.info(f'created order commit = {order.id}')
+        logger.info(f'created order commit = {order.title}')
         # --- VALIDATION failed!
         res = OrderResponse.from_orm(order)
         logger.info(f'created order res = {res}')
