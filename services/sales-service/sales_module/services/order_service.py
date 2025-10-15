@@ -61,7 +61,10 @@ class OrderService(BaseService):
         
         # Set order date if not provided
         if 'order_date' not in order_data:
-            order_data['order_date'] = datetime.utcnow()
+            order_data['order_date'] = datetime.utcnow()        
+        # Set required_date date if not provided
+        if 'required_date' not in order_data:
+            order_data['required_date'] = datetime.utcnow()
         
         # If order_date does not contain time then set time to 00:00:00
         if 'order_date' in order_data and order_data['order_date']:
