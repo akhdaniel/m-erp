@@ -347,8 +347,8 @@ async def create_order(
             company_id=company_id
         )
         
-        # logger.info(f'created order = {order}')
         order_service.commit()
+        logger.info(f'created order commit = {order}')
         
         return OrderResponse.from_orm(order)
         
