@@ -284,3 +284,6 @@ class BaseService:
         import time
         timestamp = int(time.time())
         return f"{prefix}{timestamp:08d}"
+    
+    def rollback(self):
+        pass
