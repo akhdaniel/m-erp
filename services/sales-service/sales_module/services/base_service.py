@@ -29,6 +29,13 @@ class BaseService:
         self.db_session = db_session
         self.model_class: Optional[Type[CompanyBusinessObject]] = None
     
+    def commit(self):
+        self.db_session.commit()
+
+    def rollback(self):
+        self.db_session.rollback()
+
+
     def create(self, data: Dict[str, Any], user_id: int = None, 
                company_id: int = None) -> CompanyBusinessObject:
         """
@@ -285,5 +292,3 @@ class BaseService:
         timestamp = int(time.time())
         return f"{prefix}{timestamp:08d}"
     
-    def rollback(self):
-        pass

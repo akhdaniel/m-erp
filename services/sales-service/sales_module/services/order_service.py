@@ -19,7 +19,7 @@ from sales_module.models import (
 from sales_module.models.quote import SalesQuotation
 
 # Set up logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('uvicorn')
 
 
 class OrderService(BaseService):
