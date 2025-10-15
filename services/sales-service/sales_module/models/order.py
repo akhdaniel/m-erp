@@ -146,6 +146,7 @@ class SalesOrder(CompanyBusinessObject):
     internal_notes = Column(Text)
     
     # Fulfillment tracking
+    invoice_count = Column(Integer, nullable=False, default=0)
     items_shipped = Column(Integer, nullable=False, default=0)
     items_remaining = Column(Integer, nullable=False, default=0)
     shipment_count = Column(Integer, nullable=False, default=0)
