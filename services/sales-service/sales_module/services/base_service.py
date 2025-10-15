@@ -16,6 +16,16 @@ T = TypeVar('T', bound=CompanyBusinessObject)
 import logging
 logger = logging.getLogger('uvicorn')
 
+class ServiceError(Exception):
+    """Base exception for service layer errors."""
+    pass
+
+
+
+class NotFoundError(ServiceError):
+    """Exception for resource not found errors."""
+    pass
+
 
 class BaseService:
     """
@@ -79,7 +89,7 @@ class BaseService:
         
         return entity
     
-    def get_by_id(self, entity_id: int, company_id: int = None) -> Optional[CompanyBusinessObject]:
+    def get_by_id_old(self, entity_id: int, company_id: int = None) -> Optional[CompanyBusinessObject]:
         """
         Get entity by ID with company isolation.
         
@@ -106,6 +116,36 @@ class BaseService:
         # Simulated for demo
         print(f"Sales Service: Getting {self.model_class.__name__} with ID {entity_id}")
         return None  # Would return actual entity
+
+    
+    def _apply_company_filter(self, query, model_class: Type[T]):
+        """Apply company filter to query if company_id is set."""
+        if self.company_id:
+            query = query.filter(model_class.company_id == self.company_id)
+        return query
+        
+    def _validate_company_access(self, model: CompanyBusinessObject) -> None:
+        """Validate user has access to company data."""
+        if self.company_id and model.company_id != self.company_id:
+            raise PermissionError(f"Access denied to {model.__class__.__name__} from different company")
+        
+    def get_by_id(self, model_class: Type[T], id: int) -> Optional[T]:
+        """Get model by ID with company filtering."""
+        query = self.db.query(model_class).filter(model_class.id == id)
+        query = self._apply_company_filter(query, model_class)
+        model = query.first()
+        
+        if model:
+            self._validate_company_access(model)
+        
+        return model
+        
+    def get_by_id_or_raise(self, model_class: Type[T], id: int) -> T:
+        """Get model by ID or raise NotFoundError."""
+        model = self.get_by_id(model_class, id)
+        if not model:
+            raise NotFoundError(f"{model_class.__name__} with ID {id} not found")
+        return model
     
     def update(self, entity_id: int, data: Dict[str, Any], user_id: int = None,
                company_id: int = None) -> Optional[CompanyBusinessObject]:
