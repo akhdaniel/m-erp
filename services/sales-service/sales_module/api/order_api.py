@@ -349,8 +349,10 @@ async def create_order(
         
         order_service.commit()
         logger.info(f'created order commit = {order}')
-        
-        return OrderResponse.from_orm(order)
+        res = OrderResponse.from_orm(order)
+        logger.info(f'created order res = {res}')
+
+        return res 
         
     except Exception as e:
         order_service.rollback()
