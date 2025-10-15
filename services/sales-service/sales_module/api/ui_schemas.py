@@ -904,7 +904,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                     {
                         "name": "order_date",
                         "label": "Order Date",
-                        "type": "date",
+                        "type": "datetime-local",
                         "required": True,
                         "defaultValue": "today"
                     },
