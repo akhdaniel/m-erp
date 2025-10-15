@@ -1,7 +1,7 @@
 <template>
   <div class="datetime-picker" ref="pickerContainer">
     <label :for="id" class="block text-sm font-medium text-gray-700">
-      {{ label }}
+      {{ label }} dateyim
       <span v-if="required" class="text-red-500">*</span>
     </label>
     
