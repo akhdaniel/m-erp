@@ -90,23 +90,27 @@
       <div v-if="type === 'datetime-local'" class="time-picker mt-3 pt-3 border-t border-gray-200">
         <div class="flex items-center space-x-2">
           <span class="text-sm text-gray-700">Time:</span>
-          <input
-            type="number"
-            v-model="selectedHour"
-            min="0"
-            max="23"
-            class="w-16 rounded border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
-            @change="updateDateTime"
-          >
-          <span>:</span>
-          <input
-            type="number"
-            v-model="selectedMinute"
-            min="0"
-            max="59"
-            class="w-16 rounded border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
-            @change="updateDateTime"
-          >
+          <div class="flex space-x-1">
+            <select
+              v-model="selectedHour"
+              class="w-16 rounded border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+              @change="updateDateTime"
+            >
+              <option v-for="hour in hours" :key="hour" :value="hour">
+                {{ formatTimeValue(hour) }}
+              </option>
+            </select>
+            <span class="text-sm text-gray-700">:</span>
+            <select
+              v-model="selectedMinute"
+              class="w-16 rounded border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+              @change="updateDateTime"
+            >
+              <option v-for="minute in minutes" :key="minute" :value="minute">
+                {{ formatTimeValue(minute) }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
       
@@ -163,6 +167,10 @@ const calendarPosition = ref('')
 
 // Constants
 const weekdays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+
+// Time options
+const hours = Array.from({ length: 24 }, (_, i) => i) // 0-23
+const minutes = Array.from({ length: 60 }, (_, i) => i) // 0-59
 
 // Computed
 const id = computed(() => `datetime-picker-${Math.random().toString(36).substr(2, 9)}`)
@@ -340,6 +348,11 @@ function setPosition() {
 // Check if click is inside calendar
 function isClickInsideCalendar() {
   return document.activeElement?.closest('.datetime-picker') === pickerContainer.value
+}
+
+// Format time value with leading zero
+function formatTimeValue(value: number): string {
+  return value.toString().padStart(2, '0')
 }
 
 // Format month and year
