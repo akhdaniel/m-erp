@@ -62,6 +62,24 @@ class OrderService(BaseService):
         if 'order_date' not in order_data:
             order_data['order_date'] = datetime.utcnow()
         
+        # If order_date does not contain time then set time to 00:00:00
+        if 'order_date' in order_data and order_data['order_date']:
+            order_date = order_data['order_date']
+            from datetime import date as date_type
+            
+            # Check if the value is a date without time (either date object or date string without time)
+            if isinstance(order_date, date_type) and not isinstance(order_date, datetime):
+                # It's a date object without time, convert to datetime with 00:00:00
+                order_data['order_date'] = datetime.combine(order_date, datetime.min.time())
+            elif isinstance(order_date, str) and ' ' not in order_date and 'T' not in order_date and len(order_date) == 10:
+                # It's a string that looks like YYYY-MM-DD (no time component)
+                try:
+                    parsed_date = datetime.fromisoformat(order_date)
+                    order_data['order_date'] = parsed_date.replace(hour=0, minute=0, second=0, microsecond=0)
+                except ValueError:
+                    # If parsing fails, keep original value
+                    pass
+        
         # Set sales rep if not provided
         if 'sales_rep_user_id' not in order_data:
             order_data['sales_rep_user_id'] = user_id

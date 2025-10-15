@@ -38,6 +38,7 @@ def get_current_user_id(
         # Extract token from "Bearer <token>" format
         token = authorization.replace("Bearer ", "")
         
+        
         # Decode JWT token
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         user_id = payload.get("user_id")
