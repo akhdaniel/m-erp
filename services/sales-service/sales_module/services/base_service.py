@@ -36,11 +36,12 @@ class BaseService:
     and event handling patterns.
     """
     
-    def __init__(self, db_session: Session = None):
+    def __init__(self, db_session: Session = None, company_id:int = None):
         """Initialize base service with database session."""
         self.db_session = db_session
         self.model_class: Optional[Type[CompanyBusinessObject]] = None
-    
+        self.company_id = company_id
+
     def commit(self):
         self.db_session.commit()
 
@@ -129,8 +130,9 @@ class BaseService:
         if self.company_id and model.company_id != self.company_id:
             raise PermissionError(f"Access denied to {model.__class__.__name__} from different company")
         
-    def get_by_id(self, model_class: Type[T], id: int) -> Optional[T]:
+    def get_by_id(self, model_class: Type[T], id: int, company_id: int) -> Optional[T]:
         """Get model by ID with company filtering."""
+        self.company_id = company_id
         query = self.db.query(model_class).filter(model_class.id == id)
         query = self._apply_company_filter(query, model_class)
         model = query.first()
@@ -140,9 +142,9 @@ class BaseService:
         
         return model
         
-    def get_by_id_or_raise(self, model_class: Type[T], id: int) -> T:
+    def get_by_id_or_raise(self, model_class: Type[T], id: int, company_id: int = None) -> T:
         """Get model by ID or raise NotFoundError."""
-        model = self.get_by_id(model_class, id)
+        model = self.get_by_id(model_class, id, company_id)
         if not model:
             raise NotFoundError(f"{model_class.__name__} with ID {id} not found")
         return model
