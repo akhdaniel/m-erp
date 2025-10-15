@@ -135,6 +135,7 @@ class SalesOrder(CompanyBusinessObject):
     shipping_address = Column(JSON)
     
     # Order flags and settings
+    priority = Column(Integer, nullable=False, default=10)
     is_priority = Column(Boolean, nullable=False, default=False)
     requires_approval = Column(Boolean, nullable=False, default=False)
     is_dropship = Column(Boolean, nullable=False, default=False)
