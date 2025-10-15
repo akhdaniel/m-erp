@@ -54,6 +54,8 @@ class OrderService(BaseService):
         Returns:
             Created order instance
         """
+
+        logger.info(f"service db_session={self.db_session}")
         
         # Generate order number if not provided
         if 'order_number' not in order_data or not order_data['order_number']:
