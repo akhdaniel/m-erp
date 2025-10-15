@@ -28,7 +28,7 @@ def get_current_user_id() -> int:
     # In production, would extract from JWT token
     return 1
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('uvicorn')
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 
