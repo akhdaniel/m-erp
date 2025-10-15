@@ -157,7 +157,7 @@ class OrderResponse(BaseModel):
     items_shipped: int
     items_remaining: int
     shipment_count: int
-    invoice_count: int
+    invoice_count: Optional[int]
     
     # Addresses
     billing_address: Optional[Dict[str, Any]]
