@@ -971,8 +971,13 @@ class OrderService(BaseService):
         
         # Validate dates
         if 'required_date' in data and 'order_date' in data:
-            if data['required_date'] < data['order_date']:
-                raise ValueError("Required date cannot be before order date")
+            required_date = data['required_date']
+            order_date = data['order_date']
+            
+            # Only validate if both dates are not None
+            if required_date is not None and order_date is not None:
+                if required_date < order_date:
+                    raise ValueError("Required date cannot be before order date")
     
     def validate_update_data(self, data: Dict[str, Any], order: SalesOrder) -> None:
         """Validate order update data."""
