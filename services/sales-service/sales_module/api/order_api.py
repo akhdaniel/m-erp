@@ -78,13 +78,13 @@ class OrderCreate(BaseModel):
     # Priority and preferences
     # priority: str = Field(default="normal", pattern="^(low|normal|high|urgent)$")
     shipping_method: Optional[str] = Field(None, max_length=100)
-    delivery_instructions: Optional[str] = None
+    # delivery_instructions: Optional[str] = None
     
     # Additional information
     internal_notes: Optional[str] = None
     customer_po_number: Optional[str] = Field(None, max_length=100)
     terms_and_conditions: Optional[str] = None
-    custom_fields: Optional[Dict[str, Any]] = None
+    # custom_fields: Optional[Dict[str, Any]] = None
     tags: Optional[List[str]] = None
     
     # Line items
