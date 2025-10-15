@@ -54,6 +54,7 @@ class OrderService(BaseService):
         Returns:
             Created order instance
         """
+        
         # Generate order number if not provided
         if 'order_number' not in order_data or not order_data['order_number']:
             order_data['order_number'] = self.generate_order_number()
