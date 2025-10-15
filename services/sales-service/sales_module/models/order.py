@@ -88,13 +88,11 @@ class SalesOrder(CompanyBusinessObject):
     )
     opportunity_id = Column(
         Integer,
-        ForeignKey("sales_opportunities.id", ondelete="SET NULL"),
         nullable=True,
         index=True
     )
     quote_id = Column(
         Integer,
-        ForeignKey("sales_quotes.id", ondelete="SET NULL"),
         nullable=True,
         index=True
     )
