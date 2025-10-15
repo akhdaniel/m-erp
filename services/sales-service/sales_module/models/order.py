@@ -140,6 +140,7 @@ class SalesOrder(CompanyBusinessObject):
     requires_approval = Column(Boolean, nullable=False, default=False)
     is_dropship = Column(Boolean, nullable=False, default=False)
     is_backorder_allowed = Column(Boolean, nullable=False, default=True)
+    hold_status = Column(Boolean, nullable=False, default=False)
     
     # Customer service information
     customer_po_number = Column(String(100), nullable=True, index=True)
