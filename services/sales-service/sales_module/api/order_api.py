@@ -76,7 +76,7 @@ class OrderCreate(BaseModel):
     shipping_address: Optional[Dict[str, Any]] = None
     
     # Priority and preferences
-    priority: str = Field(default="normal", pattern="^(low|normal|high|urgent)$")
+    # priority: str = Field(default="normal", pattern="^(low|normal|high|urgent)$")
     shipping_method: Optional[str] = Field(None, max_length=100)
     delivery_instructions: Optional[str] = None
     
