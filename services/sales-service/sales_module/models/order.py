@@ -82,7 +82,6 @@ class SalesOrder(CompanyBusinessObject):
     # Customer and source references
     customer_id = Column(
         Integer,
-        ForeignKey("customers.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
