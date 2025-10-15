@@ -83,9 +83,9 @@ class OrderCreate(BaseModel):
     # Additional information
     internal_notes: Optional[str] = None
     customer_po_number: Optional[str] = Field(None, max_length=100)
-    terms_and_conditions: Optional[str] = None
+    # terms_and_conditions: Optional[str] = None
     # custom_fields: Optional[Dict[str, Any]] = None
-    tags: Optional[List[str]] = None
+    # tags: Optional[List[str]] = None
     
     # Line items
     line_items: Optional[List[OrderLineItemCreate]] = None
