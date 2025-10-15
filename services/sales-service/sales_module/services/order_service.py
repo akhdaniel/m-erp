@@ -63,18 +63,26 @@ class OrderService(BaseService):
         
         # Set order date if not provided
         if 'order_date' not in order_data:
-            order_data['order_date'] = datetime.utcnow()        
-        # Set required_date date if not provided
-        if 'required_date' not in order_data:
-            order_data['required_date'] = datetime.utcnow()
+            order_data['order_date'] = datetime.utcnow()
         
         # If order_date does not contain time then set time to 00:00:00
         if 'order_date' in order_data and order_data['order_date']:
             order_date = order_data['order_date']
-            from datetime import date as date_type
+            from datetime import date as date_type, datetime as datetime_type
             
+            # Handle datetime strings with time components first
+            if isinstance(order_date, str) and ('T' in order_date or ' ' in order_date):
+                # It's a datetime string with time components, parse it
+                try:
+                    # Replace space with T for consistent parsing
+                    normalized_string = order_date.replace(' ', 'T')
+                    parsed_datetime = datetime.fromisoformat(normalized_string)
+                    order_data['order_date'] = parsed_datetime
+                except ValueError:
+                    # If parsing fails, keep original value
+                    pass
             # Check if the value is a date without time (either date object or date string without time)
-            if isinstance(order_date, date_type) and not isinstance(order_date, datetime):
+            elif isinstance(order_date, date_type) and not isinstance(order_date, datetime_type):
                 # It's a date object without time, convert to datetime with 00:00:00
                 order_data['order_date'] = datetime.combine(order_date, datetime.min.time())
             elif isinstance(order_date, str) and ' ' not in order_date and 'T' not in order_date and len(order_date) == 10:
@@ -978,8 +986,32 @@ class OrderService(BaseService):
             
             # Only validate if both dates are not None
             if required_date is not None and order_date is not None:
-                if required_date < order_date:
-                    raise ValueError("Required date cannot be before order date")
+                # Convert to datetime if they are strings before comparison
+                if isinstance(required_date, str):
+                    try:
+                        required_date = datetime.fromisoformat(required_date.replace('Z', '+00:00'))
+                    except ValueError:
+                        # Try alternative format for date-only strings
+                        try:
+                            required_date = datetime.fromisoformat(required_date + 'T00:00:00')
+                        except ValueError:
+                            # If conversion fails, skip validation
+                            pass
+                if isinstance(order_date, str):
+                    try:
+                        order_date = datetime.fromisoformat(order_date.replace('Z', '+00:00'))
+                    except ValueError:
+                        # Try alternative format for date-only strings
+                        try:
+                            order_date = datetime.fromisoformat(order_date + 'T00:00:00')
+                        except ValueError:
+                            # If conversion fails, skip validation
+                            pass
+                
+                # Only compare if both are datetime objects now
+                if isinstance(required_date, datetime) and isinstance(order_date, datetime):
+                    if required_date < order_date:
+                        raise ValueError("Required date cannot be before order date")
     
     def validate_update_data(self, data: Dict[str, Any], order: SalesOrder) -> None:
         """Validate order update data."""

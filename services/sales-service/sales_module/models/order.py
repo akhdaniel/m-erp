@@ -305,7 +305,7 @@ class SalesOrder(CompanyBusinessObject):
         # This would sum up all line item amounts, discounts, taxes, etc.
         
         # Calculate outstanding amount
-        self.outstanding_amount = self.total_amount - self.paid_amount
+        self.outstanding_amount = self.total_amount - (self.paid_amount or 0)
         
         # Set due date based on payment terms
         if not self.due_date and self.payment_terms_days:

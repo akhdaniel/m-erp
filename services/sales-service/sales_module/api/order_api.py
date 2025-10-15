@@ -166,7 +166,7 @@ class OrderResponse(BaseModel):
     # Priority and preferences
     priority: str
     shipping_method: Optional[str]
-    delivery_instructions: Optional[str]
+    # delivery_instructions: Optional[str]
     
     # People
     sales_rep_user_id: Optional[int]
@@ -174,9 +174,9 @@ class OrderResponse(BaseModel):
     # Additional information
     internal_notes: Optional[str]
     customer_po_number: Optional[str]
-    terms_and_conditions: Optional[str]
-    custom_fields: Optional[Dict[str, Any]]
-    tags: Optional[List[str]]
+    # terms_and_conditions: Optional[str]
+    # custom_fields: Optional[Dict[str, Any]]
+    # tags: Optional[List[str]]
     
     # System fields
     is_active: bool
