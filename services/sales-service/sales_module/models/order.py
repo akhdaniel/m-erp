@@ -120,6 +120,8 @@ class SalesOrder(CompanyBusinessObject):
     promised_date = Column(DateTime, nullable=True, index=True)
     shipped_date = Column(DateTime, nullable=True, index=True)
     delivered_date = Column(DateTime, nullable=True, index=True)
+    confirmed_date = Column(DateTime, nullable=True, index=True)
+    completed_date = Column(DateTime, nullable=True, index=True)
     
     # Order source and tracking
     source_channel = Column(String(50), nullable=True)  # web, phone, email, etc.
@@ -140,12 +142,13 @@ class SalesOrder(CompanyBusinessObject):
     requires_approval = Column(Boolean, nullable=False, default=False)
     is_dropship = Column(Boolean, nullable=False, default=False)
     is_backorder_allowed = Column(Boolean, nullable=False, default=True)
-    hold_status = Column(Boolean, nullable=False, default=False)
+    hold_status = Column(Boolean, nullable=True, default='')
     
     # Customer service information
     customer_po_number = Column(String(100), nullable=True, index=True)
     special_instructions = Column(Text)
     internal_notes = Column(Text)
+    hold_reason = Column(Text, nullable=True)
     
     # Fulfillment tracking
     invoice_count = Column(Integer, nullable=False, default=0)
