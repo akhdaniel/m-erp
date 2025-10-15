@@ -39,6 +39,7 @@ class BaseService:
     def __init__(self, db_session: Session = None, company_id:int = None):
         """Initialize base service with database session."""
         self.db_session = db_session
+        self.db = db_session
         self.model_class: Optional[Type[CompanyBusinessObject]] = None
         self.company_id = company_id
 
