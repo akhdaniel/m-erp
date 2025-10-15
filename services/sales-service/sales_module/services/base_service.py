@@ -62,6 +62,7 @@ class BaseService:
             data['company_id'] = company_id
         
         # Create entity instance
+        logger.info(f'order service data={data}')
         entity = self.model_class(**data)
         
         # Perform pre-create operations
