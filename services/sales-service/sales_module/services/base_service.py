@@ -13,6 +13,8 @@ from sqlalchemy import and_, or_
 from sales_module.framework.base import CompanyBusinessObject
 
 T = TypeVar('T', bound=CompanyBusinessObject)
+import logging
+logger = logging.getLogger('uvicorn')
 
 
 class BaseService:
@@ -70,6 +72,9 @@ class BaseService:
         
         # Perform post-create operations
         self.after_create(entity, user_id)
+
+
+        logger.info(f"base_service; entity={entity}")
         
         return entity
     
