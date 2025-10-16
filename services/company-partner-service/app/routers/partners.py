@@ -67,6 +67,7 @@ async def create_partner(
 
 
 @router.get("/", response_model=PartnerListResponse)
+@router.get("", response_model=PartnerListResponse)
 async def list_partners(
     company_id: Optional[int] = Query(None, description="Filter by company ID"),
     skip: int = Query(0, ge=0, description="Number of records to skip"),

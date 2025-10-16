@@ -238,7 +238,7 @@ async def get_quotations_list_schema() -> Dict[str, Any]:
                 "field": "customer_id",
                 "label": "Customer",
                 "type": "select",
-                "optionsEndpoint": "/base/partners?is_customer=true",
+                "optionsEndpoint": "/api/v1/base/partners?is_customer=true",
                 "optionLabelField": "name",
                 "optionValueField": "id"
             },
@@ -319,7 +319,7 @@ async def get_quotations_form_schema() -> Dict[str, Any]:
                         "label": "Customer",
                         "type": "autocomplete",
                         "required": True,
-                        "optionsEndpoint": "/base/partners?is_customer=true",
+                        "optionsEndpoint": "/api/v1/base/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Start typing to search customers..."
@@ -712,7 +712,7 @@ async def get_customers_list_schema() -> Dict[str, Any]:
             {"label": "Customers", "route": "/sales/customers"}
         ],
         "viewType": "table",
-        "endpoint": "/base/partners?is_customer=true",
+        "endpoint": "/api/v1/base/partners?is_customer=true",
         # "dataPath": "partners",  # Tell the UI where to find the data in the response
         "searchable": True,
         "paginated": True,
@@ -798,7 +798,7 @@ async def get_customers_form_schema() -> Dict[str, Any]:
             {"label": "New Customer", "route": "/sales/customers/new"}
         ],
         "viewType": "form",
-        "endpoint": "/base/partners",
+        "endpoint": "/api/v1/base/partners",
         "method": "POST",
         "successRoute": "/sales/customers",
         "cancelRoute": "/sales/customers",
@@ -896,7 +896,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                         "type": "autocomplete",
                         "required": True,
                         "colSpan": 1,
-                        "optionsEndpoint": "/base/partners?is_customer=true",
+                        "optionsEndpoint": "/api/v1/base/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Start typing to search customers..."
@@ -1114,7 +1114,7 @@ async def get_pricing_rules_form_schema() -> Dict[str, Any]:
                         "label": "Specific Customers",
                         "type": "select",
                         "multiple": True,
-                        "optionsEndpoint": "/base/partners?is_customer=true",
+                        "optionsEndpoint": "/api/v1/base/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "help": "Leave empty to apply to all customers",
@@ -1346,7 +1346,7 @@ async def get_transactions_list_schema() -> Dict[str, Any]:
                 "field": "customer_id",
                 "label": "Customer",
                 "type": "select",
-                "optionsEndpoint": "/base/partners?is_customer=true",
+                "optionsEndpoint": "/api/v1/base/partners?is_customer=true",
                 "optionLabelField": "name",
                 "optionValueField": "id"
             },
@@ -1430,7 +1430,7 @@ async def get_transactions_form_schema() -> Dict[str, Any]:
                         "type": "autocomplete",
                         "required": True,
                         "colSpan": 1,
-                        "optionsEndpoint": "/base/partners?is_customer=true",
+                        "optionsEndpoint": "/api/v1/base/partners?is_customer=true",
                         "optionLabelField": "name",
                         "optionValueField": "id",
                         "placeholder": "Start typing to search customers..."
