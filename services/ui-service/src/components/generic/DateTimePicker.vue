@@ -251,7 +251,6 @@ watch(() => props.modelValue, (newValue) => {
     const date = new Date(newValue)
     // Check if the date is valid before setting
     if (!isNaN(date.getTime())) {
-      console.log('date',date)
       currentMonth.value = date.getMonth()
       currentYear.value = date.getFullYear()
       selectedHour.value = date.getHours()
@@ -277,6 +276,8 @@ watch(() => props.modelValue, (newValue) => {
     selectedHour.value = 0
     selectedMinute.value = 0
   }
+  console.log('displayValue',displayValue.value)
+
 }, { immediate: true })
 
 // Handle focus
