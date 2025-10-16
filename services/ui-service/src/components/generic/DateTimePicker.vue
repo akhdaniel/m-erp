@@ -506,7 +506,7 @@ onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
 
 
-  console.log('props',props)
+  // console.log('props',props)
   
   if (props.modelValue) {
     displayValue.value = props.modelValue
@@ -525,6 +525,10 @@ onMounted(() => {
       selectedHour.value = 0
       selectedMinute.value = 0
     }
+    console.log('current', currentMonth.value,
+      currentYear.value,
+      selectedHour.value,
+      selectedMinute.value)
   } else {
     const now = new Date()
     currentMonth.value = now.getMonth()
