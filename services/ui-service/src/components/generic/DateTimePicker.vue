@@ -241,7 +241,7 @@ const calendarDays = computed(() => {
 
 // Watch for modelValue changes
 watch(() => props.modelValue, (newValue) => {
-  console.log('props.modelValue',props.modelValue)
+  console.log('props',props)
   console.log('newValue',newValue)
   if (newValue) {
     displayValue.value = newValue
