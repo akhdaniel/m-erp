@@ -249,6 +249,7 @@ watch(() => props.modelValue, (newValue) => {
     console.log('newValue newValue',newValue)    
     displayValue.value = newValue
     const date = new Date(newValue)
+    console.log('date',date)
     // Check if the date is valid before setting
     if (!isNaN(date.getTime())) {
       currentMonth.value = date.getMonth()
