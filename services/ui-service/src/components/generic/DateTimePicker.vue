@@ -511,6 +511,7 @@ onMounted(() => {
   if (props.modelValue) {
     displayValue.value = props.modelValue
     const date = new Date(props.modelValue)
+    console.log('date',date,props.modelValue)
     // Check if the date is valid before setting
     if (!isNaN(date.getTime())) {
       currentMonth.value = date.getMonth()
