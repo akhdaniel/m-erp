@@ -259,8 +259,8 @@ watch(() => props.modelValue, (newValue) => {
       selectedMinute.value = 0
     }
   } else {
-    displayValue.value = ''
     const now = new Date()
+    displayValue.value = now.toDateString()
     currentMonth.value = now.getMonth()
     currentYear.value = now.getFullYear()
     selectedHour.value = 0
