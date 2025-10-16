@@ -139,7 +139,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 
 // Props
 const props = defineProps<{
-  modelValue: string | null | undefined
+  modelValue: string 
   type: 'date' | 'datetime-local'
   label?: string
   required?: boolean
