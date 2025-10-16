@@ -244,10 +244,20 @@ watch(() => props.modelValue, (newValue) => {
   if (newValue) {
     displayValue.value = newValue
     const date = new Date(newValue)
-    currentMonth.value = date.getMonth()
-    currentYear.value = date.getFullYear()
-    selectedHour.value = date.getHours()
-    selectedMinute.value = date.getMinutes()
+    // Check if the date is valid before setting
+    if (!isNaN(date.getTime())) {
+      currentMonth.value = date.getMonth()
+      currentYear.value = date.getFullYear()
+      selectedHour.value = date.getHours()
+      selectedMinute.value = date.getMinutes()
+    } else {
+      // If the date is invalid, try to parse with more formats or use current date
+      const now = new Date()
+      currentMonth.value = now.getMonth()
+      currentYear.value = now.getFullYear()
+      selectedHour.value = 0
+      selectedMinute.value = 0
+    }
   } else {
     displayValue.value = ''
     const now = new Date()
@@ -323,8 +333,10 @@ function toggleCalendar() {
     // Initialize time values if datetime
     if (props.type === 'datetime-local' && props.modelValue) {
       const date = new Date(props.modelValue)
-      selectedHour.value = date.getHours()
-      selectedMinute.value = date.getMinutes()
+      if (!isNaN(date.getTime())) {
+        selectedHour.value = date.getHours()
+        selectedMinute.value = date.getMinutes()
+      }
     }
   }
 }
@@ -496,10 +508,20 @@ onMounted(() => {
   if (props.modelValue) {
     displayValue.value = props.modelValue
     const date = new Date(props.modelValue)
-    currentMonth.value = date.getMonth()
-    currentYear.value = date.getFullYear()
-    selectedHour.value = date.getHours()
-    selectedMinute.value = date.getMinutes()
+    // Check if the date is valid before setting
+    if (!isNaN(date.getTime())) {
+      currentMonth.value = date.getMonth()
+      currentYear.value = date.getFullYear()
+      selectedHour.value = date.getHours()
+      selectedMinute.value = date.getMinutes()
+    } else {
+      // If the date is invalid, try to parse with more formats or use current date
+      const now = new Date()
+      currentMonth.value = now.getMonth()
+      currentYear.value = now.getFullYear()
+      selectedHour.value = 0
+      selectedMinute.value = 0
+    }
   } else {
     const now = new Date()
     currentMonth.value = now.getMonth()
