@@ -270,7 +270,7 @@ watch(() => props.modelValue, (newValue) => {
     console.log('!newValue newValue',newValue)
         
     const now = new Date()
-    displayValue.value = now.toDateString()
+    displayValue.value = formatDateTime(now)
     currentMonth.value = now.getMonth()
     currentYear.value = now.getFullYear()
     selectedHour.value = 0
