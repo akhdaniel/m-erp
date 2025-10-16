@@ -259,7 +259,9 @@ watch(() => props.modelValue, (newValue) => {
     } else {
       // If the date is invalid, try to parse with more formats or use current date
       const now = new Date()
-      console.log('. now',now)
+      console.log('. newValue now',now)
+      displayValue.value = formatDateTime(now)
+      console.log('. newValue displayValue',displayValue.value)
       currentMonth.value = now.getMonth()
       currentYear.value = now.getFullYear()
       selectedHour.value = 0
@@ -270,7 +272,9 @@ watch(() => props.modelValue, (newValue) => {
     console.log('. !newValue newValue',newValue)
         
     const now = new Date()
+    console.log('. !newValue now',now)
     displayValue.value = formatDateTime(now)
+    console.log('. !newValue displayValue',displayValue.value)
     currentMonth.value = now.getMonth()
     currentYear.value = now.getFullYear()
     selectedHour.value = 0
