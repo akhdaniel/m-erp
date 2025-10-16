@@ -506,7 +506,7 @@ onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
 
 
-  // console.log('props',props)
+  console.log('props',props)
   
   if (props.modelValue) {
     displayValue.value = props.modelValue
