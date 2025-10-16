@@ -128,7 +128,7 @@ const recordId = computed(() => {
 const componentType = computed(() => {
   if (!schema.value) return null
   
-  console.log('schema.value.viewType==', schema.value.viewType , viewType.value)
+  // console.log('schema.value.viewType==', schema.value.viewType , viewType.value)
   // Map view types to components
   switch (schema.value.viewType || viewType.value) {
     case 'list':
@@ -202,30 +202,30 @@ function getSchemaEndpoint(): string {
   console.log('getSchemaEndpoint path=',path)
   if (path.includes('dashboard'))
   {
-    console.log('dashboard includes', path)
+    // console.log('dashboard includes', path)
     return '/api/v1'+path+'/ui-schemas'
   }
   else if(path.includes('/new')){
     // /sales/order/new => /sales/order/ui-schemas/form
     const segments = path.split("/").filter(segment => segment !== "");
-    console.log('segement includes', segments)
+    // console.log('segement includes', segments)
     return '/api/v1/'+segments[0]+'/'+segments[1]+'/ui-schemas/form'
   }
   else if(path.includes('/edit')){
     // /inventory/products/14/edit => /inventory/products/ui-schemas/form
     const segments = path.split("/").filter(segment => segment !== "");
-    console.log('segement', segments)
+    // console.log('segement', segments)
     return '/api/v1/'+segments[0]+'/'+segments[1]+'/ui-schemas/form'
   }
   else if(/\d+$/.test(path)) {
     // /inventory/products/14 => /inventory/products/ui-schemas/form
     const segments = path.split("/").filter(segment => segment !== "");
-    console.log('segement test', segments)
+    // console.log('segement test', segments)
     return '/api/v1/'+segments[0]+'/'+segments[1]+'/ui-schemas/detail'
   }
   else{
     const res = '/api/v1'+path+'/ui-schemas/'+viewType.value
-    console.log('segement path res', path, res)
+    // console.log('segement path res', path, res)
     return res 
   }
 
@@ -323,7 +323,7 @@ function handleRowClick(item: any) {
 }
 
 async function handleAction(action: any, item?: any) {
-  console.log('Action:', action, item)
+  // console.log('Action:', action, item)
   
   if (action.id === 'create') {
     if (schema.value?.createRoute) {
@@ -384,7 +384,7 @@ async function handleStateTransition(actionType: string, item?: any) {
     const serviceUrl = SERVICE_MAPPING['sales'] || ''
     const url = `${serviceUrl}/sales/transactions/${item.id}/state/${nextState}`
     
-    console.log('Making API call to:', url)
+    // console.log('Making API call to:', url)
     
     const response = await fetch(url, {
       method: 'POST',
@@ -438,7 +438,7 @@ function getNextState(currentState: string, actionType: string): string | null {
     'order_completed': 'order_delivered'
   }
   
-  console.log('getNextState called with:', { currentState, actionType })
+  // console.log('getNextState called with:', { currentState, actionType })
   
   let nextState = null
   if (actionType === 'confirm_transaction') {
@@ -470,25 +470,25 @@ function handleCancel() {
 
 // Watch route changes
 watch(() => route.path, () => {
-  console.log('route changs')
+  // console.log('route changs')
   loadSchema()
 })
 
 // Also watch route name and params for more comprehensive updates
 watch(() => route.name, () => {
-  console.log('route name changs')
+  // console.log('route name changs')
   // loadSchema()
 })
 
 watch(() => route.params, () => {
-  console.log('route param changs')
+  // console.log('route param changs')
 
   // loadSchema()
 }, { deep: true })
 
 // Initialize
 onMounted(() => {
-  console.log('mounted..')
+  // console.log('mounted..')
   loadSchema()
 })
 </script>
