@@ -292,7 +292,10 @@
               </div>
 
               <!-- Date/DateTime -->
-              <div v-else-if="field.type === 'date' || field.type === 'datetime-local'" >value={{ formData[field.name] }} </div>
+              <div v-else-if="field.type === 'date' || field.type === 'datetime-local'" >
+                name={{field.name}}
+                value={{ formData[field.name] }} 
+                </div>
               <!-- <DateTimePicker
                 v-else-if="field.type === 'date' || field.type === 'datetime-local'"
                 v-model="formData[field.name]"
