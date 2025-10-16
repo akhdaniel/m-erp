@@ -292,11 +292,11 @@
               </div>
 
               <!-- Date/DateTime -->
-              <div v-else-if="field.type === 'date' || field.type === 'datetime-local'" >
+              <!-- <div v-else-if="field.type === 'date' || field.type === 'datetime-local'" >
                 name={{field.name}}
                 value={{ formData[field.name] }} 
-                </div>
-              <!-- <DateTimePicker
+              </div> -->
+              <DateTimePicker
                 v-else-if="field.type === 'date' || field.type === 'datetime-local'"
                 v-model="formData[field.name]"
                 :type="field.type"
@@ -307,7 +307,7 @@
                 :min="field.min"
                 :max="field.max"
                 :help="field.help"
-              /> -->
+              />
 
               <!-- LineItemsManager Component -->
               <LineItemsManager
