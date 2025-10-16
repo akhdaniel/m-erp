@@ -525,15 +525,16 @@ onMounted(() => {
       selectedHour.value = 0
       selectedMinute.value = 0
     }
-    console.log('current', currentMonth.value,
-      currentYear.value,
-      selectedHour.value,
-      selectedMinute.value)
+
   } else {
     const now = new Date()
     currentMonth.value = now.getMonth()
     currentYear.value = now.getFullYear()
   }
+    console.log('current', currentMonth.value,
+      currentYear.value,
+      selectedHour.value,
+      selectedMinute.value)  
 })
 
 // Cleanup
