@@ -299,6 +299,7 @@
               <DateTimePicker
                 v-else-if="field.type === 'date' || field.type === 'datetime-local'"
                 v-model="formData[field.name]"
+                :name="field.name"
                 :type="field.type"
                 :label="field.label"
                 :required="field.required"

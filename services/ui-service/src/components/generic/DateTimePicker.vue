@@ -141,6 +141,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 const props = defineProps<{
   modelValue: string 
   type: 'date' | 'datetime-local'
+  name?: string 
   label?: string
   required?: boolean
   disabled?: boolean
@@ -241,6 +242,7 @@ const calendarDays = computed(() => {
 
 // Watch for modelValue changes
 watch(() => props.modelValue, (newValue) => {
+  console.log('props.name',props.name)
   console.log('props.modelValue',props.modelValue)
   console.log('newValue',newValue)
   if (newValue) {
