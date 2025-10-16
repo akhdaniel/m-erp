@@ -80,7 +80,7 @@
     
     <!-- Hidden input to store the actual value -->
     <input 
-      type="hidden" 
+      type="text" 
       :name="field.name" 
       :value="selectedValue"
     >
@@ -150,13 +150,6 @@ async function loadOptions() {
     
     // Construct the full URL using serviceUrl if provided
     let url = props.field.optionsEndpoint
-    // if (props.serviceUrl && !url.startsWith('http')) {
-    //   // Remove trailing slash from serviceUrl if present
-    //   const baseUrl = props.serviceUrl.endsWith('/') ? props.serviceUrl.slice(0, -1) : props.serviceUrl
-    //   // Add leading slash to optionsEndpoint if not present
-    //   const endpoint = url.startsWith('/') ? url : `/${url}`
-    //   url = `${baseUrl}${endpoint}`
-    // }
     
     const response = await fetch(url, { headers })
     if (!response.ok) throw new Error('Failed to load options')
