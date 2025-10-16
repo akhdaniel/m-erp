@@ -249,9 +249,9 @@ watch(() => props.modelValue, (newValue) => {
     console.log('newValue newValue',newValue)    
     displayValue.value = newValue
     const date = new Date(newValue)
-    console.log('date',date)
     // Check if the date is valid before setting
     if (!isNaN(date.getTime())) {
+      console.log('date',date)
       currentMonth.value = date.getMonth()
       currentYear.value = date.getFullYear()
       selectedHour.value = date.getHours()
@@ -259,6 +259,7 @@ watch(() => props.modelValue, (newValue) => {
     } else {
       // If the date is invalid, try to parse with more formats or use current date
       const now = new Date()
+      console.log('now',now)
       currentMonth.value = now.getMonth()
       currentYear.value = now.getFullYear()
       selectedHour.value = 0
