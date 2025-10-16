@@ -508,6 +508,7 @@ onMounted(() => {
 
   console.log('props',props)
   console.log('props.modelValue',props.modelValue)
+  console.log('props.type',props.type)
   
   if (props.modelValue) {
     displayValue.value = props.modelValue
