@@ -504,6 +504,9 @@ function handleKeydown(event: KeyboardEvent) {
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   document.addEventListener('keydown', handleKeydown)
+
+
+  console.log('props',props)
   
   if (props.modelValue) {
     displayValue.value = props.modelValue
