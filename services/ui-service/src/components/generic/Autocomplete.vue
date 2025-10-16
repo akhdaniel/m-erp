@@ -80,7 +80,7 @@
     
     <!-- Hidden input to store the actual value -->
     <input 
-      type="text" 
+      type="hidden" 
       :name="field.name" 
       :value="selectedValue"
     >
