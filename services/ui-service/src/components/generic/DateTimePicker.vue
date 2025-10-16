@@ -150,9 +150,9 @@ const props = defineProps<{
   help?: string
 }>()
 
-const emit = defineEmits<{
-  'update:modelValue': [value: string | null]
-}>()
+// const emit = defineEmits<{
+//   'update:modelValue': [value: string | null]
+// }>()
 
 // Refs
 const inputRef = ref<HTMLInputElement | null>(null)
@@ -285,7 +285,7 @@ function handleBlur() {
 
 // Handle change
 function handleChange() {
-  emit('update:modelValue', displayValue.value || null)
+  // emit('update:modelValue', displayValue.value || null)
 }
 
 // Open calendar immediately
@@ -405,14 +405,14 @@ function selectDate(day: any) {
     // Format as YYYY-MM-DD
     const formatted = formatDate(date)
     displayValue.value = formatted
-    emit('update:modelValue', formatted)
+    // emit('update:modelValue', formatted)
     showCalendar.value = false
   } else {
     // For datetime, update date but keep time picker open
     date.setHours(selectedHour.value, selectedMinute.value)
     const formatted = formatDateTime(date)
     displayValue.value = formatted
-    emit('update:modelValue', formatted)
+    // emit('update:modelValue', formatted)
   }
 }
 
@@ -423,7 +423,7 @@ function updateDateTime() {
     date.setHours(selectedHour.value, selectedMinute.value)
     const formatted = formatDateTime(date)
     displayValue.value = formatted
-    emit('update:modelValue', formatted)
+    // emit('update:modelValue', formatted)
   }
 }
 
@@ -436,21 +436,21 @@ function setToday() {
   if (props.type === 'date') {
     const formatted = formatDate(now)
     displayValue.value = formatted
-    emit('update:modelValue', formatted)
+    // emit('update:modelValue', formatted)
     showCalendar.value = false
   } else {
     selectedHour.value = now.getHours()
     selectedMinute.value = now.getMinutes()
     const formatted = formatDateTime(now)
     displayValue.value = formatted
-    emit('update:modelValue', formatted)
+    // emit('update:modelValue', formatted)
   }
 }
 
 // Clear date
 function clearDate() {
   displayValue.value = ''
-  emit('update:modelValue', null)
+  // emit('update:modelValue', null)
   showCalendar.value = false
 }
 
