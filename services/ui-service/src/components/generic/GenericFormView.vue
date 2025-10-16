@@ -578,14 +578,14 @@ async function loadRecord() {
     }
     
     // Map order_date from order_date if it exists
-    if (data.order_date && formData.value.hasOwnProperty('order_date')) {
-      formData.value.order_date = data.order_date.split('T')[0]
-    }
+    // if (data.order_date && formData.value.hasOwnProperty('order_date')) {
+    //   formData.value.order_date = data.order_date.split('T')[0]
+    // }
     
     // Map quotation_date from valid_from if it exists
-    if (data.valid_from && formData.value.hasOwnProperty('quotation_date')) {
-      formData.value.quotation_date = data.valid_from.split('T')[0]
-    }
+    // if (data.valid_from && formData.value.hasOwnProperty('quotation_date')) {
+    //   formData.value.quotation_date = data.valid_from.split('T')[0]
+    // }
     
     // Also check for line_items if the form has that field but API returns items
     if (formData.value.hasOwnProperty('line_items') && !data.line_items && data.items) {
@@ -593,9 +593,9 @@ async function loadRecord() {
     }
     
     // Map API field names to form field names
-    if (formData.value.hasOwnProperty('quote_date') && data.valid_from) {
-      formData.value.quote_date = data.valid_from.split('T')[0]
-    }
+    // if (formData.value.hasOwnProperty('quote_date') && data.valid_from) {
+    //   formData.value.quote_date = data.valid_from.split('T')[0]
+    // }
     
     // Handle autocomplete fields that might need pre-population
     // Find all autocomplete fields in the schema
