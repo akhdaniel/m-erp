@@ -150,9 +150,9 @@ const props = defineProps<{
   help?: string
 }>()
 
-// const emit = defineEmits<{
-//   'update:modelValue': [value: string | null]
-// }>()
+const emit = defineEmits<{
+  'update:modelValue': [value: string | null]
+}>()
 
 // Refs
 const inputRef = ref<HTMLInputElement | null>(null)
@@ -240,33 +240,33 @@ const calendarDays = computed(() => {
 })
 
 // Watch for modelValue changes
-// watch(() => props.modelValue, (newValue) => {
-//   if (newValue) {
-//     displayValue.value = newValue
-//     const date = new Date(newValue)
-//     // Check if the date is valid before setting
-//     if (!isNaN(date.getTime())) {
-//       currentMonth.value = date.getMonth()
-//       currentYear.value = date.getFullYear()
-//       selectedHour.value = date.getHours()
-//       selectedMinute.value = date.getMinutes()
-//     } else {
-//       // If the date is invalid, try to parse with more formats or use current date
-//       const now = new Date()
-//       currentMonth.value = now.getMonth()
-//       currentYear.value = now.getFullYear()
-//       selectedHour.value = 0
-//       selectedMinute.value = 0
-//     }
-//   } else {
-//     const now = new Date()
-//     displayValue.value = now.toDateString()
-//     currentMonth.value = now.getMonth()
-//     currentYear.value = now.getFullYear()
-//     selectedHour.value = 0
-//     selectedMinute.value = 0
-//   }
-// }, { immediate: true })
+watch(() => props.modelValue, (newValue) => {
+  if (newValue) {
+    displayValue.value = newValue
+    const date = new Date(newValue)
+    // Check if the date is valid before setting
+    if (!isNaN(date.getTime())) {
+      currentMonth.value = date.getMonth()
+      currentYear.value = date.getFullYear()
+      selectedHour.value = date.getHours()
+      selectedMinute.value = date.getMinutes()
+    } else {
+      // If the date is invalid, try to parse with more formats or use current date
+      const now = new Date()
+      currentMonth.value = now.getMonth()
+      currentYear.value = now.getFullYear()
+      selectedHour.value = 0
+      selectedMinute.value = 0
+    }
+  } else {
+    const now = new Date()
+    displayValue.value = now.toDateString()
+    currentMonth.value = now.getMonth()
+    currentYear.value = now.getFullYear()
+    selectedHour.value = 0
+    selectedMinute.value = 0
+  }
+}, { immediate: true })
 
 // Handle focus
 function handleFocus() {
@@ -285,7 +285,7 @@ function handleBlur() {
 
 // Handle change
 function handleChange() {
-  // emit('update:modelValue', displayValue.value || null)
+  emit('update:modelValue', displayValue.value || null)
 }
 
 // Open calendar immediately
@@ -423,7 +423,7 @@ function updateDateTime() {
     date.setHours(selectedHour.value, selectedMinute.value)
     const formatted = formatDateTime(date)
     displayValue.value = formatted
-    // emit('update:modelValue', formatted)
+    emit('update:modelValue', formatted)
   }
 }
 
@@ -436,21 +436,21 @@ function setToday() {
   if (props.type === 'date') {
     const formatted = formatDate(now)
     displayValue.value = formatted
-    // emit('update:modelValue', formatted)
+    emit('update:modelValue', formatted)
     showCalendar.value = false
   } else {
     selectedHour.value = now.getHours()
     selectedMinute.value = now.getMinutes()
     const formatted = formatDateTime(now)
     displayValue.value = formatted
-    // emit('update:modelValue', formatted)
+    emit('update:modelValue', formatted)
   }
 }
 
 // Clear date
 function clearDate() {
   displayValue.value = ''
-  // emit('update:modelValue', null)
+  emit('update:modelValue', null)
   showCalendar.value = false
 }
 
@@ -504,40 +504,6 @@ function handleKeydown(event: KeyboardEvent) {
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   document.addEventListener('keydown', handleKeydown)
-
-
-  console.log('props',props)
-  console.log('props.modelValue',props.modelValue)
-  console.log('props.type',props.type)
-  
-  if (props.modelValue) {
-    displayValue.value = props.modelValue
-    const date = new Date(props.modelValue)
-    console.log('date',date,props.modelValue)
-    // Check if the date is valid before setting
-    if (!isNaN(date.getTime())) {
-      currentMonth.value = date.getMonth()
-      currentYear.value = date.getFullYear()
-      selectedHour.value = date.getHours()
-      selectedMinute.value = date.getMinutes()
-    } else {
-      // If the date is invalid, try to parse with more formats or use current date
-      const now = new Date()
-      currentMonth.value = now.getMonth()
-      currentYear.value = now.getFullYear()
-      selectedHour.value = 0
-      selectedMinute.value = 0
-    }
-
-  } else {
-    const now = new Date()
-    currentMonth.value = now.getMonth()
-    currentYear.value = now.getFullYear()
-  }
-  console.log('current', currentMonth.value,
-      currentYear.value,
-      selectedHour.value,
-      selectedMinute.value)  
 })
 
 // Cleanup
