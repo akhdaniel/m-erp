@@ -287,7 +287,7 @@ function selectOption(option: { label: string; value: any }) {
 }
 
 // Watch for modelValue changes
-watch(() => props.modelValue, (newValue) => {
+watch(() => props.modelValue, async (newValue) => {
   selectedValue.value = newValue
   if (newValue && options.value.length > 0) {
     const selectedOption = options.value.find(option => option.value === newValue)
@@ -304,6 +304,18 @@ watch(() => props.modelValue, (newValue) => {
     if (parentFormData && parentFormData[displayNameField]) {
       selectedLabel.value = parentFormData[displayNameField]
       searchTerm.value = parentFormData[displayNameField]
+    } else {
+      // If we don't have the display name and options aren't loaded yet,
+      // try to load the options to find the matching label
+      if (options.value.length === 0 && props.field.optionsEndpoint) {
+        await loadOptions()
+        // After loading options, try to find the selected option again
+        const selectedOption = options.value.find(option => option.value === newValue)
+        if (selectedOption) {
+          selectedLabel.value = selectedOption.label
+          searchTerm.value = selectedOption.label
+        }
+      }
     }
   } else if (!newValue) {
     selectedLabel.value = ''
