@@ -984,8 +984,24 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                 ]
             }
         ],
-        "submitLabel": "Create Order",
-        "cancelLabel": "Cancel"
+        "actions": [
+            {
+                "id": "send_email",
+                "label": "Send Email",
+                "type": "submit",
+                "action": "send_email",
+                "variant": "outline"
+            },
+            {
+                "id": "confirm",
+                "label": "Confirm",
+                "type": "submit",
+                "action": "confirm",
+                "variant": "outline"
+            }
+        ],
+        "submitLabel": "Save Order",
+        "cancelLabel": "Discard"
     }
 
 
