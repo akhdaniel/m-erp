@@ -242,10 +242,11 @@ const calendarDays = computed(() => {
 
 // Watch for modelValue changes
 watch(() => props.modelValue, (newValue) => {
-  console.log('props.name',props.name)
-  console.log('props.modelValue',props.modelValue)
-  console.log('newValue',newValue)
+
   if (newValue) {
+    console.log('newValue props.name',props.name)
+    console.log('newValue props.modelValue',props.modelValue)
+    console.log('newValue newValue',newValue)    
     displayValue.value = newValue
     const date = new Date(newValue)
     // Check if the date is valid before setting
@@ -263,6 +264,10 @@ watch(() => props.modelValue, (newValue) => {
       selectedMinute.value = 0
     }
   } else {
+    console.log('!newValue props.name',props.name)
+    console.log('!newValue props.modelValue',props.modelValue)
+    console.log('!newValue newValue',newValue)
+        
     const now = new Date()
     displayValue.value = now.toDateString()
     currentMonth.value = now.getMonth()
