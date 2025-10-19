@@ -845,7 +845,7 @@ async function handleSubmit() {
 // Validation
 function validate(): boolean {
   validationErrors.value = []
-  
+  console.log('formData',formData.value)
   props.schema.sections?.forEach((section: any) => {
     section.fields?.forEach((field: any) => {
       // Required validation
