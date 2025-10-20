@@ -137,11 +137,12 @@ class BaseService:
 
         logger.info(f"get_by_id: model_class={model_class}, id={id}, company_id={company_id}")
         query = self.db.query(model_class).filter(model_class.id == id)
-        logger.info(f'query1={query}')
+        # logger.info(f'query1={query}')
 
         query = self._apply_company_filter(query, model_class)
-        logger.info(f'query2={query}')
+        # logger.info(f'query2={query}')
         model = query.first()
+        logger.info(f"mode={model}")
         
         if model:
             self._validate_company_access(model)
