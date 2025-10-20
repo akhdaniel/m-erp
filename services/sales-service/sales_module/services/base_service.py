@@ -154,8 +154,10 @@ class BaseService:
         """Get model by ID or raise NotFoundError."""
         logger.info(f'get_by_id_or_raise: model_class={model_class}, id={id}, company_id={company_id}')
         model = self.get_by_id(model_class, id, company_id)
+        logger.info(f"mode3={model}")
         if not model:
             raise NotFoundError(f"{model_class.__name__} with ID {id} not found")
+        logger.info(f"mode4={model}")
         return model
     
     def update(self, entity_id: int, data: Dict[str, Any], user_id: int = None,
