@@ -41,9 +41,9 @@ class OrderLineItemCreate(BaseModel):
     description: Optional[str] = None
     quantity_ordered: float = Field(..., gt=0)
     unit_of_measure: str = Field(default="each", max_length=50)
-    unit_price: Decimal = Field(..., ge=0)
+    unit_price: float = Field(..., ge=0)
     # list_price: Optional[Decimal] = Field(None, ge=0)
-    unit_price: Optional[Decimal] = Field(None, ge=0)
+    # unit_price: Optional[Decimal] = Field(None, ge=0)
     discount_percentage: Decimal = Field(default=0.0, ge=0, le=100)
     discount_amount: Decimal = Field(default=0.0, ge=0)
     tax_percentage: Decimal = Field(default=0.0, ge=0, le=100)
