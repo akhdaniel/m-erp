@@ -176,6 +176,7 @@ class BaseService:
         """
         # Get existing entity
         entity = self.get_by_id(model_class, entity_id, company_id)
+        logger.info(f"entity00={entity}")            
         if not entity:
             logger.info(f"entity0={entity}")            
             return None
