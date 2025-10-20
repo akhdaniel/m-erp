@@ -21,7 +21,6 @@ def upgrade() -> None:
     # Add due_date column to sales_order_line_items table
     op.add_column('sales_order_line_items', sa.Column('warehouse_id', sa.Integer(), nullable=True, index=True))
     op.add_column('sales_order_line_items', sa.Column('reserved_quantity', sa.Numeric(), nullable=True, ))
-    op.add_column('sales_order_line_items', sa.Column('reserved_quantity', sa.Numeric(), nullable=True, ))
     op.add_column('sales_order_line_items', sa.Column('allocated_quantity', sa.Numeric(), nullable=True, ))
     op.add_column('sales_order_line_items', sa.Column('required_date', sa.DateTime(), nullable=True, ))
     op.add_column('sales_order_line_items', sa.Column('promised_date', sa.DateTime(), nullable=True, ))
@@ -34,7 +33,6 @@ def upgrade() -> None:
 def downgrade() -> None:
     """Remove quantity_ordered column from sales_order_line_items table."""
     op.drop_column('sales_order_line_items', 'warehouse_id')
-    op.drop_column('sales_order_line_items', 'reserved_quantity')
     op.drop_column('sales_order_line_items', 'allocated_quantity')
     op.drop_column('sales_order_line_items', 'required_date')
     op.drop_column('sales_order_line_items', 'promised_date')
