@@ -175,19 +175,19 @@ class BaseService:
             Updated entity instance or None if not found
         """
         # Get existing entity
-        logger.info(f"update model_class={model_class}")            
+        # logger.info(f"update model_class={model_class}")            
         entity = self.get_by_id(model_class, entity_id, company_id)
-        logger.info(f"entity00={entity}")            
+        # logger.info(f"entity00={entity}")            
         if not entity:
-            logger.info(f"entity0={entity}")            
+            # logger.info(f"entity0={entity}")            
             return None
         
         # Validate update data
-        logger.info(f"entity1={entity}")
+        # logger.info(f"entity1={entity}")
         self.validate_update_data(data, entity)
         
         # Perform pre-update operations
-        logger.info(f"entity2={entity}")
+        # logger.info(f"entity2={entity}")
         self.before_update(entity, data, user_id)
         
         # Update entity fields
