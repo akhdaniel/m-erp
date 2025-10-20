@@ -622,7 +622,8 @@ async function loadRecord() {
     originalData.value = { ...formData.value }
 
 
-    // console.log('final formData', formData)
+    console.log('final formData', formData)
+    console.log('originalData', originalData)
   } catch (err: any) {
     error.value = err.message || 'Failed to load record'
     console.error('Error loading record:', err)
@@ -846,7 +847,6 @@ async function handleSubmit() {
 // Validation
 function validate(): boolean {
   validationErrors.value = []
-  console.log('formData',formData.value)
   props.schema.sections?.forEach((section: any) => {
     section.fields?.forEach((field: any) => {
       // Required validation
