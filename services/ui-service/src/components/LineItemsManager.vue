@@ -52,7 +52,7 @@
               {{ item.item_code || item.product_sku || item.sku }}
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-              {{ item.quantity }}
+              {{ item.quantity_ordered }}
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               {{ formatCurrency(item.unit_price) }}
@@ -192,11 +192,11 @@
                         </div>
                       </div>
 
-                      <!-- Quantity -->
+                      <!-- quantity_ordered -->
                       <div>
                         <label class="block text-sm font-medium text-gray-700">Quantity</label>
                         <input
-                          v-model.number="currentItem.quantity"
+                          v-model.number="currentItem.quantity_ordered"
                           type="number"
                           min="1"
                           step="1"
@@ -243,7 +243,7 @@
                   <button
                     type="button"
                     @click="saveItem"
-                    :disabled="!currentItem.product_id || !currentItem.quantity"
+                    :disabled="!currentItem.product_id || !currentItem.quantity_ordered"
                     class="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:opacity-50 disabled:cursor-not-allowed sm:col-start-2"
                   >
                     {{ editingIndex !== null ? 'Update' : 'Add' }}
@@ -305,7 +305,7 @@ const currentItem = ref({
   product_id: null,
   product_name: '',
   product_sku: '',
-  quantity: 1,
+  quantity_ordered: 1,
   unit_price: 0,
   discount_percentage: 0
 })
@@ -340,14 +340,14 @@ watch(() => props.modelValue, (newValue) => {
 // Computed values
 const subtotal = computed(() => {
   return items.value.reduce((sum, item) => {
-    const lineTotal = item.quantity * item.unit_price
+    const lineTotal = item.quantity_ordered * item.unit_price
     return sum + lineTotal
   }, 0)
 })
 
 const totalDiscount = computed(() => {
   return items.value.reduce((sum, item) => {
-    const lineTotal = item.quantity * item.unit_price
+    const lineTotal = item.quantity_ordered * item.unit_price
     const discount = lineTotal * (item.discount_percentage || 0) / 100
     return sum + discount
   }, 0)
@@ -394,7 +394,7 @@ const selectProduct = (product) => {
 }
 
 const calculateLineTotal = (item) => {
-  const lineTotal = item.quantity * item.unit_price
+  const lineTotal = item.quantity_ordered * item.unit_price
   const discount = lineTotal * (item.discount_percentage || 0) / 100
   return lineTotal - discount
 }
@@ -413,7 +413,7 @@ const editItem = (index) => {
     product_id: item.product_id,
     product_name: item.item_name || item.product_name,
     product_sku: item.item_code || item.product_sku,
-    quantity: item.quantity,
+    quantity_ordered: item.quantity_ordered,
     unit_price: item.unit_price,
     discount_percentage: item.discount_percentage || 0
   }
@@ -427,7 +427,7 @@ const removeItem = (index) => {
 }
 
 const saveItem = () => {
-  if (!currentItem.value.product_id || !currentItem.value.quantity) {
+  if (!currentItem.value.product_id || !currentItem.value.quantity_ordered) {
     return
   }
 
@@ -436,7 +436,7 @@ const saveItem = () => {
     product_id: currentItem.value.product_id,
     item_name: currentItem.value.product_name,
     item_code: currentItem.value.product_sku,
-    quantity: currentItem.value.quantity,
+    quantity_ordered: currentItem.value.quantity_ordered,
     unit_price: currentItem.value.unit_price,
     discount_percentage: currentItem.value.discount_percentage || 0,
     description: `${currentItem.value.product_sku} - ${currentItem.value.product_name}`
@@ -459,7 +459,7 @@ const closeModal = () => {
     product_id: null,
     product_name: '',
     product_sku: '',
-    quantity: 1,
+    quantity_ordered: 1,
     unit_price: 0,
     discount_percentage: 0
   }
