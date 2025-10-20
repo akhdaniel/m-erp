@@ -338,6 +338,7 @@ async def create_order(
         if order_data.line_items:
             line_items_data = [item.dict() for item in order_data.line_items]
         
+        logger.info(f"line_items_data={line_items_data}")
         # Remove line_items from order_data for service call
         order_dict = order_data.dict()
         order_dict.pop('line_items', None)
