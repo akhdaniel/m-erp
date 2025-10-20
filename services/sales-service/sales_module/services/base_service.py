@@ -87,39 +87,10 @@ class BaseService:
         self.after_create(entity, user_id)
 
 
-        logger.info(f"base_service; entity={entity.id}")
+        logger.info(f"create: base_service; entity={entity.id}")
         
         return entity
-    
-    def get_by_id_old(self, entity_id: int, company_id: int = None) -> Optional[CompanyBusinessObject]:
-        """
-        Get entity by ID with company isolation.
-        
-        Args:
-            entity_id: Entity ID
-            company_id: Company ID for isolation
-            
-        Returns:
-            Entity instance or None if not found
-        """
-        if not self.model_class:
-            raise NotImplementedError("model_class must be set in service")
-        
-        # In production, would query database:
-        # query = self.db_session.query(self.model_class).filter(
-        #     self.model_class.id == entity_id
-        # )
-        # 
-        # if company_id:
-        #     query = query.filter(self.model_class.company_id == company_id)
-        # 
-        # return query.first()
-        
-        # Simulated for demo
-        print(f"Sales Service: Getting {self.model_class.__name__} with ID {entity_id}")
-        return None  # Would return actual entity
-
-    
+ 
     def _apply_company_filter(self, query, model_class: Type[T]):
         """Apply company filter to query if company_id is set."""
         if self.company_id:

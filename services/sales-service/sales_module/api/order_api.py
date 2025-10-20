@@ -359,7 +359,7 @@ async def create_order(
         
     except Exception as e:
         order_service.rollback()
-        logger.info(str(e))
+        logger.error(f'create_order error: {str(e)}')
         raise HTTPException(status_code=400, detail=str(e))
 
 
