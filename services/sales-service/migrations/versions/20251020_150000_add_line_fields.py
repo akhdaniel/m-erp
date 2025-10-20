@@ -20,7 +20,7 @@ def upgrade() -> None:
     """Add quantity_ordered column to sales_order_line_items table."""
     # Add due_date column to sales_order_line_items table
     op.add_column('sales_order_line_items', sa.Column('warehouse_id', sa.Integer(), nullable=True, index=True))
-    op.add_column('sales_order_line_items', sa.Column('reserved_quantity', sa.Numeric(), nullable=True, ))
+    # op.add_column('sales_order_line_items', sa.Column('reserved_quantity', sa.Numeric(), nullable=True, ))
     op.add_column('sales_order_line_items', sa.Column('allocated_quantity', sa.Numeric(), nullable=True, ))
     op.add_column('sales_order_line_items', sa.Column('required_date', sa.DateTime(), nullable=True, ))
     op.add_column('sales_order_line_items', sa.Column('promised_date', sa.DateTime(), nullable=True, ))
