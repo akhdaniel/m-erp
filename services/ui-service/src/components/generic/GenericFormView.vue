@@ -458,7 +458,6 @@ async function initializeForm() {
     await loadFieldOptions()
 
   // Load existing data if editing
-  console.log('isEditMode==', isEditMode.value)
   if (isEditMode.value) {
     await loadRecord()
   }
@@ -466,6 +465,7 @@ async function initializeForm() {
 
 // Load record for editing
 async function loadRecord() {
+
   if (!apiUrl.value) {
     error.value = 'No endpoint configured'
     return

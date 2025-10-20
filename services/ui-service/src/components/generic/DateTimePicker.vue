@@ -242,6 +242,7 @@ const calendarDays = computed(() => {
 
 // Watch for modelValue changes
 watch(() => props.modelValue, (newValue) => {
+  console.log('newValue props.type',props.type)
   console.log('newValue props.name',props.name)
 
   if (newValue) {
@@ -262,7 +263,7 @@ watch(() => props.modelValue, (newValue) => {
       // If the date is invalid, try to parse with more formats or use current date
       const now = new Date()
       console.log('. newValue now',now)
-      displayValue.value = formatDateTime(now)
+      displayValue.value = formatDateTime(now, false )
       console.log('. newValue !isnan displayValue',displayValue.value)
       currentMonth.value = now.getMonth()
       currentYear.value = now.getFullYear()
@@ -275,14 +276,14 @@ watch(() => props.modelValue, (newValue) => {
         
     const now = new Date()
     console.log('. !newValue now',now)
-    displayValue.value = formatDateTime(now)
+    displayValue.value = formatDateTime(now, false)
     console.log('. !newValue displayValue',displayValue.value)
     currentMonth.value = now.getMonth()
     currentYear.value = now.getFullYear()
     selectedHour.value = 0
     selectedMinute.value = 0
   }
-  console.log('displayValue',displayValue.value)
+  // console.log('displayValue',displayValue.value)
 
 }, { immediate: true })
 
@@ -481,13 +482,18 @@ function formatDate(date: Date): string {
 }
 
 // Format datetime as YYYY-MM-DDTHH:mm
-function formatDateTime(date: Date): string {
+function formatDateTime(date: Date, withTime:boolean ): string {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-  return `${year}-${month}-${day}T${hours}:${minutes}`
+  if(withTime){
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+  }
+  else{
+    return `${year}-${month}`
+  }
 }
 
 // Check if date is disabled
