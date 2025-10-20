@@ -134,6 +134,8 @@ class BaseService:
     def get_by_id(self, model_class: Type[T], id: int, company_id: int) -> Optional[T]:
         """Get model by ID with company filtering."""
         self.company_id = company_id
+
+        logger.info(f"get_by_id: model_class={model_class}, id={id}, company_id={company_id}")
         query = self.db.query(model_class).filter(model_class.id == id)
         query = self._apply_company_filter(query, model_class)
         model = query.first()
