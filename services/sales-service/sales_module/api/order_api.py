@@ -42,17 +42,17 @@ class OrderLineItemCreate(BaseModel):
     quantity_ordered: Decimal = Field(..., gt=0)
     unit_of_measure: str = Field(default="each", max_length=50)
     unit_price: Decimal = Field(..., ge=0)
-    list_price: Optional[Decimal] = Field(None, ge=0)
-    unit_cost: Optional[Decimal] = Field(None, ge=0)
+    # list_price: Optional[Decimal] = Field(None, ge=0)
+    unit_price: Optional[Decimal] = Field(None, ge=0)
     discount_percentage: Decimal = Field(default=0.0, ge=0, le=100)
     discount_amount: Decimal = Field(default=0.0, ge=0)
     tax_percentage: Decimal = Field(default=0.0, ge=0, le=100)
     tax_code: Optional[str] = Field(None, max_length=50)
     specifications: Optional[Dict[str, Any]] = None
-    custom_options: Optional[Dict[str, Any]] = None
-    lead_time_days: Optional[int] = Field(None, ge=0)
-    delivery_date: Optional[datetime] = None
-    notes: Optional[str] = None
+    custom_attributes: Optional[Dict[str, Any]] = None
+    # lead_time_days: Optional[int] = Field(None, ge=0)
+    # delivery_date: Optional[datetime] = None
+    # notes: Optional[str] = None
 
 
 class OrderCreate(BaseModel):
