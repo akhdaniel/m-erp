@@ -28,7 +28,7 @@ def upgrade() -> None:
     op.add_column('sales_order_line_items', sa.Column('is_backordered', sa.Boolean(), nullable=True, index=True))
     op.add_column('sales_order_line_items', sa.Column('is_dropship', sa.Boolean(), nullable=True, index=True))
     op.add_column('sales_order_line_items', sa.Column('requires_special_handling', sa.Boolean(), nullable=True, index=True))
-    op.add_column('sales_order_line_items', sa.Column('custom_attributes', sa.JSON(), nullable=True, index=True))
+    op.add_column('sales_order_line_items', sa.Column('custom_attributes', sa.JSON(), nullable=True, ))
 
 def downgrade() -> None:
     """Remove quantity_ordered column from sales_order_line_items table."""
