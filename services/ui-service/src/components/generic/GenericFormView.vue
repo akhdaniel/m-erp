@@ -458,6 +458,7 @@ async function initializeForm() {
     await loadFieldOptions()
 
   // Load existing data if editing
+  console.log('isEditMode==', isEditMode.value)
   if (isEditMode.value) {
     await loadRecord()
   }
