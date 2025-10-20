@@ -305,6 +305,7 @@ function handleBlur() {
 
 // Handle change
 function handleChange() {
+  console.log('handleChange', displayValue.value)
   emit('update:modelValue', displayValue.value || null)
 }
 
