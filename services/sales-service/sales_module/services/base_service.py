@@ -160,7 +160,7 @@ class BaseService:
         logger.info(f"mode4={model}")
         return model
     
-    def update(self, entity_id: int, data: Dict[str, Any], user_id: int = None,
+    def update(self, model_class: Type[T], entity_id: int, data: Dict[str, Any], user_id: int = None,
                company_id: int = None) -> Optional[CompanyBusinessObject]:
         """
         Update entity with validation and audit logging.
@@ -175,7 +175,7 @@ class BaseService:
             Updated entity instance or None if not found
         """
         # Get existing entity
-        entity = self.get_by_id(entity_id, company_id)
+        entity = self.get_by_id(model_class, entity_id, company_id)
         if not entity:
             return None
         
