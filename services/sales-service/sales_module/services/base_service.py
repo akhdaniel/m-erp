@@ -180,19 +180,24 @@ class BaseService:
             return None
         
         # Validate update data
+        logger.info(f"entity1={entity}")
         self.validate_update_data(data, entity)
         
         # Perform pre-update operations
+        logger.info(f"entity2={entity}")
         self.before_update(entity, data, user_id)
         
         # Update entity fields
+        logger.info(f"data={data}")
         entity.update_from_dict(data)
         
         # Save entity
+        logger.info(f"entity3={entity}")
         entity.save(self.db_session, user_id)
         
         # Perform post-update operations
         self.after_update(entity, user_id)
+        logger.info(f"entity4={entity}")
         
         return entity
     
