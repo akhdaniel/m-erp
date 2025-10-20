@@ -102,7 +102,8 @@ class BaseService:
         if self.company_id and model.company_id != self.company_id:
             raise PermissionError(f"Access denied to {model.__class__.__name__} from different company")
         
-    def get_by_id(self, model_class: Type[T], id: int, company_id: int) -> Optional[T]:
+    def get_by_id(self, id: int, company_id: int) -> Optional[T]:
+        model_class = self.model_class
         """Get model by ID with company filtering."""
         self.company_id = company_id
 
@@ -121,8 +122,9 @@ class BaseService:
         logger.info(f"mode2={model}")
         return model
         
-    def get_by_id_or_raise(self, model_class: Type[T], id: int, company_id: int = None) -> T:
+    def get_by_id_or_raise(self, id: int, company_id: int = None) -> T:
         """Get model by ID or raise NotFoundError."""
+        model_class = self.model_class
         logger.info(f'get_by_id_or_raise: model_class={model_class}, id={id}, company_id={company_id}')
         model = self.get_by_id(model_class, id, company_id)
         logger.info(f"mode3={model}")
