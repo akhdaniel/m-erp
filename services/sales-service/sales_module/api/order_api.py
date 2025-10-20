@@ -39,7 +39,7 @@ class OrderLineItemCreate(BaseModel):
     item_code: Optional[str] = Field(None, max_length=100)
     item_name: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
-    quantity_ordered: Decimal = Field(..., gt=0)
+    quantity_ordered: float = Field(..., gt=0)
     unit_of_measure: str = Field(default="each", max_length=50)
     unit_price: Decimal = Field(..., ge=0)
     # list_price: Optional[Decimal] = Field(None, ge=0)
