@@ -145,6 +145,7 @@ class BaseService:
         
     def get_by_id_or_raise(self, model_class: Type[T], id: int, company_id: int = None) -> T:
         """Get model by ID or raise NotFoundError."""
+        logger.info(f'get_by_id_or_raise: model_class={model_class}, id={id}, company_id={company_id}')
         model = self.get_by_id(model_class, id, company_id)
         if not model:
             raise NotFoundError(f"{model_class.__name__} with ID {id} not found")
