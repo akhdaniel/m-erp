@@ -908,7 +908,7 @@ async def get_orders_form_schema() -> Dict[str, Any]:
                         "required": True,
                     },
                     {
-                        "name": "delivery_date",
+                        "name": "delivered_date",
                         "label": "Delivery Date",
                         "type": "date",
                         "required": True,

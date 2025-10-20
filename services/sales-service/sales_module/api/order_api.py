@@ -64,7 +64,7 @@ class OrderCreate(BaseModel):
     
     # Order details
     order_date: Optional[datetime] = None
-    delivery_date: Optional[date] = None
+    delivered_date: Optional[date] = None
     required_date: Optional[datetime] = None
     sales_rep_user_id: Optional[int] = Field(None, gt=0)
     
@@ -113,7 +113,7 @@ class OrderUpdate(BaseModel):
     terms_and_conditions: Optional[str] = None
     custom_fields: Optional[Dict[str, Any]] = None
     tags: Optional[List[str]] = None
-    delivery_date: Optional[date] = None
+    delivered_date: Optional[date] = None
 
 
 class OrderFromQuotationCreate(BaseModel):
