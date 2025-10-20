@@ -442,7 +442,7 @@ class SalesOrderLineItem(CompanyBusinessObject):
     description = Column(Text)
     
     # Quantities
-    quantity_ordered = Column(Numeric(15, 4), nullable=False)
+    quantity = Column(Numeric(15, 4), nullable=False)
     quantity_shipped = Column(Numeric(15, 4), nullable=False, default=0.0)
     quantity_cancelled = Column(Numeric(15, 4), nullable=False, default=0.0)
     quantity_backordered = Column(Numeric(15, 4), nullable=False, default=0.0)
