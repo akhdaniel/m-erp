@@ -658,7 +658,7 @@ async def update_order(
         order = order_service.get_by_id_or_raise(SalesOrder, order_id, company_id)
         logger.info(f'order={order} order_id={order_id} order_data={order_data}')
 
-        updated_order = order_service.update(order, order_id, order_data.dict(exclude_unset=True), user_id, company_id)
+        updated_order = order_service.update(SalesOrder, order_id, order_data.dict(exclude_unset=True), user_id, company_id)
         logger.info(f'updated_order={updated_order}')
         order_service.commit()
         
