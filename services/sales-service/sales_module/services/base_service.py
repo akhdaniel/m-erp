@@ -175,6 +175,7 @@ class BaseService:
             Updated entity instance or None if not found
         """
         # Get existing entity
+        logger.info(f"update model_class={model_class}")            
         entity = self.get_by_id(model_class, entity_id, company_id)
         logger.info(f"entity00={entity}")            
         if not entity:
