@@ -244,6 +244,7 @@ const calendarDays = computed(() => {
 watch(() => props.modelValue, (newValue) => {
   console.log('newValue props.type',props.type)
   console.log('newValue props.name',props.name)
+  const withTime = props.type=='datetime-local'? true: false;
 
   if (newValue) {
     console.log('. newValue props.modelValue',props.modelValue)
@@ -263,7 +264,7 @@ watch(() => props.modelValue, (newValue) => {
       // If the date is invalid, try to parse with more formats or use current date
       const now = new Date()
       console.log('. newValue now',now)
-      displayValue.value = formatDateTime(now, false )
+      displayValue.value = formatDateTime(now, withTime )
       console.log('. newValue !isnan displayValue',displayValue.value)
       currentMonth.value = now.getMonth()
       currentYear.value = now.getFullYear()
@@ -276,7 +277,7 @@ watch(() => props.modelValue, (newValue) => {
         
     const now = new Date()
     console.log('. !newValue now',now)
-    displayValue.value = formatDateTime(now, false)
+    displayValue.value = formatDateTime(now, withTime)
     console.log('. !newValue displayValue',displayValue.value)
     currentMonth.value = now.getMonth()
     currentYear.value = now.getFullYear()
@@ -492,7 +493,7 @@ function formatDateTime(date: Date, withTime:boolean ): string {
     return `${year}-${month}-${day}T${hours}:${minutes}`
   }
   else{
-    return `${year}-${month}`
+    return `${year}-${month}-${day}`
   }
 }
 
