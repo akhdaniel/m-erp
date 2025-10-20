@@ -654,6 +654,7 @@ async def update_order(
 ):
     """Update order details."""
     try:
+        logger.info(f'put:update_order order_id={order_id}, company_id={company_id}')
         order = order_service.get_by_id_or_raise(SalesOrder, order_id, company_id)
         updated_order = order_service.update(order, order_data.dict(exclude_unset=True), user_id)
         order_service.commit()
