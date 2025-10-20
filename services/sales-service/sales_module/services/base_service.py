@@ -177,6 +177,7 @@ class BaseService:
         # Get existing entity
         entity = self.get_by_id(model_class, entity_id, company_id)
         if not entity:
+            logger.info(f"entity0={entity}")            
             return None
         
         # Validate update data
