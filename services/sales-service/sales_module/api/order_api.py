@@ -658,7 +658,7 @@ async def update_order(
     """Update order details."""
     try:
         logger.info(f'put:update_order order_id={order_id}, company_id={company_id}')
-        order = order_service.get_by_id_or_raise(SalesOrder, order_id, company_id)
+        order = order_service.get_by_id_or_raise(order_id, company_id)
         logger.info(f'order={order} order_id={order_id} order_data={order_data}')
 
         updated_order = order_service.update(SalesOrder, order_id, order_data.dict(exclude_unset=True), user_id, company_id)
@@ -809,7 +809,7 @@ async def get_order_line_items(
     order_service: OrderService = Depends(get_order_service)
 ):
     """Get order line items."""
-    order = order_service.get_by_id_or_raise(SalesOrder, order_id, company_id)
+    order = order_service.get_by_id_or_raise(order_id, company_id)
     
     line_items = order.line_items
     if active_only:
