@@ -439,7 +439,8 @@ const saveItem = () => {
     quantity_ordered: currentItem.value.quantity_ordered,
     unit_price: currentItem.value.unit_price,
     discount_percentage: currentItem.value.discount_percentage || 0,
-    description: `${currentItem.value.product_sku} - ${currentItem.value.product_name}`
+    description: `${currentItem.value.product_sku} - ${currentItem.value.product_name}`,
+    line_type:''
   }
 
   if (editingIndex.value !== null) {

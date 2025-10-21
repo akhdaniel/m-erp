@@ -643,7 +643,7 @@ async def get_order(
     order_service: OrderService = Depends(get_order_service)
 ):
     """Get order by ID."""
-    order = order_service.get_by_id_or_raise(SalesOrder, order_id, company_id)
+    order = order_service.get_by_id_or_raise(order_id, company_id)
     return OrderResponse.from_orm(order)
 
 
