@@ -187,6 +187,7 @@ class OrderResponse(BaseModel):
     hold_reason: Optional[str]
     created_at: datetime
     updated_at: datetime
+    line_items: Optional[List[OrderLineItemCreate]] = None
     
     class Config:
         from_attributes = True
