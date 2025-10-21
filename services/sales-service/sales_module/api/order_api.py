@@ -114,6 +114,7 @@ class OrderUpdate(BaseModel):
     custom_fields: Optional[Dict[str, Any]] = None
     tags: Optional[List[str]] = None
     delivered_date: Optional[date] = None
+    line_items: Optional[List[OrderLineItemCreate]] = None
 
 
 class OrderFromQuotationCreate(BaseModel):
