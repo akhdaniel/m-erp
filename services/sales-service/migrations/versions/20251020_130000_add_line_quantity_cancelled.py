@@ -19,7 +19,7 @@ depends_on = None
 def upgrade() -> None:
     """Add quantity_ordered column to sales_order_line_items table."""
     # Add due_date column to sales_order_line_items table
-    op.add_column('sales_order_line_items', sa.Column('quantity_cancelled', sa.DateTime(), nullable=True, index=True))
+    op.add_column('sales_order_line_items', sa.Column('quantity_cancelled', sa.Numeric(), nullable=True, index=True))
 
 def downgrade() -> None:
     """Remove quantity_ordered column from sales_order_line_items table."""
