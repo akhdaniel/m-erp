@@ -107,30 +107,30 @@ class BaseService:
         """Get model by ID with company filtering."""
         self.company_id = company_id
 
-        logger.info(f"get_by_id: model_class={model_class}, id={id}, company_id={company_id}")
+        # logger.info(f"get_by_id: model_class={model_class}, id={id}, company_id={company_id}")
         query = self.db.query(model_class).filter(model_class.id == id)
         # logger.info(f'query1={query}')
 
         query = self._apply_company_filter(query, model_class)
-        logger.info(f'query2={query}')
+        # logger.info(f'query2={query}')
         model = query.first()
-        logger.info(f"mode1={model}")
+        # logger.info(f"mode1={model}")
         
         if model:
             self._validate_company_access(model)
         
-        logger.info(f"mode2={model}")
+        # logger.info(f"mode2={model}")
         return model
         
     def get_by_id_or_raise(self, id: int, company_id: int = None) -> T:
         """Get model by ID or raise NotFoundError."""
         model_class = self.model_class
-        logger.info(f'get_by_id_or_raise: model_class={model_class}, id={id}, company_id={company_id}')
-        model = self.get_by_id(model_class, id, company_id)
-        logger.info(f"mode3={model}")
+        # logger.info(f'get_by_id_or_raise: model_class={model_class}, id={id}, company_id={company_id}')
+        model = self.get_by_id(id, company_id)
+        # logger.info(f"mode3={model}")
         if not model:
             raise NotFoundError(f"{model_class.__name__} with ID {id} not found")
-        logger.info(f"mode4={model}")
+        # logger.info(f"mode4={model}")
         return model
     
     def update(self, model_class: Type[T], entity_id: int, data: Dict[str, Any], user_id: int = None,
